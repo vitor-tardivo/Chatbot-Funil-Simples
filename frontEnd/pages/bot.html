@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="shortcut icon" href="midia/Bot/faviconP.png" type="image/x-icon"><!-- ICON TITLE PAGE-->
+    
+    <link rel="stylesheet" href="../styles/styleStandards.css"><!-- STANDARDS STYLIZATION -->
+    <link rel="stylesheet" href="../styles/Bot/styleBot.css" media="all"><!-- ALL MEDIAS -->
+    <link rel="stylesheet" href="../styles/Bot/mediaQueryBotlPrint.css" media="print"><!-- MEDIA QUERY - PRINT -->
+    
+    <script src="../scripts/scriptStandards.js"></script><!-- STANDARDS SCRIPT -->
+    <script src="../scripts/Bot/scriptBot.js"></script><!-- ALL THE SCRIPT -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script><!-- ADD AXIOS TO PROJECT -->
+    
+    <title>Bot</title>
+</head>
+<body>
+    <div id="barLoading"></div><!-- LOADING BAR -->
+    
+    <header>
+        <abbr title="Pagina principal Portal"><a id="home" href="../index.html" target="_self"><stronger>HOME</stronger></a></abbr><!-- HOME PAGE -->
+
+        <nav> 
+            <ul>
+                <abbr title="Pagina Bot"><li><a class="navs" href="#" target="_self"><stronger>BOT</stronger></a></li></abbr><!-- BOT PAGE -->
+                <abbr title="Pagina Ver IP"><li><a class="navs" href="verIp.html" target="_blank"><stronger>VER IP</stronger></a></li></abbr><!-- VER IP PAGE -->
+                <abbr title="Pagina Multi Link"><li><a class="navs" href="multiLink.html" target="_blank"><stronger>MULTI LINK</stronger></a></li></abbr><!-- MULTI LINKS PAGE -->
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <article id="articleConsole">
+            <div id="console">
+                <div id="divReload">
+                    <abbr title="STATUS: null" id="abbrReload"><button id="reload" onclick="reconnectConsole()">⟳</button></abbr>
+                </div>
+                <div id="divLog">
+                    <abbr title="Terminal"><div id="log">
+
+                    </div></abbr>
+                </div>
+                <div id="commandSendInput">
+                    <abbr title="Envia o Comando"><div id="divSend">
+                        <button id="commandSend" onclick="sendCommand()">></button>
+                    </div></abbr>
+
+                    <div id="divInput">
+                        <abbr title="Digite um comando do console..."><input type="text" id="commandInput" placeholder="..."></abbr>       
+                    </div>
+                </div>
+            </div>
+            
+            <abbr id="titleHide" title="Esconder o Terminal"><div id="divHide">
+                <button id="hideConsole" onclick="hideConsole()">◀</button>
+            </div></abbr>
+        </article>
+        
+        <section id="content">
+            <abbr title="Status do Bot"><div class="divs" id="divStatus">
+                <p id="pStatus"><span id="status">...</span></p>
+            </div></abbr>
+            <div id="innerContent">
+                <div class="divs" id="divStart">
+                    <abbr title="Inicia o Bot"><span id="start" onclick="startBot()" ><stronger>INICIAR</stronger></span></abbr><!-- BUTTON START BOT --> 
+                </div>
+
+                <!--<abbr title="Ir ao fim da pagina"><button id="scrollB" onclick="bottomScroll()">&#9650;</button></abbr> BUTTON GO TO THE BOTTOM OF THE PAGE
+                <abbr title="Ir ao topo da pagina"><button id="scrollT" onclick="topScroll()">&#9650;</button></abbr> BUTTON GO TO THE TOP OF THE PAGE -->
+                
+                <div class="divs">
+                    <abbr title="Qr-Code WhatsApp Web"><div id="qrCode">
+
+                    </div></abbr>
+                </div>
+
+                <div class="divs" id="divButtonList">
+                    <abbr title="Lista todos os ChatData"><span id="list" onclick="listDataButton()" ><stronger>LISTAR</stronger></span></abbr><!-- BUTTON LIST CHAT DATA --> 
+                </div>
+
+                <div id="listChatData">
+                    
+                    <div class="divs" id="sendInputList">
+                        <div id="divInputList">
+                            <abbr title="Digite um nome de contato..."><input type="text" id="inputList" placeholder="..."></abbr>       
+                        </div>
+
+                        <abbr title="Pesquisa um nome de contato"><div id="divSendList">
+                            <button id="sendSearchList" onclick="searchNameList()">></button>
+                        </div></abbr>
+                        <abbr title="Apaga um ChatData pelo Nome"><div id="divEraseSearchList">
+                            <button id="eraseSearchList" onclick="eraseDataByName()">></button>
+                        </div></abbr>
+                    </div>
+                    <div class="divs">
+                        <table> <!-- LIST -->
+                            <caption title="Os items(data - hora, ip) serao salvos aqui"><stronger>CHATDATA</stronger></caption>
+                        
+                            <thead>
+                                <tr>
+                                    <th title="Tamanho da Lista" scope="col" colspan="2"><strong>Tamanho</strong></th>
+                                </tr>
+                                <tr>
+                                    <td title="Lista" scope="col" colspan="2">0</td>
+                                </tr>
+                                <tr>
+                                    <th title="Numero do Whatsapp" class="tableTitle" scope="col"><strong>Numero(s)</strong></th>
+                                    <th title="Nome do Contato" class="tableTitle" scope="col"><strong>Nome(s)</strong></th>
+                                </tr>
+                            </thead>
+                        
+                            <tbody title="Itens">
+                                <td>N/A</td><!-- Numero --> 
+                                <td>N/A</td><!-- Nome --> 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="divs" id="divButtonErase">
+                    <abbr title="Apaga todos os itens da lista"><button id="erase" onclick="allEraseList()">APAGAR</button></abbr><!-- BUTTON ERASE ITENS OF THE LIST -->
+                </div>
+            </div>
+
+
+        </section>
+    </main>
+
+    <footer>
+        <abbr title="Link perfil GitHub do criador"><p id="credits"><a href="https://github.com/vitor-tardivo" id="linkCredits" rel="noopener" target="_blank">🔗GitHub</a></p></abbr><!-- SILLY CREDITS -->
+    </footer>
+</body>
+</html>

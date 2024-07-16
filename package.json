@@ -1,0 +1,27 @@
+{
+  "name": "bot",
+  "version": "0.1.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon --watch src/app.js --watch server.js --watch package.json --ext json,js,ts server.js"
+  },
+  "license": "",
+  "author": "Vitor de Souza Tardivo",
+  "description": "Bot WhatsApp automation, Digital marketing.",
+  "dependencies": {
+    "path": "^0.12.7",
+    "promises": "^0.2.5",
+    "puppeteer": "^22.11.2",
+    "qrcode-terminal": "^0.12.0",
+    "readline": "^1.3.0",
+    "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#webpack-exodus"
+  },
+  "devDependencies": {
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "http": "^0.0.1-security",
+    "nodemon": "^3.1.4",
+    "ws": "^8.17.1"
+  }
+}
