@@ -77,38 +77,9 @@ main {
 #console::-webkit-scrollbar {
     background-color: #2b2b2b; 
 }
-#divReload {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    background-color: #2b2b2b;
-}
-#reload {
-    background-color: var(--colorContrast);
-    color: var(--colorInteractionElements);
-    border-radius: 0px 0px 50px 50px;
-    border: 2px solid var(--colorBlack);
-    outline: 2px solid rgba(0, 0, 0, 0);
-    padding: 7px;
-    font-size: 1vw;
-    cursor: pointer;
-    pointer-events: unset;
-    z-index: 8000;
-    transition: var(--configTrasition03s);
-}
-#reload:hover {
-    border: 2px solid var(--colorWhite);
-}
-#reload:active {
-    outline: 2px solid var(--colorWhite);
-    transition: var(--configTrasition01s);
-}
-#reload:focus {
-    border: 2px solid var(--colorWhite);
-}
 #divLog {
     background-color: #2b2b2b;
-    border-top: 1px solid var(--colorWhite);
+    /*border-top: 1px solid var(--colorWhite);*/
     border-right: 1px solid var(--colorWhite);
     border-bottom: 1px solid var(--colorWhite);
     padding: 30px 15px 30px 15px;
@@ -265,8 +236,64 @@ main {
     display: block;
     max-width: 100%;
 }
+#divFunctions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: var(--colorContrast);
+}
+.functionsDiv {
+    margin: 0vw 1vw 0vw 1vw;
+    padding: 7px;
+    font-size: 1vw;
+    z-index: 8000;
+    transition: var(--configTrasition03s);
+}
+#reload {
+    background-color: var(--colorContrast);
+    color: var(--colorInteractionElements);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    cursor: pointer;
+    pointer-events: unset;
+    transition: var(--configTrasition03s);
+}
+#reload:hover {
+    border: 2px solid var(--colorWhite);
+}
+#reload:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+#reload:focus {
+    border: 2px solid var(--colorWhite);
+}
+#showList {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    cursor: pointer;
+    pointer-events: unset;
+    transition: var(--configTrasition03s);
+}
+#showList:hover {
+    border: 2px solid var(--colorWhite);
+}
+#showList:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+#showList:focus {
+    border: 2px solid var(--colorWhite);
+}
 #divStatus {
     background-color: var(--colorContrast);
+    border-top: 2px solid var(--colorBlack);
     border-bottom: 2px solid var(--colorBlack);
     box-shadow: 2px 2px 6px var(--colorShadow);
     opacity: 1;
@@ -276,10 +303,13 @@ main {
     text-align: center;
     white-space: normal;
     word-wrap: break-word;
+    max-height: 4.5em;
+    overflow-y: auto;
     z-index: 8000;
     transition: var(--configTrasition03s);
 }
 #divStatus:hover {
+    border-top: 2px solid var(--colorInteractionElements);
     border-bottom: 2px solid var(--colorInteractionElements);
 }
 #pStatus {

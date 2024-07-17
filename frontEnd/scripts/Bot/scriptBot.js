@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {// LOAD MEDIA QUERY P
 
         reloadButton.style.cssText =
             'color: var(--colorContrast); background-color: var(--colorYellow); cursor: progress;'
-        reloadAbbr.title = `STATUS: carregando`
+        reloadAbbr.title = `STATUS WebSocket: carregando`
         
         wss = new WebSocket(`ws://${window.location.host}`)
         /*wss = new WebSocket(`wss://${window.location.host}`)*/
@@ -152,7 +152,7 @@ function reconnectConsole() {
 
         reloadButton.style.cssText =
             'color: var(--colorContrast); background-color: var(--colorYellow); cursor: progress;'
-        reloadAbbr.title = `STATUS: carregando...`
+        reloadAbbr.title = `STATUS WebSocket: carregando...`
 
         wss.close();
         wss = null
@@ -175,14 +175,14 @@ function webSocket() {
         displayLogOnConsole(`>  ◌ Conectando Client ao WebSocket(front).`, event);
         reloadButton.style.cssText =
             'color: var(--colorContrast); background-color: var(--colorGreen); cursor: pointer;'
-        reloadAbbr.title = `STATUS: conectado`
+        reloadAbbr.title = `STATUS WebSocket: conectado`
     };
     wss.onclose = function(event) {
         console.log('>  ◌ Desconectando Client do WebSocket(front).', event);
         displayLogOnConsole(`>  ◌ Desconectando Client do WebSocket(front).`, event);
         reloadButton.style.cssText =
             'color: var(--colorContrast); background-color: var(--colorOrange); cursor: pointer;'
-        reloadAbbr.title = `STATUS: desconectou`
+        reloadAbbr.title = `STATUS WebSocket: desconectou`
 
         isDisconected = true
     };
@@ -191,7 +191,7 @@ function webSocket() {
         displayLogOnConsole(`> ❌ ERROR ao reconectar Client ao WebSocket(front).`, event);
         reloadButton.style.cssText =
             'color: var(--colorContrast); background-color: var(-colorRed); cursor: pointer;'
-        reloadAbbr.title = `STATUS: error`
+        reloadAbbr.title = `STATUS WebSocket: error`
 
         isDisconected = true
     };
@@ -366,6 +366,20 @@ function ready() {
     const listButton = document.querySelector('#list')
     listButton.style.cssText =
         'opacity: 1; position: unset; visibility: visible;'
+
+    let tableList = document.querySelector('#listChatData')
+    tableList.style.cssText =
+        'opacity: 1; visibility: visible; position: unset;'
+    
+    let eraseButton = document.querySelector('#erase')
+    eraseButton.style.cssText =
+        'opacity: 1; visibility: visible; position: unset;'
+    
+    let listShow = document.querySelector('#showList')
+    let listShowAbbr = document.querySelector('#abbrShowList')
+    listShow.style.cssText = 
+        'background-color: var(--colorWhite); color: var(--colorBlack);'
+    listShowAbbr.title = `STATUS Lista: visivel`
 } 
 
 function saveConsoleStyles() {
@@ -419,14 +433,66 @@ function loadConsoleStyles() {
         displayLogOnConsole('ERROR ao carregar estilos do console:', error);
     }
 }
+let isVisibleList = null
+function showTableList() {
+    try {
+        const listButton = document.querySelector('#list')
+        let tableList = document.querySelector('#listChatData')
+        let eraseButton = document.querySelector('#erase')
+
+        let listShow = document.querySelector('#showList')
+        let listShowAbbr = document.querySelector('#abbrShowList')
+        
+        if (isVisibleList === null) {
+            isVisibleList = true
+        } else if (isVisibleList === true) {
+            isVisibleList = false
+        } else if (isVisibleList === false) {
+            isVisibleList = true
+        }
+        if (isVisibleList) {
+            listShow.style.cssText = 
+                'background-color: var(--colorWhite); color: var(--colorBlack);'
+            listShowAbbr.title = `STATUS Lista: visivel`
+            
+            listButton.style.cssText =
+                'opacity: 1; position: unset; visibility: visible;'
+            tableList.style.cssText =
+                'opacity: 1; visibility: visible; position: unset;'
+            eraseButton.style.cssText =
+                'opacity: 1; visibility: visible; position: unset;'
+            
+            isVisibleList = true
+            return
+        }
+        if (isVisibleList !== true) {
+            listShow.style.cssText = 
+                'background-color: var(--colorBlack); color: var(--colorWhite);'
+            listShowAbbr.title = `STATUS Lista: escondido`
+            
+            listButton.style.cssText =
+                'opacity: 0; position: absolute; visibility: hidden;'
+            tableList.style.cssText =
+                'opacity: 0; visibility: hidden; position: absolute;'
+            eraseButton.style.cssText =
+                'opacity: 0; visibility: hidden; position: absolute;'
+
+            isVisibleList = false
+            return
+        }
+    } catch (error) {
+        console.error('ERROR:', error)
+        displayLogOnConsole('ERROR:', error)
+    }
+}
 let isVisibleHideButton = null
 function hideConsole() {
     try {
         let consoleElement = document.querySelector('#console')
-        
+    
         let buttonHideConsole = document.querySelector('#hideConsole')
         let titleHideConsole = document.querySelector('#titleHide')
-        
+    
         if (isVisibleHideButton === null) {
             isVisibleHideButton = true
         } else if (isVisibleHideButton === true) {
@@ -460,7 +526,8 @@ function hideConsole() {
             return
         }
     } catch (error) {
-        alert('ERROR:', error)
+        console.error('ERROR:', error)
+        displayLogOnConsole('ERROR:', error)
     }
 }
 
@@ -827,8 +894,21 @@ async function listDataButton() {
     try {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
-        'width: 100vw; visibility: visible;'
+            'width: 100vw; visibility: visible;'
         
+        let listShow = document.querySelector('#showList')
+        let listShowAbbr = document.querySelector('#abbrShowList')
+        if (isVisibleList === null) {
+            isVisibleList = true
+            listShow.style.cssText = 
+                'background-color: var(--colorWhite); color: var(--colorBlack);'
+            listShowAbbr.title = `STATUS Lista: visivel`
+        } else if (isVisibleList = true) {
+            isVisibleList = true
+            listShow.style.cssText = 
+                'background-color: var(--colorWhite); color: var(--colorBlack);'
+            listShowAbbr.title = `STATUS Lista: visivel`
+        }
         
         let tableList = document.querySelector('#listChatData')
         tableList.style.cssText =
@@ -1073,17 +1153,15 @@ async function startBot() {
 }
 
 //tarefas bot frontend 
-
 //em desenvolvimento...
-    //uma forma de esconder e mostra a tabela
-
+    //adicionar um isReady no front tbm no caso feedback disso no status igual no console do back
+    
 //a desenvolver...
     //ajustar o status para guardar sempre no terminal tudo taligado? salvo, que ja esta so fazer certinho as msgs iguais
     //erros e statuses deixar com mais detalhes no terminal do console f12 ai ja tudo do backend e do front end no terminal do site
     //melhoras os logs de conexao do websocket backend e frontend
     //organizar a ordem de como as funcoes sao chamadas pra um melhor desempenho e sentido logico
     //juntar as funcoes listData(data) listDataButton() em uma so na listData(data)
-    //adicionar um isReady no front tbm no caso feedback disso no status igual no console do back
     //mudar o botao reconect de lugar para o meio do content
     //arrumar erro de mandar nada no input da lista e dar msgs de erros n desejados
     //melhorar a logica de usar a mesma funcao pra duas coisas
@@ -1091,4 +1169,3 @@ async function startBot() {
     //melhorar o reconhecimento do arquivo json estar vazio e as acoes sobre, status e tals
     //adiconar ao lado do botao reconect um botao de esconder a tabela lista
     //arrumar meios de as coisas serem automaticas funcoes acionarem de acordo com certar coisas inves de prever todo cenario possivel em varias funcoes
-    //adicionar um limite de break de 3 linhas para o status mais que isso ativar uma barra de rolagem vertical

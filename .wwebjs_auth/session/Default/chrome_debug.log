@@ -1,5 +1,3 @@
-[0716/105842.009:ERROR:simple_backend_impl.cc(79)] Failed to create directory: G:\Meu Drive\AplicationsVT\Programacao\softwares\bot_debug\.wwebjs_auth\session\Default\Code Cache\wasm
-[0716/105843.655:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'battery'.", source:  (0)
-[0716/105843.655:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'usb-unrestricted'.", source:  (0)
-[0716/105851.526:INFO:CONSOLE(133)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v3/yu/r/llXotypCbZa.js?_nc_x=Ij3Wp8lg5Kz (133)
-[0716/105957.838:INFO:CONSOLE(133)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v3/yu/r/llXotypCbZa.js?_nc_x=Ij3Wp8lg5Kz (133)
+[0717/104831.855:INFO:CONSOLE(133)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v3/y2/r/DmhxnZjtvkI.js?_nc_x=Ij3Wp8lg5Kz (133)
+[0717/104831.988:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'battery'.", source:  (0)
+[0717/104831.990:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'usb-unrestricted'.", source:  (0)

@@ -395,9 +395,7 @@ server.listen(port, () => {
 })*/
 
 //tarefas bot backend 
-
 //em desenvolvimento...
-
 
 //a desenvolver...
     //tornar possivel varias instancias com websocket

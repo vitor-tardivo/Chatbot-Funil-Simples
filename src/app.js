@@ -827,7 +827,6 @@ module.exports = {
 }
 
 //tarefas bot backend 
-
 //em desenvolvimento...
 
 

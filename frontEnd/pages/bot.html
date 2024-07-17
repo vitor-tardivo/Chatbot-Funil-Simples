@@ -34,9 +34,7 @@
     <main>
         <article id="articleConsole">
             <div id="console">
-                <div id="divReload">
-                    <abbr title="STATUS: null" id="abbrReload"><button id="reload" onclick="reconnectConsole()">⟳</button></abbr>
-                </div>
+                
                 <div id="divLog">
                     <abbr title="Terminal"><div id="log">
 
@@ -59,6 +57,10 @@
         </article>
         
         <section id="content">
+            <div id="divFunctions">
+                <abbr title="STATUS WebSocket: null" id="abbrReload"><button class="functionsDiv" id="reload" onclick="reconnectConsole()">⟳</button></abbr>
+                <abbr title="STATUS Lista: null" id="abbrShowList"><button class="functionsDiv" id="showList" onclick="showTableList()">⟳</button></abbr>
+            </div>
             <abbr title="Status do Bot"><div class="divs" id="divStatus">
                 <p id="pStatus"><span id="status">...</span></p>
             </div></abbr>

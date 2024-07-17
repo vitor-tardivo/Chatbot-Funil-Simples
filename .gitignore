@@ -1,2 +1,4 @@
 node_modules
 desktop.ini
+.wwebjs_cache
+.wwebjs_auth
