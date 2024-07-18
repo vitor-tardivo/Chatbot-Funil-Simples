@@ -246,6 +246,8 @@ main {
     margin: 0vw 1vw 0vw 1vw;
     padding: 7px;
     font-size: 1vw;
+    font-family: var(--fontMonoSerif);
+    font-weight: bold;
     z-index: 8000;
     transition: var(--configTrasition03s);
 }
@@ -271,8 +273,8 @@ main {
     border: 2px solid var(--colorWhite);
 }
 #showList {
-    background-color: var(--colorBlack);
-    color: var(--colorWhite);
+    background-color: var(--colorContrast);
+    color: var(--colorInteractionElements);
     border: 2px solid var(--colorBlack);
     border-radius: 0px 0px 50px 50px;
     outline: 2px solid rgba(0, 0, 0, 0);
@@ -345,8 +347,6 @@ main {
     cursor: pointer;
     /*transform: translate(0px, -10px);*/
     opacity: 1;
-    visibility: visible;
-    position: unset;
     transition: var(--configTrasition03s);
 }
 #start:hover {
@@ -369,7 +369,7 @@ main {
 }
 
 #qrCode {
-    display: inline-block;
+    display: none;
     background-color: black;
     color: white;
     box-shadow: 2px 2px 6px var(--colorShadow);
@@ -385,8 +385,6 @@ main {
     font-family: 'Cascadia Code';
     cursor: help;
     opacity: 0;
-    visibility: hidden;
-    position: absolute;
     transition: var(--configTrasition03s);
 }
 #qrCode:hover {
@@ -400,7 +398,7 @@ main {
     align-items: center;
 }
 #list {
-    display: inline-block;
+    display: none;
     background-color: var(--colorWhite);
     color: var(--colorBlack);
     border: 2px solid var(--colorBlack);
@@ -412,8 +410,6 @@ main {
     cursor: pointer;
     transform: translate(0px, -10px);
     opacity: 0;
-    visibility: hidden;
-    position: absolute;
     transition: var(--configTrasition03s);
 }
 #list:hover {
@@ -436,7 +432,7 @@ main {
 }
 
 #listChatData {
-    display: inline-block;
+    display: none;
     width: 100%;
     box-shadow: 2px 2px 10px var(--colorShadow);
     border-top: 1px solid var(--colorBlack);
@@ -445,8 +441,6 @@ main {
     border-bottom: 1px solid var(--colorBlack);
     margin-bottom: 10px;
     opacity: 0;
-    visibility: hidden;
-    position: absolute;
 }
 #divInputList {
     flex: 1 1 auto;
@@ -631,7 +625,7 @@ td {
     align-items: center;
 }
 #erase {
-    display: inline-block;
+    display: none;
     background-color: var(--colorWhite);
     color: var(--colorBlack);
     border: 2px solid var(--colorBlack);
@@ -643,8 +637,6 @@ td {
     cursor: pointer;
     transform: translate(0px, 10px);    
     opacity: 0;
-    visibility: hidden;
-    position: absolute;
     transition: var(--configTrasition03s);
 }
 #erase:hover {

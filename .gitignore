@@ -1,4 +1,5 @@
 node_modules
+yarn.lock
 desktop.ini
 .wwebjs_cache
 .wwebjs_auth

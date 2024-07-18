@@ -1,4 +1,7 @@
 //scriptBot.js frontEnd
+let Name_Software = 'bot'
+let Version_ = '0.1.0'
+
 function isMobile() {//IDENTIFY IF THE USER IS FROM A PHONE
     const userAgent = navigator.userAgent
     return /Mobi|Android|iPhone|iPod|iPad|Windows\sPhone|Windows\sCE|BlackBerry|BB10|IEMobile|Opera\sMini|Mobile\sSafari|webOS|Mobile|Tablet|CriOS/i.test(userAgent)
@@ -12,7 +15,7 @@ window.onbeforeunload = function(event) {
 }
 
 let wss = null
-document.addEventListener('DOMContentLoaded', function () {// LOAD MEDIA QUERY PHONE
+document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA QUERY PHONE
     try {
         if (isMobile()) {
             console.log('User is from a Phone.')
@@ -25,12 +28,30 @@ document.addEventListener('DOMContentLoaded', function () {// LOAD MEDIA QUERY P
             console.log('User is from a Desktop.')
         }
 
+        const response = await axios.get('/what-stage')
+        const stage = response.data.data
+        const QR_Counter = response.data.data2
+        
+        if (stage === 0) {
+            
+        }
+        if (stage === 1) {
+            Is_Started = true
+            isQrOff = false
+            generateQrCode(QR_Counter)
+        }
+        if (stage === 2) {
+            Is_Started = true
+            authsucess()
+            ready()
+        }
+
         const reloadButton = document.querySelector('#reload')
         let reloadAbbr = document.querySelector('#abbrReload')
 
         reloadButton.style.cssText =
             'color: var(--colorContrast); background-color: var(--colorYellow); cursor: progress;'
-        reloadAbbr.title = `STATUS WebSocket: carregando`
+        reloadAbbr.title = `WebSocket STATUS: carregando`
         
         wss = new WebSocket(`ws://${window.location.host}`)
         /*wss = new WebSocket(`wss://${window.location.host}`)*/
@@ -63,7 +84,8 @@ document.addEventListener('DOMContentLoaded', function () {// LOAD MEDIA QUERY P
 
         loadConsoleStyles()
     } catch (error) {
-        alert('ERROR: ' + error.message)
+        console.error('ERROR: ' + error.message)
+        displayLogOnConsole('ERROR: ' + error.message)
     }
 })
 
@@ -152,7 +174,7 @@ function reconnectConsole() {
 
         reloadButton.style.cssText =
             'color: var(--colorContrast); background-color: var(--colorYellow); cursor: progress;'
-        reloadAbbr.title = `STATUS WebSocket: carregando...`
+        reloadAbbr.title = `WebSocket STATUS: carregando...`
 
         wss.close();
         wss = null
@@ -166,7 +188,7 @@ function reconnectConsole() {
     }
 }
 let isFromTerminal = false
-function webSocket() {
+async function webSocket() {
     const reloadButton = document.querySelector('#reload')
     let reloadAbbr = document.querySelector('#abbrReload')
 
@@ -175,14 +197,14 @@ function webSocket() {
         displayLogOnConsole(`>  ◌ Conectando Client ao WebSocket(front).`, event);
         reloadButton.style.cssText =
             'color: var(--colorContrast); background-color: var(--colorGreen); cursor: pointer;'
-        reloadAbbr.title = `STATUS WebSocket: conectado`
+        reloadAbbr.title = `WebSocket STATUS: conectado`
     };
     wss.onclose = function(event) {
         console.log('>  ◌ Desconectando Client do WebSocket(front).', event);
         displayLogOnConsole(`>  ◌ Desconectando Client do WebSocket(front).`, event);
         reloadButton.style.cssText =
             'color: var(--colorContrast); background-color: var(--colorOrange); cursor: pointer;'
-        reloadAbbr.title = `STATUS WebSocket: desconectou`
+        reloadAbbr.title = `WebSocket STATUS: desconectou`
 
         isDisconected = true
     };
@@ -191,7 +213,7 @@ function webSocket() {
         displayLogOnConsole(`> ❌ ERROR ao reconectar Client ao WebSocket(front).`, event);
         reloadButton.style.cssText =
             'color: var(--colorContrast); background-color: var(-colorRed); cursor: pointer;'
-        reloadAbbr.title = `STATUS WebSocket: error`
+        reloadAbbr.title = `WebSocket STATUS: error`
 
         isDisconected = true
     };
@@ -220,11 +242,16 @@ function webSocket() {
         } if (logData.type === 'start') {
             startBot()
         } if (logData.type === 'generate_qr_code') {
-            generateQrCode()
+            const QR_Counter = logData.data;
+            setTimeout(function() {
+                generateQrCode(QR_Counter)
+            }, 100)
         } if (logData.type === 'qr_exceeds') {
-            Counter_Exceeds()
+            isExceeds = false
+            const QR_Counter_Exceeds = logData.data;
+            Counter_Exceeds(QR_Counter_Exceeds)
         } if (logData.type === 'auth_autenticated') {
-            //autenticated()
+            authsucess()
         } if (logData.type === 'auth_failure') {
             authFailure() 
         } if (logData.type === 'ready') {
@@ -235,7 +262,7 @@ function webSocket() {
             emptyList()
         } if (logData.type === 'search-list') {
             const Parse_Data = logData.data;
-            const search = logData.data2;
+            const search = logData.data2.trim()
             isFromTerminal = true
             searchNameList(isFromTerminal, Parse_Data, search)
         } if (logData.type === 'all-erase') {
@@ -253,13 +280,10 @@ function webSocket() {
     resetLoadingBar()
 }
 
-/*function displayLogOnSite(message) {
-    const logElement = document.createElement('div');
-    logElement.textContent = `${message}`;
-    document.querySelector('#log').appendChild(logElement);
-}*/
-
 function exit() {
+    resetLoadingBar()
+    Is_Not_Ready = true
+
     if (isDisconected) {
         reconnectConsole()
 
@@ -270,85 +294,146 @@ function exit() {
 
     const mainContent = document.querySelector('#content')
     mainContent.style.cssText =
-        'display: block;'
+        'display: inline-block;'
+
+    const status = document.querySelector('#status')
+    status.textContent = `ERROR Back End!`
+
+    isVisibleHideButton = null
 
     let buttonStart = document.querySelector('#start')
     buttonStart.style.cssText =
-        'position: unset; opacity: 1; visibility: visible;'
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        buttonStart.style.cssText =
+            'display: inline-block; opacity: 1;'
+    }, 100)
     Is_Started = false
-
-    const status = document.querySelector('#status')
-        status.textContent = `ERROR Back End!`
     
     document.querySelector('#qrCode').innerText = ''
     const codeQr = document.querySelector('#qrCode')
     codeQr.style.cssText =
-        'opacity: 0; position: absolute; visibility: hidden;'
-    QR_Counter = 0
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        codeQr.style.cssText =
+            'display: none; opacity: 0;'
+    }, 300)
+    isQrOff = true
 
+    isVisibleList = null
     const listButton = document.querySelector('#list')
     listButton.style.cssText =
-        'opacity: 0; position: absolute; visibility: hidden;'
-
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        listButton.style.cssText =
+            'display: none; opacity: 0;'
+    }, 300)
     let tableList = document.querySelector('#listChatData')
     tableList.style.cssText =
-        'opacity: 0; visibility: hidden; position: absolute;'
-
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        tableList.style.cssText =
+            'display: none; opacity: 0;'
+    }, 300)
     let eraseButton = document.querySelector('#erase')
     eraseButton.style.cssText =
-        'opacity: 0; visibility: hidden; position: abolute;'
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        eraseButton.style.cssText =
+            'display: none; opacity: 0;'
+    }, 300)
 }
-
-/*function autenticated() {
-    displayLogOnConsole('auth_autenticated')
-}*/
-
+function authsucess() {
+    let buttonStart = document.querySelector('#start')
+    buttonStart.style.cssText =
+        'display: display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        buttonStart.style.cssText =
+            'display: none; opacity: 0;'
+    }, 300)
+    
+    document.querySelector('#qrCode').innerText = ''
+    const codeQr = document.querySelector('#qrCode')
+    codeQr.style.cssText =
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        codeQr.style.cssText =
+           'display: none; opacity: 0;'
+    }, 300)
+    isQrOff = true
+}
 function authFailure() {
+    resetLoadingBar()
+    Is_Not_Ready = true
+
     if (isDisconected) {
         reconnectConsole()
 
         isDisconected = false
     }
 
-    let buttonStart = document.querySelector('#start')
-    buttonStart.style.cssText =
-        'position: unset; opacity: 1; visibility: visible;'
-    Is_Started = false
+    displayLogOnConsole('> ❌ ERROR Back End Auth Failure')
+
+    const mainContent = document.querySelector('#content')
+    mainContent.style.cssText =
+        'display: inline-block;'
 
     const status = document.querySelector('#status')
-        status.textContent = `Falhou Autenticação ao WhatsApp Web pelo Local_Auth!`
+    status.textContent = `Falhou Autenticação ao WhatsApp Web pelo Local_Auth!`
+
+    isVisibleHideButton = null
+
+    let buttonStart = document.querySelector('#start')
+    buttonStart.style.cssText =
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        buttonStart.style.cssText =
+            'display: inline-block; opacity: 1;'
+    }, 100)
+    Is_Started = false
     
     document.querySelector('#qrCode').innerText = ''
     const codeQr = document.querySelector('#qrCode')
     codeQr.style.cssText =
-        'opacity: 0; position: absolute; visibility: hidden;'
-    QR_Counter = 0
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        codeQr.style.cssText =
+            'display: none; opacity: 0;'
+    }, 300)
+    isQrOff = true
 
+    isVisibleList = null
     const listButton = document.querySelector('#list')
     listButton.style.cssText =
-        'opacity: 0; position: absolute; visibility: hidden;'
-
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        listButton.style.cssText =
+            'display: none; opacity: 0;'
+    }, 300)
     let tableList = document.querySelector('#listChatData')
     tableList.style.cssText =
-        'opacity: 0; visibility: hidden; position: absolute;'
-
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        tableList.style.cssText =
+            'display: none; opacity: 0;'
+    }, 300)
     let eraseButton = document.querySelector('#erase')
     eraseButton.style.cssText =
-        'opacity: 0; visibility: hidden; position: abolute;'
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        eraseButton.style.cssText =
+           'display: none; opacity: 0;'
+    }, 300)
 } 
-
 function ready() {
     resetLoadingBar()
+    Is_Not_Ready = false
 
     if (isDisconected) {
         reconnectConsole()
 
         isDisconected = false
     }
-
-    let buttonStart = document.querySelector('#start')
-    buttonStart.style.cssText =
-        'position: absolute; opacity: 0; visibility: hidden;'
 
     const mainContent = document.querySelector('#innerContent')
     mainContent.style.cssText =
@@ -357,30 +442,53 @@ function ready() {
     const status = document.querySelector('#status')
         status.textContent = `Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
 
-    document.querySelector('#qrCode').innerText = ''
+    /*let buttonStart = document.querySelector('#start')
+    buttonStart.style.cssText =
+        'display: display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        buttonStart.style.cssText =
+            'display: none; opacity: 0;'
+    }, 300)*/
+
+    /*document.querySelector('#qrCode').innerText = ''
     const codeQr = document.querySelector('#qrCode')
     codeQr.style.cssText =
-        'opacity: 0; position: absolute; visibility: hidden;'
-    QR_Counter = 0
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        codeQr.style.cssText =
+           'display: none; opacity: 0;'
+    }, 300)*/
+    isQrOff = true
 
+    isVisibleList = true
     const listButton = document.querySelector('#list')
     listButton.style.cssText =
-        'opacity: 1; position: unset; visibility: visible;'
-
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        listButton.style.cssText =
+            'display: inline-block; opacity: 1;'
+    }, 100)
     let tableList = document.querySelector('#listChatData')
     tableList.style.cssText =
-        'opacity: 1; visibility: visible; position: unset;'
-    
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        tableList.style.cssText =
+            'display: inline-block; opacity: 1;'
+    }, 100)
     let eraseButton = document.querySelector('#erase')
     eraseButton.style.cssText =
-        'opacity: 1; visibility: visible; position: unset;'
-    
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        eraseButton.style.cssText =
+            'display: inline-block; opacity: 1;'
+    }, 100)
     let listShow = document.querySelector('#showList')
     let listShowAbbr = document.querySelector('#abbrShowList')
     listShow.style.cssText = 
         'background-color: var(--colorWhite); color: var(--colorBlack);'
     listShowAbbr.title = `STATUS Lista: visivel`
-} 
+}
+let Is_Not_Ready = true
 
 function saveConsoleStyles() {
     try {
@@ -396,7 +504,7 @@ function saveConsoleStyles() {
         }));
     } catch (error) {
         console.error('Erro ao salvar estilos do console:', error);
-        alert('Erro ao salvar estilos do console:', error.message);
+        displayLogOnConsole('Erro ao salvar estilos do console:', error.message);
     }
 }
 function loadConsoleStyles() {
@@ -456,11 +564,23 @@ function showTableList() {
             listShowAbbr.title = `STATUS Lista: visivel`
             
             listButton.style.cssText =
-                'opacity: 1; position: unset; visibility: visible;'
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                listButton.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
             tableList.style.cssText =
-                'opacity: 1; visibility: visible; position: unset;'
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                tableList.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
             eraseButton.style.cssText =
-                'opacity: 1; visibility: visible; position: unset;'
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                eraseButton.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
             
             isVisibleList = true
             return
@@ -471,11 +591,23 @@ function showTableList() {
             listShowAbbr.title = `STATUS Lista: escondido`
             
             listButton.style.cssText =
-                'opacity: 0; position: absolute; visibility: hidden;'
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                listButton.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
             tableList.style.cssText =
-                'opacity: 0; visibility: hidden; position: absolute;'
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                tableList.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
             eraseButton.style.cssText =
-                'opacity: 0; visibility: hidden; position: absolute;'
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                eraseButton.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
 
             isVisibleList = false
             return
@@ -532,6 +664,10 @@ function hideConsole() {
 }
 
 function emptyList() {
+    if (Is_Not_Ready) {
+        displayLogOnConsole('>  ℹ️ Client not Ready.')
+        return
+    }
     const status = document.querySelector('#status')
     
     setTimeout(function() {
@@ -540,6 +676,10 @@ function emptyList() {
 }
 let fromTerminal = null
 async function eraseDataByName(isFromTerminal, queryFromTerminal) {
+    if (Is_Not_Ready) {
+        displayLogOnConsole('>  ℹ️ Client not Ready.')
+        return
+    }
     let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -567,7 +707,8 @@ async function eraseDataByName(isFromTerminal, queryFromTerminal) {
                 let userConfirmation = confirm(`Tem certeza de que deseja apagar o ChatData de ${queryFromTerminal} da lista?\nsera apagada para sempre`)
                 if (userConfirmation) {
                     fromTerminal = true
-                    await axios.delete('/erase-name', { params: { queryFromTerminal, fromTerminal } });
+                    let query = queryFromTerminal
+                    await axios.delete('/erase-name', { params: { query, fromTerminal } });
                     setTimeout(function() {
                         status.textContent = `${queryFromTerminal} de ChatData.json foi Apagado!`
                     }, 300)
@@ -602,7 +743,7 @@ async function eraseDataByName(isFromTerminal, queryFromTerminal) {
         }, 100)
         
         const status = document.querySelector('#status')
-        const query = document.querySelector('#inputList').value
+        const query = document.querySelector('#inputList').value.trim();
 
         try {
             if (query === undefined || null) {
@@ -635,6 +776,10 @@ async function eraseDataByName(isFromTerminal, queryFromTerminal) {
     }
 }
 function allEraseList() {
+    if (Is_Not_Ready) {
+        displayLogOnConsole('>  ℹ️ Client not Ready.')
+        return
+    }
     let barL = document.querySelector('#barLoading')
     
     const status = document.querySelector('#status')
@@ -663,6 +808,10 @@ function allEraseList() {
     }
 }
 async function searchNameList(isFromTerminal, dataFromTerminal, queryFromTerminal) {
+    if (Is_Not_Ready) {
+        displayLogOnConsole('>  ℹ️ Client not Ready.')
+        return
+    }
     let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -800,7 +949,7 @@ async function searchNameList(isFromTerminal, dataFromTerminal, queryFromTermina
                         resetLoadingBar()
                         return
                     } else {
-                        status.textContent = `Listando ${queryFromTerminal}...`
+                        status.textContent = `Listando ${query}...`
                         
                         list.innerHTML = ''
                         
@@ -815,7 +964,7 @@ async function searchNameList(isFromTerminal, dataFromTerminal, queryFromTermina
                             cell2.textContent = entry.name
                             
                         })
-                        status.textContent = `${queryFromTerminal} Listado!`
+                        status.textContent = `${query} Listado!`
                     }
                 }
                 //document.querySelector('#inputList').value = ''
@@ -832,6 +981,10 @@ async function searchNameList(isFromTerminal, dataFromTerminal, queryFromTermina
 }
 async function listData(data) {
     try {
+        if (Is_Not_Ready) {
+            displayLogOnConsole('>  ℹ️ Client not Ready.')
+            return
+        }
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -892,6 +1045,10 @@ async function listData(data) {
 }
 async function listDataButton() {
     try {
+        if (Is_Not_Ready) {
+            displayLogOnConsole('>  ℹ️ Client not Ready.')
+            return
+        }
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -912,11 +1069,18 @@ async function listDataButton() {
         
         let tableList = document.querySelector('#listChatData')
         tableList.style.cssText =
-            'opacity: 1; visibility: visible; position: unset;'
-        
+            'display: inline-block; opacity: 1;'
+        setTimeout(function() {
+            tableList.style.cssText =
+                'display: inline-block; opacity: 1;'
+        }, 100)
         let eraseButton = document.querySelector('#erase')
         eraseButton.style.cssText =
-            'opacity: 1; visibility: visible; position: unset;'
+            'display: inline-block; opacity: 1;'
+        setTimeout(function() {
+            eraseButton.style.cssText =
+                'display: inline-block; opacity: 1;'
+        }, 100)
             
         const status = document.querySelector('#status')
         let list = document.querySelector('table tbody')
@@ -1005,33 +1169,65 @@ async function sendCommand() {
         console.error('ERROR ao enviar comando:', error);
     }
 }
+let isExceeds = true 
+function Counter_Exceeds(QR_Counter_Exceeds) {
+    if (isExceeds) {
+        displayLogOnConsole('>  ℹ️ Client not Ready.')
+        return
+    }
+    isExceeds = true
 
-let QR_Counter = 0
-let QR_Counter_Exceeds = 3
-function Counter_Exceeds() {
+    const mainContent = document.querySelector('#content')
+    mainContent.style.cssText =
+        'display: inline-block;'
+
     const status = document.querySelector('#status')
-    status.textContent = `❌ Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web.`
-    QR_Counter = 0
-
+    status.textContent = `❌ Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!.`
+    /*setTimeout(function() {
+        status.textContent = `Tente novamente!`
+    }, 2000)*/
     let buttonStart = document.querySelector('#start')
+    buttonStart.style.cssText =
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
         buttonStart.style.cssText =
-            'position: unset; opacity: 1; visibility: visible;'
+            'display: inline-block; opacity: 1;'
+    }, 100)
 
     Is_Started = false
-
-    const codeQr = document.querySelector('#qrCode')
-        codeQr.style.cssText =
-            'opacity: 0; position: absolute; visibility: hidden;'
+    isQrOff = true
 
     document.querySelector('#qrCode').innerText = ''
+    const codeQr = document.querySelector('#qrCode')
+    codeQr.style.cssText =
+        'display: inline-block; opacity: 0;'
+    setTimeout(function() {
+        codeQr.style.cssText =
+        'display: none; opacity: 0;'
+    }, 300)
 }
-async function generateQrCode() {
+let isQrOff = true
+async function generateQrCode(QR_Counter) {
     try {
+        if (isQrOff) {
+            displayLogOnConsole('>  ℹ️ Client not Ready.')
+            return
+        }
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
-        
-        QR_Counter++
+
+        const mainContent = document.querySelector('#innerContent')
+            mainContent.style.cssText =
+                'display: inline-block;'
+
+        let buttonStart = document.querySelector('#start')
+        buttonStart.style.cssText =
+            'display: none; opacity: 0;'
+        setTimeout(function() {
+            buttonStart.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
         
         const status = document.querySelector('#status')
         const codeQr = document.querySelector('#qrCode')
@@ -1046,8 +1242,13 @@ async function generateQrCode() {
                 setTimeout(function() {
                     status.textContent = `Client ja conectado!`
                 }, 100)
+                document.querySelector('#qrCode').innerText = ''
                 codeQr.style.cssText =
-                    'opacity: 0; position: absolute; visibility: hidden;'
+                    'display: inline-block; opacity: 0;'
+                setTimeout(function() {
+                    codeQr.style.cssText =
+                        'display: none; opacity: 0;'
+                }, 300)
                 resetLoadingBar()
             } else {
                 setTimeout(function() {
@@ -1055,7 +1256,11 @@ async function generateQrCode() {
                 }, 100)
                 
                 codeQr.style.cssText =
-                    'opacity: 1; position: unset; visibility: visible;'
+                    'display: inline-block; opacity: 0;'
+                setTimeout(function() {
+                    codeQr.style.cssText =
+                        'display: inline-block; opacity: 1;'
+                }, 100)
                     
                 document.querySelector('#qrCode').innerText = qrString
                 
@@ -1063,27 +1268,50 @@ async function generateQrCode() {
             }
         })
         .catch(error => {
-            alert('ERROR fetching QR code:', error)
             console.error('ERROR fetching QR code:', error)
-            const status = document.querySelector('#status')
+            displayLogOnConsole('ERROR fetching QR code:', error)
             status.textContent = `ERROR Gerando Qr-Code!`
             QR_Counter = 0
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
-                'position: unset; opacity: 1; visibility: visible;'
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                buttonStart.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
             Is_Started = false
+            document.querySelector('#qrCode').innerText = ''
+            codeQr.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                codeQr.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
+            isQrOff = true
             resetLoadingBar()
         })
     } catch (error) {
         const status = document.querySelector('#status')
-        alert('ERROR fetching Qr-Code:', error)
+        displayLogOnConsole('ERROR fetching Qr-Code:', error)
         console.error('ERROR fetching QR code:', error)
         status.textContent = `ERROR Gerando Qr-Code!`
         let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
-            'position: unset; opacity: 1; visibility; visible;'
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            buttonStart.style.cssText =
+                'display: inline-block; opacity: 1;'
+        }, 100)
         Is_Started = false
-        QR_Counter = 0
+        document.querySelector('#qrCode').innerText = ''
+        const codeQr = document.querySelector('#qrCode')
+        codeQr.style.cssText =
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            codeQr.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+        isQrOff = true
         resetLoadingBar() 
     }
 }
@@ -1098,19 +1326,25 @@ async function startBot() {
             barL.style.cssText =
                 'width: 100vw; visibility: visible;'
 
+            displayLogOnConsole(`>  ℹ️ ${Name_Software} = v${Version_}`)
+
             if (isDisconected) {
                 reconnectConsole()
 
                 isDisconected = false
             }
 
-            let buttonStart = document.querySelector('#start')
-            buttonStart.style.cssText =
-                'position: absolute; opacity: 0; visibility: hidden;'
-
             const mainContent = document.querySelector('#innerContent')
             mainContent.style.cssText =
-                'display: block;'
+                'display: inline-block;'
+
+            let buttonStart = document.querySelector('#start')
+            buttonStart.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                buttonStart.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
             
             const status = document.querySelector('#status')
             status.textContent = `Iniciando...`
@@ -1118,8 +1352,11 @@ async function startBot() {
             document.querySelector('#qrCode').innerText = ''
             const codeQr = document.querySelector('#qrCode')
             codeQr.style.cssText =
-                'opacity: 0; position: absolute; visibility: hidden;'
-
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                codeQr.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
             const response = await axios.post('/start-bot')
             const data = response.data
             if (data.success) {
@@ -1127,26 +1364,45 @@ async function startBot() {
                 displayLogOnConsole(`> ✅ Iniciou o Bot Corretamente`)
                 
                 Is_Started = true
+                isQrOff = false
             } else {
                 buttonStart.style.cssText =
-                    'position: unset; opacity: 1; visibility: visible;'
+                    'display: inline-block; opacity: 0;'
+                setTimeout(function() {
+                    buttonStart.style.cssText =
+                        'display: inline-block; opacity: 1;'
+                }, 100)
 
                 status.textContent = `Falhou ao iniciar o Bot!`
                 displayLogOnConsole(`> ⚠️ Falhou ao iniciar o Bot`)
                 
                 Is_Started = false
+                isQrOff = true
 
                 resetLoadingBar()
             }
         } catch (error) {
             const status = document.querySelector('#status')
-            alert('ERROR starting Bot:', error)
             console.error('ERROR starting Bot:', error)
+            displayLogOnConsole('ERROR starting Bot:', error)
             status.textContent = `ERROR iniciando Bot!`
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
-                'position: unset; opacity: 1; visibility: visible;'
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                buttonStart.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
             Is_Started = false
+            document.querySelector('#qrCode').innerText = ''
+            const codeQr = document.querySelector('#qrCode')
+            codeQr.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                codeQr.style.cssText =
+                'display: none; opacity: 0;'
+            }, 300)
+            isQrOff = true
             resetLoadingBar()
         }
     }
@@ -1154,18 +1410,18 @@ async function startBot() {
 
 //tarefas bot frontend 
 //em desenvolvimento...
-    //adicionar um isReady no front tbm no caso feedback disso no status igual no console do back
-    
-//a desenvolver...
     //ajustar o status para guardar sempre no terminal tudo taligado? salvo, que ja esta so fazer certinho as msgs iguais
     //erros e statuses deixar com mais detalhes no terminal do console f12 ai ja tudo do backend e do front end no terminal do site
     //melhoras os logs de conexao do websocket backend e frontend
+    //arrumar erro de mandar nada no input da lista e dar msgs de erros n desejados
+    //melhorar o display log on console do site para modificar a cor caso seja um log de error
+    //melhorar trazer os logs do backend a dedo e trazer o efeito de error tbm caso for um log disso
+    //adicionar forma de clear no terminal do site
+
+//a desenvolver...
     //organizar a ordem de como as funcoes sao chamadas pra um melhor desempenho e sentido logico
     //juntar as funcoes listData(data) listDataButton() em uma so na listData(data)
-    //mudar o botao reconect de lugar para o meio do content
-    //arrumar erro de mandar nada no input da lista e dar msgs de erros n desejados
     //melhorar a logica de usar a mesma funcao pra duas coisas
     //melhorar o problema de de vez em quando o a barra de loading do start n funciona direito
     //melhorar o reconhecimento do arquivo json estar vazio e as acoes sobre, status e tals
-    //adiconar ao lado do botao reconect um botao de esconder a tabela lista
     //arrumar meios de as coisas serem automaticas funcoes acionarem de acordo com certar coisas inves de prever todo cenario possivel em varias funcoes

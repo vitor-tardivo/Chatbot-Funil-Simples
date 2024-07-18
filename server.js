@@ -28,6 +28,12 @@ const {
     Set_Name_Erase_Callback
 } = require('./src/app')
 
+process.on('uncaughtException', (error) => {
+    if (Exit_Callback) Exit_Callback();
+    console.error(`> ❌ Uncaught Exception: ${error}`);
+    //process.exit(1);
+});
+
 const port = process.env.PORT || 3000
 
 const app = express()
@@ -35,8 +41,10 @@ const server = http.createServer(app)
 
 const wsServer = new WebSocket.Server({ server })
 
+global.QR_Counter = 0
 global.Qr_String = ''
 global.Is_Conected = true
+global.Stage_ = 0;
 
 app.use( 
     cors({
@@ -79,13 +87,13 @@ wsServer.on('connection', async  function connection(ws) {
         ws.send(JSON.stringify({ type: 'exit'}));
     });
     
-    Set_QrCode_On_Callback(function(isOn) {
+    Set_QrCode_On_Callback(function(isOn, QR_Counter) {
         if (isOn) {
-            ws.send(JSON.stringify({ type: 'generate_qr_code'}));
+            ws.send(JSON.stringify({ type: 'generate_qr_code', data: QR_Counter}));
         }
     });
-    Set_QrCode_Exceeds_Callback(function() {
-        ws.send(JSON.stringify({ type: 'qr_exceeds' }));
+    Set_QrCode_Exceeds_Callback(function(QR_Counter_Exceeds) {
+        ws.send(JSON.stringify({ type: 'qr_exceeds', data: QR_Counter_Exceeds }));
     });
     
     Set_Auth_Autenticated_Callback(function() {
@@ -149,15 +157,19 @@ wsServer.on('connection', async  function connection(ws) {
     });
 });
 
+app.get('/what-stage', async (req, res) => {
+    res.json({ data: global.Stage_, data2: global.QR_Counter  })
+})
+
 let Is_From_End = null
 app.delete('/erase-name', async (req, res) => {
     const fromTerminal = req.query.fromTerminal
     Is_From_End = false
     if (fromTerminal) {
-        const queryFromTerminal = req.query.queryFromTerminal
-        if (queryFromTerminal) {
-            await Erase_Chat_Data_By_Name(queryFromTerminal, Is_From_End)
-            res.status(200).send({ message: `${queryFromTerminal} apagado com sucesso.` });
+        const query = req.query.query
+        if (query) {
+            await Erase_Chat_Data_By_Name(query, Is_From_End)
+            res.status(200).send({ message: `${query} apagado com sucesso.` });
         } else {
             res.status(400).send({ message: 'Query parameter is required.' });
         }

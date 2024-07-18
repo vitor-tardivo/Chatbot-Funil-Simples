@@ -1,19 +1,20 @@
 // app.js Back_End
-let name = 'bot'
-let version = '0.1.0'
-console.log(`>  ℹ️ ${name} = v${version}`)
+let Name_Software = 'bot'
+let Version_ = '0.1.0'
+console.log(`>  ℹ️ ${Name_Software} = v${Version_}`)
 console.log(`>  ◌ Starting secundary functions...`)
 
 const { Client, LocalAuth, MessageMedia, Buttons } = require('whatsapp-web.js')
+const axios = require('axios');
 const qrcode = require('qrcode-terminal')
 const fs = require('fs').promises
 const path = require('path')
 const readline = require('readline')
 
 function Reload_Front() {
-    console.error(`> ⚠️  Reloaded FrontEnd page`);
-    Is_First_Reaload = false
-    //process.exit(1)//off for debug
+    //console.error(`> ⚠️  Reloaded FrontEnd page`);
+    //Is_First_Reaload = false
+    //process.exit(1)
 }
 
 let Exit_Callback = null;
@@ -21,11 +22,11 @@ function Set_Exit_Callback(callback) {
     Exit_Callback = callback;
 }
 process.on('exit', (code) => {
-    if (Is_Exceeds) {
+    /*if (Is_Exceeds) {
         Is_Not_Ready = true
         Is_Exceeds = true
         if (Exit_Callback) Exit_Callback();
-    }
+    }*/
     Is_Not_Ready = true
     console.error(`> ⚠️  Process exited with code(${code})`);
 });
@@ -37,25 +38,21 @@ process.on('uncaughtException', (error) => {
 });
 
 process.on('SIGUSR2', () => {// nodemon
-    Is_Not_Ready = true
     if (Exit_Callback) Exit_Callback();
     console.error('> ❌ Process interrupted: (SIGUSR2)');
     //process.exit(0);
 });
 process.on('SIGINT', () => {// Ctrl+C
-    Is_Not_Ready = true
     if (Exit_Callback) Exit_Callback();
     console.error('> ❌ Process interrupted: (SIGINT)');
     //process.exit(0);
 });
 process.on('SIGTERM', () => {// kill
-    Is_Not_Ready = true
     if (Exit_Callback) Exit_Callback();
     console.error('> ❌ Process interrupted: (SIGTERM)');
     //process.exit(0);
 });
 process.on('SIGHUP', () => {// terminal closed
-    Is_Not_Ready = true
     if (Exit_Callback) Exit_Callback();
     console.error('> ❌ Process interrupted: (SIGHUP)');
     //process.exit(0);
@@ -596,55 +593,64 @@ let Ready_Callback = null;
 function Set_Ready_Callback(callback) {
     Ready_Callback = callback;
 }
-let Is_Exceeds = true
+//let Is_Exceeds = true
+let QR_Counter_Exceeds = 3
 try {
-    let QR_Counter = 1
-    let QR_Counter_Exceeds = 3
     client.on('qr', async qr => {
-        if (QR_Counter <= QR_Counter_Exceeds) { 
-            console.log(`> ↓↓ 📸 Client try to Connect for the ${QR_Counter}º to WhatsApp Web by the QR-Code below 📸 ↓↓`)
+        global.QR_Counter++
+        global.Stage_ = 1
+        if (global.QR_Counter <= QR_Counter_Exceeds) { 
+            console.log(`> ↓↓ 📸 Client try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code below 📸 ↓↓`)
             qrcode.generate(qr, { small: true })
             qrcode.generate(qr, { small: true }, (Qr_String_Ascii) =>{
                 global.Is_Conected = false
                 global.Qr_String = Qr_String_Ascii
 
-                if (QrCode_On_Callback) QrCode_On_Callback(true);
+                if (QrCode_On_Callback) QrCode_On_Callback(true, global.QR_Counter);
             })
-            console.log(`> ↑↑ 📸 Client try to Connect for the ${QR_Counter}º to WhatsApp Web by the QR-Code above 📸 ↑↑`)
-            QR_Counter++
+            console.log(`> ↑↑ 📸 Client try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code above 📸 ↑↑`)
         } else {
-            if (QrCode_Exceeds_Callback) QrCode_Exceeds_Callback();
+            global.QR_Counter = 0
+            global.Stage_ = 0
+            if (QrCode_Exceeds_Callback) QrCode_Exceeds_Callback(QR_Counter_Exceeds);
             console.log(`> ❌ Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
-            console.log(`>  ◌ Exiting...`)
-            Is_Exceeds = false
-            process.exit(1)
+            //console.log(`>  ◌ Exiting...`)
+            //Is_Exceeds = false
+            //process.exit(1)
+            client.destroy()
+            console.log(`>  ℹ️ Retry again.`)
         }
     })
 } catch (error) {
     console.log(`> ❌ ERROR connecting Client to WhatsApp Web by the QR_Code:`, error)
 }
-// app.js BackEnd
-
-//codigo restante...
 client.on('authenticated', async () => {
+    global.Qr_String = ''
+    global.QR_Counter = 0
+    global.Stage_ = 2
     if (Auth_Autenticated_Callback) Auth_Autenticated_Callback();
     console.log('> 🔑 SUCESSIFULLY Client Authenticated by the Local_Auth.')
 })
 client.on('auth_failure', async error => {
+    global.Qr_String = ''
+    global.QR_Counter = 0
+    global.Stage_ = 0
     if (Auth_Failure_Callback) Auth_Failure_Callback();
     console.error('>  ⚠️  ERROR Authentication Client to WhatsApp Web by the Local_Auth:', error)
 })
-client.on('ready', async () => {// vai roda os 2 ao ja conectado se colocar nos 2 o callback
+client.on('ready', async () => {
+    global.Qr_String = ''
+    global.QR_Counter = 0
+    global.Stage_ = 2
     if (Ready_Callback) Ready_Callback();
     global.Is_QrCode_On = false
-    QR_Counter = 1
+    global.QR_Counter = 1
     console.log(`> ✅ Client is READY.`)
     Is_Not_Ready = false
     await Load_Chat_Data()
     console.log(`> ✅ FINISHED(Starting primary functions: Bot)`)
 })
 
-//codigo restante...
 let Count_MSG = 0
 //message //actual
 //message_create //debug
@@ -798,7 +804,6 @@ console.log(`>  ◌ Starting primary functions: Bot...`)
 client.initialize()*/
 
 async function initialize() {
-    console.log(`>  ℹ️ ${name} = v${version}`)
     console.log(`>  ◌ Starting primary functions: Bot...`)
     await client.initialize()
 }
@@ -842,3 +847,7 @@ module.exports = {
     //modificar as pesquisar delete por nome ou print por nome pra aceitar o numero tbm
     //melhorar a logica de usar a mesma funcao pra duas coisas
     //melhorar o reconhecimento do arquivo json estar vazio e as acoes sobre, status e tals
+    //adicionar debug pra quando o client desconecta o whatsapp web do bot, nao fazer dar error total e so continuar no caso resetar e tals
+    //melhorar trazer os logs do backend a dedo e trazer o efeito de error tbm caso for um log disso
+    //se ainda existe encontrar variaveis Is e resetalas a qualquer erro que tiver que n seja de resetar tudo nos locais de debug de erro, sinca com o front end e tals
+    //adicionar pra nao executar comandos funcoes pra front end caso o front end n esteja conectado no caso quando estiver so rodando o backend as os funils funcionando sem ta no site com requesicao http e de Is e tals
