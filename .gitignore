@@ -3,3 +3,4 @@ yarn.lock
 desktop.ini
 .wwebjs_cache
 .wwebjs_auth
+.wwebjs_auth/session

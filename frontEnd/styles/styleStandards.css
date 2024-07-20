@@ -83,6 +83,7 @@ li {
 /* SCROLLBAR STYLIZATION */
 *::-webkit-scrollbar {
     width: 16px; 
+    transition: var(--configTrasition03s);
 }
 *::-webkit-scrollbar-thumb {
     background-color: rgb(215, 215, 215); 
@@ -93,15 +94,21 @@ li {
 }
 *::-webkit-scrollbar-thumb:hover {
     background-color: var(--colorInteractionElements);
+    border: 1px solid var(--colorBlack); 
+    transition: var(--configTrasition03s);
 }
 *::-webkit-scrollbar-thumb:active {
     background-color: rgb(140, 140, 140);
+    border: 1px solid var(--colorBlack); 
+    transition: var(--configTrasition03s);
 }
 *::-webkit-scrollbar-thumb:focus {
     outline: 1px solid var(--colorWhite);
+    transition: var(--configTrasition03s);
 }
 *.scrollbar {
     color: var(--colorWhite);
+    transition: var(--configTrasition03s);
 }
 *::-webkit-scrollbar-corner {
     background-color: var(--colorWhite);

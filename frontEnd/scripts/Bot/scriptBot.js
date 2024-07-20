@@ -3,15 +3,30 @@ let Name_Software = 'bot'
 let Version_ = '0.1.0'
 
 function isMobile() {//IDENTIFY IF THE USER IS FROM A PHONE
-    const userAgent = navigator.userAgent
-    return /Mobi|Android|iPhone|iPod|iPad|Windows\sPhone|Windows\sCE|BlackBerry|BB10|IEMobile|Opera\sMini|Mobile\sSafari|webOS|Mobile|Tablet|CriOS/i.test(userAgent)
+    try {    
+        const userAgent = navigator.userAgent
+        return /Mobi|Android|iPhone|iPod|iPad|Windows\sPhone|Windows\sCE|BlackBerry|BB10|IEMobile|Opera\sMini|Mobile\sSafari|webOS|Mobile|Tablet|CriOS/i.test(userAgent)
+    } catch(error) {
+        console.error(`> ⚠️ ERROR isMobile: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR isMobile: ${error.message}`, setLogError)
+    }
 }
 
 window.onload = function(event) {
-    axios.get('/reload')
-};
+    try {
+        axios.get('/reload')
+    } catch(error) {
+        console.error(`> ⚠️ ERROR onload: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR onload: ${error.message}`, setLogError)
+    }
+}
 window.onbeforeunload = function(event) {
-    event.preventDefault();
+    try {    
+        event.preventDefault()
+    } catch(error) {
+        console.error(`> ⚠️ ERROR onbeforeunload: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR onbeforeunload: ${error.message}`, setLogError)
+    }
 }
 
 let wss = null
@@ -21,9 +36,9 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
             console.log('User is from a Phone.')
             
             var link = document.createElement('link')
-            link.rel = 'stylesheet';
+            link.rel = 'stylesheet'
             link.href = '../styles/Bot/mediaQueryBot.css'
-            document.head.appendChild(link);
+            document.head.appendChild(link)
         } else {
             console.log('User is from a Desktop.')
         }
@@ -53,18 +68,19 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
             'color: var(--colorContrast); background-color: var(--colorYellow); cursor: progress;'
         reloadAbbr.title = `WebSocket STATUS: carregando`
         
+        if (wss) wss.close(), wss = null
         wss = new WebSocket(`ws://${window.location.host}`)
         /*wss = new WebSocket(`wss://${window.location.host}`)*/
         webSocket()
 
-        /*const originalConsoleLog = console.log;
+        /*const originalConsoleLog = console.log
         console.log = function (...args) {
-            originalConsoleLog.apply(console, args);
+            originalConsoleLog.apply(console, args)
             
-            displayLogOnSite(args.join(' '));
+            displayLogOnSite(args.join(' '))
         
-            ws.send(JSON.stringify({ type: 'log', message: args.join(' ') }));
-        };*/
+            ws.send(JSON.stringify({ type: 'log', message: args.join(' ') }))
+        }*/
         
         const commandInput = document.querySelector('#commandInput')
         commandInput.addEventListener('keydown', function (event) {
@@ -84,8 +100,8 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
 
         loadConsoleStyles()
     } catch (error) {
-        console.error('ERROR: ' + error.message)
-        displayLogOnConsole('ERROR: ' + error.message)
+        console.error(`> ⚠️ ERROR DOMContentLoaded: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR DOMContentLoaded: ${error.message}`, setLogError)
     }
 })
 
@@ -95,14 +111,29 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
 // Formated= 1 \ * 60 * 1000 = 1-Minute
 // Formated= 1 \ * 1000 = 1-Second
 function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms))
+    try {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    } catch(error) {
+        console.error(`> ⚠️ ERROR sleep: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR sleep: ${error.message}`, setLogError)
+    }
 }
 
-function displayLogOnConsole(message) {
-    const logElement = document.createElement('div');
-    logElement.textContent = `${message}`;
-    document.querySelector('#log').appendChild(logElement);
-    autoScroll();
+let setLogError = true
+function displayLogOnConsole(message, setLogError) {
+    try {
+        const logElement = document.createElement('div')
+        logElement.textContent = `${message}`
+        if (setLogError) {
+            logElement.style.cssText =
+                'color: var(--colorRed)'
+        }
+        document.querySelector('#log').appendChild(logElement)
+        autoScroll()
+    } catch(error) {
+        console.error(`> ⚠️ ERROR displayLogOnConsole: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR displayLogOnConsole: ${error.message}`, setLogError)
+    }
 }
 
 /*window.onscroll = function() { scrollFunction() }// CALL FUNCTION FOR HEADER AND FOOTER CUSTOMS
@@ -112,10 +143,10 @@ function scrollFunction() {// SHOW THE SCROLLS BUTTONS AND FOOTER
     
     if (window.scrollY > 35) {
         head.style.cssText =
-            'border-radius: 0px 0px 0px 0px;'
+            'border-radius: 0px 0px 0px 0px'
     } else {
         head.style.cssText =
-            'border-radius: 0px 0px 50px 0px;'
+            'border-radius: 0px 0px 50px 0px'
     }
 
     let foot = document.querySelector('footer')
@@ -123,50 +154,56 @@ function scrollFunction() {// SHOW THE SCROLLS BUTTONS AND FOOTER
     
     if (document.body.scrollHeight - (window.scrollY + window.innerHeight) < 27) {
         foot.style.cssText =
-            'opacity: 1; visibility: visible; border-radius: 0px 50px 0px 0px;'
+            'opacity: 1 visibility: visible border-radius: 0px 50px 0px 0px'
 
         lO.style.cssText =
-            'pointer-events: unset;'
+            'pointer-events: unset'
     } else {
         foot.style.cssText =
-            'opacity: 1; visibility: visible; border-radius: 0px 0px 0px 0px;'
+            'opacity: 1 visibility: visible border-radius: 0px 0px 0px 0px'
 
         lO.style.cssText =
-            'pointer-events: none;'
+            'pointer-events: none'
     }
 }*/
 function autoScroll() {
-    const consoleLog = document.querySelector('#divLog');
-    const currentScroll = consoleLog.scrollTop;
-    const targetScroll = consoleLog.scrollHeight - consoleLog.clientHeight;
-    const scrollDifference = targetScroll - currentScroll;
-    const duration = 300;
+    try {
+        const consoleLog = document.querySelector('#divLog')
+        const currentScroll = consoleLog.scrollTop
+        const targetScroll = consoleLog.scrollHeight - consoleLog.clientHeight
+        const scrollDifference = targetScroll - currentScroll
+        const duration = 300
 
-    let startTime;
+        let startTime
 
-    function scrollStep(timestamp) {
-        if (!startTime) {
-            startTime = timestamp;
+        function scrollStep(timestamp) {
+            if (!startTime) {
+                startTime = timestamp
+            }
+
+            const progress = Math.min((timestamp - startTime) / duration, 1)
+            consoleLog.scrollTop = currentScroll + scrollDifference * progress
+
+            if (progress < 1) {
+                requestAnimationFrame(scrollStep)
+            }
         }
 
-        const progress = Math.min((timestamp - startTime) / duration, 1);
-        consoleLog.scrollTop = currentScroll + scrollDifference * progress;
-
-        if (progress < 1) {
-            requestAnimationFrame(scrollStep);
-        }
+        requestAnimationFrame(scrollStep)
+    } catch(error) {
+        console.error(`> ⚠️ ERROR autoScroll: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR autoSroll: ${error.message}`, setLogError)
     }
-
-    requestAnimationFrame(scrollStep);
 }
 
 let isDisconected = false
-function reconnectConsole() {
+function reconnectWebSocket() {
     try {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
+        isReconectOn = true
         isDisconected = false
 
         const reloadButton = document.querySelector('#reload')
@@ -176,373 +213,466 @@ function reconnectConsole() {
             'color: var(--colorContrast); background-color: var(--colorYellow); cursor: progress;'
         reloadAbbr.title = `WebSocket STATUS: carregando...`
 
-        wss.close();
-        wss = null
+        if (wss) wss.close(), wss = null
         wss = new WebSocket(`ws://${window.location.host}`)
-        /*wss = new WebSocket(`wss://${window.location.host}`)*/
+        //wss = new WebSocket(`wss://${window.location.host}`)
         webSocket()
 
     } catch (error) {
-        console.error('Erro ao reconectar WebSocket:', error);
+        console.error(`> ⚠️ ERRO reconnectConsole: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR reconnectConsole: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
 let isFromTerminal = false
 async function webSocket() {
-    const reloadButton = document.querySelector('#reload')
-    let reloadAbbr = document.querySelector('#abbrReload')
+    try {
+        const reloadButton = document.querySelector('#reload')
+        let reloadAbbr = document.querySelector('#abbrReload')
 
-    wss.onopen = function(event) {
-        console.log('>  ◌ Conectando Client ao WebSocket(front).', event);
-        displayLogOnConsole(`>  ◌ Conectando Client ao WebSocket(front).`, event);
-        reloadButton.style.cssText =
-            'color: var(--colorContrast); background-color: var(--colorGreen); cursor: pointer;'
-        reloadAbbr.title = `WebSocket STATUS: conectado`
-    };
-    wss.onclose = function(event) {
-        console.log('>  ◌ Desconectando Client do WebSocket(front).', event);
-        displayLogOnConsole(`>  ◌ Desconectando Client do WebSocket(front).`, event);
-        reloadButton.style.cssText =
-            'color: var(--colorContrast); background-color: var(--colorOrange); cursor: pointer;'
-        reloadAbbr.title = `WebSocket STATUS: desconectou`
+        wss.onopen = function(event) {
+            console.log(`> ✅ Conectado Client ao WebSocket: `, event)
+            displayLogOnConsole(`> ✅ Conectado Client ao WebSocket: ${event}`)
+            reloadButton.style.cssText =
+                'color: var(--colorContrast); background-color: var(--colorGreen); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
+            reloadAbbr.title = `WebSocket STATUS: conectado`
+            setTimeout(function() {
+                reloadButton.style.cssText =
+                    'color: var(--colorContrast); background-color: var(--colorGreen); cursor: pointer; pointer-events: unset; opacity: 1;'
+            }, 5 * 1000)
 
-        isDisconected = true
-    };
-    wss.onerror = function(event) {
-        console.error('> ❌ ERROR ao conectar Client ao WebSocket(front):', event);
-        displayLogOnConsole(`> ❌ ERROR ao reconectar Client ao WebSocket(front).`, event);
-        reloadButton.style.cssText =
-            'color: var(--colorContrast); background-color: var(-colorRed); cursor: pointer;'
-        reloadAbbr.title = `WebSocket STATUS: error`
+            isDisconected = false
 
-        isDisconected = true
-    };
+            resetLoadingBar()
+        }
+        wss.onclose = function(event) {
+            console.log(`> ⚠️ Desconectado Client do WebSocket: `, event)
+            displayLogOnConsole(`> ⚠️ Desconectado Client do WebSocket: ${event}`, setLogError)
+            reloadButton.style.cssText =
+                'color: var(--colorContrast); background-color: var(--colorOrange); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
+            reloadAbbr.title = `WebSocket STATUS: desconectou`
+            setTimeout(function() {
+                reloadButton.style.cssText =
+                    'color: var(--colorContrast); background-color: var(--colorOrange); cursor: pointer; pointer-events: unset; opacity: 1;'
+            }, 5 * 1000)
 
-    wss.onmessage = function(event) {
-        const logData = JSON.parse(event.data);
-        if (logData.type === 'exit') {
+            isDisconected = true
+
+            resetLoadingBar()
+        }
+        wss.onerror = function(event) {
+            console.error(`> ❌ ERROR ao reconectar Client ao WebSocket(front): `, event)
+            displayLogOnConsole(`> ❌ ERROR ao reconectar Client ao WebSocket(front): ${event}`, setLogError)
+            setTimeout(function() {
+                reloadButton.style.cssText =
+                    'color: var(--colorContrast); background-color: var(-colorRed); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
+                reloadAbbr.title = `WebSocket STATUS: error`
+                setTimeout(function() {
+                    reloadButton.style.cssText =
+                        'color: var(--colorContrast); background-color: var(-colorRed); cursor: pointer; pointer-events: none; opacity: 0.5;'
+                }, 5 * 1000)
+            }, 100)
+
+            isDisconected = true
+            reconectAttempts = 0
+            
+            resetLoadingBar()
+        }
+
+        wss.onmessage = function(event) {
+            const dataWebSocket = JSON.parse(event.data)
+            handleWebSocketMessage(dataWebSocket)
+        }
+        
+        resetLoadingBar()
+    } catch(error) {
+        console.error(`> ⚠️ ERROR webSocket: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR webSocket: ${error.message}`, setLogError)
+        reconectAttempts = 0
+        resetLoadingBar()
+    }
+}
+function handleWebSocketMessage(dataWebSocket) {
+    switch (dataWebSocket.type) {
+        case 'exit':
+            isReconectionOff = true
             exit()
-        } else if (logData.type === 'log') {
-            //console.log(logData.message);
-            displayLogOnConsole(logData.message)
-            /*const logElement = document.createElement('div');
-            logElement.textContent = logData.message;
-            document.querySelector('#log').appendChild(logElement);
+            break
+        case 'log':
+            //console.log(logData.message)
+            displayLogOnConsole(dataWebSocket.message)
+            /*const logElement = document.createElement('div')
+            logElement.textContent = logData.message
+            document.querySelector('#log').appendChild(logElement)
             autoScroll()*/
-        } else if (logData.type === 'command') {
-            //console.log(logData.message);
-            displayLogOnConsole(logData.message)
-            /*const logElement = document.createElement('div');
-            logElement.textContent = `> ${logData.command}`;
-            document.querySelector('#log').appendChild(logElement);
-            autoScroll()*/
-        } if (logData.type === 'list') {
-            const data = logData.data;
+            break
+        case 'statues-ws':
+            const statuses = dataWebSocket.data
+            statusesWs(statuses)
+            break
+        case 'list':
+            const data = dataWebSocket.data
             listData(data)
-        } if (logData.type === 'start') {
-            startBot()
-        } if (logData.type === 'generate_qr_code') {
-            const QR_Counter = logData.data;
+            break
+        case 'start':
+            startBot();
+            break
+        case 'generate_qr_code':
+            const QR_Counter = dataWebSocket.data
             setTimeout(function() {
                 generateQrCode(QR_Counter)
             }, 100)
-        } if (logData.type === 'qr_exceeds') {
+            break
+        case 'qr_exceeds':
             isExceeds = false
-            const QR_Counter_Exceeds = logData.data;
-            Counter_Exceeds(QR_Counter_Exceeds)
-        } if (logData.type === 'auth_autenticated') {
-            authsucess()
-        } if (logData.type === 'auth_failure') {
-            authFailure() 
-        } if (logData.type === 'ready') {
-            ready()
-        } if (logData.type === 'print') {
-            listDataButton()
-        } if (logData.type === 'empty-list') {
-            emptyList()
-        } if (logData.type === 'search-list') {
-            const Parse_Data = logData.data;
-            const search = logData.data2.trim()
+            const QR_Counter_Exceeds = dataWebSocket.data
+            counterExceeds(QR_Counter_Exceeds)
+            break
+        case 'auth_autenticated':
+            authsucess();
+            break
+        case 'auth_failure':
+            isReconectionOff = true
+            authFailure()
+            break
+        case 'ready':
+            ready();
+            break
+        case 'print':
+            listDataButton();
+            break
+        case 'empty-list':
+            emptyList();
+            break
+        case 'search-list':
+            const Parse_Data = dataWebSocket.data
+            const searchList = dataWebSocket.data2.trim()
             isFromTerminal = true
-            searchNameList(isFromTerminal, Parse_Data, search)
-        } if (logData.type === 'all-erase') {
-            allEraseList()
-        } if (logData.type === 'name-erase') {
-            const search = logData.data;
+            searchNameList(isFromTerminal, Parse_Data, searchList)
+            break
+        case 'all-erase':
+            allEraseList();
+            break
+        case 'name-erase':
+            const searchErase = dataWebSocket.data
             isFromTerminal = true
-            eraseDataByName(isFromTerminal, search)
-        } if (logData.type === 'error') {
-            console.error(logData.message)
-            displayLogOnConsole(logData.message)
-        } 
-    };
+            eraseDataByName(isFromTerminal, searchErase)
+            break
+        case 'error':
+            console.error(`> ⚠️ ERROR Return WebSocket Conection: ${dataWebSocket.message}`)
+            displayLogOnConsole(`> ⚠️ ERROR Retorno da Conexão WebSocket: ${dataWebSocket.message}`, setLogError)
+            break
+    }
+}
+function statusesWs(statuses) {
+    try {
+        //const reloadButton = document.querySelector('#reload')
+        //let reloadAbbr = document.querySelector('#abbrReload')
+        if (statuses) {
+            //console.log(`> ✅ Conectado Client ao WebSocket`)
+            /*displayLogOnConsole(`> ✅ Conectado Client ao WebSocket(true)`)
+            reloadButton.style.cssText =
+                'color: var(--colorContrast); background-color: var(--colorGreen); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
+            reloadAbbr.title = `WebSocket STATUS: conectado`
+            setTimeout(function() {
+                reloadButton.style.cssText =
+                    'color: var(--colorContrast); background-color: var(--colorGreen); cursor: pointer; pointer-events: unset; opacity: 1;'
+            }, 5 * 1000)
 
-    resetLoadingBar()
+            isDisconected = false
+
+            resetLoadingBar()*/
+        } else {
+            //console.log(`> ⚠️ Desconectado Client do WebSocket`)
+            /*displayLogOnConsole(`> ⚠️ Desconectado Client do WebSocket(true)`, setLogError)
+            reloadButton.style.cssText =
+                'color: var(--colorContrast); background-color: var(--colorOrange); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
+            reloadAbbr.title = `WebSocket STATUS: desconectou`
+            setTimeout(function() {
+                reloadButton.style.cssText =
+                    'color: var(--colorContrast); background-color: var(--colorOrange); cursor: pointer; pointer-events: unset; opacity: 1;'
+            }, 5 * 1000)
+
+            isDisconected = true*/
+    
+            if (wss) wss.close(), wss = null
+            wss = new WebSocket(`ws://${window.location.host}`)
+            /*wss = new WebSocket(`wss://${window.location.host}`)*/
+            webSocket()
+
+            //resetLoadingBar()
+        }
+    } catch(error) {
+        console.error(`> ⚠️ ERROR statusesWs: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR statusesWs: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
 }
 
 function exit() {
-    resetLoadingBar()
-    Is_Not_Ready = true
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
 
-    if (isDisconected) {
-        reconnectConsole()
+        Is_Not_Ready = true
 
-        isDisconected = false
-    }
+        if (isDisconected) {
+            reconnectWebSocket()
 
-    displayLogOnConsole('> ❌ ERROR Back End')
+            isDisconected = false
+        }
+        console.error(`> ❌ ERROR: BackEnd`)
+        displayLogOnConsole(`> ❌ ERROR: BackEnd`, setLogError)
 
-    const mainContent = document.querySelector('#content')
-    mainContent.style.cssText =
-        'display: inline-block;'
+        const mainContent = document.querySelector('#innerContent')
+        mainContent.style.cssText =
+            'display: inline-block;'
 
-    const status = document.querySelector('#status')
-    status.textContent = `ERROR Back End!`
+        let listShow = document.querySelector('#showList')
+        let listShowAbbr = document.querySelector('#abbrShowList')
+        listShow.style.cssText = 
+            'background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0.5;'
+        listShowAbbr.title = `STATUS Lista: null`
+        
+        isVisibleHideButton = null
 
-    isVisibleHideButton = null
+        const status = document.querySelector('#status')
+        status.textContent = `ERROR Back End!`
 
-    let buttonStart = document.querySelector('#start')
-    buttonStart.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+        let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
-            'display: inline-block; opacity: 1;'
-    }, 100)
-    Is_Started = false
-    
-    document.querySelector('#qrCode').innerText = ''
-    const codeQr = document.querySelector('#qrCode')
-    codeQr.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            buttonStart.style.cssText =
+                'display: inline-block; opacity: 1;'
+        }, 100)
+        Is_Started = false
+        
+        document.querySelector('#qrCode').innerText = ''
+        const codeQr = document.querySelector('#qrCode')
         codeQr.style.cssText =
-            'display: none; opacity: 0;'
-    }, 300)
-    isQrOff = true
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            codeQr.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+        isQrOff = true
 
-    isVisibleList = null
-    const listButton = document.querySelector('#list')
-    listButton.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+        isVisibleList = null
+        const listButton = document.querySelector('#list')
         listButton.style.cssText =
-            'display: none; opacity: 0;'
-    }, 300)
-    let tableList = document.querySelector('#listChatData')
-    tableList.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            listButton.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+        let tableList = document.querySelector('#listChatData')
         tableList.style.cssText =
-            'display: none; opacity: 0;'
-    }, 300)
-    let eraseButton = document.querySelector('#erase')
-    eraseButton.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            tableList.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+        let eraseButton = document.querySelector('#erase')
         eraseButton.style.cssText =
-            'display: none; opacity: 0;'
-    }, 300)
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            eraseButton.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+
+        resetLoadingBar()
+    } catch(error) {
+        console.error(`> ⚠️ ERROR exit: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR exit: ${error.message}`, setLogError)
+        Is_Not_Ready = true
+        resetLoadingBar()
+    }
 }
 function authsucess() {
-    let buttonStart = document.querySelector('#start')
-    buttonStart.style.cssText =
-        'display: display: inline-block; opacity: 0;'
-    setTimeout(function() {
+    try {
+        let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
-            'display: none; opacity: 0;'
-    }, 300)
-    
-    document.querySelector('#qrCode').innerText = ''
-    const codeQr = document.querySelector('#qrCode')
-    codeQr.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            buttonStart.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+        
+        document.querySelector('#qrCode').innerText = ''
+        const codeQr = document.querySelector('#qrCode')
         codeQr.style.cssText =
-           'display: none; opacity: 0;'
-    }, 300)
-    isQrOff = true
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            codeQr.style.cssText =
+            'display: none; opacity: 0;'
+        }, 300)
+        isQrOff = true
+    } catch(error) {
+        console.error(`> ⚠️ ERROR authSucess: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR authSucess: ${error.message}`, setLogError)
+    }
 }
 function authFailure() {
-    resetLoadingBar()
-    Is_Not_Ready = true
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
 
-    if (isDisconected) {
-        reconnectConsole()
+        Is_Not_Ready = true
 
-        isDisconected = false
-    }
+        if (isDisconected) {
+            reconnectWebSocket()
 
-    displayLogOnConsole('> ❌ ERROR Back End Auth Failure')
+            isDisconected = false
+        }
+        console.error(`> ❌ ERROR Back End Auth Failure`)
+        displayLogOnConsole(`> ❌ ERROR Back End Auth Failure`, setLogError)
 
-    const mainContent = document.querySelector('#content')
-    mainContent.style.cssText =
-        'display: inline-block;'
+        const mainContent = document.querySelector('#innerContent')
+        mainContent.style.cssText =
+            'display: inline-block;'
 
-    const status = document.querySelector('#status')
-    status.textContent = `Falhou Autenticação ao WhatsApp Web pelo Local_Auth!`
+        let listShow = document.querySelector('#showList')
+        let listShowAbbr = document.querySelector('#abbrShowList')
+        listShow.style.cssText = 
+            'background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0.5;'
+        listShowAbbr.title = `STATUS Lista: null`
 
-    isVisibleHideButton = null
+        isVisibleHideButton = null
 
-    let buttonStart = document.querySelector('#start')
-    buttonStart.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+        let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
-            'display: inline-block; opacity: 1;'
-    }, 100)
-    Is_Started = false
-    
-    document.querySelector('#qrCode').innerText = ''
-    const codeQr = document.querySelector('#qrCode')
-    codeQr.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            buttonStart.style.cssText =
+                'display: inline-block; opacity: 1;'
+        }, 100)
+        Is_Started = false
+        
+        document.querySelector('#qrCode').innerText = ''
+        const codeQr = document.querySelector('#qrCode')
         codeQr.style.cssText =
-            'display: none; opacity: 0;'
-    }, 300)
-    isQrOff = true
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            codeQr.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+        isQrOff = true
 
-    isVisibleList = null
-    const listButton = document.querySelector('#list')
-    listButton.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+        isVisibleList = null
+        const listButton = document.querySelector('#list')
         listButton.style.cssText =
-            'display: none; opacity: 0;'
-    }, 300)
-    let tableList = document.querySelector('#listChatData')
-    tableList.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            listButton.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+        let tableList = document.querySelector('#listChatData')
         tableList.style.cssText =
-            'display: none; opacity: 0;'
-    }, 300)
-    let eraseButton = document.querySelector('#erase')
-    eraseButton.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            tableList.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+        let eraseButton = document.querySelector('#erase')
         eraseButton.style.cssText =
-           'display: none; opacity: 0;'
-    }, 300)
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            eraseButton.style.cssText =
+            'display: none; opacity: 0;'
+        }, 300)
+        resetLoadingBar()
+    } catch(error) {
+        console.error(`> ⚠️ ERROR authFailure: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR authFailure: ${error.message}`, setLogError)
+        Is_Not_Ready = true
+        resetLoadingBar()
+    }
 } 
 function ready() {
-    resetLoadingBar()
-    Is_Not_Ready = false
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
 
-    if (isDisconected) {
-        reconnectConsole()
+        Is_Not_Ready = false
 
-        isDisconected = false
-    }
+        if (isDisconected) {
+            reconnectWebSocket()
+            
+            isDisconected = false
+        }
 
-    const mainContent = document.querySelector('#innerContent')
-    mainContent.style.cssText =
-        'display: inline-block;'
+        const mainContent = document.querySelector('#innerContent')
+        mainContent.style.cssText =
+            'display: inline-block;'
 
-    const status = document.querySelector('#status')
-        status.textContent = `Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
+        const status = document.querySelector('#status')
+            status.textContent = `Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
 
-    /*let buttonStart = document.querySelector('#start')
-    buttonStart.style.cssText =
-        'display: display: inline-block; opacity: 0;'
-    setTimeout(function() {
+        /*let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
-            'display: none; opacity: 0;'
-    }, 300)*/
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            buttonStart.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)*/
 
-    /*document.querySelector('#qrCode').innerText = ''
-    const codeQr = document.querySelector('#qrCode')
-    codeQr.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+        /*document.querySelector('#qrCode').innerText = ''
+        const codeQr = document.querySelector('#qrCode')
         codeQr.style.cssText =
-           'display: none; opacity: 0;'
-    }, 300)*/
-    isQrOff = true
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            codeQr.style.cssText =
+            'display: none; opacity: 0;'
+        }, 300)*/
+        isQrOff = true
 
-    isVisibleList = true
-    const listButton = document.querySelector('#list')
-    listButton.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+        isVisibleList = true
+        const listButton = document.querySelector('#list')
         listButton.style.cssText =
-            'display: inline-block; opacity: 1;'
-    }, 100)
-    let tableList = document.querySelector('#listChatData')
-    tableList.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            listButton.style.cssText =
+                'display: inline-block; opacity: 1;'
+        }, 100)
+        let tableList = document.querySelector('#listChatData')
         tableList.style.cssText =
-            'display: inline-block; opacity: 1;'
-    }, 100)
-    let eraseButton = document.querySelector('#erase')
-    eraseButton.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            tableList.style.cssText =
+                'display: inline-block; opacity: 1;'
+        }, 100)
+        let eraseButton = document.querySelector('#erase')
         eraseButton.style.cssText =
-            'display: inline-block; opacity: 1;'
-    }, 100)
-    let listShow = document.querySelector('#showList')
-    let listShowAbbr = document.querySelector('#abbrShowList')
-    listShow.style.cssText = 
-        'background-color: var(--colorWhite); color: var(--colorBlack);'
-    listShowAbbr.title = `STATUS Lista: visivel`
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            eraseButton.style.cssText =
+                'display: inline-block; opacity: 1;'
+        }, 100)
+        let listShow = document.querySelector('#showList')
+        let listShowAbbr = document.querySelector('#abbrShowList')
+        listShow.style.cssText = 
+            'background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
+        listShowAbbr.title = `STATUS Lista: visivel`
+        
+        resetLoadingBar()
+    } catch(error) {
+        console.error(`> ⚠️ ERROR ready: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR ready: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
 }
 let Is_Not_Ready = true
 
-function saveConsoleStyles() {
-    try {
-        const consoleElement = document.querySelector('#console');
-        const buttonHideConsole = document.querySelector('#hideConsole');
-        const titleHideConsole = document.querySelector('#titleHide');
-
-        localStorage.setItem('consoleStyles', JSON.stringify({
-            width: consoleElement.style.width,
-            title: titleHideConsole.title,
-            textContent: buttonHideConsole.textContent,
-            isVisibleHideButton: isVisibleHideButton
-        }));
-    } catch (error) {
-        console.error('Erro ao salvar estilos do console:', error);
-        displayLogOnConsole('Erro ao salvar estilos do console:', error.message);
-    }
-}
-function loadConsoleStyles() {
-    try {
-        const savedStyles = localStorage.getItem('consoleStyles');
-        if (savedStyles) {
-            const parsedStyles = JSON.parse(savedStyles);
-            const consoleElement = document.querySelector('#console');
-            const buttonHideConsole = document.querySelector('#hideConsole');
-            const titleHideConsole = document.querySelector('#titleHide');
-
-            consoleElement.style.width = parsedStyles.width || '30.439vw';
-            titleHideConsole.title = parsedStyles.title || 'Esconder o Terminal';
-            buttonHideConsole.textContent = parsedStyles.textContent || '◀';
-            isVisibleHideButton = parsedStyles.isVisibleHideButton !== undefined ? parsedStyles.isVisibleHideButton : null;
-            
-            if (isVisibleHideButton === null) {
-                isVisibleHideButton = true;
-                hideConsole();
-            } else {
-                if (isVisibleHideButton) {
-                    consoleElement.style.width = '0';
-                    titleHideConsole.title = 'Mostrar o Terminal';
-                    buttonHideConsole.textContent = '▶';
-                } else {
-                    consoleElement.style.width = '30.439vw';
-                    titleHideConsole.title = 'Esconder o Terminal';
-                    buttonHideConsole.textContent = '◀';
-                }
-            }
-        }
-    } catch (error) {
-        console.error('ERROR ao carregar estilos do console:', error);
-        displayLogOnConsole('ERROR ao carregar estilos do console:', error);
-    }
-}
 let isVisibleList = null
 function showTableList() {
+    if (Is_Not_Ready) {
+        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        return
+    }
     try {
         const listButton = document.querySelector('#list')
         let tableList = document.querySelector('#listChatData')
@@ -560,7 +690,7 @@ function showTableList() {
         }
         if (isVisibleList) {
             listShow.style.cssText = 
-                'background-color: var(--colorWhite); color: var(--colorBlack);'
+                'background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
             listShowAbbr.title = `STATUS Lista: visivel`
             
             listButton.style.cssText =
@@ -587,7 +717,7 @@ function showTableList() {
         }
         if (isVisibleList !== true) {
             listShow.style.cssText = 
-                'background-color: var(--colorBlack); color: var(--colorWhite);'
+                'background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
             listShowAbbr.title = `STATUS Lista: escondido`
             
             listButton.style.cssText =
@@ -613,8 +743,60 @@ function showTableList() {
             return
         }
     } catch (error) {
-        console.error('ERROR:', error)
-        displayLogOnConsole('ERROR:', error)
+        console.error(`> ⚠️ ERROR showTableList: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR showTableList: ${error.message}`, setLogError)
+    }
+}
+
+function saveConsoleStyles() {
+    try {
+        const consoleElement = document.querySelector('#console')
+        const buttonHideConsole = document.querySelector('#hideConsole')
+        const titleHideConsole = document.querySelector('#titleHide')
+
+        localStorage.setItem('consoleStyles', JSON.stringify({
+            width: consoleElement.style.width,
+            title: titleHideConsole.title,
+            textContent: buttonHideConsole.textContent,
+            isVisibleHideButton: isVisibleHideButton
+        }))
+    } catch (error) {
+        console.error(`> ⚠️ ERROR saveConsoleStyles: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR saveConsoleStyles: ${error.message}`, setLogError)
+    }
+}
+function loadConsoleStyles() {
+    try {
+        const savedStyles = localStorage.getItem('consoleStyles')
+        if (savedStyles) {
+            const parsedStyles = JSON.parse(savedStyles)
+            const consoleElement = document.querySelector('#console')
+            const buttonHideConsole = document.querySelector('#hideConsole')
+            const titleHideConsole = document.querySelector('#titleHide')
+
+            consoleElement.style.width = parsedStyles.width || '30.439vw'
+            titleHideConsole.title = parsedStyles.title || 'Esconder o Terminal'
+            buttonHideConsole.textContent = parsedStyles.textContent || '◀'
+            isVisibleHideButton = parsedStyles.isVisibleHideButton !== undefined ? parsedStyles.isVisibleHideButton : null
+            
+            if (isVisibleHideButton === null) {
+                isVisibleHideButton = true
+                hideConsole()
+            } else {
+                if (isVisibleHideButton) {
+                    consoleElement.style.width = '0'
+                    titleHideConsole.title = 'Mostrar o Terminal'
+                    buttonHideConsole.textContent = '▶'
+                } else {
+                    consoleElement.style.width = '30.439vw'
+                    titleHideConsole.title = 'Esconder o Terminal'
+                    buttonHideConsole.textContent = '◀'
+                }
+            }
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR loadConsoleStyles: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR loadConsoleStyles: ${error.message}`, setLogError)
     }
 }
 let isVisibleHideButton = null
@@ -640,7 +822,7 @@ function hideConsole() {
             titleHideConsole.title = `Mostrar o Terminal`
             buttonHideConsole.textContent = `▶`
             /*buttonHideConsole.cssText =
-                'transform: rotate(180deg); border-left: 2px solid var(--colorBlack); border-right: 0px solid var(--colorBlack);'*/
+                'transform: rotate(180deg) border-left: 2px solid var(--colorBlack) border-right: 0px solid var(--colorBlack)'*/
             isVisibleHideButton = true
             saveConsoleStyles()
             return
@@ -652,138 +834,130 @@ function hideConsole() {
             titleHideConsole.title = `Esconder o Terminal`
             buttonHideConsole.textContent = `◀`
             /*buttonHideConsole.cssText =
-                'transform: rotate(0deg); border-left: 0px solid var(--colorBlack); border-right: 2px solid var(--colorBlack);'*/
+                'transform: rotate(0deg) border-left: 0px solid var(--colorBlack) border-right: 2px solid var(--colorBlack)'*/
             isVisibleHideButton = false
             saveConsoleStyles()
             return
         }
     } catch (error) {
-        console.error('ERROR:', error)
-        displayLogOnConsole('ERROR:', error)
+        console.error(`> ⚠️ ERROR hideConsole: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR hideConsole: ${error.message}`, setLogError)
     }
 }
 
 function emptyList() {
     if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.')
+        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
         return
     }
-    const status = document.querySelector('#status')
-    
-    setTimeout(function() {
-        status.textContent = `Lista de ChatData esta vazia!`
-    }, 400)
+    try {
+        const status = document.querySelector('#status')
+        setTimeout(function() {
+            status.textContent = `Lista de ChatData esta vazia!`
+        }, 400)
+    } catch(error) {
+        console.error(`> ⚠️ ERROR emptyList: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR emptyList: ${error.message}`, setLogError)
+    }
 }
 let fromTerminal = null
 async function eraseDataByName(isFromTerminal, queryFromTerminal) {
     if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.')
+        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
         return
     }
-    let barL = document.querySelector('#barLoading')
-        barL.style.cssText =
-            'width: 100vw; visibility: visible;'
+    try {
+        let barL = document.querySelector('#barLoading')
+            barL.style.cssText =
+                'width: 100vw; visibility: visible;'
 
-    if (isFromTerminal) {
-        let sendErase = document.querySelector('#eraseSearchList')
-            
-        sendErase.style.cssText =
-            'background-color: #2b2b2b; color: var(--colorWhite); border: 1px solid var(--colorWhite); transition: var(--configTrasition01s);'
+        if (isFromTerminal) {
+            const status = document.querySelector('#status')
 
-        setTimeout(function() {
-            sendErase.style.cssText =
-            'background-color: var(--colorInteractionElements); color: var(--colorBlack); border: 1px solid rgba(0, 0, 0, 0); transition: var(--configTrasition03s);'
-        }, 100)
-        
-        const status = document.querySelector('#status')
-
-        try {
-            if (queryFromTerminal === undefined || null) {
-                status.textContent = `Digite algum nome de contato para apaga-lo!`
+            try {
+                if (queryFromTerminal === undefined || null) {
+                    status.textContent = `Digite algum nome de contato para apaga-lo!`
+                    isFromTerminal = false
+                    resetLoadingBar()
+                    return 
+                } else {
+                    let userConfirmation = confirm(`Tem certeza de que deseja apagar o ChatData de ${queryFromTerminal} da lista?\nsera apagada para sempre`)
+                    if (userConfirmation) {
+                        fromTerminal = true
+                        let query = queryFromTerminal
+                        await axios.delete('/erase-name', { params: { query, fromTerminal } })
+                        setTimeout(function() {
+                            status.textContent = `${queryFromTerminal} de ChatData.json foi Apagado!`
+                        }, 300)
+                        
+                        //document.querySelector('#inputList').value = ''
+                        resetLoadingBar()
+                        isFromTerminal = false
+                    } else {
+                        resetLoadingBar()
+                        isFromTerminal = false
+                        return
+                    }
+                }
+            } catch (error) {
+                status.textContent = `ERROR ao buscar Por: ${queryFromTerminal}`
+                console.error(`> ⚠️ ERROR Search for ${queryFromTerminal}: ${error}`)
+                displayLogOnConsole(`> ⚠️ ERROR ao buscar Por ${queryFromTerminal}: ${error.message}`)
+                resetLoadingBar()
                 isFromTerminal = false
+            } finally {
                 resetLoadingBar()
-                return 
-            } else {
-                let userConfirmation = confirm(`Tem certeza de que deseja apagar o ChatData de ${queryFromTerminal} da lista?\nsera apagada para sempre`)
-                if (userConfirmation) {
-                    fromTerminal = true
-                    let query = queryFromTerminal
-                    await axios.delete('/erase-name', { params: { query, fromTerminal } });
-                    setTimeout(function() {
-                        status.textContent = `${queryFromTerminal} de ChatData.json foi Apagado!`
-                    }, 300)
-                    
-                    //document.querySelector('#inputList').value = ''
-                    resetLoadingBar()
-                    isFromTerminal = false
-                } else {
-                    resetLoadingBar()
-                    isFromTerminal = false
-                    return
-                }
+                isFromTerminal = false
             }
-        } catch (error) {
-            status.textContent = `ERROR ao buscar Por: ${queryFromTerminal}`;
-            console.error(error);
-            resetLoadingBar()
-            isFromTerminal = false
-        } finally {
-            resetLoadingBar()
-            isFromTerminal = false
-        }
-    } else {
-        let sendErase = document.querySelector('#eraseSearchList')
-            
-        sendErase.style.cssText =
-            'background-color: #2b2b2b; color: var(--colorWhite); border: 1px solid var(--colorWhite); transition: var(--configTrasition01s);'
+        } else {
+            const status = document.querySelector('#status')
+            const query = document.querySelector('#inputList').value.trim()
 
-        setTimeout(function() {
-            sendErase.style.cssText =
-            'background-color: var(--colorInteractionElements); color: var(--colorBlack); border: 1px solid rgba(0, 0, 0, 0); transition: var(--configTrasition03s);'
-        }, 100)
-        
-        const status = document.querySelector('#status')
-        const query = document.querySelector('#inputList').value.trim();
+            try {
+                if (query === undefined || null) {
+                    status.textContent = `Digite algum nome de contato para apaga-lo!`
+                    resetLoadingBar()
+                    return 
+                } else {
+                    let userConfirmation = confirm(`Tem certeza de que deseja apagar o ChatData de ${query} da lista?\nsera apagada para sempre`)
+                    if (userConfirmation) {
+                        fromTerminal = false
+                        await axios.delete('/erase-name', { params: { query, fromTerminal } })
 
-        try {
-            if (query === undefined || null) {
-                status.textContent = `Digite algum nome de contato para apaga-lo!`
+                        setTimeout(function() {
+                            status.textContent = `${query} de ChatData.json foi Apagado!`
+                        }, 300)
+                        
+                        //document.querySelector('#inputList').value = ''
+                        resetLoadingBar()
+                    } else {
+                        return
+                    }
+                }
+            } catch (error) {
+                status.textContent = `ERROR ao buscar Por: ${query}`
+                console.error(`> ⚠️ ERROR Search for ${query}: ${error}`)
+                displayLogOnConsole(`> ⚠️ ERROR ao buscar Por ${query}: ${error.message}`)
                 resetLoadingBar()
-                return 
-            } else {
-                let userConfirmation = confirm(`Tem certeza de que deseja apagar o ChatData de ${query} da lista?\nsera apagada para sempre`)
-                if (userConfirmation) {
-                    fromTerminal = false
-                    await axios.delete('/erase-name', { params: { query, fromTerminal } });
-
-                    setTimeout(function() {
-                        status.textContent = `${query} de ChatData.json foi Apagado!`
-                    }, 300)
-                    
-                    //document.querySelector('#inputList').value = ''
-                    resetLoadingBar()
-                } else {
-                    return
-                }
+            } finally {
+                resetLoadingBar()
             }
-        } catch (error) {
-            status.textContent = `ERROR ao buscar Por: ${query}`;
-            console.error(error);
-            resetLoadingBar()
-        } finally {
-            resetLoadingBar()
         }
-    }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR eraseDataByName: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR eraseDataByName: ${error.message}`, setLogError)
+        resetLoadingBar()
+    } 
 }
 function allEraseList() {
     if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.')
+        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
         return
     }
-    let barL = document.querySelector('#barLoading')
-    
-    const status = document.querySelector('#status')
     try {
+        let barL = document.querySelector('#barLoading')
+    
+        const status = document.querySelector('#status')
         let userConfirmation = confirm('Tem certeza de que deseja apagar a lista?\nsera apagada para sempre.')
 
         if (userConfirmation) {
@@ -801,51 +975,33 @@ function allEraseList() {
         
         resetLoadingBar()
     } catch (error) {
-        status.textContent = `ERROR ao apagar Todo o ChatData!`
-        displayLogOnConsole('ERROR: ' + error.message);
-
+        //status.textContent = `ERROR ao apagar Todo o ChatData!`
+        console.error(`> ⚠️ ERROR allEraseList: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR allEraseList: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
 async function searchNameList(isFromTerminal, dataFromTerminal, queryFromTerminal) {
     if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.')
+        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
         return
     }
-    let barL = document.querySelector('#barLoading')
-        barL.style.cssText =
-            'width: 100vw; visibility: visible;'
+    try {
+        let barL = document.querySelector('#barLoading')
+            barL.style.cssText =
+                'width: 100vw; visibility: visible;'
 
-    if (isFromTerminal) {
-        const status = document.querySelector('#status')
-        let list = document.querySelector('table tbody')
-        let counter = document.querySelector('thead > tr > td ')
+        if (isFromTerminal) {
+            const status = document.querySelector('#status')
+            let list = document.querySelector('table tbody')
+            let counter = document.querySelector('thead > tr > td ')
 
-        try {
-            if (dataFromTerminal === true) {
-                emptyList()
+            try {
+                if (dataFromTerminal === true) {
+                    emptyList()
 
-                list.innerHTML = ''
-                    
-                counter.textContent = `0`
-                
-                let row = list.insertRow(-1)
-                
-                let cell1 = row.insertCell(0)
-                cell1.textContent = 'N/A'
-                
-                let cell2 = row.insertCell(1)
-                cell2.textContent = 'N/A'
-                
-                resetLoadingBar()
-                isFromTerminal = false
-                return
-            } else {
-                if (dataFromTerminal.length === 0) {
-                    status.textContent = `${queryFromTerminal} Não econtrado em ChatData.json!`
-                    
                     list.innerHTML = ''
-                    
+                        
                     counter.textContent = `0`
                     
                     let row = list.insertRow(-1)
@@ -860,79 +1016,8 @@ async function searchNameList(isFromTerminal, dataFromTerminal, queryFromTermina
                     isFromTerminal = false
                     return
                 } else {
-                    status.textContent = `Listando ${queryFromTerminal}...`
-                    
-                    list.innerHTML = ''
-                    
-                    counter.textContent = `${dataFromTerminal.length}`
-                    dataFromTerminal.forEach(entry => {
-                        let row = list.insertRow(-1)
-                        
-                        let cell1 = row.insertCell(0)
-                        cell1.textContent = entry.chatId
-                        
-                        let cell2 = row.insertCell(1)
-                        cell2.textContent = entry.name
-                        
-                    })
-                    status.textContent = `${queryFromTerminal} Listado!`
-                }   
-                isFromTerminal = false
-                //document.querySelector('#inputList').value = ''
-                resetLoadingBar()
-            }
-        } catch (error) {
-            status.textContent = `ERROR ao buscar Por: ${queryFromTerminal}`;
-            console.error(error);
-            resetLoadingBar()
-            isFromTerminal = false
-        } finally {
-            resetLoadingBar()
-            isFromTerminal = false
-        }
-    } else {
-        let sendSearch = document.querySelector('#sendSearchList')
-        
-        sendSearch.style.cssText =
-            'background-color: #2b2b2b; color: var(--colorWhite); border: 1px solid var(--colorWhite); transition: var(--configTrasition01s);'
-
-        setTimeout(function() {
-            sendSearch.style.cssText =
-            'background-color: var(--colorInteractionElements); color: var(--colorBlack); border: 1px solid rgba(0, 0, 0, 0); transition: var(--configTrasition03s);'
-        }, 100)
-        
-        const status = document.querySelector('#status')
-        let list = document.querySelector('table tbody')
-        let counter = document.querySelector('thead > tr > td ')
-        const query = document.querySelector('#inputList').value
-
-        try {
-            if (query === undefined || null) {
-                status.textContent = `Digite algum nome de contato para pesquisa-lo na lista!`
-                return
-            } else {
-                const response = await axios.get('/search-list', { params: { query } });
-                const data = response.data;
-                if (data === true) {
-                    emptyList()
-    
-                    list.innerHTML = ''
-                        
-                    counter.textContent = `0`
-                    
-                    let row = list.insertRow(-1)
-                    
-                    let cell1 = row.insertCell(0)
-                    cell1.textContent = 'N/A'
-                    
-                    let cell2 = row.insertCell(1)
-                    cell2.textContent = 'N/A'
-                    
-                    resetLoadingBar()
-                    return
-                } else {
-                    if (data.length === 0) {
-                        status.textContent = `${query} Não econtrado em ChatData.json!`
+                    if (dataFromTerminal.length === 0) {
+                        status.textContent = `${queryFromTerminal} Não econtrado em ChatData.json!`
                         
                         list.innerHTML = ''
                         
@@ -947,14 +1032,15 @@ async function searchNameList(isFromTerminal, dataFromTerminal, queryFromTermina
                         cell2.textContent = 'N/A'
                         
                         resetLoadingBar()
+                        isFromTerminal = false
                         return
                     } else {
-                        status.textContent = `Listando ${query}...`
+                        status.textContent = `Listando ${queryFromTerminal}...`
                         
                         list.innerHTML = ''
                         
-                        counter.textContent = `${data.length}`
-                        data.forEach(entry => {
+                        counter.textContent = `${dataFromTerminal.length}`
+                        dataFromTerminal.forEach(entry => {
                             let row = list.insertRow(-1)
                             
                             let cell1 = row.insertCell(0)
@@ -964,32 +1050,128 @@ async function searchNameList(isFromTerminal, dataFromTerminal, queryFromTermina
                             cell2.textContent = entry.name
                             
                         })
-                        status.textContent = `${query} Listado!`
-                    }
+                        status.textContent = `${queryFromTerminal} Listado!`
+                    }   
+                    isFromTerminal = false
+                    //document.querySelector('#inputList').value = ''
+                    resetLoadingBar()
                 }
-                //document.querySelector('#inputList').value = ''
+            } catch (error) {
+                status.textContent = `ERROR ao buscar Por: ${queryFromTerminal}`
+                console.error(`> ⚠️ ERROR Search for ${queryFromTerminal}: ${error}`)
+                displayLogOnConsole(`> ⚠️ ERROR ao buscar Por ${queryFromTerminal}: ${error.message}`)
                 resetLoadingBar()
-            }   
-        } catch (error) {
-            status.textContent = `ERROR ao buscar Por: ${query}`;
-            console.error(error);
-            resetLoadingBar()
-        } finally {
-            resetLoadingBar()
+                isFromTerminal = false
+            } finally {
+                resetLoadingBar()
+                isFromTerminal = false
+            }
+        } else {
+            let sendSearch = document.querySelector('#sendSearchList')
+            
+            sendSearch.style.cssText =
+                'background-color: #2b2b2b; color: var(--colorWhite); border: 1px solid var(--colorWhite); transition: var(--configTrasition01s);'
+
+            setTimeout(function() {
+                sendSearch.style.cssText =
+                'background-color: var(--colorInteractionElements); color: var(--colorBlack); border: 1px solid rgba(0, 0, 0, 0); transition: var(--configTrasition03s);'
+            }, 100)
+            
+            const status = document.querySelector('#status')
+            let list = document.querySelector('table tbody')
+            let counter = document.querySelector('thead > tr > td ')
+            const query = document.querySelector('#inputList').value
+
+            try {
+                if (query === undefined || null) {
+                    status.textContent = `Digite algum nome de contato para pesquisa-lo na lista!`
+                    return
+                } else {
+                    const response = await axios.get('/search-list', { params: { query } })
+                    const data = response.data
+                    if (data === true) {
+                        emptyList()
+        
+                        list.innerHTML = ''
+                            
+                        counter.textContent = `0`
+                        
+                        let row = list.insertRow(-1)
+                        
+                        let cell1 = row.insertCell(0)
+                        cell1.textContent = 'N/A'
+                        
+                        let cell2 = row.insertCell(1)
+                        cell2.textContent = 'N/A'
+                        
+                        resetLoadingBar()
+                        return
+                    } else {
+                        if (data.length === 0) {
+                            status.textContent = `${query} Não econtrado em ChatData.json!`
+                            
+                            list.innerHTML = ''
+                            
+                            counter.textContent = `0`
+                            
+                            let row = list.insertRow(-1)
+                            
+                            let cell1 = row.insertCell(0)
+                            cell1.textContent = 'N/A'
+                            
+                            let cell2 = row.insertCell(1)
+                            cell2.textContent = 'N/A'
+                            
+                            resetLoadingBar()
+                            return
+                        } else {
+                            status.textContent = `Listando ${query}...`
+                            
+                            list.innerHTML = ''
+                            
+                            counter.textContent = `${data.length}`
+                            data.forEach(entry => {
+                                let row = list.insertRow(-1)
+                                
+                                let cell1 = row.insertCell(0)
+                                cell1.textContent = entry.chatId
+                                
+                                let cell2 = row.insertCell(1)
+                                cell2.textContent = entry.name
+                                
+                            })
+                            status.textContent = `${query} Listado!`
+                        }
+                    }
+                    //document.querySelector('#inputList').value = ''
+                    resetLoadingBar()
+                }   
+            } catch (error) {
+                status.textContent = `ERROR ao buscar Por: ${query}`
+                console.error(`> ⚠️ ERROR Search for ${query}: ${error}`)
+                displayLogOnConsole(`> ⚠️ ERROR ao buscar Por ${query}: ${error.message}`)
+                resetLoadingBar()
+            } finally {
+                resetLoadingBar()
+            }
         }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR searchNameList: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR searchNameList: ${error.message}`, setLogError)
+        resetLoadingBar()
     }
 }
 async function listData(data) {
+    if (Is_Not_Ready) {
+        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        return
+    }
     try {
-        if (Is_Not_Ready) {
-            displayLogOnConsole('>  ℹ️ Client not Ready.')
-            return
-        }
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
-        /*const response = await axios.get('/list');
-        const data = response.data;*/
+        /*const response = await axios.get('/list')
+        const data = response.data*/
 
         const status = document.querySelector('#status')
         let list = document.querySelector('table tbody')
@@ -1031,7 +1213,7 @@ async function listData(data) {
                 /*let bList = document.querySelector('#erase')
                 
                 bList.style.cssText =
-                'opacity: 1; pointer-events: unset;'*/
+                'opacity: 1 pointer-events: unset;'*/
                 
             }
             //status.textContent = `Todo ChatData de ChatData.json Printado!`
@@ -1039,16 +1221,17 @@ async function listData(data) {
             resetLoadingBar()
         }
     } catch (error) {
-        displayLogOnConsole('> ⚠️ ERRORa: ' + error.message);
+        console.error(`> ⚠️ ERROR listData: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR listData: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
 async function listDataButton() {
+    if (Is_Not_Ready) {
+        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        return
+    }
     try {
-        if (Is_Not_Ready) {
-            displayLogOnConsole('>  ℹ️ Client not Ready.')
-            return
-        }
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -1058,12 +1241,12 @@ async function listDataButton() {
         if (isVisibleList === null) {
             isVisibleList = true
             listShow.style.cssText = 
-                'background-color: var(--colorWhite); color: var(--colorBlack);'
+                'background-color: var(--colorWhite); color: var(--colorBlack); pointer-events: auto; opacity: 1;'
             listShowAbbr.title = `STATUS Lista: visivel`
         } else if (isVisibleList = true) {
             isVisibleList = true
             listShow.style.cssText = 
-                'background-color: var(--colorWhite); color: var(--colorBlack);'
+                'background-color: var(--colorWhite); color: var(--colorBlack); pointer-events: auto; opacity: 1;'
             listShowAbbr.title = `STATUS Lista: visivel`
         }
         
@@ -1086,8 +1269,8 @@ async function listDataButton() {
         let list = document.querySelector('table tbody')
         let counter = document.querySelector('thead > tr > td ')
         
-        const response = await axios.get('/list');
-        const data = response.data;
+        const response = await axios.get('/list')
+        const data = response.data
         if (data.length === 0) {
             status.textContent = `ChatData.json esta vazio!`
             
@@ -1124,7 +1307,7 @@ async function listDataButton() {
                 /*let bList = document.querySelector('#erase')
                 
                 bList.style.cssText =
-                'opacity: 1; pointer-events: unset;'*/
+                'opacity: 1 pointer-events: unset'*/
                 
             }
             status.textContent = `Todo ChatData de ChatData.json Printado!`
@@ -1132,14 +1315,15 @@ async function listDataButton() {
             resetLoadingBar()
         }
     } catch (error) {
-        displayLogOnConsole('> ⚠️ ERROR: ' + error.message);
+        console.error(`> ⚠️ ERROR listDataButton: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR listDataButton: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
 
 async function sendCommand() {
     try {
-        let commandInput = document.querySelector('#commandInput').value.trim();
+        let commandInput = document.querySelector('#commandInput').value.trim()
         let commandSend = document.querySelector('#commandSend')
 
         commandSend.style.cssText =
@@ -1152,12 +1336,12 @@ async function sendCommand() {
             headers: {
                 'Content-Type': 'application/json',
             }
-        });
+        })
         /*await axios.post('/command', { command: commandInput }, {
             headers: {
                 'Content-Type': 'application/json',
             }
-        });*/
+        })*/
         
         setTimeout(function() {
             commandSend.style.cssText =
@@ -1166,53 +1350,66 @@ async function sendCommand() {
         
         document.querySelector('#commandInput').value = ''
     } catch (error) {
-        console.error('ERROR ao enviar comando:', error);
+        console.error(`> ⚠️ ERROR sendCommand: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR sendCommand: ${error.message}`, setLogError)
     }
 }
 let isExceeds = true 
-function Counter_Exceeds(QR_Counter_Exceeds) {
+function counterExceeds(QR_Counter_Exceeds) {
     if (isExceeds) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.')
+        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
         return
     }
-    isExceeds = true
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
 
-    const mainContent = document.querySelector('#content')
-    mainContent.style.cssText =
-        'display: inline-block;'
+        isExceeds = true
 
-    const status = document.querySelector('#status')
-    status.textContent = `❌ Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!.`
-    /*setTimeout(function() {
-        status.textContent = `Tente novamente!`
-    }, 2000)*/
-    let buttonStart = document.querySelector('#start')
-    buttonStart.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+        const mainContent = document.querySelector('#content')
+        mainContent.style.cssText =
+            'display: inline-block;'
+
+        const status = document.querySelector('#status')
+        status.textContent = `❌ Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!.`
+        /*setTimeout(function() {
+            status.textContent = `Tente novamente!`
+        }, 2000)*/
+        let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
-            'display: inline-block; opacity: 1;'
-    }, 100)
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            buttonStart.style.cssText =
+                'display: inline-block; opacity: 1;'
+        }, 100)
 
-    Is_Started = false
-    isQrOff = true
+        Is_Started = false
+        isQrOff = true
 
-    document.querySelector('#qrCode').innerText = ''
-    const codeQr = document.querySelector('#qrCode')
-    codeQr.style.cssText =
-        'display: inline-block; opacity: 0;'
-    setTimeout(function() {
+        document.querySelector('#qrCode').innerText = ''
+        const codeQr = document.querySelector('#qrCode')
         codeQr.style.cssText =
-        'display: none; opacity: 0;'
-    }, 300)
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            codeQr.style.cssText =
+            'display: none; opacity: 0;'
+        }, 300)
+
+        resetLoadingBar()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR counterExceeds: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR counterExceeds: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
 }
 let isQrOff = true
 async function generateQrCode(QR_Counter) {
+    if (isQrOff) {
+        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        return
+    }
     try {
-        if (isQrOff) {
-            displayLogOnConsole('>  ℹ️ Client not Ready.')
-            return
-        }
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -1236,7 +1433,7 @@ async function generateQrCode(QR_Counter) {
         
         axios.get('/qr')
         .then(response => {
-            const { qrString, Is_Conected } = response.data;
+            const { qrString, Is_Conected } = response.data
 
             if (Is_Conected) {
                 setTimeout(function() {
@@ -1268,10 +1465,9 @@ async function generateQrCode(QR_Counter) {
             }
         })
         .catch(error => {
-            console.error('ERROR fetching QR code:', error)
-            displayLogOnConsole('ERROR fetching QR code:', error)
-            status.textContent = `ERROR Gerando Qr-Code!`
-            QR_Counter = 0
+            console.error(`> ⚠️ ERROR buscando Qr-Code: ${error}`)
+            displayLogOnConsole(`> ⚠️ ERROR buscando Qr-Code: ${error.message}`, setLogError)
+            status.textContent = `ERROR buscando Qr-Code!`
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 0;'
@@ -1292,8 +1488,8 @@ async function generateQrCode(QR_Counter) {
         })
     } catch (error) {
         const status = document.querySelector('#status')
-        displayLogOnConsole('ERROR fetching Qr-Code:', error)
-        console.error('ERROR fetching QR code:', error)
+        console.error(`> ⚠️ ERROR generateQrCode: ${error}`)
+        displayLogOnConsole(`> ⚠️ ERROR generateQrCode: ${error.message}`, setLogError)
         status.textContent = `ERROR Gerando Qr-Code!`
         let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
@@ -1318,7 +1514,7 @@ async function generateQrCode(QR_Counter) {
 let Is_Started = false
 async function startBot() {
     if (Is_Started) {
-        displayLogOnConsole(`> ⚠️ Bot ja esta Iniciado`)
+        displayLogOnConsole(`> ⚠️ Bot ja esta Iniciado`, setLogError)
         return        
     } else {
         try {
@@ -1326,10 +1522,10 @@ async function startBot() {
             barL.style.cssText =
                 'width: 100vw; visibility: visible;'
 
-            displayLogOnConsole(`>  ℹ️ ${Name_Software} = v${Version_}`)
+            displayLogOnConsole(`>  ℹ️  ${Name_Software} = v${Version_}`)
 
             if (isDisconected) {
-                reconnectConsole()
+                reconnectWebSocket()
 
                 isDisconected = false
             }
@@ -1360,7 +1556,7 @@ async function startBot() {
             const response = await axios.post('/start-bot')
             const data = response.data
             if (data.success) {
-                status.textContent = `Iniciou o Bot Corretamente!`
+                //status.textContent = `Iniciou o Bot Corretamente!`
                 displayLogOnConsole(`> ✅ Iniciou o Bot Corretamente`)
                 
                 Is_Started = true
@@ -1373,8 +1569,8 @@ async function startBot() {
                         'display: inline-block; opacity: 1;'
                 }, 100)
 
-                status.textContent = `Falhou ao iniciar o Bot!`
-                displayLogOnConsole(`> ⚠️ Falhou ao iniciar o Bot`)
+                status.textContent = `ERROR ao iniciar o Bot!`
+                displayLogOnConsole(`> ⚠️ ERROR ao iniciar o Bot`, setLogError)
                 
                 Is_Started = false
                 isQrOff = true
@@ -1383,8 +1579,8 @@ async function startBot() {
             }
         } catch (error) {
             const status = document.querySelector('#status')
-            console.error('ERROR starting Bot:', error)
-            displayLogOnConsole('ERROR starting Bot:', error)
+            console.error(`> ⚠️ ERROR startBot: ${error}`)
+            displayLogOnConsole(`> ⚠️ ERROR startBot: ${error.message}`, setLogError)
             status.textContent = `ERROR iniciando Bot!`
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
@@ -1400,7 +1596,7 @@ async function startBot() {
                 'display: inline-block; opacity: 0;'
             setTimeout(function() {
                 codeQr.style.cssText =
-                'display: none; opacity: 0;'
+                    'display: none; opacity: 0;'
             }, 300)
             isQrOff = true
             resetLoadingBar()
@@ -1411,17 +1607,13 @@ async function startBot() {
 //tarefas bot frontend 
 //em desenvolvimento...
     //ajustar o status para guardar sempre no terminal tudo taligado? salvo, que ja esta so fazer certinho as msgs iguais
-    //erros e statuses deixar com mais detalhes no terminal do console f12 ai ja tudo do backend e do front end no terminal do site
-    //melhoras os logs de conexao do websocket backend e frontend
-    //arrumar erro de mandar nada no input da lista e dar msgs de erros n desejados
-    //melhorar o display log on console do site para modificar a cor caso seja um log de error
-    //melhorar trazer os logs do backend a dedo e trazer o efeito de error tbm caso for um log disso
     //adicionar forma de clear no terminal do site
-
+    
 //a desenvolver...
+    //arrumar erro de mandar nada no input da lista e dar msgs de erros n desejados
+    //melhorar a logica de usar a mesma funcao pra duas coisas
+    //melhorar o reconhecimento do arquivo json estar vazio e as acoes sobre, status e tals
     //organizar a ordem de como as funcoes sao chamadas pra um melhor desempenho e sentido logico
     //juntar as funcoes listData(data) listDataButton() em uma so na listData(data)
-    //melhorar a logica de usar a mesma funcao pra duas coisas
     //melhorar o problema de de vez em quando o a barra de loading do start n funciona direito
-    //melhorar o reconhecimento do arquivo json estar vazio e as acoes sobre, status e tals
     //arrumar meios de as coisas serem automaticas funcoes acionarem de acordo com certar coisas inves de prever todo cenario possivel em varias funcoes
