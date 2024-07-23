@@ -62,9 +62,50 @@ main {
     box-sizing: border-box;
     z-index: 8000;
 }
+#functionsConsole {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: #2b2b2b00;
+}
+#clearConsole {
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+    padding: 7px;
+    margin: 0vw 1vw 0vw 1vw;
+    font-size: 1vw;
+    font-family: var(--fontMonoSerif);
+    font-weight: bold;
+    z-index: 8000;
+    transition: var(--configTrasition03s);
+}
+#clearConsole:hover {
+    background-color: var(--colorRed);
+    border: 2px solid var(--colorRed);
+}
+#clearConsole:active {
+    background-color: var(--colorRed);
+    color: var(--colorBlack);
+    border-radius: 0px 0px 0px 0px;
+    border: 2px solid rgba(255, 255, 255, 0);
+    outline: 2px solid var(--colorRed);
+    transition: 0s;
+}
+#clearConsole:focus {
+    border: 2px solid rgba(255, 255, 255, 0);
+    border: 2px solid var(--colorRed);
+}
 #console {
     display: flex;
     flex-direction: column;
+    background-color: #2b2b2b;
     /*width: 44.227vw;*/
     width: 30.439vw;
     /*width: 100vw;*/
@@ -80,6 +121,7 @@ main {
 #divLog {
     background-color: #2b2b2b;
     /*border-top: 1px solid var(--colorWhite);*/
+    border-top: 1px solid var(--colorWhite);
     border-right: 1px solid var(--colorWhite);
     border-bottom: 1px solid var(--colorWhite);
     padding: 30px 15px 30px 15px;
@@ -406,7 +448,6 @@ main {
     border: 2px solid var(--colorBlack);
     outline: 2px solid rgba(255, 255, 255, 0);
     padding: 0px 17px 3px 17px;
-    margin-bottom: 10px;
     font-size: 3vw;
     word-break: break-word;
     cursor: pointer;
@@ -441,6 +482,7 @@ main {
     border-right: 1px solid var(--colorBlack);
     border-left: 1px solid var(--colorBlack);
     border-bottom: 1px solid var(--colorBlack);
+    margin-top: 10px;
     margin-bottom: 10px;
     opacity: 0;
 }

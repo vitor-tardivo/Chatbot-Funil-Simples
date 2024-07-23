@@ -34,6 +34,9 @@
     <main>
         <article id="articleConsole">
             <div id="console">
+                <div id="functionsConsole">
+                    <abbr title="clear/cls-Console" id="abbrClear"><button id="clearConsole" onclick="clsConsole()">C</button></abbr>
+                </div>
                 
                 <div id="divLog">
                     <abbr title="Terminal"><div id="log">
@@ -79,7 +82,7 @@
                 </div>
 
                 <div class="divs" id="divButtonList">
-                    <abbr title="Lista todos os ChatData"><span id="list" onclick="listDataButton()" ><stronger>LISTAR</stronger></span></abbr><!-- BUTTON LIST CHAT DATA --> 
+                    <abbr title="Lista todos os ChatData"><span id="list" onclick="allPrint(true, false)" ><stronger>LISTAR</stronger></span></abbr><!-- BUTTON LIST CHAT DATA --> 
                 </div>
 
                 <div id="listChatData">
@@ -90,10 +93,10 @@
                         </div>
 
                         <abbr title="Pesquisa um nome de contato"><div id="divSendList">
-                            <button id="sendSearchList" onclick="searchNameList()">></button>
+                            <button id="sendSearchList" onclick="searchChatDataBySearch()">></button>
                         </div></abbr>
                         <abbr title="Apaga um ChatData pelo Nome"><div id="divEraseSearchList">
-                            <button id="eraseSearchList" onclick="eraseDataByName()">></button>
+                            <button id="eraseSearchList" onclick="eraseChatDataByQuery(false, null)">></button>
                         </div></abbr>
                     </div>
                     <div class="divs">
@@ -121,7 +124,7 @@
                     </div>
                 </div>
                 <div class="divs" id="divButtonErase">
-                    <abbr title="Apaga todos os itens da lista"><button id="erase" onclick="allEraseList()">APAGAR</button></abbr><!-- BUTTON ERASE ITENS OF THE LIST -->
+                    <abbr title="Apaga todos os itens da lista"><button id="erase" onclick="allErase()">APAGAR</button></abbr><!-- BUTTON ERASE ITENS OF THE LIST -->
                 </div>
             </div>
 

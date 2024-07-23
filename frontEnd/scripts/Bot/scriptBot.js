@@ -8,7 +8,7 @@ function isMobile() {//IDENTIFY IF THE USER IS FROM A PHONE
         return /Mobi|Android|iPhone|iPod|iPad|Windows\sPhone|Windows\sCE|BlackBerry|BB10|IEMobile|Opera\sMini|Mobile\sSafari|webOS|Mobile|Tablet|CriOS/i.test(userAgent)
     } catch(error) {
         console.error(`> ⚠️ ERROR isMobile: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR isMobile: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR isMobile: ${error.message}`, setLogError)
     }
 }
 
@@ -17,7 +17,7 @@ window.onload = function(event) {
         axios.get('/reload')
     } catch(error) {
         console.error(`> ⚠️ ERROR onload: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR onload: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR onload: ${error.message}`, setLogError)
     }
 }
 window.onbeforeunload = function(event) {
@@ -25,11 +25,9 @@ window.onbeforeunload = function(event) {
         event.preventDefault()
     } catch(error) {
         console.error(`> ⚠️ ERROR onbeforeunload: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR onbeforeunload: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR onbeforeunload: ${error.message}`, setLogError)
     }
 }
-
-let wss = null
 document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA QUERY PHONE
     try {
         if (isMobile()) {
@@ -101,26 +99,11 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         loadConsoleStyles()
     } catch (error) {
         console.error(`> ⚠️ ERROR DOMContentLoaded: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR DOMContentLoaded: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR DOMContentLoaded: ${error.message}`, setLogError)
     }
 })
 
-//Patterns for Miliseconds times:
-// Formated= 1 \ * 24 * 60 * 60 * 1000 = 1-Day
-// Formated= 1 \ * 60 * 60 * 1000 = 1-Hour
-// Formated= 1 \ * 60 * 1000 = 1-Minute
-// Formated= 1 \ * 1000 = 1-Second
-function sleep(ms) {
-    try {
-        return new Promise((resolve) => setTimeout(resolve, ms))
-    } catch(error) {
-        console.error(`> ⚠️ ERROR sleep: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR sleep: ${error.message}`, setLogError)
-    }
-}
-
-let setLogError = true
-function displayLogOnConsole(message, setLogError) {
+function displayOnConsole(message, setLogError) {
     try {
         const logElement = document.createElement('div')
         logElement.textContent = `${message}`
@@ -131,10 +114,42 @@ function displayLogOnConsole(message, setLogError) {
         document.querySelector('#log').appendChild(logElement)
         autoScroll()
     } catch(error) {
-        console.error(`> ⚠️ ERROR displayLogOnConsole: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR displayLogOnConsole: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR displayOnConsole: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR displayOnConsole: ${error.message}`, setLogError)
     }
 }
+
+let wss = null
+
+let setLogError = true
+
+let isDisconected = false
+
+let isFromTerminal = false
+
+let Is_Not_Ready = true
+
+let isVisibleList = null
+
+let isExceeds = true 
+
+let isQrOff = true
+
+let Is_Started = false
+
+function sleep(ms) {
+    try {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    } catch(error) {
+        console.error(`> ⚠️ ERROR sleep: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR sleep: ${error.message}`, setLogError)
+    }
+}
+//Patterns for Miliseconds times:
+// Formated= 1 \ * 24 * 60 * 60 * 1000 = 1-Day
+// Formated= 1 \ * 60 * 60 * 1000 = 1-Hour
+// Formated= 1 \ * 60 * 1000 = 1-Minute
+// Formated= 1 \ * 1000 = 1-Second
 
 /*window.onscroll = function() { scrollFunction() }// CALL FUNCTION FOR HEADER AND FOOTER CUSTOMS
 
@@ -192,11 +207,10 @@ function autoScroll() {
         requestAnimationFrame(scrollStep)
     } catch(error) {
         console.error(`> ⚠️ ERROR autoScroll: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR autoSroll: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR autoSroll: ${error.message}`, setLogError)
     }
 }
 
-let isDisconected = false
 function reconnectWebSocket() {
     try {
         let barL = document.querySelector('#barLoading')
@@ -220,11 +234,10 @@ function reconnectWebSocket() {
 
     } catch (error) {
         console.error(`> ⚠️ ERRO reconnectConsole: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR reconnectConsole: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR reconnectConsole: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
-let isFromTerminal = false
 async function webSocket() {
     try {
         const reloadButton = document.querySelector('#reload')
@@ -232,7 +245,7 @@ async function webSocket() {
 
         wss.onopen = function(event) {
             console.log(`> ✅ Conectado Client ao WebSocket: `, event)
-            displayLogOnConsole(`> ✅ Conectado Client ao WebSocket: ${event}`)
+            displayOnConsole(`> ✅ Conectado Client ao WebSocket: ${event}`)
             reloadButton.style.cssText =
                 'color: var(--colorContrast); background-color: var(--colorGreen); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
             reloadAbbr.title = `WebSocket STATUS: conectado`
@@ -247,7 +260,7 @@ async function webSocket() {
         }
         wss.onclose = function(event) {
             console.log(`> ⚠️ Desconectado Client do WebSocket: `, event)
-            displayLogOnConsole(`> ⚠️ Desconectado Client do WebSocket: ${event}`, setLogError)
+            displayOnConsole(`> ⚠️ Desconectado Client do WebSocket: ${event}`, setLogError)
             reloadButton.style.cssText =
                 'color: var(--colorContrast); background-color: var(--colorOrange); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
             reloadAbbr.title = `WebSocket STATUS: desconectou`
@@ -262,7 +275,7 @@ async function webSocket() {
         }
         wss.onerror = function(event) {
             console.error(`> ❌ ERROR ao reconectar Client ao WebSocket(front): `, event)
-            displayLogOnConsole(`> ❌ ERROR ao reconectar Client ao WebSocket(front): ${event}`, setLogError)
+            displayOnConsole(`> ❌ ERROR ao reconectar Client ao WebSocket(front): ${event}`, setLogError)
             setTimeout(function() {
                 reloadButton.style.cssText =
                     'color: var(--colorContrast); background-color: var(-colorRed); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
@@ -281,18 +294,18 @@ async function webSocket() {
 
         wss.onmessage = function(event) {
             const dataWebSocket = JSON.parse(event.data)
-            handleWebSocketMessage(dataWebSocket)
+            handleWebSocketData(dataWebSocket)
         }
         
         resetLoadingBar()
     } catch(error) {
         console.error(`> ⚠️ ERROR webSocket: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR webSocket: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR webSocket: ${error.message}`, setLogError)
         reconectAttempts = 0
         resetLoadingBar()
     }
 }
-function handleWebSocketMessage(dataWebSocket) {
+function handleWebSocketData(dataWebSocket) {
     switch (dataWebSocket.type) {
         case 'exit':
             isReconectionOff = true
@@ -300,7 +313,7 @@ function handleWebSocketMessage(dataWebSocket) {
             break
         case 'log':
             //console.log(logData.message)
-            displayLogOnConsole(dataWebSocket.message)
+            displayOnConsole(dataWebSocket.message)
             /*const logElement = document.createElement('div')
             logElement.textContent = logData.message
             document.querySelector('#log').appendChild(logElement)
@@ -310,9 +323,22 @@ function handleWebSocketMessage(dataWebSocket) {
             const statuses = dataWebSocket.data
             statusesWs(statuses)
             break
-        case 'list':
-            const data = dataWebSocket.data
-            listData(data)
+        case 'all-print':
+            /*const Sucess = dataWebSocket.sucess
+            const Is_Empty = dataWebSocket.empty
+            const ChatData = dataWebSocket.chatdata*/
+            const isFromButton = false
+            //allPrint(Sucess, Is_Empty, ChatData, isFromButton, Is_From_All_Erase)
+            allPrint(isFromButton, false)
+            break
+        case 'all-print-auxiliar':
+            /*const Sucess = dataWebSocket.sucess
+            const Is_Empty = dataWebSocket.empty
+            const ChatData = dataWebSocket.chatdata*/
+            const isFromButton2 = false
+            const Is_From_All_Erase = dataWebSocket.isallerase
+            //allPrint(Sucess, Is_Empty, ChatData, isFromButton, Is_From_All_Erase)
+            allPrint(isFromButton2, Is_From_All_Erase)
             break
         case 'start':
             startBot();
@@ -338,29 +364,28 @@ function handleWebSocketMessage(dataWebSocket) {
         case 'ready':
             ready();
             break
-        case 'print':
-            listDataButton();
-            break
-        case 'empty-list':
-            emptyList();
-            break
-        case 'search-list':
-            const Parse_Data = dataWebSocket.data
-            const searchList = dataWebSocket.data2.trim()
-            isFromTerminal = true
-            searchNameList(isFromTerminal, Parse_Data, searchList)
+        case 'search-search':
+            //const Parse_Data = dataWebSocket.data
+            const Search = dataWebSocket.search.trim()
+            const isFromTerminal = true
+            searchChatDataBySearch(isFromTerminal, Search)
+            //searchChatDataBySearch(isFromTerminal, Parse_Data, Search)
             break
         case 'all-erase':
-            allEraseList();
+            /*const Sucess2 = dataWebSocket.sucess
+            const Is_Empty2 = dataWebSocket.empty
+            const isFromTerminal2 = true*/
+            //allErase(Sucess2, Is_Empty2, isFromTerminal2)
+            allErase()
             break
-        case 'name-erase':
-            const searchErase = dataWebSocket.data
-            isFromTerminal = true
-            eraseDataByName(isFromTerminal, searchErase)
+        case 'erase-query':
+            const search2 = dataWebSocket.Search.trim()
+            const isFromTerminal3 = true
+            eraseChatDataByQuery(isFromTerminal3, search2)
             break
         case 'error':
             console.error(`> ⚠️ ERROR Return WebSocket Conection: ${dataWebSocket.message}`)
-            displayLogOnConsole(`> ⚠️ ERROR Retorno da Conexão WebSocket: ${dataWebSocket.message}`, setLogError)
+            displayOnConsole(`> ⚠️ ERROR Retorno da Conexão WebSocket: ${dataWebSocket.message}`, setLogError)
             break
     }
 }
@@ -370,7 +395,7 @@ function statusesWs(statuses) {
         //let reloadAbbr = document.querySelector('#abbrReload')
         if (statuses) {
             //console.log(`> ✅ Conectado Client ao WebSocket`)
-            /*displayLogOnConsole(`> ✅ Conectado Client ao WebSocket(true)`)
+            /*displayOnConsole(`> ✅ Conectado Client ao WebSocket(true)`)
             reloadButton.style.cssText =
                 'color: var(--colorContrast); background-color: var(--colorGreen); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
             reloadAbbr.title = `WebSocket STATUS: conectado`
@@ -384,7 +409,7 @@ function statusesWs(statuses) {
             resetLoadingBar()*/
         } else {
             //console.log(`> ⚠️ Desconectado Client do WebSocket`)
-            /*displayLogOnConsole(`> ⚠️ Desconectado Client do WebSocket(true)`, setLogError)
+            /*displayOnConsole(`> ⚠️ Desconectado Client do WebSocket(true)`, setLogError)
             reloadButton.style.cssText =
                 'color: var(--colorContrast); background-color: var(--colorOrange); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
             reloadAbbr.title = `WebSocket STATUS: desconectou`
@@ -404,7 +429,7 @@ function statusesWs(statuses) {
         }
     } catch(error) {
         console.error(`> ⚠️ ERROR statusesWs: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR statusesWs: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR statusesWs: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
@@ -423,7 +448,7 @@ function exit() {
             isDisconected = false
         }
         console.error(`> ❌ ERROR: BackEnd`)
-        displayLogOnConsole(`> ❌ ERROR: BackEnd`, setLogError)
+        displayOnConsole(`> ❌ ERROR: BackEnd`, setLogError)
 
         const mainContent = document.querySelector('#innerContent')
         mainContent.style.cssText =
@@ -439,6 +464,7 @@ function exit() {
 
         const status = document.querySelector('#status')
         status.textContent = `ERROR Back End!`
+        displayOnConsole(`>  ℹ️ (status)ERROR Back End!`)
 
         let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
@@ -485,33 +511,9 @@ function exit() {
         resetLoadingBar()
     } catch(error) {
         console.error(`> ⚠️ ERROR exit: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR exit: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR exit: ${error.message}`, setLogError)
         Is_Not_Ready = true
         resetLoadingBar()
-    }
-}
-function authsucess() {
-    try {
-        let buttonStart = document.querySelector('#start')
-        buttonStart.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            buttonStart.style.cssText =
-                'display: none; opacity: 0;'
-        }, 300)
-        
-        document.querySelector('#qrCode').innerText = ''
-        const codeQr = document.querySelector('#qrCode')
-        codeQr.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            codeQr.style.cssText =
-            'display: none; opacity: 0;'
-        }, 300)
-        isQrOff = true
-    } catch(error) {
-        console.error(`> ⚠️ ERROR authSucess: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR authSucess: ${error.message}`, setLogError)
     }
 }
 function authFailure() {
@@ -528,7 +530,7 @@ function authFailure() {
             isDisconected = false
         }
         console.error(`> ❌ ERROR Back End Auth Failure`)
-        displayLogOnConsole(`> ❌ ERROR Back End Auth Failure`, setLogError)
+        displayOnConsole(`> ❌ ERROR Back End Auth Failure`, setLogError)
 
         const mainContent = document.querySelector('#innerContent')
         mainContent.style.cssText =
@@ -583,14 +585,39 @@ function authFailure() {
             eraseButton.style.cssText =
             'display: none; opacity: 0;'
         }, 300)
+
         resetLoadingBar()
     } catch(error) {
         console.error(`> ⚠️ ERROR authFailure: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR authFailure: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR authFailure: ${error.message}`, setLogError)
         Is_Not_Ready = true
         resetLoadingBar()
     }
 } 
+function authsucess() {
+    try {
+        let buttonStart = document.querySelector('#start')
+        buttonStart.style.cssText =
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            buttonStart.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+        
+        document.querySelector('#qrCode').innerText = ''
+        const codeQr = document.querySelector('#qrCode')
+        codeQr.style.cssText =
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            codeQr.style.cssText =
+            'display: none; opacity: 0;'
+        }, 300)
+        isQrOff = true
+    } catch(error) {
+        console.error(`> ⚠️ ERROR authSucess: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR authSucess: ${error.message}`, setLogError)
+    }
+}
 function ready() {
     try {
         let barL = document.querySelector('#barLoading')
@@ -611,6 +638,8 @@ function ready() {
 
         const status = document.querySelector('#status')
             status.textContent = `Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
+            displayOnConsole(`>  ℹ️ (status)Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
+            
 
         /*let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
@@ -658,19 +687,26 @@ function ready() {
             'background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
         listShowAbbr.title = `STATUS Lista: visivel`
         
+
         resetLoadingBar()
     } catch(error) {
         console.error(`> ⚠️ ERROR ready: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR ready: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR ready: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
-let Is_Not_Ready = true
 
-let isVisibleList = null
+function clsConsole() {
+    try {
+        document.querySelector('#log').innerHTML = ''
+    } catch (error) {
+        console.error(`> ⚠️ ERROR clsConsole: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR clsConsole: ${error.message}`, setLogError)
+    }
+}
 function showTableList() {
     if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        displayOnConsole('>  ℹ️ Client not Ready.', setLogError)
         return
     }
     try {
@@ -744,10 +780,9 @@ function showTableList() {
         }
     } catch (error) {
         console.error(`> ⚠️ ERROR showTableList: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR showTableList: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR showTableList: ${error.message}`, setLogError)
     }
 }
-
 function saveConsoleStyles() {
     try {
         const consoleElement = document.querySelector('#console')
@@ -762,7 +797,7 @@ function saveConsoleStyles() {
         }))
     } catch (error) {
         console.error(`> ⚠️ ERROR saveConsoleStyles: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR saveConsoleStyles: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR saveConsoleStyles: ${error.message}`, setLogError)
     }
 }
 function loadConsoleStyles() {
@@ -796,7 +831,7 @@ function loadConsoleStyles() {
         }
     } catch (error) {
         console.error(`> ⚠️ ERROR loadConsoleStyles: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR loadConsoleStyles: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR loadConsoleStyles: ${error.message}`, setLogError)
     }
 }
 let isVisibleHideButton = null
@@ -841,483 +876,7 @@ function hideConsole() {
         }
     } catch (error) {
         console.error(`> ⚠️ ERROR hideConsole: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR hideConsole: ${error.message}`, setLogError)
-    }
-}
-
-function emptyList() {
-    if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
-        return
-    }
-    try {
-        const status = document.querySelector('#status')
-        setTimeout(function() {
-            status.textContent = `Lista de ChatData esta vazia!`
-        }, 400)
-    } catch(error) {
-        console.error(`> ⚠️ ERROR emptyList: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR emptyList: ${error.message}`, setLogError)
-    }
-}
-let fromTerminal = null
-async function eraseDataByName(isFromTerminal, queryFromTerminal) {
-    if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
-        return
-    }
-    try {
-        let barL = document.querySelector('#barLoading')
-            barL.style.cssText =
-                'width: 100vw; visibility: visible;'
-
-        if (isFromTerminal) {
-            const status = document.querySelector('#status')
-
-            try {
-                if (queryFromTerminal === undefined || null) {
-                    status.textContent = `Digite algum nome de contato para apaga-lo!`
-                    isFromTerminal = false
-                    resetLoadingBar()
-                    return 
-                } else {
-                    let userConfirmation = confirm(`Tem certeza de que deseja apagar o ChatData de ${queryFromTerminal} da lista?\nsera apagada para sempre`)
-                    if (userConfirmation) {
-                        fromTerminal = true
-                        let query = queryFromTerminal
-                        await axios.delete('/erase-name', { params: { query, fromTerminal } })
-                        setTimeout(function() {
-                            status.textContent = `${queryFromTerminal} de ChatData.json foi Apagado!`
-                        }, 300)
-                        
-                        //document.querySelector('#inputList').value = ''
-                        resetLoadingBar()
-                        isFromTerminal = false
-                    } else {
-                        resetLoadingBar()
-                        isFromTerminal = false
-                        return
-                    }
-                }
-            } catch (error) {
-                status.textContent = `ERROR ao buscar Por: ${queryFromTerminal}`
-                console.error(`> ⚠️ ERROR Search for ${queryFromTerminal}: ${error}`)
-                displayLogOnConsole(`> ⚠️ ERROR ao buscar Por ${queryFromTerminal}: ${error.message}`)
-                resetLoadingBar()
-                isFromTerminal = false
-            } finally {
-                resetLoadingBar()
-                isFromTerminal = false
-            }
-        } else {
-            const status = document.querySelector('#status')
-            const query = document.querySelector('#inputList').value.trim()
-
-            try {
-                if (query === undefined || null) {
-                    status.textContent = `Digite algum nome de contato para apaga-lo!`
-                    resetLoadingBar()
-                    return 
-                } else {
-                    let userConfirmation = confirm(`Tem certeza de que deseja apagar o ChatData de ${query} da lista?\nsera apagada para sempre`)
-                    if (userConfirmation) {
-                        fromTerminal = false
-                        await axios.delete('/erase-name', { params: { query, fromTerminal } })
-
-                        setTimeout(function() {
-                            status.textContent = `${query} de ChatData.json foi Apagado!`
-                        }, 300)
-                        
-                        //document.querySelector('#inputList').value = ''
-                        resetLoadingBar()
-                    } else {
-                        return
-                    }
-                }
-            } catch (error) {
-                status.textContent = `ERROR ao buscar Por: ${query}`
-                console.error(`> ⚠️ ERROR Search for ${query}: ${error}`)
-                displayLogOnConsole(`> ⚠️ ERROR ao buscar Por ${query}: ${error.message}`)
-                resetLoadingBar()
-            } finally {
-                resetLoadingBar()
-            }
-        }
-    } catch (error) {
-        console.error(`> ⚠️ ERROR eraseDataByName: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR eraseDataByName: ${error.message}`, setLogError)
-        resetLoadingBar()
-    } 
-}
-function allEraseList() {
-    if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
-        return
-    }
-    try {
-        let barL = document.querySelector('#barLoading')
-    
-        const status = document.querySelector('#status')
-        let userConfirmation = confirm('Tem certeza de que deseja apagar a lista?\nsera apagada para sempre.')
-
-        if (userConfirmation) {
-            barL.style.cssText =
-                'width: 100vw; visibility: visible;'
-
-            axios.delete('/all-erase')
-
-            setTimeout(function() {
-                status.textContent = `Todo o ChatData foi Apagado!`
-            }, 300)
-        } else {
-            return
-        }
-        
-        resetLoadingBar()
-    } catch (error) {
-        //status.textContent = `ERROR ao apagar Todo o ChatData!`
-        console.error(`> ⚠️ ERROR allEraseList: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR allEraseList: ${error.message}`, setLogError)
-        resetLoadingBar()
-    }
-}
-async function searchNameList(isFromTerminal, dataFromTerminal, queryFromTerminal) {
-    if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
-        return
-    }
-    try {
-        let barL = document.querySelector('#barLoading')
-            barL.style.cssText =
-                'width: 100vw; visibility: visible;'
-
-        if (isFromTerminal) {
-            const status = document.querySelector('#status')
-            let list = document.querySelector('table tbody')
-            let counter = document.querySelector('thead > tr > td ')
-
-            try {
-                if (dataFromTerminal === true) {
-                    emptyList()
-
-                    list.innerHTML = ''
-                        
-                    counter.textContent = `0`
-                    
-                    let row = list.insertRow(-1)
-                    
-                    let cell1 = row.insertCell(0)
-                    cell1.textContent = 'N/A'
-                    
-                    let cell2 = row.insertCell(1)
-                    cell2.textContent = 'N/A'
-                    
-                    resetLoadingBar()
-                    isFromTerminal = false
-                    return
-                } else {
-                    if (dataFromTerminal.length === 0) {
-                        status.textContent = `${queryFromTerminal} Não econtrado em ChatData.json!`
-                        
-                        list.innerHTML = ''
-                        
-                        counter.textContent = `0`
-                        
-                        let row = list.insertRow(-1)
-                        
-                        let cell1 = row.insertCell(0)
-                        cell1.textContent = 'N/A'
-                        
-                        let cell2 = row.insertCell(1)
-                        cell2.textContent = 'N/A'
-                        
-                        resetLoadingBar()
-                        isFromTerminal = false
-                        return
-                    } else {
-                        status.textContent = `Listando ${queryFromTerminal}...`
-                        
-                        list.innerHTML = ''
-                        
-                        counter.textContent = `${dataFromTerminal.length}`
-                        dataFromTerminal.forEach(entry => {
-                            let row = list.insertRow(-1)
-                            
-                            let cell1 = row.insertCell(0)
-                            cell1.textContent = entry.chatId
-                            
-                            let cell2 = row.insertCell(1)
-                            cell2.textContent = entry.name
-                            
-                        })
-                        status.textContent = `${queryFromTerminal} Listado!`
-                    }   
-                    isFromTerminal = false
-                    //document.querySelector('#inputList').value = ''
-                    resetLoadingBar()
-                }
-            } catch (error) {
-                status.textContent = `ERROR ao buscar Por: ${queryFromTerminal}`
-                console.error(`> ⚠️ ERROR Search for ${queryFromTerminal}: ${error}`)
-                displayLogOnConsole(`> ⚠️ ERROR ao buscar Por ${queryFromTerminal}: ${error.message}`)
-                resetLoadingBar()
-                isFromTerminal = false
-            } finally {
-                resetLoadingBar()
-                isFromTerminal = false
-            }
-        } else {
-            let sendSearch = document.querySelector('#sendSearchList')
-            
-            sendSearch.style.cssText =
-                'background-color: #2b2b2b; color: var(--colorWhite); border: 1px solid var(--colorWhite); transition: var(--configTrasition01s);'
-
-            setTimeout(function() {
-                sendSearch.style.cssText =
-                'background-color: var(--colorInteractionElements); color: var(--colorBlack); border: 1px solid rgba(0, 0, 0, 0); transition: var(--configTrasition03s);'
-            }, 100)
-            
-            const status = document.querySelector('#status')
-            let list = document.querySelector('table tbody')
-            let counter = document.querySelector('thead > tr > td ')
-            const query = document.querySelector('#inputList').value
-
-            try {
-                if (query === undefined || null) {
-                    status.textContent = `Digite algum nome de contato para pesquisa-lo na lista!`
-                    return
-                } else {
-                    const response = await axios.get('/search-list', { params: { query } })
-                    const data = response.data
-                    if (data === true) {
-                        emptyList()
-        
-                        list.innerHTML = ''
-                            
-                        counter.textContent = `0`
-                        
-                        let row = list.insertRow(-1)
-                        
-                        let cell1 = row.insertCell(0)
-                        cell1.textContent = 'N/A'
-                        
-                        let cell2 = row.insertCell(1)
-                        cell2.textContent = 'N/A'
-                        
-                        resetLoadingBar()
-                        return
-                    } else {
-                        if (data.length === 0) {
-                            status.textContent = `${query} Não econtrado em ChatData.json!`
-                            
-                            list.innerHTML = ''
-                            
-                            counter.textContent = `0`
-                            
-                            let row = list.insertRow(-1)
-                            
-                            let cell1 = row.insertCell(0)
-                            cell1.textContent = 'N/A'
-                            
-                            let cell2 = row.insertCell(1)
-                            cell2.textContent = 'N/A'
-                            
-                            resetLoadingBar()
-                            return
-                        } else {
-                            status.textContent = `Listando ${query}...`
-                            
-                            list.innerHTML = ''
-                            
-                            counter.textContent = `${data.length}`
-                            data.forEach(entry => {
-                                let row = list.insertRow(-1)
-                                
-                                let cell1 = row.insertCell(0)
-                                cell1.textContent = entry.chatId
-                                
-                                let cell2 = row.insertCell(1)
-                                cell2.textContent = entry.name
-                                
-                            })
-                            status.textContent = `${query} Listado!`
-                        }
-                    }
-                    //document.querySelector('#inputList').value = ''
-                    resetLoadingBar()
-                }   
-            } catch (error) {
-                status.textContent = `ERROR ao buscar Por: ${query}`
-                console.error(`> ⚠️ ERROR Search for ${query}: ${error}`)
-                displayLogOnConsole(`> ⚠️ ERROR ao buscar Por ${query}: ${error.message}`)
-                resetLoadingBar()
-            } finally {
-                resetLoadingBar()
-            }
-        }
-    } catch (error) {
-        console.error(`> ⚠️ ERROR searchNameList: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR searchNameList: ${error.message}`, setLogError)
-        resetLoadingBar()
-    }
-}
-async function listData(data) {
-    if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
-        return
-    }
-    try {
-        let barL = document.querySelector('#barLoading')
-        barL.style.cssText =
-            'width: 100vw; visibility: visible;'
-        /*const response = await axios.get('/list')
-        const data = response.data*/
-
-        const status = document.querySelector('#status')
-        let list = document.querySelector('table tbody')
-        let counter = document.querySelector('thead > tr > td ')
-        
-        if (data.length === 0) {
-            status.textContent = `ChatData.json esta vazio!`
-            
-            counter.textContent = `0`
-            
-            list.innerHTML = ''
-            
-            let row = list.insertRow(-1)
-            
-            let cell1 = row.insertCell(0)
-            cell1.textContent = 'N/A'
-            
-            let cell2 = row.insertCell(1)
-            cell2.textContent = 'N/A'
-            
-            resetLoadingBar()
-            return
-        } else {
-            //status.textContent = `Pritando todo ChatData de ChatData.json...`
-            
-            list.innerHTML = ''
-            
-            for (let entry of data) {
-                counter.textContent = `${data.length}`
-                
-                let row = list.insertRow(-1)
-
-                let cell1 = row.insertCell(0)
-                cell1.textContent = entry.chatId
-                
-                let cell2 = row.insertCell(1)
-                cell2.textContent = entry.name
-                
-                /*let bList = document.querySelector('#erase')
-                
-                bList.style.cssText =
-                'opacity: 1 pointer-events: unset;'*/
-                
-            }
-            //status.textContent = `Todo ChatData de ChatData.json Printado!`
-            
-            resetLoadingBar()
-        }
-    } catch (error) {
-        console.error(`> ⚠️ ERROR listData: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR listData: ${error.message}`, setLogError)
-        resetLoadingBar()
-    }
-}
-async function listDataButton() {
-    if (Is_Not_Ready) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
-        return
-    }
-    try {
-        let barL = document.querySelector('#barLoading')
-        barL.style.cssText =
-            'width: 100vw; visibility: visible;'
-        
-        let listShow = document.querySelector('#showList')
-        let listShowAbbr = document.querySelector('#abbrShowList')
-        if (isVisibleList === null) {
-            isVisibleList = true
-            listShow.style.cssText = 
-                'background-color: var(--colorWhite); color: var(--colorBlack); pointer-events: auto; opacity: 1;'
-            listShowAbbr.title = `STATUS Lista: visivel`
-        } else if (isVisibleList = true) {
-            isVisibleList = true
-            listShow.style.cssText = 
-                'background-color: var(--colorWhite); color: var(--colorBlack); pointer-events: auto; opacity: 1;'
-            listShowAbbr.title = `STATUS Lista: visivel`
-        }
-        
-        let tableList = document.querySelector('#listChatData')
-        tableList.style.cssText =
-            'display: inline-block; opacity: 1;'
-        setTimeout(function() {
-            tableList.style.cssText =
-                'display: inline-block; opacity: 1;'
-        }, 100)
-        let eraseButton = document.querySelector('#erase')
-        eraseButton.style.cssText =
-            'display: inline-block; opacity: 1;'
-        setTimeout(function() {
-            eraseButton.style.cssText =
-                'display: inline-block; opacity: 1;'
-        }, 100)
-            
-        const status = document.querySelector('#status')
-        let list = document.querySelector('table tbody')
-        let counter = document.querySelector('thead > tr > td ')
-        
-        const response = await axios.get('/list')
-        const data = response.data
-        if (data.length === 0) {
-            status.textContent = `ChatData.json esta vazio!`
-            
-            list.innerHTML = ''
-            
-            counter.textContent = `0`
-            
-            let row = list.insertRow(-1)
-            
-            let cell1 = row.insertCell(0)
-            cell1.textContent = 'N/A'
-            
-            let cell2 = row.insertCell(1)
-            cell2.textContent = 'N/A'
-            
-            resetLoadingBar()
-            return
-        } else {
-            status.textContent = `Pritando todo ChatData de ChatData.json...`
-            
-            list.innerHTML = ''
-            
-            for (let entry of data) {
-                counter.textContent = `${data.length}`
-                
-                let row = list.insertRow(-1)
-
-                let cell1 = row.insertCell(0)
-                cell1.textContent = entry.chatId
-                
-                let cell2 = row.insertCell(1)
-                cell2.textContent = entry.name
-                
-                /*let bList = document.querySelector('#erase')
-                
-                bList.style.cssText =
-                'opacity: 1 pointer-events: unset'*/
-                
-            }
-            status.textContent = `Todo ChatData de ChatData.json Printado!`
-            
-            resetLoadingBar()
-        }
-    } catch (error) {
-        console.error(`> ⚠️ ERROR listDataButton: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR listDataButton: ${error.message}`, setLogError)
-        resetLoadingBar()
+        displayOnConsole(`> ⚠️ ERROR hideConsole: ${error.message}`, setLogError)
     }
 }
 
@@ -1330,7 +889,7 @@ async function sendCommand() {
             'background-color: #2b2b2b; color: var(--colorWhite); border: 1px solid var(--colorWhite); transition: var(--configTrasition01s);'
         
         //console.log(commandInput)
-        displayLogOnConsole(commandInput)
+        displayOnConsole(commandInput)
         
         await axios.post('/command', { command: commandInput }, {
             headers: {
@@ -1351,13 +910,418 @@ async function sendCommand() {
         document.querySelector('#commandInput').value = ''
     } catch (error) {
         console.error(`> ⚠️ ERROR sendCommand: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR sendCommand: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR sendCommand: ${error.message}`, setLogError)
     }
 }
-let isExceeds = true 
+
+async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
+    if (Is_Not_Ready) {
+        displayOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        return
+    }
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+        
+        const status = document.querySelector('#status')
+
+        let queryList = null
+        let userConfirmation = confirm(`Tem certeza de que deseja apagar o ChatData de ${queryList} da lista?\nsera apagada para sempre`)
+        if (userConfirmation) {
+            if (isFromTerminal) {
+                queryList = queryFromTerminal
+            } else {
+                const query = document.querySelector('#inputList').value.trim()
+                queryList = query
+            }
+            const response = await axios.delete('/erase-query', { params: { queryList } })
+            const Sucess = response.data.sucess
+            const Is_Empty = response.data.empty
+            const Is_Empty_Input = response.data.empty_input
+            if (Is_Empty) {
+                status.textContent = `Lista de Chat_Data.json esta vazia!`
+                displayOnConsole(`>  ℹ️ (status)Lista de Chat_Data.json esta vazia!`)
+
+                resetLoadingBar()
+                if (isFromTerminal) {
+                    isFromTerminal = false
+                }
+                return
+            }
+            if (Is_Empty_Input) {
+                status.textContent = `ChatData ${queryList} não foi encontrado na lista de Chat_Data.json!`
+                displayOnConsole(`>  ℹ️ (status)ChatData ${queryList} não foi encontrado na lista de Chat_Data.json!`)
+
+                resetLoadingBar()
+                if (isFromTerminal) {
+                    isFromTerminal = false
+                }
+                return  
+            } 
+            if (Sucess) {
+                status.textContent = `${queryList} de ChatData.json foi Apagado!`
+                displayOnConsole(`>  ℹ️ (status)${queryList} de ChatData.json foi Apagado!`)
+            } else {
+                status.textContent = `ERROR ao Apagar ChatData ${queryList} de ChatData.json!`
+                displayOnConsole(`>  ℹ️ (status)ERROR ao Apagar ChatData ${queryList} de ChatData.json!`)
+            }
+
+            //document.querySelector('#inputList').value = ''
+            resetLoadingBar()
+            if (isFromTerminal) {
+                isFromTerminal = false
+            }
+        } else {
+            resetLoadingBar()
+            if (isFromTerminal) {
+                isFromTerminal = false
+            }
+            return
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR eraseChatDataByQuery: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR eraseChatDataByQuery: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+//async function allErase(sucess, empty, isFromTerminal) {
+async function allErase() {
+    if (Is_Not_Ready) {
+        displayOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        return
+    }
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+    
+        const status = document.querySelector('#status')
+
+        let userConfirmation = confirm('Tem certeza de que deseja apagar a lista?\nsera apagada para sempre.')
+        if (userConfirmation) {
+            /*const response = await axios.delete('/all-erase')
+            let Sucess = null
+            let Is_Empty = null
+            if (isFromTerminal) {
+                Sucess = sucess 
+                Is_Empty = empty
+            } else {
+                let sucess = response.data.sucess
+                let empty = response.data.empty
+                Sucess = sucess
+                Is_Empty = empty
+            }*/
+            const response = await axios.delete('/all-erase')
+            const Sucess = response.data.sucess
+            const Is_Empty = response.data.empty
+            if (Is_Empty) {
+                status.textContent = `Lista de Chat_Data.json esta vazia!`
+                displayOnConsole(`>  ℹ️ (status)Lista de Chat_Data.json esta vazia!`)
+
+                resetLoadingBar()
+                return
+            } 
+            if (Sucess) {
+                status.textContent = `Todo o ChatData de Chat_Data.json foi Apagado!`
+                displayOnConsole(`>  ℹ️ (status)Todo o ChatData de Chat_Data.json foi Apagado!`)
+            } else {
+                status.textContent = `ERROR ao Apagar todo ChatData de Chat_Data.json!`
+                displayOnConsole(`>  ℹ️ (status)ERROR ao Apagar todo ChatData de Chat_Data.json!`)
+            } 
+        } else {
+            resetLoadingBar()
+            return
+        }
+        
+        resetLoadingBar()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR allEraseList: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR allEraseList: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+//async function searchChatDataBySearch(isFromTerminal, dataFromTerminal, searchFromTerminal) {
+async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
+    if (Is_Not_Ready) {
+        displayOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        return
+    }
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+        let list = document.querySelector('table tbody')
+        let counter = document.querySelector('thead > tr > td ')
+        
+        let response = null
+        let Search = null
+        //let ChatData = null
+        if (isFromTerminal) {
+            Search = searchFromTerminal
+            response = await axios.get('/search-search', { params: { Search } })
+            //ChatData = dataFromTerminal
+        } else {
+            let sendSearch = document.querySelector('#sendSearchList')
+            sendSearch.style.cssText =
+            'background-color: #2b2b2b; color: var(--colorWhite); border: 1px solid var(--colorWhite); transition: var(--configTrasition01s);'
+            setTimeout(function() {
+                sendSearch.style.cssText =
+                'background-color: var(--colorInteractionElements); color: var(--colorBlack); border: 1px solid rgba(0, 0, 0, 0); transition: var(--configTrasition03s);'
+            }, 100)
+            
+            const search = document.querySelector('#inputList').value.trim()
+            Search = search
+            response = await axios.get('/search-search', { params: { Search } })
+            //const chatdata = response.data.chatdata
+            //ChatData = chatdata
+            //displayOnConsole(ChatData)
+        }
+        const Sucess = response.data.sucess
+        const Is_Empty = response.data.empty
+        const Is_Empty_Input = response.data.empty_input
+        const ChatData = response.data.chatdata
+
+        if (Is_Empty) {
+            status.textContent = `Lista de Chat_Data.json esta vazia!`
+            displayOnConsole(`>  ℹ️ (status)Lista de Chat_Data.json esta vazia!`)
+
+            list.innerHTML = ''
+            
+            counter.textContent = `0`
+            
+            let row = list.insertRow(-1)
+            
+            let cell1 = row.insertCell(0)
+            cell1.textContent = 'N/A'
+            
+            let cell2 = row.insertCell(1)
+            cell2.textContent = 'N/A'
+
+            resetLoadingBar()
+            if (isFromTerminal) {
+                isFromTerminal = false
+            }
+            return
+        }
+        if (Is_Empty_Input) {
+            status.textContent = `ChatData ${Search} não foi encontrado na lista de Chat_Data.json!`
+            displayOnConsole(`>  ℹ️ (status)ChatData ${Search} não foi encontrado na lista de Chat_Data.json!`)
+
+            list.innerHTML = ''
+            
+            counter.textContent = `0`
+            
+            let row = list.insertRow(-1)
+            
+            let cell1 = row.insertCell(0)
+            cell1.textContent = 'N/A'
+            
+            let cell2 = row.insertCell(1)
+            cell2.textContent = 'N/A'
+
+            resetLoadingBar()
+            if (isFromTerminal) {
+                isFromTerminal = false
+            }
+            return  
+        } 
+        if (Sucess) {
+            status.textContent = `Listando ChatData ${Search} de ChatData.json...`
+            displayOnConsole(`>  ℹ️ (status)Listando ChatData ${Search} de ChatData.json...`)
+            
+            list.innerHTML = ''
+            
+            ChatData.forEach(entry => {
+                counter.textContent = `${ChatData.length}`
+
+                let row = list.insertRow(-1)
+                
+                let cell1 = row.insertCell(0)
+                cell1.textContent = entry.chatId
+                
+                let cell2 = row.insertCell(1)
+                cell2.textContent = entry.name
+                
+            })
+            /*let bList = document.querySelector('#erase')
+            
+            bList.style.cssText =
+                'opacity: 1 pointer-events: unset;'*/
+
+            status.textContent = `Listado ChatData ${Search} de Chat_Data.json!`
+            displayOnConsole(`>  ℹ️ (status)Listado ChatData ${Search} de Chat_Data.json!`)
+        } else {
+            status.textContent = `ERROR ao pesquisar ChatData ${Search} de Chat_Data.json!`
+            displayOnConsole(`>  ℹ️ (status)ERROR ao pesquisar ChatData${Search} de Chat_Data.json!`)
+        }
+
+        //document.querySelector('#inputList').value = ''
+        resetLoadingBar()
+        if (isFromTerminal) {
+            isFromTerminal = false
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR searchChatDataBySearch: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR searchChatDataBySearch: ${error.message}`, setLogError)
+        if (isFromTerminal) {
+            isFromTerminal = false
+        } 
+        resetLoadingBar()
+    }
+}
+//async function allPrint(Sucess, Is_Empty, ChatData, isFromButton, isallerase) {
+async function allPrint(isFromButton, isallerase) {
+    if (Is_Not_Ready) {
+        displayOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        return
+    }
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+        let list = document.querySelector('table tbody')
+        let counter = document.querySelector('thead > tr > td ')
+
+        if (isallerase) {
+            await axios.get('/all-print', { params: { isallerase } })
+            counter.textContent = `0`
+            
+            list.innerHTML = ''
+            
+            let row = list.insertRow(-1)
+            
+            let cell1 = row.insertCell(0)
+            cell1.textContent = 'N/A'
+            
+            let cell2 = row.insertCell(1)
+            cell2.textContent = 'N/A'
+            
+            resetLoadingBar()
+            return
+        }
+
+        let Sucess = null
+        let Is_Empty = null
+        let ChatData = null
+        const response = await axios.get('/all-print')
+        if (isFromButton) {
+            let listShow = document.querySelector('#showList')
+            let listShowAbbr = document.querySelector('#abbrShowList')
+            if (isVisibleList === null) {
+                isVisibleList = true
+                listShow.style.cssText = 
+                'background-color: var(--colorWhite); color: var(--colorBlack); pointer-events: auto; opacity: 1;'
+                listShowAbbr.title = `STATUS Lista: visivel`
+            } else if (isVisibleList = true) {
+                isVisibleList = true
+                listShow.style.cssText = 
+                'background-color: var(--colorWhite); color: var(--colorBlack); pointer-events: auto; opacity: 1;'
+                listShowAbbr.title = `STATUS Lista: visivel`
+            }
+            
+            let tableList = document.querySelector('#listChatData')
+            tableList.style.cssText =
+            'display: inline-block; opacity: 1;'
+            setTimeout(function() {
+                tableList.style.cssText =
+                'display: inline-block; opacity: 1;'
+            }, 100)
+            let eraseButton = document.querySelector('#erase')
+            eraseButton.style.cssText =
+            'display: inline-block; opacity: 1;'
+            setTimeout(function() {
+                eraseButton.style.cssText =
+                'display: inline-block; opacity: 1;'
+            }, 100)
+            let sucess = response.data.sucess
+            let empty = response.data.empty
+            let chatdata = response.data.chatdata
+            Sucess = sucess
+            Is_Empty = empty
+            ChatData = chatdata
+        } /*else {
+            Sucess = sucess 
+            Is_Empty = empty
+            ChatData = chatdata
+        }*/
+        let sucess = response.data.sucess
+        let empty = response.data.empty
+        let chatdata = response.data.chatdata
+        Sucess = sucess
+        Is_Empty = empty
+        ChatData = chatdata
+
+        if (Is_Empty) {
+            status.textContent = `Lista de Chat_Data.json esta vazia!`
+            displayOnConsole(`>  ℹ️ (status)Lista de Chat_Data.json esta vazia!`)
+
+            counter.textContent = `0`
+            
+            list.innerHTML = ''
+            
+            let row = list.insertRow(-1)
+            
+            let cell1 = row.insertCell(0)
+            cell1.textContent = 'N/A'
+            
+            let cell2 = row.insertCell(1)
+            cell2.textContent = 'N/A'
+            
+            resetLoadingBar()
+            return
+        } 
+        if (Sucess) {
+            if (isFromButton) {
+                status.textContent = `Listando todo ChatData de ChatData.json...`
+                displayOnConsole(`>  ℹ️ (status)Listando todo ChatData de ChatData.json...`)
+            }
+
+            list.innerHTML = ''
+            
+            for (let entry of ChatData) {
+                counter.textContent = `${ChatData.length}`
+                
+                let row = list.insertRow(-1)
+
+                let cell1 = row.insertCell(0)
+                cell1.textContent = entry.chatId
+                
+                let cell2 = row.insertCell(1)
+                cell2.textContent = entry.name    
+            }
+            /*let bList = document.querySelector('#erase')
+            
+            bList.style.cssText =
+                'opacity: 1 pointer-events: unset;'*/
+            if (isFromButton) {
+                status.textContent = `Todo ChatData de ChatData.json Listado!`
+                displayOnConsole(`>  ℹ️ (status)Todo ChatData de ChatData.json Listado!`)
+            }
+            
+            isFromButton = true
+            resetLoadingBar()
+        } else {
+            status.textContent = `ERROR ao listar todo ChatData de ChatData.json!`
+            displayOnConsole(`>  ℹ️ (status)ERROR ao listar todo ChatData de ChatData.json!`)
+            isFromButton = true
+            resetLoadingBar()
+        } 
+    } catch (error) {
+        console.error(`> ⚠️ ERROR  allPrint: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR  allPrint: ${error.message}`, setLogError)
+        isFromButton = true
+        resetLoadingBar()
+    }
+}
+
 function counterExceeds(QR_Counter_Exceeds) {
     if (isExceeds) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        displayOnConsole('>  ℹ️ Client not Ready.', setLogError)
         return
     }
     try {
@@ -1372,7 +1336,8 @@ function counterExceeds(QR_Counter_Exceeds) {
             'display: inline-block;'
 
         const status = document.querySelector('#status')
-        status.textContent = `❌ Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!.`
+        status.textContent = `Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!`
+        displayOnConsole(`>  ℹ️ (status)Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!`)
         /*setTimeout(function() {
             status.textContent = `Tente novamente!`
         }, 2000)*/
@@ -1399,14 +1364,13 @@ function counterExceeds(QR_Counter_Exceeds) {
         resetLoadingBar()
     } catch (error) {
         console.error(`> ⚠️ ERROR counterExceeds: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR counterExceeds: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR counterExceeds: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
-let isQrOff = true
 async function generateQrCode(QR_Counter) {
     if (isQrOff) {
-        displayLogOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        displayOnConsole('>  ℹ️ Client not Ready.', setLogError)
         return
     }
     try {
@@ -1430,6 +1394,7 @@ async function generateQrCode(QR_Counter) {
         const codeQr = document.querySelector('#qrCode')
 
         status.textContent = `Gerando Qr-Code...`
+        displayOnConsole(`>  ℹ️ (status)Gerando Qr-Code...`)
         
         axios.get('/qr')
         .then(response => {
@@ -1438,6 +1403,7 @@ async function generateQrCode(QR_Counter) {
             if (Is_Conected) {
                 setTimeout(function() {
                     status.textContent = `Client ja conectado!`
+                    displayOnConsole(`>  ℹ️ (status)Client ja conectado!`)
                 }, 100)
                 document.querySelector('#qrCode').innerText = ''
                 codeQr.style.cssText =
@@ -1449,7 +1415,8 @@ async function generateQrCode(QR_Counter) {
                 resetLoadingBar()
             } else {
                 setTimeout(function() {
-                    status.textContent = `↓↓ 📸 Client tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo 📸 ↓↓`
+                    status.textContent = `↓↓ Client tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`
+                    displayOnConsole(`>  ℹ️ (status)↓↓ Client tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`)
                 }, 100)
                 
                 codeQr.style.cssText =
@@ -1466,8 +1433,9 @@ async function generateQrCode(QR_Counter) {
         })
         .catch(error => {
             console.error(`> ⚠️ ERROR buscando Qr-Code: ${error}`)
-            displayLogOnConsole(`> ⚠️ ERROR buscando Qr-Code: ${error.message}`, setLogError)
+            displayOnConsole(`> ⚠️ ERROR buscando Qr-Code: ${error.message}`, setLogError)
             status.textContent = `ERROR buscando Qr-Code!`
+            displayOnConsole(`>  ℹ️ (status)ERROR buscando Qr-Code!`)
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 0;'
@@ -1489,8 +1457,9 @@ async function generateQrCode(QR_Counter) {
     } catch (error) {
         const status = document.querySelector('#status')
         console.error(`> ⚠️ ERROR generateQrCode: ${error}`)
-        displayLogOnConsole(`> ⚠️ ERROR generateQrCode: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ ERROR generateQrCode: ${error.message}`, setLogError)
         status.textContent = `ERROR Gerando Qr-Code!`
+        displayOnConsole(`>  ℹ️ (status)ERROR Gerando Qr-Code!`)
         let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
             'display: inline-block; opacity: 0;'
@@ -1511,10 +1480,9 @@ async function generateQrCode(QR_Counter) {
         resetLoadingBar() 
     }
 }
-let Is_Started = false
 async function startBot() {
     if (Is_Started) {
-        displayLogOnConsole(`> ⚠️ Bot ja esta Iniciado`, setLogError)
+        displayOnConsole(`> ⚠️ Bot ja esta Iniciado`, setLogError)
         return        
     } else {
         try {
@@ -1522,7 +1490,7 @@ async function startBot() {
             barL.style.cssText =
                 'width: 100vw; visibility: visible;'
 
-            displayLogOnConsole(`>  ℹ️  ${Name_Software} = v${Version_}`)
+            displayOnConsole(`>  ℹ️  ${Name_Software} = v${Version_}`)
 
             if (isDisconected) {
                 reconnectWebSocket()
@@ -1544,6 +1512,7 @@ async function startBot() {
             
             const status = document.querySelector('#status')
             status.textContent = `Iniciando...`
+            displayOnConsole(`>  ℹ️ (status)Iniciando...`)
             
             document.querySelector('#qrCode').innerText = ''
             const codeQr = document.querySelector('#qrCode')
@@ -1554,10 +1523,10 @@ async function startBot() {
                     'display: none; opacity: 0;'
             }, 300)
             const response = await axios.post('/start-bot')
-            const data = response.data
-            if (data.success) {
-                //status.textContent = `Iniciou o Bot Corretamente!`
-                displayLogOnConsole(`> ✅ Iniciou o Bot Corretamente`)
+            const data = response.data.sucess
+            if (data) {
+                status.textContent = `Iniciou o Bot Corretamente!`
+                displayOnConsole(`> ✅ Iniciou o Bot Corretamente`)
                 
                 Is_Started = true
                 isQrOff = false
@@ -1570,7 +1539,8 @@ async function startBot() {
                 }, 100)
 
                 status.textContent = `ERROR ao iniciar o Bot!`
-                displayLogOnConsole(`> ⚠️ ERROR ao iniciar o Bot`, setLogError)
+                displayOnConsole(`>  ℹ️ (status)ERROR ao iniciar o Bot!`)
+                displayOnConsole(`> ⚠️ ERROR ao iniciar o Bot`, setLogError)
                 
                 Is_Started = false
                 isQrOff = true
@@ -1580,8 +1550,9 @@ async function startBot() {
         } catch (error) {
             const status = document.querySelector('#status')
             console.error(`> ⚠️ ERROR startBot: ${error}`)
-            displayLogOnConsole(`> ⚠️ ERROR startBot: ${error.message}`, setLogError)
+            displayOnConsole(`> ⚠️ ERROR startBot: ${error.message}`, setLogError)
             status.textContent = `ERROR iniciando Bot!`
+            displayOnConsole(`>  ℹ️ (status)ERROR iniciando Bot!`)
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 0;'
@@ -1606,14 +1577,11 @@ async function startBot() {
 
 //tarefas bot frontend 
 //em desenvolvimento...
-    //ajustar o status para guardar sempre no terminal tudo taligado? salvo, que ja esta so fazer certinho as msgs iguais
-    //adicionar forma de clear no terminal do site
+    //organizar a ordem de como as funcoes sao chamadas pra um melhor desempenho e sentido logico
+    
     
 //a desenvolver...
-    //arrumar erro de mandar nada no input da lista e dar msgs de erros n desejados
-    //melhorar a logica de usar a mesma funcao pra duas coisas
-    //melhorar o reconhecimento do arquivo json estar vazio e as acoes sobre, status e tals
-    //organizar a ordem de como as funcoes sao chamadas pra um melhor desempenho e sentido logico
-    //juntar as funcoes listData(data) listDataButton() em uma so na listData(data)
-    //melhorar o problema de de vez em quando o a barra de loading do start n funciona direito
+    //?//melhorar o problema de de vez em quando o a barra de loading do start n funciona direito/
     //arrumar meios de as coisas serem automaticas funcoes acionarem de acordo com certar coisas inves de prever todo cenario possivel em varias funcoes
+    //talves algum dia fazer ums sistema frontend de commands igual no backend com requesicao http usando as funcoes padrao de funcao do backend e tals
+    //arrumar meios de n precisar dessas variaveis permanentes, ou pelo menos diminuir muito
