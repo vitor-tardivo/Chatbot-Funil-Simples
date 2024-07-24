@@ -7,7 +7,7 @@
   },
   "license": "",
   "author": "Vitor de Souza Tardivo",
-  "description": "Bot WhatsApp automation, Digital marketing.",
+  "description": "Bot WhatsApp automation, Digital marketing E-Commerce.",
   "dependencies": {
     "path": "^0.12.7",
     "promises": "^0.2.5",
