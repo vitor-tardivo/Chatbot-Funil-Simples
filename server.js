@@ -74,16 +74,10 @@ app.get('/', (req, res) => {
     }
 })
 
-//const connections = new Set();
 wssServer.on('connection', async  function connection(wss) {
     try {
-        if (connection.size > 0) {
-            wss.close()
-            return
-        }
-        //connection.add(wss);
-        /*const originalConsoleLog = console.log
-        console.log = function(...args) {
+        const originalConsoleLog = console.log
+        /*console.log = function(...args) {
             originalConsoleLog.apply(console, args)
             wss.send(JSON.stringify({ type: 'log', message: args.join(' ') }))
         }*/

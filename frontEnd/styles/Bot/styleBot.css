@@ -107,7 +107,7 @@ main {
     flex-direction: column;
     background-color: #2b2b2b;
     /*width: 44.227vw;*/
-    width: 30.439vw;
+    width: 30.62vw;
     /*width: 100vw;*/
     box-sizing: border-box;
     overflow: hidden;
@@ -135,7 +135,7 @@ main {
     color: #d0d0d0;
     font-size: 0.85vw;
     white-space: pre-wrap;
-    font-family: 'Cascadia Code';
+    font-family: var(--fontConsole);
     word-wrap: break-word;
     box-sizing: border-box;
     z-index: 7000;
@@ -196,7 +196,7 @@ main {
     width: 100%;
     box-sizing: border-box;
     font-size: 1vw;
-    font-family: 'Cascadia Code';
+    font-family: var(--fontConsole);
     transition: var(--configTrasition03s);
 }
 #commandInput:focus-within {
@@ -423,10 +423,11 @@ main {
     margin-bottom: 20px;
     text-align: center;
     max-width: 100%;
-    font-size: 0.85vw;
+    /*font-size: 0.85vw;*/
+    font-size: 0.76vw;
     white-space: pre-wrap;
     word-wrap: break-word;
-    font-family: 'Cascadia Code';
+    font-family: var(--fontConsole);
     cursor: help;
     opacity: 0;
     transition: var(--configTrasition03s);
@@ -485,6 +486,7 @@ main {
     margin-top: 10px;
     margin-bottom: 10px;
     opacity: 0;
+    transition: var(--configTrasition03s);
 }
 #divInputList {
     flex: 1 1 auto;
@@ -500,7 +502,7 @@ main {
     width: 100%;
     box-sizing: border-box;
     font-size: 1vw;
-    font-family: 'Cascadia Code';
+    font-family: var(--fontConsole);
     transition: var(--configTrasition03s);
 }
 #inputList:focus-within {
@@ -586,6 +588,7 @@ table {
     border-collapse: collapse;
     box-sizing: border-box;
     word-break: break-word;
+    transition: var(--configTrasition03s);
 }
 caption {
     background-color: var(--colorContrast);
@@ -604,6 +607,7 @@ caption {
 thead {
     border-top: 0px solid var(--colorBlack);
     border-bottom: 0px solid var(--colorBlack);
+    transition: var(--configTrasition03s);
 }
 .tableTitle {
     position: sticky;

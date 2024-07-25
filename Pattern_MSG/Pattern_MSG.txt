@@ -1,54 +1,53 @@
-//Message
-		await sleep(1000)
-		chat.sendStateTyping()
-		await sleep(1000)
-		const Text = await fs.readFile('./midia/Texto_Mensagem.txt', 'utf8')
-		client.sendMessage(msg.from, Text)
+//Messages Patterns
+    //Message Buttons !!!!!WhatsApp Bussines ONLY!!!!!(deprecated: maybe if change the version off the api wweb.js)
+    const buttons = new Buttons(
+        'Choose an option:',
+        [
+            { id: 'option1', body: 'Option 1' },
+            { id: 'option2', body: 'Option 2' },
+            { id: 'option3', body: 'Option 3' }
+        ],
+        'Title',
+        'Footer'
+    )
 
-		//Message Buttons !!!!!WhatsApp Bussines ONLY!!!!!
-		/*const buttons = [
-			{ buttonId: 'option1', buttonText: { displayText: 'Option 1' }, type: 1 },
-			{ buttonId: 'option2', buttonText: { displayText: 'Option 2' }, type: 1 },
-			{ buttonId: 'option3', buttonText: { displayText: 'Option 3' }, type: 1 },
-		];
-		const Text_Buttons = await fs.readFile('./midia/Texto_Mensagem_Botao.txt', 'utf8')
-		const messageWithButtons = new Buttons(Text_Buttons, buttons);
-		
-		client.sendMessage(msg.from, messageWithButtons)
-		
-		const buttonId = msg.selectedButtonId;
-		if (buttonId === 'option1') {
-			// Perform action for Option 1
-			client.sendMessage(msg.from, 'You chose Option 1');
-		} else if (buttonId === 'option2') {
-			// Perform action for Option 2
-			client.sendMessage(msg.from, 'You chose Option 2');
-		} else if (buttonId === 'option3') {
-			// Perform action for Option 3
-			client.sendMessage(msg.from, 'You chose Option 3');
-		}*/
-		
-		//file
-		await sleep(1500)
-		const Caption_Document = await fs.readFile('./midia/Legenda_Arquivo.txt', 'utf8')
-		const Document = MessageMedia.fromFilePath('./midia/Arquivo.txt')
-		client.sendMessage(msg.from, Document, { caption: Caption_Document })
-		
-		//Image
-		await sleep(1500)
-		const Caption_Image = await fs.readFile('./midia/Legenda_Imagem.txt', 'utf8')
-		const Media_Photo = MessageMedia.fromFilePath('./midia/Foto.png')
-		client.sendMessage(msg.from, Media_Photo, { caption: Caption_Image })
-		
-		//Audio
-		await sleep(1500)
-		chat.sendStateRecording()
-		await sleep(1000)
-		const Media_Audio = MessageMedia.fromFilePath('./midia/Audio.m4a')
-		client.sendMessage(msg.from, Media_Audio, { sendAudioAsVoice: true})
-		
-		//Video
-		await sleep(3000)
-		const Caption_Video = await fs.readFile('./midia/Legenda_Video.txt', 'utf8')
-		const Media_Video = MessageMedia.fromFilePath('./midia/Video.mp4')
-		client.sendMessage(msg.from, Media_Video, { caption: Caption_Video })
+    await client.sendMessage(chatId, buttons)
+
+    if (msg.type === 'buttons_response') {
+        const buttonId = msg.selectedButtonId
+        if (buttonId === 'option1') {
+            await client.sendMessage(chatId, 'You chose Option 1')
+        } else if (buttonId === 'option2') {
+            await client.sendMessage(chatId, 'You chose Option 2')
+        } else if (buttonId === 'option3') {
+            await client.sendMessage(chatId, 'You chose Option 3')
+        }
+    }
+
+
+
+    //text
+    await sleep(1.5 * 1000)
+    chat.sendStateTyping()
+    await sleep(1 * 1000)
+    client.sendMessage(msg.from, await fs.readFile('./Midia/texts/Texto_Mensagem.txt', 'utf8'))
+
+    
+    //file
+    await sleep(1.5 * 1000)
+    client.sendMessage(msg.from, MessageMedia.fromFilePath('./Midia/files/Arquivo.txt'), { caption: await fs.readFile('./Midia/texts/Legenda_Arquivo.txt', 'utf8') })
+    
+    
+    //Image
+    await sleep(1.5 * 1000)
+    client.sendMessage(msg.from, MessageMedia.fromFilePath('./Midia/images/Foto.png'), { caption: await fs.readFile('./Midia/texts/Legenda_Imagem.txt', 'utf8') })
+    
+    //Audio
+    await sleep(1.5 * 1000)
+    chat.sendStateRecording()
+    await sleep(1 * 1000)
+    client.sendMessage(msg.from, MessageMedia.fromFilePath('./Midia/audios/Audio.m4a'), { sendAudioAsVoice: true})
+    
+    //Video
+    await sleep(1.5 * 1000)
+    client.sendMessage(msg.from, MessageMedia.fromFilePath('./Midia/videos/Video.mp4'), { caption: await fs.readFile('./Midia/texts/Legenda_Video.txt', 'utf8') })

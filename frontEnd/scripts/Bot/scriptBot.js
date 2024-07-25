@@ -137,9 +137,9 @@ let isQrOff = true
 
 let Is_Started = false
 
-function sleep(ms) {
+function sleep(time) {
     try {
-        return new Promise((resolve) => setTimeout(resolve, ms))
+        return new Promise((resolve) => setTimeout(resolve, time))
     } catch(error) {
         console.error(`> ⚠️ ERROR sleep: ${error}`)
         displayOnConsole(`> ⚠️ ERROR sleep: ${error.message}`, setLogError)
@@ -253,8 +253,6 @@ async function webSocket() {
                 reloadButton.style.cssText =
                     'color: var(--colorContrast); background-color: var(--colorGreen); cursor: pointer; pointer-events: unset; opacity: 1;'
             }, 5 * 1000)
-
-            isDisconected = false
 
             resetLoadingBar()
         }
@@ -444,9 +442,9 @@ function exit() {
 
         if (isDisconected) {
             reconnectWebSocket()
-
-            isDisconected = false
         }
+        document.title = 'ERROR'
+        
         console.error(`> ❌ ERROR: BackEnd`)
         displayOnConsole(`> ❌ ERROR: BackEnd`, setLogError)
 
@@ -526,9 +524,9 @@ function authFailure() {
 
         if (isDisconected) {
             reconnectWebSocket()
-
-            isDisconected = false
         }
+        document.title = 'ERROR'
+
         console.error(`> ❌ ERROR Back End Auth Failure`)
         displayOnConsole(`> ❌ ERROR Back End Auth Failure`, setLogError)
 
@@ -628,8 +626,6 @@ function ready() {
 
         if (isDisconected) {
             reconnectWebSocket()
-            
-            isDisconected = false
         }
 
         const mainContent = document.querySelector('#innerContent')
@@ -687,6 +683,7 @@ function ready() {
             'background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
         listShowAbbr.title = `STATUS Lista: visivel`
         
+        document.title = 'Bot ready'
 
         resetLoadingBar()
     } catch(error) {
@@ -809,7 +806,7 @@ function loadConsoleStyles() {
             const buttonHideConsole = document.querySelector('#hideConsole')
             const titleHideConsole = document.querySelector('#titleHide')
 
-            consoleElement.style.width = parsedStyles.width || '30.439vw'
+            consoleElement.style.width = parsedStyles.width || '30.62vw'
             titleHideConsole.title = parsedStyles.title || 'Esconder o Terminal'
             buttonHideConsole.textContent = parsedStyles.textContent || '◀'
             isVisibleHideButton = parsedStyles.isVisibleHideButton !== undefined ? parsedStyles.isVisibleHideButton : null
@@ -823,7 +820,7 @@ function loadConsoleStyles() {
                     titleHideConsole.title = 'Mostrar o Terminal'
                     buttonHideConsole.textContent = '▶'
                 } else {
-                    consoleElement.style.width = '30.439vw'
+                    consoleElement.style.width = '30.62vw'
                     titleHideConsole.title = 'Esconder o Terminal'
                     buttonHideConsole.textContent = '◀'
                 }
@@ -864,7 +861,7 @@ function hideConsole() {
         }
         if (isVisibleHideButton !== true) {    
             consoleElement.style.cssText =
-                'width: 30.439vw;'
+                'width: 30.62vw;'
             
             titleHideConsole.title = `Esconder o Terminal`
             buttonHideConsole.textContent = `◀`
@@ -1361,8 +1358,11 @@ function counterExceeds(QR_Counter_Exceeds) {
             'display: none; opacity: 0;'
         }, 300)
 
+        document.title = 'Tente iniciar novamente'
+
         resetLoadingBar()
     } catch (error) {
+        document.title = 'ERROR'
         console.error(`> ⚠️ ERROR counterExceeds: ${error}`)
         displayOnConsole(`> ⚠️ ERROR counterExceeds: ${error.message}`, setLogError)
         resetLoadingBar()
@@ -1377,6 +1377,8 @@ async function generateQrCode(QR_Counter) {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
+
+        document.title = `WhatsApp Web QR-Code(${QR_Counter})`
 
         const mainContent = document.querySelector('#innerContent')
             mainContent.style.cssText =
@@ -1414,10 +1416,8 @@ async function generateQrCode(QR_Counter) {
                 }, 300)
                 resetLoadingBar()
             } else {
-                setTimeout(function() {
-                    status.textContent = `↓↓ Client tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`
-                    displayOnConsole(`>  ℹ️ (status)↓↓ Client tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`)
-                }, 100)
+                status.textContent = `↓↓ Client tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`
+                displayOnConsole(`>  ℹ️ (status)↓↓ Client tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`)
                 
                 codeQr.style.cssText =
                     'display: inline-block; opacity: 0;'
@@ -1427,6 +1427,7 @@ async function generateQrCode(QR_Counter) {
                 }, 100)
                     
                 document.querySelector('#qrCode').innerText = qrString
+                //displayOnConsole(qrString)
                 
                 resetLoadingBar()
             }
@@ -1434,6 +1435,7 @@ async function generateQrCode(QR_Counter) {
         .catch(error => {
             console.error(`> ⚠️ ERROR buscando Qr-Code: ${error}`)
             displayOnConsole(`> ⚠️ ERROR buscando Qr-Code: ${error.message}`, setLogError)
+            document.title = 'ERROR'
             status.textContent = `ERROR buscando Qr-Code!`
             displayOnConsole(`>  ℹ️ (status)ERROR buscando Qr-Code!`)
             let buttonStart = document.querySelector('#start')
@@ -1458,6 +1460,7 @@ async function generateQrCode(QR_Counter) {
         const status = document.querySelector('#status')
         console.error(`> ⚠️ ERROR generateQrCode: ${error}`)
         displayOnConsole(`> ⚠️ ERROR generateQrCode: ${error.message}`, setLogError)
+        document.title = 'ERROR'
         status.textContent = `ERROR Gerando Qr-Code!`
         displayOnConsole(`>  ℹ️ (status)ERROR Gerando Qr-Code!`)
         let buttonStart = document.querySelector('#start')
@@ -1494,9 +1497,9 @@ async function startBot() {
 
             if (isDisconected) {
                 reconnectWebSocket()
-
-                isDisconected = false
             }
+
+            document.title = 'Iniciando o Bot'
 
             const mainContent = document.querySelector('#innerContent')
             mainContent.style.cssText =
@@ -1525,6 +1528,7 @@ async function startBot() {
             const response = await axios.post('/start-bot')
             const data = response.data.sucess
             if (data) {
+                document.title = 'Iniciou o Bot Corretamente'
                 status.textContent = `Iniciou o Bot Corretamente!`
                 displayOnConsole(`> ✅ Iniciou o Bot Corretamente`)
                 
@@ -1538,6 +1542,7 @@ async function startBot() {
                         'display: inline-block; opacity: 1;'
                 }, 100)
 
+                document.title = 'ERROR'
                 status.textContent = `ERROR ao iniciar o Bot!`
                 displayOnConsole(`>  ℹ️ (status)ERROR ao iniciar o Bot!`)
                 displayOnConsole(`> ⚠️ ERROR ao iniciar o Bot`, setLogError)
@@ -1551,6 +1556,7 @@ async function startBot() {
             const status = document.querySelector('#status')
             console.error(`> ⚠️ ERROR startBot: ${error}`)
             displayOnConsole(`> ⚠️ ERROR startBot: ${error.message}`, setLogError)
+            document.title = 'ERROR'
             status.textContent = `ERROR iniciando Bot!`
             displayOnConsole(`>  ℹ️ (status)ERROR iniciando Bot!`)
             let buttonStart = document.querySelector('#start')

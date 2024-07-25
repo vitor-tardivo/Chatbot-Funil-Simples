@@ -4,10 +4,10 @@ function resetLoadingBar() {// RESET LOADING BAR WORK
     if (barL) {
         setTimeout(function() {
             barL.style.cssText =
-            'width: 0px;'
+                'width: 0px;'
             setTimeout(function() {
                 barL.style.cssText =
-                'visibility: hidden;'
+                    'visibility: hidden;'
             }, 300)
         }, 600)
     }
