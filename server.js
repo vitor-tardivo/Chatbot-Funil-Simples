@@ -158,7 +158,7 @@ wssServer.on('connection', async  function connection(wss) {
                 } else {
                     wss.send(JSON.stringify({ type: 'search-chatdata', data: Parse_Data, data2: search }))
                 }*/
-                wss.send(JSON.stringify({ type: 'search-search', search: Search }))
+                wss.send(JSON.stringify({ type: 'search-search', search: Search.trim().toLowerCase() }))
             } catch (error) {
                 console.error(`ERROR Set search-search: ${error}`)
                 //wss.send(JSON.stringify({ type: 'error', message: `status(500) ERROR searching ChatData by the search ${search}: ${error}` }))
@@ -181,7 +181,7 @@ wssServer.on('connection', async  function connection(wss) {
         })
         Set_Query_Erase_Callback(function(search) {
             try {
-                wss.send(JSON.stringify({ type: 'erase-query', Search: search }))
+                wss.send(JSON.stringify({ type: 'erase-query', Search: search.trim().toLowerCase() }))
             } catch (error) {
                 console.error(`ERROR Set erase-query: ${error}`)
                 //wss.send(JSON.stringify({ type: 'error', message: `status(500) ERROR erasing ChatData by the query ${search}: ${error}` }))
@@ -214,7 +214,7 @@ app.get('/what-stage', async (req, res) => {
 
 app.delete('/erase-query', async (req, res) => {
     try {
-        const query = req.query.queryList
+        const query = req.query.queryList.trim().toLowerCase()
         const Is_From_End = false
         const { Sucess, Is_Empty, Is_Empty_Input } = await Erase_Chat_Data_By_Query(query, Is_From_End)
         //if (query) {
@@ -242,12 +242,12 @@ app.delete('/all-erase', async (req, res) => {
         }
     } catch (error) {
         console.error(`> ❌ ERROR /all-erase: ${error}`)
-        res.status(500).send({ Sucess: false, message: `ERROR Internal server: ${error}`, empty: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null })
     }
 })
 app.get('/search-search', async (req, res) => {
     try {
-        const search = req.query.Search
+        const search = req.query.Search.trim().toLowerCase()
         if (!search) {
             return res.status(200).send({ sucess: false, message: `The ChatData ${search} is not in List.`, empty: false, chatdata: [], empty_input: true })
         }
@@ -259,7 +259,7 @@ app.get('/search-search', async (req, res) => {
         }         
     } catch (error) {
         console.error(`> ❌ ERROR /search-list: ${error}`)
-        res.status(500).send({ Sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], empty_input: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], empty_input: null })
     }    
 })
 app.get('/all-print', async (req, res) => {
@@ -289,7 +289,7 @@ app.get('/reload', (req, res) => {
 
 app.post('/command', express.json(), (req, res) => {
     try {
-        const { command } = req.body
+        const { command } = req.body.trim().toLowerCase()
         let Is_Front_Back = false
         Input_Command(command, Is_Front_Back) 
         res.status(200).send({ sucess: true, message: `sucessfully send command.`})
@@ -302,10 +302,8 @@ app.post('/command', express.json(), (req, res) => {
 app.get('/qr', (req, res) => {
     try {
         if (Qr_String === null) {
-            //res.json({ qrString: 'Client já Conectado ao WhatsApp Web!', Is_Conected })
             res.status(200).send({ sucess: true, message: `sucessfully send command.`, qrString: 'Client já Conectado ao WhatsApp Web!', Is_Conected })
         } else {
-            //res.json({ qrString: Qr_String, Is_Conected })
             res.status(200).send({ sucess: true, message: `sucessfully send command.`, qrString: Qr_String, Is_Conected })
         }
     } catch (error) {
@@ -316,13 +314,10 @@ app.get('/qr', (req, res) => {
 
 app.post('/start-bot', async (req, res) => {
     try {
-        await initialize()
-        //res.json({ sucess: true })
-        //res.status(200).send('Comando recebido com sucesso.')
-        res.status(200).send({ sucess: true, message: `sucessfully started bot.` })
+        const { Sucess } = await initialize()
+        res.status(200).send({ sucess: Sucess, message: `sucessfully started bot.` })
     } catch (error) {
         console.error(`> ❌ ERROR /start-bot: ${error}`)
-        //res.json({ sucess: false })
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })

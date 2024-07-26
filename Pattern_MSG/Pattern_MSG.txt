@@ -1,5 +1,5 @@
 //Messages Patterns
-    //Message Buttons !!!!!WhatsApp Bussines ONLY!!!!!(deprecated: maybe if change the version off the api wweb.js)
+    //Message Buttons !!!!!WhatsApp Bussines ONLY!!!!!(deprecated: maybe if change the version off the api wweb.js, the thing changes)
     const buttons = new Buttons(
         'Choose an option:',
         [
@@ -25,7 +25,6 @@
     }
 
 
-
     //text
     await sleep(1.5 * 1000)
     chat.sendStateTyping()
@@ -42,12 +41,47 @@
     await sleep(1.5 * 1000)
     client.sendMessage(msg.from, MessageMedia.fromFilePath('./Midia/images/Foto.png'), { caption: await fs.readFile('./Midia/texts/Legenda_Imagem.txt', 'utf8') })
     
+
     //Audio
     await sleep(1.5 * 1000)
     chat.sendStateRecording()
     await sleep(1 * 1000)
     client.sendMessage(msg.from, MessageMedia.fromFilePath('./Midia/audios/Audio.m4a'), { sendAudioAsVoice: true})
     
+
     //Video
     await sleep(1.5 * 1000)
     client.sendMessage(msg.from, MessageMedia.fromFilePath('./Midia/videos/Video.mp4'), { caption: await fs.readFile('./Midia/texts/Legenda_Video.txt', 'utf8') })
+
+
+    //Messages with multiple paths
+    timer_Duration_ = timer_Duration_Formated_MSG_debug * timer_Duration_MSG_debug
+            
+    console.log(`> ⏲️  Timer STARTING for ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
+    if (global.Log_Callback) global.Log_Callback(`> ⏲️ Timer STARTING for ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
+    
+    timer = setTimeout (async () => {
+        console.log(`> ⏰ Timer FINALIZED ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+        if (global.Log_Callback) global.Log_Callback(`> ⏰ Timer FINALIZED ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+
+            
+        
+        
+        timer = null
+        MSG = false
+    }, timer_Duration_)
+    await Sleep_Timer(12.5 * 1000, Cancel_Promise)
+    await Promise_
+    
+
+    if (MSG) {
+        clearTimeout(timer)
+        timer = null
+
+        console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Timer ended BEFORE ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+        
+
+        
+    }
+    MSG = true

@@ -508,6 +508,7 @@ function exit() {
 
         resetLoadingBar()
     } catch(error) {
+        document.title = 'ERROR'
         console.error(`> ⚠️ ERROR exit: ${error}`)
         displayOnConsole(`> ⚠️ ERROR exit: ${error.message}`, setLogError)
         Is_Not_Ready = true
@@ -586,6 +587,7 @@ function authFailure() {
 
         resetLoadingBar()
     } catch(error) {
+        document.title = 'ERROR'
         console.error(`> ⚠️ ERROR authFailure: ${error}`)
         displayOnConsole(`> ⚠️ ERROR authFailure: ${error.message}`, setLogError)
         Is_Not_Ready = true
@@ -633,26 +635,9 @@ function ready() {
             'display: inline-block;'
 
         const status = document.querySelector('#status')
-            status.textContent = `Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
-            displayOnConsole(`>  ℹ️ (status)Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
+        status.textContent = `Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
+        displayOnConsole(`>  ℹ️ (status)Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
             
-
-        /*let buttonStart = document.querySelector('#start')
-        buttonStart.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            buttonStart.style.cssText =
-                'display: none; opacity: 0;'
-        }, 300)*/
-
-        /*document.querySelector('#qrCode').innerText = ''
-        const codeQr = document.querySelector('#qrCode')
-        codeQr.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            codeQr.style.cssText =
-            'display: none; opacity: 0;'
-        }, 300)*/
         isQrOff = true
 
         isVisibleList = true
@@ -683,10 +668,11 @@ function ready() {
             'background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
         listShowAbbr.title = `STATUS Lista: visivel`
         
-        document.title = 'Bot ready'
+        document.title = 'Bot pronto'
 
         resetLoadingBar()
     } catch(error) {
+        document.title = 'ERROR'
         console.error(`> ⚠️ ERROR ready: ${error}`)
         displayOnConsole(`> ⚠️ ERROR ready: ${error.message}`, setLogError)
         resetLoadingBar()
@@ -879,14 +865,14 @@ function hideConsole() {
 
 async function sendCommand() {
     try {
-        let commandInput = document.querySelector('#commandInput').value.trim()
+        let commandInput = document.querySelector('#commandInput').value.trim().toLowerCase()
         let commandSend = document.querySelector('#commandSend')
 
         commandSend.style.cssText =
             'background-color: #2b2b2b; color: var(--colorWhite); border: 1px solid var(--colorWhite); transition: var(--configTrasition01s);'
         
         //console.log(commandInput)
-        displayOnConsole(commandInput)
+        //displayOnConsole(commandInput)
         
         await axios.post('/command', { command: commandInput }, {
             headers: {
@@ -929,7 +915,7 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             if (isFromTerminal) {
                 queryList = queryFromTerminal
             } else {
-                const query = document.querySelector('#inputList').value.trim()
+                const query = document.querySelector('#inputList').value.trim().toLowerCase()
                 queryList = query
             }
             const response = await axios.delete('/erase-query', { params: { queryList } })
@@ -1069,7 +1055,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
                 'background-color: var(--colorInteractionElements); color: var(--colorBlack); border: 1px solid rgba(0, 0, 0, 0); transition: var(--configTrasition03s);'
             }, 100)
             
-            const search = document.querySelector('#inputList').value.trim()
+            const search = document.querySelector('#inputList').value.trim().toLowerCase()
             Search = search
             response = await axios.get('/search-search', { params: { Search } })
             //const chatdata = response.data.chatdata
@@ -1499,7 +1485,7 @@ async function startBot() {
                 reconnectWebSocket()
             }
 
-            document.title = 'Iniciando o Bot'
+            document.title = 'Iniciando Bot'
 
             const mainContent = document.querySelector('#innerContent')
             mainContent.style.cssText =
@@ -1526,8 +1512,8 @@ async function startBot() {
                     'display: none; opacity: 0;'
             }, 300)
             const response = await axios.post('/start-bot')
-            const data = response.data.sucess
-            if (data) {
+            const Sucess = response.data.sucess
+            if (Sucess) {
                 document.title = 'Iniciou o Bot Corretamente'
                 status.textContent = `Iniciou o Bot Corretamente!`
                 displayOnConsole(`> ✅ Iniciou o Bot Corretamente`)

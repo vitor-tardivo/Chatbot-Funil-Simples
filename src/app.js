@@ -17,7 +17,7 @@ const path = require('path')
 const readline = require('readline')
 
 function Reload_Front() {
-    //console.error(`> ⚠️  Reloaded FrontEnd page`)
+    //console.error(`> ⚠️  Load FrontEnd page`)
     //Is_First_Reaload = false
     //process.exit(1)
 }
@@ -111,50 +111,7 @@ const CHAT_DATA_FILE = path.join(rootDir, 'Chat_Datas', 'Chat_Data.json')
 const Chat_Data = new Map()
 
 let Is_Not_Ready = true
-
-let Is_Schedule = false //On/Off = Schedule_Erase_Chat_Data
-let Is_New = false/////////////////
-let timer_Schedule = {}
-let Is_timer_On = false
-
-let timer_Duration_Formated_Schedule = 10
-let timer_Duration_Type_Schedule = 'Seconds'
-let timer_Duration_Schedule = 1000
-
-let timer_Duration_Type_MSG_ = ''
-let timer_Duration_Formated_MSG_ = 0
-let timer_Duration_MSG_ = 0
-let timer_Duration_ = 0
-
-let QR_Counter_Exceeds = 6
-
-function sleep(time) {
-    try {
-        return new Promise((resolve) => setTimeout(resolve, time))
-    } catch (error) {
-        console.error(`> ❌ ERROR sleep: ${error}`)
-    }
-}
-
-function Actual_Time() {
-    const now = new Date()
-    
-    const hours24 = now.getHours().toString().padStart(2, '0')
-    
-    //let hours = now.getHours()
-    //hours = hours % 12
-    //hours = hours ? hours : 12
-    //const hours12 = hours.toString().padStart(2, '0')
-    
-    const minutes = now.getMinutes().toString().padStart(2, '0')
-    const seconds = now.getSeconds().toString().padStart(2, '0')
-    
-    //const period = hours <= 12 ? 'PM' : 'AM'
-
-    return `${hours24}:${minutes}:${seconds}`
-    //return `${hours12}:${minutes}:${seconds} ${period}`
-}
-
+let QR_Counter_Exceeds = 5
 
 //Patterns for Miliseconds times:
 // Formated= 1 \ * 24 * 60 * 60 * 1000 = 1-Day
@@ -162,26 +119,11 @@ function Actual_Time() {
 // Formated= 1 \ * 60 * 1000 = 1-Minute
 // Formated= 1 \ * 1000 = 1-Second
 
-/*function Command_Confirm(input) {
-    if (Is_Not_Ready) {
-        console.log('>  ℹ️ Client not Ready.')
-        return
-    } else {
-        const command = input.trim()
-
-        if (command === null || command === undefined) {
-            console.log('>  ℹ️ Command not recognized.')
-            return
-        } else {
-            rl.write(command + '\n')
-        }
-    }
-}*/
 const rl = readline.createInterface({
     input: process.stdin
 })
 rl.on('line', async (input) => {
-    const command = input.trim()
+    const command = input.trim().toLowerCase()
     
     let Is_Front_Back = true
     
@@ -193,7 +135,7 @@ async function Input_Command(command, Is_Front_Back) {
             console.log('> ℹ️ Command not recognized.')
             return
         }*/
-        command = command.trim()
+        command = command.trim().toLowerCase()
         
         commands(command, Is_Front_Back)
     } catch (error) {
@@ -361,6 +303,32 @@ async function Load_Chat_Data() {
         }
     }
 }
+let Is_Schedule = true //On/Off = Schedule_Erase_Chat_Data
+let Is_New = false/////////////////
+let timer_Schedule = {}
+let Is_timer_On = false
+function Schedule_Erase_Chat_Data(chatId, timeout) {
+    if (Is_Not_Ready) {
+        console.log('>  ℹ️ Client not Ready.')
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Client not Ready.`)
+        return
+    } else {
+        try {
+            Is_timer_On = true
+            timer_Schedule[chatId] = setTimeout(async () => {
+                    Chat_Data.delete(chatId)
+                    Is_New = false
+                    let isallerase = false
+                    await Save_Chat_Data(Is_New, isallerase)
+                    console.log(`> 🚮 Timer FINALIZED ChatData for ${chatId} ERASED after ${timeout / timer_Duration_Schedule} ${timer_Duration_Type_Schedule} from ${Data_File}.`)
+                    if (global.Log_Callback) global.Log_Callback(`> 🚮 Timer FINALIZED ChatData for ${chatId} ERASED after ${timeout / timer_Duration_Schedule} ${timer_Duration_Type_Schedule} from ${Data_File}.`)
+                    delete timer_Schedule[chatId]
+            }, timeout)
+        } catch (error) {
+            console.error(`> ❌ ERROR Schedule_Erase_Chat_Data: ${error}`)
+        }
+    }
+}
 async function Save_Chat_Data(Is_New, isallerase) {
     if (Is_Not_Ready) {
         console.log('>  ℹ️ Client not Ready.')
@@ -413,7 +381,7 @@ async function Erase_Chat_Data_By_Query(query, Is_From_End) {
                 if (global.Log_Callback) global.Log_Callback(`> ⚠️ ${Data_File} is empty, does not contain any chat data.`)
                 return { Sucess: false, Is_Empty: true, Is_Empty_Input: false }
             }
-            const normalizedQuery = query.toLowerCase()
+            const normalizedQuery = query.trim().toLowerCase()
             //const chatEntries = Array.from(Chat_Data.entries()).filter(([chatId, chatName]) => chatName.toLowerCase().includes(normalizedQuery) || chatId.toLowerCase().includes(normalizedQuery))
             //da pra adicionar um negocio loko de identificar se digito alguma coisa e se digito se existe na lista, por enquanto n vai ter ma so modifica um pouco que ja tem
             //if (chatEntries.every(entry => !entry.chatId)) {
@@ -427,8 +395,8 @@ async function Erase_Chat_Data_By_Query(query, Is_From_End) {
             let erased = false
             let chatIdToErase = null
             for (const [chatId, name] of Chat_Data.entries()) {
-                const normalizedEntryName = name.toLowerCase()
-                const normalizedEntryChatId = chatId.toLowerCase()
+                const normalizedEntryName = name.trim().toLowerCase()
+                const normalizedEntryChatId = chatId.trim().toLowerCase()
                 if (Is_From_End) {
                     if (normalizedEntryName === normalizedQuery || normalizedEntryChatId === normalizedQuery) {
                         console.log(`> ⚠️  Are you sure that you want to erase ${query} from ${Data_File}?`)
@@ -481,7 +449,7 @@ async function Erase_Chat_Data_By_Query(query, Is_From_End) {
                     Is_timer_On = false
                 }
                 Is_New = false
-                let isallerase = true
+                let isallerase = false
                 await Save_Chat_Data(Is_New, isallerase)
                 console.log(`> ✅ ChatData for ${query} from ${Data_File}: ERASED`)
                 if (global.Log_Callback) global.Log_Callback(`> ✅ ChatData for ${query} from ${Data_File}: ERASED`)
@@ -562,28 +530,6 @@ async function Erase_All_Chat_Data(Is_From_End) {
         }
     }
 }
-function Schedule_Erase_Chat_Data(chatId, timeout) {
-    if (Is_Not_Ready) {
-        console.log('>  ℹ️ Client not Ready.')
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Client not Ready.`)
-        return
-    } else {
-        try {
-            Is_timer_On = true
-            timer_Schedule[chatId] = setTimeout(async () => {
-                    Chat_Data.delete(chatId)
-                    Is_New = false
-                    let isallerase = false
-                    await Save_Chat_Data(Is_New, isallerase)
-                    console.log(`> 🚮 Timer FINALIZED ChatData for ${chatId} ERASED after ${timeout / timer_Duration_Schedule} ${timer_Duration_Type_Schedule} from ${Data_File}.`)
-                    if (global.Log_Callback) global.Log_Callback(`> 🚮 Timer FINALIZED ChatData for ${chatId} ERASED after ${timeout / timer_Duration_Schedule} ${timer_Duration_Type_Schedule} from ${Data_File}.`)
-                    delete timer_Schedule[chatId]
-            }, timeout)
-        } catch (error) {
-            console.error(`> ❌ ERROR Schedule_Erase_Chat_Data: ${error}`)
-        }
-    }
-}
 async function Search_Chat_Data_By_Search(search) {
     if (Is_Not_Ready) {
         console.log('>  ℹ️ Client not Ready.')
@@ -594,13 +540,18 @@ async function Search_Chat_Data_By_Search(search) {
             const Data_ = await fs.readFile(CHAT_DATA_FILE, 'utf8')
             const Parse_Data = JSON.parse(Data_)
             if (Parse_Data.length === 0) {
-                console.log(`> ⚠️  ${Data_File} is empty, does not contain any chat data.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ ${Data_File} is empty, does not contain any chat data.`)
+                console.log(`> ↓↓ 📄${Data_File} is empty, does not contain any chat data📄 ↓↓`)
+                if (global.Log_Callback) global.Log_Callback(`> ↓↓ 📄${Data_File} is empty, does not contain any chat data📄 ↓↓`)
+                console.log(`- Length: (0)`)
+                if (global.Log_Callback) global.Log_Callback(`- Length: (0)`)
+                console.log(`- chatId: N/A = name: N/A`)
+                if (global.Log_Callback) global.Log_Callback(`- chatId: N/A = name: N/A`)
+
                 return { Sucess: false, Is_Empty: true, Is_Empty_Input: false, ChatData: [] }
             }
 
-            const normalizedSearch = search.toLowerCase()
-            const chatEntries = Array.from(Chat_Data.entries()).filter(([chatId, chatName]) => chatName.toLowerCase().includes(normalizedSearch) || chatId.toLowerCase().includes(normalizedSearch))
+            const normalizedSearch = search.trim().toLowerCase()
+            const chatEntries = Array.from(Chat_Data.entries()).filter(([chatId, chatName]) => chatName.trim().toLowerCase().includes(normalizedSearch) || chatId.trim().toLowerCase().includes(normalizedSearch))
             if (chatEntries.length === 0) {
                 console.log(`> ⚠️  No ChatData found for the search: ${search}.`)
                 if (global.Log_Callback) global.Log_Callback(`> ⚠️ No ChatData found for the search: ${search}.`)
@@ -608,10 +559,12 @@ async function Search_Chat_Data_By_Search(search) {
             }
     
             console.log(`>  ◌ Printing ChatData for ${search} from ${Data_File}...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌ Printing ChatData for ${search} from ${Data_File}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  Printing ChatData for ${search} from ${Data_File}...`)
             
-            console.log(`> ↓↓ 💬${search} (${chatEntries.length}) Printed💬 ↓↓`)
-            if (global.Log_Callback) global.Log_Callback(`> ↓↓ 💬${search} (${chatEntries.length}) Printed💬 ↓↓`)
+            console.log(`> ↓↓ 📄${search} ChatData Printed📄 ↓↓`)
+            if (global.Log_Callback) global.Log_Callback(`> ↓↓ 📄${search} ChatData Printed📄 ↓↓`)
+            console.log(`- Length: (${Parse_Data.length})`)
+            if (global.Log_Callback) global.Log_Callback(`- Length: (${Parse_Data.length})`)
             chatEntries.forEach(([chatId, chatName]) => {
                 console.log(`- chatId: ${chatId} = name: ${chatName}`)
                 if (global.Log_Callback) global.Log_Callback(`- chatId: ${chatId} = name: ${chatName}`)
@@ -637,29 +590,36 @@ async function Print_All_Chat_Data(isallerase) {
     } else {
         try {
             if (isallerase) {
-                console.log(`>  ◌ Printing ChatData from ${Data_File}...`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌ Printing ChatData from ${Data_File}...`)
-
-                console.log('> ↓↓ 💬ALL ChatData (0) Printed💬 ↓↓')
-                if (global.Log_Callback) global.Log_Callback('> ↓↓ 💬ALL ChatData (0) Printed💬 ↓↓')
+                console.log(`> ↓↓ 📄ALL ChatData Erased📄 ↓↓`)
+                if (global.Log_Callback) global.Log_Callback(`> ↓↓ 📄ALL ChatData Erased📄 ↓↓`)
+                console.log(`- Length: (0)`)
+                if (global.Log_Callback) global.Log_Callback(`- Length: (0)`)
                 console.log(`- chatId: N/A = name: N/A`)
                 if (global.Log_Callback) global.Log_Callback(`- chatId: N/A = name: N/A`)
+                    
                 return { Sucess: true, Is_Empty: false, ChatData: [], Is_From_All_Erase: true }
             }
 
             const Data_ = await fs.readFile(CHAT_DATA_FILE, 'utf8')
             const Parse_Data = JSON.parse(Data_)
             if (Parse_Data.length === 0) {
-                console.log(`> ⚠️  ${Data_File} is empty, does not contain any chat data.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ ${Data_File} is empty, does not contain any chat data.`)
+                console.log(`> ↓↓ 📄${Data_File} is empty, does not contain any chat data📄 ↓↓`)
+                if (global.Log_Callback) global.Log_Callback(`> ↓↓ 📄${Data_File} is empty, does not contain any chat data📄 ↓↓`)
+                console.log(`- Length: (0)`)
+                if (global.Log_Callback) global.Log_Callback(`- Length: (0)`)
+                console.log(`- chatId: N/A = name: N/A`)
+                if (global.Log_Callback) global.Log_Callback(`- chatId: N/A = name: N/A`)
+
                 return { Sucess: false, Is_Empty: true, ChatData: [], Is_From_All_Erase: false }
             }
             
-            console.log(`>  ◌ Printing ChatData from ${Data_File}...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌ Printing ChatData from ${Data_File}...`)
+            console.log(`>  ◌  Printing ChatData from ${Data_File}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  Printing ChatData from ${Data_File}...`)
             
-            console.log(`> ↓↓ 💬ALL ChatData (${Parse_Data.length}) Printed💬 ↓↓`)
-            if (global.Log_Callback) global.Log_Callback(`> ↓↓ 💬ALL ChatData (${Parse_Data.length}) Printed💬 ↓↓`)
+            console.log(`> ↓↓ 📄ALL ChatData Printed📄 ↓↓`)
+            if (global.Log_Callback) global.Log_Callback(`> ↓↓ 📄ALL ChatData Printed📄 ↓↓`)
+            console.log(`- Length: (${Parse_Data.length})`)
+            if (global.Log_Callback) global.Log_Callback(`- Length: (${Parse_Data.length})`)
             Parse_Data.forEach(entry => {
                 console.log(`- chatId: ${entry.chatId} = name: ${entry.name}`)
                 if (global.Log_Callback) global.Log_Callback(`- chatId: ${entry.chatId} = name: ${entry.name}`)
@@ -780,6 +740,42 @@ client.on('ready', async () => {
     } 
 })
 
+let timer_Duration_Formated_Schedule = 10
+let timer_Duration_Type_Schedule = 'Seconds'
+let timer_Duration_Schedule = 1000
+
+let timer_Duration_Type_MSG_ = ''
+let timer_Duration_Formated_MSG_ = 0
+let timer_Duration_MSG_ = 0
+let timer_Duration_ = 0
+
+function sleep(time) {
+    try {
+        return new Promise((resolve) => setTimeout(resolve, time))
+    } catch (error) {
+        console.error(`> ❌ ERROR sleep: ${error}`)
+    }
+}
+
+function Actual_Time() {
+    const now = new Date()
+    
+    const hours24 = now.getHours().toString().padStart(2, '0')
+    
+    //let hours = now.getHours()
+    //hours = hours % 12
+    //hours = hours ? hours : 12
+    //const hours12 = hours.toString().padStart(2, '0')
+    
+    const minutes = now.getMinutes().toString().padStart(2, '0')
+    const seconds = now.getSeconds().toString().padStart(2, '0')
+    
+    //const period = hours <= 12 ? 'PM' : 'AM'
+
+    return `${hours24}:${minutes}:${seconds}`
+    //return `${hours12}:${minutes}:${seconds} ${period}`
+}
+
 let Is_MSG_Started = false
 let Cancel_Promise = false 
 let Promise_ = null
@@ -797,14 +793,14 @@ async function Sleep_Timer(time, Cancel_Sleep) {
                 Promise_ = null
                 Timer_Sleep = null
                 Is_MSG_Started = false
-                console.log('foi')
                 return
             }
             Is_MSG_Started = true
+
             Promise_ = new Promise((resolve) => Timer_Sleep = setTimeout(resolve, 1000))
             
-            console.log(Cancel_Sleep)
-            console.log(i)
+            //console.log(Cancel_Sleep)
+            //console.log(i)
             Cancel_Sleep = Cancel_Promise
             i++
             
@@ -822,30 +818,22 @@ async function Sleep_Timer(time, Cancel_Sleep) {
     }
 }
 
+let Is_MSG_Initiate = true
 //message //actual
 //message_create //debug
-let Count_MSG = 0
-let MSG = true
-let timer = null
-client.on('message', async msg => {
+client.on('message_create', async msg => {
     try {
         const chat = await msg.getChat()
         const chatId = chat.id._serialized
         const contact = await chat.getContact()
         const contactName = chat.name || contact.pushname || contact.verifiedName || 'Unknown'
-
-        /*if (msg.fromMe) {
-            console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} = (FM)`)
-            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} = (FM)`)
-            //MSG = true
-            //timer = null
-            //Count_MSG = 0
-            //return
-        }*/
-
+           
         let Accepted_ = false
-        
+        let MSG = true
+        let timer = null
         let Content_ = null
+        let Chat_Type = null
+        let Chat_Action = null
 
         if (msg.hasMedia) {
             if (msg.type === 'ptt') {
@@ -880,78 +868,53 @@ client.on('message', async msg => {
             if (global.Log_Callback) global.Log_Callback(`> ⚠️ NEW MSG TYPE`)
             Content_ = '❓ ' + (msg.body || 'UNKNOWN')
         }
-        //Content_ === '.' //debug
-        //Content_ !== null //actual
-        if (msg.body === '.' && Count_MSG === 0) {
-            Accepted_ = true
-        } else {
-            Accepted_ = false
-        }
-
-        Count_MSG = 1
-        if (Is_MSG_Started) {
-            Count_MSG++
-            
-            if (Count_MSG >= 2) {
-                clearTimeout(Timer_Sleep)
-                Cancel_Promise = true
-                Count_MSG = 1
-            }
-        }
         
         if (chat.isLoading) {
-            console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} = (LOA)`)
-            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} = (LOA)`)
+            Chat_Action = '(LOA)'
+        } else {
+            Chat_Action = '(?)'
         }
+
         if (chat.isPSA) {
-            console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} = (PSA)`)
-            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} = (PSA)`)
+            Chat_Action = '(PSA)'
+        } else {
+            Chat_Action = '(IN/?)'
         }
 
         if (chat.isGroup) {
-            console.log(`>  ℹ️ ${Actual_Time()} - ${contactName} = (GRO)\n: ${Content_}`)
-            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${contactName} = (GRO)\n: ${Content_}`)
-            Count_MSG = 0
-            MSG = true
-            timer = null
-            return
+            Chat_Type = '(GRO)'
         } else if (chat.isStatusV3) {
-            console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} = (STS)\n: ${Content_}`)
-            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} = (STS)\n: ${Content_}`)
-            Count_MSG = 0
-            MSG = true
-            timer = null
-            return
+            Chat_Type = '(STS)'
         } else if (chat.isGroupCall) {
-            console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} = (GC)\n: ${Content_}`)
-            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} = (GC)\n: ${Content_}`)
-            Count_MSG = 0
-            MSG = true
-            timer = null
-            return
+            Chat_Type = '(GROC)'
         } else if (msg.broadcast) {
-            console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} = (BD)\n: ${Content_}`)
-            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} = (BD)\n: ${Content_}`)
-            Count_MSG = 0
-            MSG = true
-            timer = null
-            return
+            Chat_Type = '(BD)'
         } else {
-            console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} = (IN/?)\n: ${Content_}`)
-            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} = (IN/?)\n: ${Content_}`)
+            Chat_Type = '(IN/?)'
+        }
+
+        if (msg.fromMe) {
+            Chat_Type = '(FM)'
+        }
+
+        if (chat.isGroup || chat.isGroupCall || chat.isStatusV3 || msg.broadcast) {
+            console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+            return
         }
 
         if (Chat_Data.has(chatId)) {
             if (Chat_Data.get(chatId) !== contactName) {
-                console.log(`> ⚠️  ${Actual_Time()} - ${chatId} - ${contactName} = (IN)(DIFERENT NAME)\n: ${Content_}`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ ${Actual_Time()} - ${chatId} - ${contactName} = (IN)(DIFERENT NAME)\n: ${Content_}`)
-                console.log(`> ${chatId} = Already exists: ${Chat_Data.get(chatId)} - Updating to - ${contactName}...`)
-                if (global.Log_Callback) global.Log_Callback(`> ${chatId} = Already exists: ${Chat_Data.get(chatId)} - Updating to - ${contactName}...`)
+                Chat_Action = '(DFN)'
+                console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+                if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+                console.log(`>  ◌ ${chatId} = Already exists: ${Chat_Data.get(chatId)} - Updating to - ${contactName}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  ${chatId} = Already exists: ${Chat_Data.get(chatId)} - Updating to - ${contactName}...`)
                 
                 Chat_Data.set(chatId, contactName)
 
                 console.log(`>  ◌ Saving UPDATED ChatData to ${Data_File}...`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌ Saving UPDATED ChatData to ${Data_File}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  Saving UPDATED ChatData to ${Data_File}...`)
 
                 const Data_ = Array.from(Chat_Data.entries()).map(([chatId, name]) => ({ chatId, name }))
                 const jsonString = '[\n' + Data_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
@@ -963,20 +926,28 @@ client.on('message', async msg => {
                 let Is_From_All_Erase = false
                 if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase)
                 
-                Count_MSG = 0
-                MSG = true
-                timer = null
                 return
             } else {
-                //console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} = (IN)(ALREADY SAVED)\n: 💬 ${Content_}`)
-                //if (global.Log_Callback) global.Log_Callback(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} = (IN)(ALREADY SAVED)\n: 💬 ${Content_}`)
+                console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+                if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
                 
-                Count_MSG = 0
-                MSG = true
-                timer = null
                 return
             }
         }
+
+        //msg.body === '.' //debug
+        //msg.body !== null //actual
+        if (msg.body === '.') {
+            if (Is_MSG_Initiate) {   
+                Accepted_ = true
+                Is_MSG_Initiate = false
+            }
+            if (Is_MSG_Started) {
+                clearTimeout(Timer_Sleep)
+                Cancel_Promise = true
+            }
+        }
+
         if (Accepted_) {
 
             //Patterns for Miliseconds times:
@@ -990,27 +961,28 @@ client.on('message', async msg => {
             let timer_Duration_MSG_debug = timer_Duration_MSG_
             
             timer_Duration_Type_MSG_debug = 'Seconds'
-            timer_Duration_Formated_MSG_debug = 20
+            timer_Duration_Formated_MSG_debug = 10
             timer_Duration_MSG_debug = 1000
 
 
             
-            console.log(`> ✨ ${Actual_Time()} - ${chatId} - ${contactName} = (IN)(NEW): ${Content_}`)
-            if (global.Log_Callback) global.Log_Callback(`> ✨ ${Actual_Time()} - ${chatId} - ${contactName} = (IN)(NEW): ${Content_}`)
-            console.log(`>  ◌ ${chatId} - ${contactName} Sending ALL Messages...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌  ${chatId} - ${contactName} Sending ALL Messages...`)
+            Chat_Action = '(NEW)'
+            console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${contactName} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${contactName} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+            console.log(`>  ◌ Sending ALL Messages...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  Sending ALL Messages...`)
 
             
-            //console.log(`>  ◌ ${chatId} - ${contactName} Sending .Message1....`)
-            //if (global.Log_Callback) global.Log_Callback(`>  ◌  ${chatId} - ${contactName} Sending .Message1....`)
+            console.log(`>  ◌ Sending .Message1....`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  Sending .Message1....`)
 
             await sleep(1.5 * 1000)
             chat.sendStateTyping()
             await sleep(1 * 1000)
             client.sendMessage(msg.from, '1', 'utf8')
 
-            //console.log(`> ✅ ${chatId} - ${contactName} .Message1. Sent.`)
-            //if (global.Log_Callback) global.Log_Callback(`> ✅ ${chatId} - ${contactName} .Message1. Sent.`)
+            console.log(`> ✅ .Message1. Sent.`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ .Message1. Sent.`)
 
 
 
@@ -1024,23 +996,22 @@ client.on('message', async msg => {
                 if (global.Log_Callback) global.Log_Callback(`> ⏰ Timer FINALIZED ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
 
                     
-                //console.log(`>  ◌ ${chatId} - ${contactName} Sending .Message22....`)
-                //if (global.Log_Callback) global.Log_Callback(`> ◌  ${chatId} - ${contactName} Sending .Message22....`)
+                console.log(`>  ◌ Sending .Message22....`)
+                if (global.Log_Callback) global.Log_Callback(`> ◌  Sending .Message22....`)
                 
                 await sleep(1.5 * 1000)
                 chat.sendStateTyping()
                 await sleep(1 * 1000)
                 await client.sendMessage(msg.from, '22', 'utf8')
 
-                //console.log(`> ✅ ${chatId} - ${contactName} .Message22. Sent.`)
-                //if (global.Log_Callback) global.Log_Callback(`> ✅ ${chatId} - ${contactName} .Message22. Sent.`)
+                console.log(`> ✅ .Message22. Sent.`)
+                if (global.Log_Callback) global.Log_Callback(`> ✅ .Message22. Sent.`)
                 
                 timer = null
                 MSG = false
             }, timer_Duration_)
-            await Sleep_Timer(22.5 * 1000, Cancel_Promise)
+            await Sleep_Timer(12.5 * 1000, Cancel_Promise)
             await Promise_
-            console.log('teste')
             if (global.Log_Callback) global.Log_Callback('teste')
             
 
@@ -1052,30 +1023,30 @@ client.on('message', async msg => {
                 if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Timer ended BEFORE ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
                 
 
-                //console.log(`>  ◌ ${chatId} - ${contactName} Sending .Message2....`)
-                //if (global.Log_Callback) global.Log_Callback(`>  ◌  ${chatId} - ${contactName} Sending .Message2....`)
+                console.log(`>  ◌ Sending .Message2....`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  Sending .Message2....`)
                 
                 await sleep(1.5 * 1000)
                 chat.sendStateTyping()
                 await sleep(1 * 1000)
                 await client.sendMessage(msg.from, '2', 'utf8')
                 
-                //console.log(`> ✅ ${chatId} - ${contactName} .Message2. Sent.`)
-                //if (global.Log_Callback) global.Log_Callback(`> ✅ ${chatId} - ${contactName} .Message2. Sent.`)
+                console.log(`> ✅ ${chatId} - ${contactName} .Message2. Sent.`)
+                if (global.Log_Callback) global.Log_Callback(`> ✅ .Message2. Sent.`)
             }
             MSG = true
                 
 
-            //console.log(`>  ◌ ${chatId} - ${contactName} Sending .Message1....`)
-            //if (global.Log_Callback) global.Log_Callback(`>  ◌  ${chatId} - ${contactName} Sending .Message1....`)
+            console.log(`>  ◌ Sending .Message1....`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  Sending .Message1....`)
 
             await sleep(1.5 * 1000)
             chat.sendStateTyping()
             await sleep(1 * 1000)
             client.sendMessage(msg.from, '1', 'utf8')
 
-            //console.log(`> ✅ ${chatId} - ${contactName} .Message1. Sent.`)
-            //if (global.Log_Callback) global.Log_Callback(`> ✅ ${chatId} - ${contactName} .Message1. Sent.`)
+            console.log(`> ✅ .Message1. Sent.`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ .Message1. Sent.`)
 
 
 
@@ -1089,23 +1060,21 @@ client.on('message', async msg => {
                 if (global.Log_Callback) global.Log_Callback(`> ⏰ Timer FINALIZED ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
 
                     
-                //console.log(`>  ◌ ${chatId} - ${contactName} Sending .Message22....`)
-                //if (global.Log_Callback) global.Log_Callback(`> ◌  ${chatId} - ${contactName} Sending .Message22....`)
+                console.log(`>  ◌ Sending .Message22....`)
+                if (global.Log_Callback) global.Log_Callback(`> ◌  Sending .Message22....`)
                 
                 await sleep(1.5 * 1000)
                 chat.sendStateTyping()
                 await sleep(1 * 1000)
                 await client.sendMessage(msg.from, '22', 'utf8')
 
-                //console.log(`> ✅ ${chatId} - ${contactName} .Message22. Sent.`)
-                //if (global.Log_Callback) global.Log_Callback(`> ✅ ${chatId} - ${contactName} .Message22. Sent.`)
+                console.log(`> ✅ .Message22. Sent.`)
+                if (global.Log_Callback) global.Log_Callback(`> ✅ .Message22. Sent.`)
                 
-                timer = null
                 MSG = false
             }, timer_Duration_)
             await Sleep_Timer(22.5 * 1000, Cancel_Promise)
             await Promise_
-            console.log('teste')
             if (global.Log_Callback) global.Log_Callback('teste')
             
 
@@ -1117,24 +1086,24 @@ client.on('message', async msg => {
                 if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Timer ended BEFORE ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
                 
 
-                //console.log(`>  ◌ ${chatId} - ${contactName} Sending .Message2....`)
-                //if (global.Log_Callback) global.Log_Callback(`>  ◌  ${chatId} - ${contactName} Sending .Message2....`)
+                console.log(`>  ◌ Sending .Message2....`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  Sending .Message2....`)
                 
                 await sleep(1.5 * 1000)
                 chat.sendStateTyping()
                 await sleep(1 * 1000)
                 await client.sendMessage(msg.from, '2', 'utf8')
                 
-                //console.log(`> ✅ ${chatId} - ${contactName} .Message2. Sent.`)
-                //if (global.Log_Callback) global.Log_Callback(`> ✅ ${chatId} - ${contactName} .Message2. Sent.`)
+                console.log(`> ✅ ${chatId} - ${contactName} .Message2. Sent.`)
+                if (global.Log_Callback) global.Log_Callback(`> ✅ .Message2. Sent.`)
             }
             MSG = true
 
 
-            console.log(`> ✅ ${chatId} - ${contactName} ALL Messages Sent.`)
-            if (global.Log_Callback) global.Log_Callback(`> ✅ ${chatId} - ${contactName} ALL Messages Sent.`)
+            console.log(`> ✅ ALL Messages Sent.`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ ALL Messages Sent.`)
 
-            Count_MSG = 0
+            Is_MSG_Initiate = true
                 
             Chat_Data.set(chatId, contactName)
             
@@ -1160,8 +1129,10 @@ async function initialize() {
         console.log(`>  ◌ Starting primary functions: Bot...`)
         if (global.Log_Callback) global.Log_Callback(`>  ◌ Starting primary functions: Bot...`)
         await client.initialize()
+        return { Sucess: true }
     } catch (error) {
         console.error(`> ❌ ERROR initialize: ${error}`)
+        return { Sucess: false }
     } 
 }
 
