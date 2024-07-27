@@ -76,8 +76,8 @@ app.get('/', (req, res) => {
 
 wssServer.on('connection', async  function connection(wss) {
     try {
-        const originalConsoleLog = console.log
-        /*console.log = function(...args) {
+        /*const originalConsoleLog = console.log
+        console.log = function(...args) {
             originalConsoleLog.apply(console, args)
             wss.send(JSON.stringify({ type: 'log', message: args.join(' ') }))
         }*/
@@ -132,21 +132,14 @@ wssServer.on('connection', async  function connection(wss) {
                 //wss.send(JSON.stringify({ type: 'all-print', sucess: false, message: `ERROR Internal server: ${error}`, chatdata: [], empty: null, isallerase: null }))
             }
         })
-        Set_List_Auxiliar_Callback(async function(isallerase) {
+        Set_List_Auxiliar_Callback(async function(Is_From_All_Erase) {
             try {
-                
-                /*const { Sucess, Is_Empty, ChatData, Is_From_All_Erase } = await Print_All_Chat_Data(isallerase)
-                if (Sucess) {
-                    wss.send(JSON.stringify({ type: 'all-print', sucess: Sucess, message: `Sucessfully send all ChatData.`, chatdata: ChatData, empty: Is_Empty, isallerase: Is_From_All_Erase }))
-                } else {
-                    wss.send(JSON.stringify({ type: 'all-print', sucess: Sucess, message: `ERROR to send all ChatData.`, chatdata: ChatData, empty: Is_Empty, isallerase: Is_From_All_Erase }))
+                /*if (Is_From_All_Erase) {
+                    Print_All_Chat_Data(Is_From_All_Erase)
                 }*/
-                let Is_From_All_Erase = null
-                Is_From_All_Erase = isallerase
                 wss.send(JSON.stringify({ type: 'all-print-auxiliar', isallerase: Is_From_All_Erase}))
             } catch (error) {
                 console.error(`> ❌ ERROR Set all-print: ${error}`)
-                //wss.send(JSON.stringify({ type: 'all-print', sucess: false, message: `ERROR Internal server: ${error}`, chatdata: [], empty: null, isallerase: null }))
             }
         })
         Set_Search_List_Callback(async function(Search) {
@@ -158,7 +151,7 @@ wssServer.on('connection', async  function connection(wss) {
                 } else {
                     wss.send(JSON.stringify({ type: 'search-chatdata', data: Parse_Data, data2: search }))
                 }*/
-                wss.send(JSON.stringify({ type: 'search-search', search: Search.trim().toLowerCase() }))
+                wss.send(JSON.stringify({ type: 'search-search', search: Search }))
             } catch (error) {
                 console.error(`ERROR Set search-search: ${error}`)
                 //wss.send(JSON.stringify({ type: 'error', message: `status(500) ERROR searching ChatData by the search ${search}: ${error}` }))
@@ -179,12 +172,11 @@ wssServer.on('connection', async  function connection(wss) {
                 //wss.send(JSON.stringify({ type: 'all-erase', Sucess: false, message: `ERROR Internal server: ${error}`, empty: null }))
             }
         })
-        Set_Query_Erase_Callback(function(search) {
+        Set_Query_Erase_Callback(function(query) {
             try {
-                wss.send(JSON.stringify({ type: 'erase-query', Search: search.trim().toLowerCase() }))
+                wss.send(JSON.stringify({ type: 'erase-query', Search: query }))
             } catch (error) {
                 console.error(`ERROR Set erase-query: ${error}`)
-                //wss.send(JSON.stringify({ type: 'error', message: `status(500) ERROR erasing ChatData by the query ${search}: ${error}` }))
             }
         })
 
@@ -204,7 +196,6 @@ wssServer.on('connection', async  function connection(wss) {
 
 app.get('/what-stage', async (req, res) => {
     try {
-        //res.json({ data: global.Stage_, data2: global.QR_Counter })
         res.status(200).send({ sucess: true, message: `sucessfully get stage.`, data: global.Stage_, data2: global.QR_Counter })
     } catch (error) {
         console.error(`> ❌ ERROR /what-stage: ${error}`)
@@ -214,18 +205,14 @@ app.get('/what-stage', async (req, res) => {
 
 app.delete('/erase-query', async (req, res) => {
     try {
-        const query = req.query.queryList.trim().toLowerCase()
+        const query = req.query.queryList
         const Is_From_End = false
         const { Sucess, Is_Empty, Is_Empty_Input } = await Erase_Chat_Data_By_Query(query, Is_From_End)
-        //if (query) {
-            if (Sucess) {
-                res.status(200).send({ sucess: Sucess, message: `sucessfully erased ${query}.`, empty: Is_Empty, empty_input: Is_Empty_Input })
-            } else {
-                res.status(200).send({ sucess: Sucess, message: `ERROR to erase ${query}.`, empty: Is_Empty, empty_input: Is_Empty_Input })
-            }
-        /*} else {
-            res.status(400).send({ sucess: Sucess, message: 'Query parameter is required.', empty: Is_Empty, empty_input: Is_Empty_Input })
-        }*/
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `sucessfully erased ${query}.`, empty: Is_Empty, empty_input: Is_Empty_Input })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to erase ${query}.`, empty: Is_Empty, empty_input: Is_Empty_Input })
+        }
     } catch (error) {
         console.error(`> ❌ ERROR /erase-query: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null })
@@ -247,7 +234,7 @@ app.delete('/all-erase', async (req, res) => {
 })
 app.get('/search-search', async (req, res) => {
     try {
-        const search = req.query.Search.trim().toLowerCase()
+        const search = req.query.Search
         if (!search) {
             return res.status(200).send({ sucess: false, message: `The ChatData ${search} is not in List.`, empty: false, chatdata: [], empty_input: true })
         }
@@ -289,7 +276,7 @@ app.get('/reload', (req, res) => {
 
 app.post('/command', express.json(), (req, res) => {
     try {
-        const { command } = req.body.trim().toLowerCase()
+        const { command } = req.body
         let Is_Front_Back = false
         Input_Command(command, Is_Front_Back) 
         res.status(200).send({ sucess: true, message: `sucessfully send command.`})
@@ -341,3 +328,4 @@ server.listen(port, () => {
     //melhorar para ser possivel varias instancias de websocket ao mesmo tempo e tals
     //da pra melhora os set pra um so e dentro dele seleionar qual vai madar o type e os caralho
     //melhora o reconhecimto do chatdata nao esta na lista do /search-search Search_Chat_Data_By_Search
+    //funcoes multi instancias...

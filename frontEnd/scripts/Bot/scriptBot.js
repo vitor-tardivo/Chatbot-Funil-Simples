@@ -865,7 +865,7 @@ function hideConsole() {
 
 async function sendCommand() {
     try {
-        let commandInput = document.querySelector('#commandInput').value.trim().toLowerCase()
+        let commandInput = document.querySelector('#commandInput').value
         let commandSend = document.querySelector('#commandSend')
 
         commandSend.style.cssText =
@@ -874,7 +874,7 @@ async function sendCommand() {
         //console.log(commandInput)
         //displayOnConsole(commandInput)
         
-        await axios.post('/command', { command: commandInput }, {
+        await axios.post('/command', { command: commandInput}, {
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -915,7 +915,7 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             if (isFromTerminal) {
                 queryList = queryFromTerminal
             } else {
-                const query = document.querySelector('#inputList').value.trim().toLowerCase()
+                const query = document.querySelector('#inputList').value
                 queryList = query
             }
             const response = await axios.delete('/erase-query', { params: { queryList } })
@@ -1055,7 +1055,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
                 'background-color: var(--colorInteractionElements); color: var(--colorBlack); border: 1px solid rgba(0, 0, 0, 0); transition: var(--configTrasition03s);'
             }, 100)
             
-            const search = document.querySelector('#inputList').value.trim().toLowerCase()
+            const search = document.querySelector('#inputList').value
             Search = search
             response = await axios.get('/search-search', { params: { Search } })
             //const chatdata = response.data.chatdata
@@ -1138,7 +1138,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
             displayOnConsole(`>  ℹ️ (status)Listado ChatData ${Search} de Chat_Data.json!`)
         } else {
             status.textContent = `ERROR ao pesquisar ChatData ${Search} de Chat_Data.json!`
-            displayOnConsole(`>  ℹ️ (status)ERROR ao pesquisar ChatData${Search} de Chat_Data.json!`)
+            displayOnConsole(`>  ℹ️ (status)ERROR ao pesquisar ChatData ${Search} de Chat_Data.json!`)
         }
 
         //document.querySelector('#inputList').value = ''
@@ -1569,11 +1569,12 @@ async function startBot() {
 
 //tarefas bot frontend 
 //em desenvolvimento...
-    //organizar a ordem de como as funcoes sao chamadas pra um melhor desempenho e sentido logico
+    
     
     
 //a desenvolver...
-    //?//melhorar o problema de de vez em quando o a barra de loading do start n funciona direito/
     //arrumar meios de as coisas serem automaticas funcoes acionarem de acordo com certar coisas inves de prever todo cenario possivel em varias funcoes
     //talves algum dia fazer ums sistema frontend de commands igual no backend com requesicao http usando as funcoes padrao de funcao do backend e tals
-    //arrumar meios de n precisar dessas variaveis permanentes, ou pelo menos diminuir muito
+    //?//arrumar meios de n precisar dessas variaveis permanentes, ou pelo menos diminuir muito?
+    //?//melhorar o problema de de vez em quando o a barra de loading do start n funciona direito?
+    //funcoes multi instancias...

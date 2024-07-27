@@ -55,14 +55,12 @@
 
 
     //Messages with multiple paths
-    timer_Duration_ = timer_Duration_Formated_MSG_debug * timer_Duration_MSG_debug
-            
-    console.log(`> ⏲️  Timer STARTING for ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
-    if (global.Log_Callback) global.Log_Callback(`> ⏲️ Timer STARTING for ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
+    console.log(`> ⏲️  Timer STARTING for ${timer_Duration_ / 1000} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
+    if (global.Log_Callback) global.Log_Callback(`> ⏲️ Timer STARTING for ${timer_Duration_ / 1000} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
     
     timer = setTimeout (async () => {
-        console.log(`> ⏰ Timer FINALIZED ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
-        if (global.Log_Callback) global.Log_Callback(`> ⏰ Timer FINALIZED ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+        console.log(`> ⏰ Timer FINALIZED ${timer_Duration_ / 1000} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+        if (global.Log_Callback) global.Log_Callback(`> ⏰ Timer FINALIZED ${timer_Duration_ / 1000} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
 
             
         
@@ -78,8 +76,8 @@
         clearTimeout(timer)
         timer = null
 
-        console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Timer ended BEFORE ${timer_Duration_Formated_MSG_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+        console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_ / 1000} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Timer ended BEFORE ${timer_Duration_ / 1000} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
         
 
         
