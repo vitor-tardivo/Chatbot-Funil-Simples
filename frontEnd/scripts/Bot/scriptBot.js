@@ -1166,6 +1166,8 @@ async function allPrint(isFromButton, isallerase) {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
+        await axios.post('/new-client')
+
         const status = document.querySelector('#status')
         let list = document.querySelector('table tbody')
         let counter = document.querySelector('thead > tr > td ')
@@ -1516,7 +1518,7 @@ async function startBot() {
             if (Sucess) {
                 document.title = 'Iniciou o Bot Corretamente'
                 status.textContent = `Iniciou o Bot Corretamente!`
-                displayOnConsole(`> ✅ Iniciou o Bot Corretamente`)
+                displayOnConsole(`>  ℹ️ (status)Iniciou o Bot Corretamente`)
                 
                 Is_Started = true
                 isQrOff = false
