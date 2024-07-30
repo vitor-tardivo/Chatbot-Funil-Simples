@@ -6,14 +6,15 @@ function Set_Log_Callback(callback) {
 let Name_Software = 'bot'
 let Version_ = '0.1.0'
 console.log(`>  ℹ️ ${Name_Software} = v${Version_}`)
-console.log(`>  ◌ Starting secundary functions...`)
-if (global.Log_Callback) global.Log_Callback(`>  ◌ Starting secundary functions...`)
+console.log(`>  ◌ Starting functions...`)
+if (global.Log_Callback) global.Log_Callback(`>  ◌ Starting functions...`)
 
 const { Client, LocalAuth, MessageMedia, Buttons } = require('whatsapp-web.js')
-const axios = require('axios')
 const qrcode = require('qrcode-terminal')
-const fs = require('fs').promises
+const axios = require('axios')
 const path = require('path')
+const fs = require('fs').promises
+const fse = require('fs-extra')
 const readline = require('readline')
 
 function Reload_Front() {
@@ -105,6 +106,20 @@ function Set_Ready_Callback(callback) {
     Ready_Callback = callback
 }
 
+async function sleep(time) {
+    if (Is_Not_Ready) {
+        console.log(`>  ℹ️ Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Client_ not Ready.`)
+        return 
+    } else {
+        try {
+            return new Promise((resolve) => setTimeout(resolve, time))
+        } catch (error) {
+            console.error(`> ❌ ERROR sleep: ${error}`)
+        }
+    }
+}
+
 let Is_Not_Ready = true
 
 //Patterns for Miliseconds times:
@@ -143,7 +158,7 @@ async function commands(command, Is_Front_Back) {
     if (Is_Not_Ready) {
         if (command === 'start') {
             if (Is_Front_Back) {
-                initialize()
+                await initialize()
                 return
             } else {
                 if (Start_Callback) Start_Callback()
@@ -164,7 +179,7 @@ async function commands(command, Is_Front_Back) {
                     if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Command not recognized.`)
                     return
                 } else if (command === 'start') {
-                    console.log(`> ⚠️ Bot already Initialized`)
+                    console.log(`> ⚠️  Bot already Initialized`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️ Bot already Initialized`)
                 }
                 else if (command.startsWith('erase ')) {
@@ -201,7 +216,7 @@ async function commands(command, Is_Front_Back) {
                     if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Command not recognized.`)
                     return
                 } else if (command === 'start') {
-                    console.log(`> ⚠️ Bot already Initialized`)
+                    console.log(`> ⚠️  Bot already Initialized`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️ Bot already Initialized`)
                 } else if (command.startsWith('erase ')) {
                     const query = command.substring(6).trim()
@@ -239,47 +254,47 @@ const Root_Dir = path.resolve(__dirname, '..')
 const Directory_Dir = path.join(Root_Dir, 'Chat_Datas')
 const Data_File = path.join(Directory_Dir, 'Chat_Data.json')
 
-async function Load_Chat_Data() {
+async function Load_Chat_Data(Clientt_) {
     if (Is_Not_Ready) {
-        console.log('>  ℹ️ Client not Ready.')
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Client not Ready.`)
+        console.log('>  ℹ️ ${Clientt_} not Ready.')
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️ ${Clientt_} not Ready.`)
         return []
     } else {
         try {
-            console.log(`>  ◌ Loading ChatData from ${File_Data}...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌ Loading ChatData from ${File_Data}...`)
+            console.log(`>  ◌ Loading ChatData ${Clientt_} from ${File_Data}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  Loading ChatData ${Clientt_} from ${File_Data}...`)
             
             const ChatData = await fs.readFile(Data_File, 'utf8')
 
             if (ChatData.length === 0) {
-                console.log(`> ⚠️  ${File_Data} is empty.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ ${File_Data} is empty.`)
+                console.log(`> ⚠️  ${File_Data} off ${Clientt_} is empty.`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ ${File_Data} off ${Clientt_} is empty.`)
                 await fs.writeFile(Data_File, '[\n\n]', 'utf8')
                 return []
             }
 
             const Parse_Data = JSON.parse(ChatData)
 
-            console.log(`> ✅ ChatData loaded from ${File_Data}.`)
-            if (global.Log_Callback) global.Log_Callback(`> ✅ ChatData loaded from ${File_Data}.`)
+            console.log(`> ✅ ChatData ${Clientt_} loaded from ${File_Data}.`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ ChatData ${Clientt_} loaded from ${File_Data}.`)
             
             return Parse_Data
         } catch (error) {
             if (error.code === 'ENOENT') {
-                console.log(`> ⚠️  ${File_Data} does not exist: ${error}`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ ${File_Data} does not exist: ${error}`)
+                console.log(`> ⚠️  ${File_Data} off ${Clientt_} does not exist: ${error}`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ ${File_Data} off ${Clientt_} does not exist: ${error}`)
                 
-                console.log(`>  ◌ Creating ${File_Data}...`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌ Creating ${File_Data}...`)
+                console.log(`>  ◌ Creating ${File_Data} off ${Clientt_}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌ Creating ${File_Data} off ${Clientt_}...`)
 
                 await fs.mkdir(Directory_Dir)                
                 await fs.writeFile(Data_File, '[\n\n]', 'utf8')
                 
-                console.log(`> 📄 Created: ${File_Data}`)
-                if (global.Log_Callback) global.Log_Callback(`> 📄 Created: ${File_Data}`)
-                Load_Chat_Data()
+                console.log(`> 📄 Created: ${File_Data} off ${Clientt_}`)
+                if (global.Log_Callback) global.Log_Callback(`> 📄 Created: ${File_Data} off ${Clientt_}`)
+                Load_Chat_Data(Clientt_)
             } else {
-                console.error(`> ❌ ERROR Load_Chat_Data: ${error}`)
+                console.error(`> ❌ ERROR Load_Chat_Data ${Clientt_}: ${error}`)
             }
         }
     }
@@ -601,7 +616,7 @@ async function Search_Chat_Data_By_Search(search) {
 async function Print_All_Chat_Data(isallerase) {
     if (Is_Not_Ready) {
         console.log('>  ℹ️ Client not Ready.')
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Client not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Client not Ready.`)
         return { Sucess: false, Is_Empty: null, ChatData: [], Is_From_All_Erase: null }
     } else {
         try {
@@ -651,25 +666,62 @@ async function Print_All_Chat_Data(isallerase) {
 let timer_Duration_MSG_Type = 0
 let timer_Duration_ = 0 * timer_Duration_MSG_Type*/
 
-const Clients_ = {}
-const MAX_Clients_ = 3
-function Generate_Client_Id() {
-    return Date.now().toString()
+//fse.remove(`Local_Auth\\Client_1`)
+//Clients_[clientId].instance.destroy()
+//fse.remove('Local_Auth\\Client_1') //apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar pra apagar ou n vo ver, sistema de apagar do json memo
+const Clients_ = {} //tirar daqui tbm quando apagar
+async function List_Directories(dir_Path, Is_Client_Ready) {
+    if (Is_Client_Ready) {
+        console.log('>  ℹ️ Client not Ready.')
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Client not Ready.`)
+        return []
+    } else {
+        try {
+            const Files_ = await fs.readdir(dir_Path, { withFileTypes: true })
+            const Directories_ = Files_.filter(file => file.isDirectory()).map(dir => dir.name)
+
+            return Directories_
+        } catch (error) {
+            console.error(`> ❌ ERROR List_Directories: ${error}`)
+            return []
+        }
+    }
 }
-async function Initialize_Client_(clientId) {
+let Counter_Name_Clients_ = 0 //quando apagar tirar desse 1 desse tbm
+async function Generate_Client_Name(Is_Client_Ready) { //talves criar um meio de o usuario colocar um nome frontend, resolveria problemas talves
+    if (Is_Client_Ready) {
+        console.log('>  ℹ️ Client_ not Ready.')
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Client_ not Ready.`)
+        return null
+    } else {
+        try {
+            Counter_Name_Clients_++
+            const Client_ = `Client_${Counter_Name_Clients_}`
+            return Client_
+        } catch (error) {
+            console.error(`> ❌ ERROR Generate_Client_Name: ${error}`)
+            return null
+        }
+    }
+}
+const MAX_Clients_ = 3
+async function Initialize_Client_(Clientt_) {
     try {
         if (Object.keys(Clients_).length >= MAX_Clients_) {
-            console.log(`> ❌ Máx instances off Clients reached: (${MAX_Clients_})`)
-            if (global.Log_Callback) global.Log_Callback(`> ❌ Máx instances off Clients reached: (${MAX_Clients_})`)         
+            console.log(`> ⚠️  Max instances off Clients reached: (${MAX_Clients_})`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ Máx instances off Clients reached: (${MAX_Clients_})`)
+            if (_Callback) _Callback() // reagir ao front end caso
+            global.Client_ = null
             return
         }
-
-        const Client_ = new Client({
+        let Client_ = Clientt_
+        Client_ = new Client({
             authStrategy: new LocalAuth({
-                dataPath: 'Local_Auth'
+                dataPath: `Local_Auth\\${Clientt_}`,
+                //clientId: Client_,
             }),
 
-            clientId: clientId,
+            //clientId: Client_,
 
             // unused because package.json: "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#webpack-exodus" solves everything
             //webVersionCache: { type: 'remote', remotePath: 'https://raw.githubusercontent.com/guigo613/alternative-wa-version/main/html/2.2412.54v2.html' }, //for video messages working version
@@ -681,16 +733,21 @@ async function Initialize_Client_(clientId) {
                 headless: true, //debug
             },
         })
+        //console.log(Client_)
         //let Is_Exceeds = true
-        let QR_Counter_Exceeds = 5
+        let QR_Counter_Exceeds = 1 //5
         Client_.on('qr', async qr => {
             try {
                 global.QR_Counter++
-                global.Stage_ = 1
+                if (global.Is_From_New) {
+                    global.Stage_ = 3
+                } else {
+                    global.Stage_ = 1
+                }
 
                 if (global.QR_Counter <= QR_Counter_Exceeds) { 
-                    console.log(`> ↓↓ 📸Client try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code below📸 ↓↓`)
-                    if (global.Log_Callback) global.Log_Callback(`> ↓↓ 📸Client try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code below📸 ↓↓`)
+                    console.log(`> ↓↓ 📸${Clientt_} try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code below📸 ↓↓`)
+                    if (global.Log_Callback) global.Log_Callback(`> ↓↓ 📸${Clientt_} try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code below📸 ↓↓`, Client_)
                     
                     qrcode.generate(qr, { small: true })
                     
@@ -699,31 +756,42 @@ async function Initialize_Client_(clientId) {
                         global.Qr_String = Qr_String_Ascii
                     
                         if (global.Log_Callback) global.Log_Callback(global.Qr_String)
-                        if (QrCode_On_Callback) QrCode_On_Callback(true, global.QR_Counter)
+                        if (QrCode_On_Callback) QrCode_On_Callback(true, global.QR_Counter, Clientt_)
                     })
 
-                    console.log(`> ↑↑ 📸Client try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code above📸 ↑↑`)
-                    if (global.Log_Callback) global.Log_Callback(`> ↑↑ 📸Client try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code above📸 ↑↑`)
+                    console.log(`> ↑↑ 📸${Clientt_} try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code above📸 ↑↑`)
+                    if (global.Log_Callback) global.Log_Callback(`> ↑↑ 📸${Clientt_} try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code above📸 ↑↑`)
                 } else {
                     global.QR_Counter = 0
-                    global.Stage_ = 0
+                    if (global.Is_From_New) {
+                        global.Stage_ = 2
+                    } else {
+                        global.Stage_ = 0
+                    }
+                    global.Client_ = null
+                    global.Is_From_New = false 
                     
                     if (QrCode_Exceeds_Callback) QrCode_Exceeds_Callback(QR_Counter_Exceeds)
                     
-                    console.log(`> ❌ Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
-                    if (global.Log_Callback) global.Log_Callback(`> ❌ Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
+                    console.log(`> ❌ ${Clientt_} Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
+                    if (global.Log_Callback) global.Log_Callback(`> ❌ ${Clientt_} Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
                     
                     //console.log(`>  ◌ Exiting...`)
                     //Is_Exceeds = false
                     //process.exit(1)
                     
-                    Client_.destroy()
+                    if (Client_) Client_.destroy()
+                    Counter_Name_Clients_--
+                    await sleep(1 * 1000)
+                    fse.remove(`Local_Auth\\${Clientt_}`)
+                    console.log('apagoiue')
                     
                     console.log(`>  ℹ️ Retry again.`)
                     if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Retry again.`)
                 }
             } catch (error) {
-                console.log(`> ❌ ERROR connecting Client to WhatsApp Web by the QR_Code ${clientId}: ${error}`)
+                console.log(`> ❌ ERROR connecting ${Clientt_} to WhatsApp Web by the QR_Code LocalAuth: ${error}`)
+                global.Client_ = null
             }
         })
         Client_.on('authenticated', async () => {
@@ -731,64 +799,77 @@ async function Initialize_Client_(clientId) {
                 global.Qr_String = ''
                 global.QR_Counter = 0
                 global.Stage_ = 2
+                global.Client_ = null
+                global.Is_From_New = false 
                 
                 if (Auth_Autenticated_Callback) Auth_Autenticated_Callback()
                 
-                console.log('> 🔑 SUCESSIFULLY Client Authenticated by the Local_Auth.')
-                if (global.Log_Callback) global.Log_Callback(`> 🔑 SUCESSIFULLY Client Authenticated by the Local_Auth.`)
+                console.log(`> 🔑 SUCESSIFULLY ${Clientt_} Authenticated by the Local_Auth.`)
+                if (global.Log_Callback) global.Log_Callback(`> 🔑 SUCESSIFULLY ${Clientt_} Authenticated by the Local_Auth.`)
             } catch (error) {
-                console.error(`> ❌ ERROR autenticated ${clientId}: ${error}`)
+                console.error(`> ❌ ERROR autenticated ${Clientt_}: ${error}`)
+                global.Client_ = null
             } 
         })
         Client_.on('auth_failure', async error => {
             try {
                 global.Qr_String = ''
                 global.QR_Counter = 0
-                global.Stage_ = 0
+                if (global.Is_From_New) {
+                    global.Stage_ = 2
+                } else {
+                    global.Stage_ = 0
+                }
+                global.Client_ = null
+                global.Is_From_New = false 
 
-                Client_.destroy()
+                if (Client_) Client_.destroy()
+                Counter_Name_Clients_--
+                await sleep(1 * 1000)
+                fse.remove(`Local_Auth\\${Clientt_}`)
+                console.log('apagoiue')
                 
                 if (Auth_Failure_Callback) Auth_Failure_Callback()
-                console.error(`> ⚠️  ERROR Authentication Client to WhatsApp Web by the Local_Auth: ${error}`)
+                console.error(`> ⚠️  ERROR Authentication ${Clientt_} to WhatsApp Web by the Local_Auth: ${error}`)
             } catch (error) {
-                console.error(`> ❌ ERROR auth_failure ${clientId}: ${error}`)
+                console.error(`> ❌ ERROR auth_failure ${Clientt_}: ${error}`)
+                global.Client_ = null
             } 
         })
         Client_.on('ready', async () => {
             try {
-                Clients_[clientId] = {
+                Clients_[Client_] = {
                     instance: Client_,
-                    id: clientId
+                    //id: Client_
                 }
-                //Clients_[clientId].instance.destroy()
 
                 global.Qr_String = ''
                 global.QR_Counter = 0
                 global.Stage_ = 2
+                global.Client_ = null
+                global.Is_From_New = false 
                 
-                if (Ready_Callback) Ready_Callback()
+                if (Ready_Callback) Ready_Callback(Clientt_)
                 
                 global.Is_QrCode_On = false
                 global.QR_Counter = 1
                 
-                console.log(`> ✅ Client_${clientId} is READY.`)
-                if (global.Log_Callback) global.Log_Callback(`> ✅ Client_${clientId} is READY.`)
+                console.log(`> ✅ ${Clientt_} is READY.`)
+                if (global.Log_Callback) global.Log_Callback(`> ✅ ${Clientt_} is READY.`)
                 
                 Is_Not_Ready = false
                 
-                await Load_Chat_Data()
-                
-                console.log(`> ✅ FINISHED(Starting primary functions: Bot)`)
-                if (global.Log_Callback) global.Log_Callback(`> ✅ FINISHED(Starting primary functions: Bot)`)
+                await Load_Chat_Data(Clientt_)
             } catch (error) {
-                console.error(`> ❌ ERROR ready ${clientId}: ${error}`)
+                console.error(`> ❌ ERROR ready ${Clientt_}: ${error}`)
+                global.Client_ = null
             } 
         })
 
         function Actual_Time() {
             if (Is_Not_Ready) {
-                console.log('>  ℹ️ Client not Ready.')
-                if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Client not Ready.`)
+                console.log(`>  ℹ️ ${Client_} not Ready.`)
+                if (global.Log_Callback) global.Log_Callback(`>  ℹ️ ${Client_} not Ready.`)
                 return '??:??:??'
             } else {
                 try {
@@ -809,30 +890,17 @@ async function Initialize_Client_(clientId) {
                     return `${hours24}:${minutes}:${seconds}`
                     //return `${hours12}:${minutes}:${seconds} ${period}`
                 } catch(error) {
-                    console.error(`> ❌ ERROR Actual_Timer ${clientId}: ${error}`)
+                    console.error(`> ❌ ERROR Actual_Timer ${Client_}: ${error}`)
                 }
             }
         }
 
         const Chat_States = {}
 
-        function sleep(time) {
-            if (Is_Not_Ready) {
-                console.log('>  ℹ️ Client not Ready.')
-                if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Client not Ready.`)
-                return 
-            } else {
-                try {
-                    return new Promise((resolve) => setTimeout(resolve, time))
-                } catch (error) {
-                    console.error(`> ❌ ERROR sleep ${clientId}: ${error}`)
-                }
-            }
-        }
         async function Sleep_Timer(time, Cancel_Sleep, chatId) {
             if (Is_Not_Ready) {
-                console.log('>  ℹ️ Client not Ready.')
-                if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Client not Ready.`)
+                console.log(`>  ℹ️ ${Clientt_} not Ready.`)
+                if (global.Log_Callback) global.Log_Callback(`>  ℹ️ ${Clientt_} not Ready.`)
                 return 
             } else {
                 try {
@@ -868,14 +936,14 @@ async function Initialize_Client_(clientId) {
                     Chat_States[chatId].Timer_Sleep = null
                     Chat_States[chatId].Is_MSG_Started = false
                 } catch (error) {
-                    console.error(`> ❌ ERROR Sleep_Timer ${clientId}: ${error}`)
+                    console.error(`> ❌ ERROR Sleep_Timer ${Client_}: ${error}`)
                 }
             }
         }
         async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_) {
             if (Is_Not_Ready) {
-                console.log('>  ℹ️ Client not Ready.')
-                if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Client not Ready.`)
+                console.log(`>  ℹ️ ${Clientt_} not Ready.`)
+                if (global.Log_Callback) global.Log_Callback(`>  ℹ️ ${Clientt_} not Ready.`)
                 return 
             } else {
                 try {
@@ -979,7 +1047,7 @@ async function Initialize_Client_(clientId) {
 
                     delete Chat_States[chatId]
                 } catch (error) {
-                    console.error(`> ❌ ERROR Funil_ ${clientId}: ${error}`)
+                    console.error(`> ❌ ERROR Funil_ ${Clientt_}: ${error}`)
                 }
             }
         }
@@ -1128,49 +1196,73 @@ async function Initialize_Client_(clientId) {
                     await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_)
                 }
             } catch (error) {
-                console.error(`> ❌ ERROR sending messages ${clientId}: ${error}`)
+                console.error(`> ❌ ERROR sending messages ${Clientt_}: ${error}`)
             } 
         })
         Client_.on('message_revoke_everyone', async (msg) => {
             try {
                 console.log(`> 📝 Message revoked: ${msg.body}`);
             } catch (error) {
-                console.error(`> ❌ ERROR message_revoke_everyone ${clientId}: ${error}`);
+                console.error(`> ❌ ERROR message_revoke_everyone ${Clientt_}: ${error}`);
             }
         })
         Client_.on('message_revoke_me', async (msg) => {
             try {
                 console.log(`> 📝 Message revoked for me: ${msg.body}`);
             } catch (error) {
-                console.error(`> ❌ ERROR message_revoke_me ${clientId}: ${error}`);
+                console.error(`> ❌ ERROR message_revoke_me ${Clientt_}: ${error}`);
             }
         })
 
-        Client_.initialize()
+        await Client_.initialize()
     } catch (error) {
-        console.error(`> ❌ ERROR Initialize_Client_ ${clientId}: ${error}`)
+        if (error.name === 'ProtocolError') {
+            //quando nao da certo a criacao ou conexao do client pode dar aqui
+            //console.error(`> ❌ ERROR Initialize_Client_ ${Clientt_} ProtocolError: ${error}`)
+        } else {
+            console.error(`> ❌ ERROR Initialize_Client_ ${Clientt_}: ${error}`)
+        }
     }
 }    
 
-console.log(`> ✅ FINISHED(Starting secundary functions)`)
-if (global.Log_Callback) global.Log_Callback(`> ✅ FINISHED(Starting secundary functions)`)
-
 async function initialize() {
-    try {
-        console.log(`>  ◌ Starting primary functions: Bot...`)
-        if (global.Log_Callback) global.Log_Callback(`>  ◌ Starting primary functions: Bot...`)
-        
-        const clientId = Generate_Client_Id()
-        await Initialize_Client_(clientId)
-
-        return { Sucess: true }
-    } catch (error) {
-        console.error(`> ❌ ERROR initialize Client_: ${error}`)
+    if (!Is_Not_Ready) {
+        console.log('>  ℹ️ Client not Ready.')
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Client not Ready.`)
         return { Sucess: false }
+    } else {
+        try {
+            let Is_Client_Ready = false
+            const Directories_ = await List_Directories('Local_Auth', Is_Client_Ready)
+            console.log(Directories_.length-1, Directories_)
+            
+            let Counter_Clients_ = 0
+            if (Directories_.length-1 === -1) {
+                console.log('n tem nada')
+                let Is_Client_Ready = false
+                const Clientt_ = await Generate_Client_Name(Is_Client_Ready)
+                global.Client_ = Clientt_
+                console.log(Clientt_)
+                await Initialize_Client_(Clientt_)
+            } else {
+                for (let i = -1; i < Directories_.length-1; i++) {
+                    console.log('roda tudo')
+                    global.Client_ = Directories_[Counter_Clients_]
+                    await Initialize_Client_(Directories_[Counter_Clients_])
+                    Counter_Clients_++
+                    Counter_Name_Clients_++
+                }
+            }
+            return { Sucess: true }
+        } catch (error) {
+            console.error(`> ❌ ERROR initialize Client_-?: ${error}`)
+            return { Sucess: false }
+        }
     } 
 }
 
 module.exports = {
+    sleep,
     Set_Log_Callback,
     Set_Exit_Callback, 
     Set_Auth_Failure_Callback, 
@@ -1190,10 +1282,13 @@ module.exports = {
     Erase_All_Chat_Data,
     Reload_Front, 
     Input_Command, 
-    Generate_Client_Id,
+    Generate_Client_Name,
     Initialize_Client_,
     initialize,
 }
+
+console.log(`> ✅ FINISHED(Starting functions)`)
+if (global.Log_Callback) global.Log_Callback(`> ✅ FINISHED(Starting functions)`)
 
 //tarefas bot backend 
 //em desenvolvimento...

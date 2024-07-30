@@ -69,7 +69,10 @@
             </div></abbr>
             <div id="innerContent">
                 <div class="divs" id="divStart">
-                    <abbr title="Inicia o Bot"><span id="start" onclick="startBot()" ><stronger>INICIAR</stronger></span></abbr><!-- BUTTON START BOT --> 
+                    <abbr title="Inicia o Bot"><button id="start" onclick="startBot()" ><stronger>INICIAR</stronger></button></abbr><!-- BUTTON START BOT --> 
+                </div>
+                <div class="divs" id="divNewClient">
+                    <abbr title="Cria um novo Client_"><button id="newClient" onclick="newClients()" ><stronger>NOVO CLIENT +</stronger></button></abbr><!-- BUTTON NEW CLIENT BOT --> 
                 </div>
 
                 <!--<abbr title="Ir ao fim da pagina"><button id="scrollB" onclick="bottomScroll()">&#9650;</button></abbr> BUTTON GO TO THE BOTTOM OF THE PAGE
@@ -82,7 +85,7 @@
                 </div>
 
                 <div class="divs" id="divButtonList">
-                    <abbr title="Lista todos os ChatData"><span id="list" onclick="allPrint(true, false)" ><stronger>LISTAR</stronger></span></abbr><!-- BUTTON LIST CHAT DATA --> 
+                    <abbr title="Lista todos os ChatData"><button id="list" onclick="allPrint(true, false)" ><stronger>LISTAR</stronger></button></abbr><!-- BUTTON LIST CHAT DATA --> 
                 </div>
 
                 <div id="listChatData">
@@ -126,10 +129,6 @@
                 <div class="divs" id="divButtonErase">
                     <abbr title="Apaga todos os itens da lista"><button id="erase" onclick="allErase()">APAGAR</button></abbr><!-- BUTTON ERASE ITENS OF THE LIST -->
                 </div>
-            </div>
-
-            <div>
-                
             </div>
 
         </section>

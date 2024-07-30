@@ -316,6 +316,7 @@ main {
     border: 2px solid var(--colorWhite);
 }
 #showList {
+    display: none;
     background-color: var(--colorContrast);
     color: var(--colorInteractionElements);
     border: 2px solid var(--colorBlack);
@@ -323,7 +324,7 @@ main {
     outline: 2px solid rgba(0, 0, 0, 0);
     cursor: help;
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0;
     transition: var(--configTrasition03s);
 }
 #showList:hover {
@@ -408,10 +409,50 @@ main {
     transition: var(--configTrasition01s);
 }
 #start:focus {
-    border: 2px solid rgba(207, 44, 44, 0);
+    border: 2px solid var(--colorBlack);
     outline: 2px solid var(--colorWhite);
 }
 
+/* BUTTON NEW CLIENT STYLIZATION */
+#divNewClient {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#newClient {
+    display: inline-block;
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border: 2px solid var(--colorBlack);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    padding: 0px 17px 3px 17px;
+    margin-bottom: 20px;
+    font-size: 3vw;
+    word-break: break-word;
+    cursor: pointer;
+    /*transform: translate(0px, -10px);*/
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+#newClient:hover {
+    background-color: var(--colorContrast);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorWhite);
+    /*transform: translate(0px, 0px);*/
+}
+#newClient:active {
+    background-color: var(--colorContrast);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorWhite);
+    outline: 2px solid var(--colorWhite);
+    /*transform: translate(0px, 0px);*/
+    transition: var(--configTrasition01s);
+}
+#newClient:focus {
+    border: 2px solid var(--colorBlack);
+    outline: 2px solid var(--colorWhite);
+}
 #qrCode {
     display: none;
     background-color: black;
@@ -471,7 +512,7 @@ main {
     transition: var(--configTrasition01s);
 }
 #list:focus {
-    border: 2px solid rgba(207, 44, 44, 0);
+    border: 2px solid var(--colorBlack);
     outline: 2px solid var(--colorWhite);
 }
 

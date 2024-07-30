@@ -28,7 +28,7 @@ window.onbeforeunload = function(event) {
         displayOnConsole(`> ⚠️ ERROR onbeforeunload: ${error.message}`, setLogError)
     }
 }
-document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA QUERY PHONE
+document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA QUERY PHONE AND ELSE
     try {
         if (isMobile()) {
             console.log('User is from a Phone.')
@@ -44,19 +44,34 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         const response = await axios.get('/what-stage')
         const stage = response.data.data
         const QR_Counter = response.data.data2
+        const Clientt_ = response.data.data3
         
         if (stage === 0) {
             
         }
         if (stage === 1) {
-            Is_Started = true
+            if (!Is_From_New) {
+                Is_Started = true
+            }
             isQrOff = false
-            generateQrCode(QR_Counter)
+            generateQrCode(QR_Counter, Clientt_)
         }
         if (stage === 2) {
-            Is_Started = true
+            if (!Is_From_New) {
+                Is_Started = true
+            }
             authsucess()
-            ready()
+            ready(Clientt_)
+        }
+        if (stage === 3) {
+            if (!Is_From_New) {
+                Is_Started = true
+            }
+            authsucess()
+            ready(Clientt_)
+            let Is_From_New = true
+            isQrOff = false
+            generateQrCode(QR_Counter)
         }
 
         const reloadButton = document.querySelector('#reload')
@@ -134,6 +149,9 @@ let isVisibleList = null
 let isExceeds = true 
 
 let isQrOff = true
+
+let Is_From_New = false
+let Is_Started_New = true
 
 let Is_Started = false
 
@@ -343,8 +361,11 @@ function handleWebSocketData(dataWebSocket) {
             break
         case 'generate_qr_code':
             const QR_Counter = dataWebSocket.data
+            const Clientt_ = dataWebSocket.data2
+
+            isQrOff = false
             setTimeout(function() {
-                generateQrCode(QR_Counter)
+                generateQrCode(QR_Counter, Clientt_)
             }, 100)
             break
         case 'qr_exceeds':
@@ -360,7 +381,8 @@ function handleWebSocketData(dataWebSocket) {
             authFailure()
             break
         case 'ready':
-            ready();
+            const Client_ = dataWebSocket.client
+            ready(Client_);
             break
         case 'search-search':
             //const Parse_Data = dataWebSocket.data
@@ -455,7 +477,11 @@ function exit() {
         let listShow = document.querySelector('#showList')
         let listShowAbbr = document.querySelector('#abbrShowList')
         listShow.style.cssText = 
-            'background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0.5;'
+            'display: inline-block; background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0;'
+        setTimeout(function() {
+            listShow.style.cssText =
+                'display: none; background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0;'
+        }, 300)
         listShowAbbr.title = `STATUS Lista: null`
         
         isVisibleHideButton = null
@@ -471,6 +497,8 @@ function exit() {
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 1;'
         }, 100)
+
+        Is_From_New = false 
         Is_Started = false
         
         document.querySelector('#qrCode').innerText = ''
@@ -481,7 +509,6 @@ function exit() {
             codeQr.style.cssText =
                 'display: none; opacity: 0;'
         }, 300)
-        isQrOff = true
 
         isVisibleList = null
         const listButton = document.querySelector('#list')
@@ -538,19 +565,25 @@ function authFailure() {
         let listShow = document.querySelector('#showList')
         let listShowAbbr = document.querySelector('#abbrShowList')
         listShow.style.cssText = 
-            'background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0.5;'
+            'display: inline-block; background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0;'
+        setTimeout(function() {
+            listShow.style.cssText =
+                'display: none; background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0;'
+        }, 300)
         listShowAbbr.title = `STATUS Lista: null`
 
         isVisibleHideButton = null
 
-        let buttonStart = document.querySelector('#start')
-        buttonStart.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
+        if (!Is_From_New) {
+            let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
-                'display: inline-block; opacity: 1;'
-        }, 100)
-        Is_Started = false
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                buttonStart.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
+            Is_Started = false
+        }
         
         document.querySelector('#qrCode').innerText = ''
         const codeQr = document.querySelector('#qrCode')
@@ -560,7 +593,6 @@ function authFailure() {
             codeQr.style.cssText =
                 'display: none; opacity: 0;'
         }, 300)
-        isQrOff = true
 
         isVisibleList = null
         const listButton = document.querySelector('#list')
@@ -596,13 +628,16 @@ function authFailure() {
 } 
 function authsucess() {
     try {
-        let buttonStart = document.querySelector('#start')
-        buttonStart.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
+        if (!Is_From_New) {
+            let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
-                'display: none; opacity: 0;'
-        }, 300)
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                buttonStart.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
+            Is_Started = true
+        }
         
         document.querySelector('#qrCode').innerText = ''
         const codeQr = document.querySelector('#qrCode')
@@ -612,13 +647,12 @@ function authsucess() {
             codeQr.style.cssText =
             'display: none; opacity: 0;'
         }, 300)
-        isQrOff = true
     } catch(error) {
         console.error(`> ⚠️ ERROR authSucess: ${error}`)
         displayOnConsole(`> ⚠️ ERROR authSucess: ${error.message}`, setLogError)
     }
 }
-function ready() {
+function ready(Client_) {
     try {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
@@ -635,10 +669,14 @@ function ready() {
             'display: inline-block;'
 
         const status = document.querySelector('#status')
-        status.textContent = `Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
-        displayOnConsole(`>  ℹ️ (status)Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
+        status.textContent = `${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
+        displayOnConsole(`>  ℹ️ (status)${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
             
-        isQrOff = true
+        Is_Started_New = false
+
+        if (!Is_From_New) {
+            Is_Started = true
+        }
 
         isVisibleList = true
         const listButton = document.querySelector('#list')
@@ -665,16 +703,22 @@ function ready() {
         let listShow = document.querySelector('#showList')
         let listShowAbbr = document.querySelector('#abbrShowList')
         listShow.style.cssText = 
-            'background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
+            'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 0;'
+        setTimeout(function() {
+            listShow.style.cssText =
+                'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
+        }, 100)
         listShowAbbr.title = `STATUS Lista: visivel`
+
+        Is_From_New = false 
         
-        document.title = 'Bot pronto'
+        document.title = `Bot ${Client_} pronto`
 
         resetLoadingBar()
     } catch(error) {
         document.title = 'ERROR'
-        console.error(`> ⚠️ ERROR ready: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR ready: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR ${Client_} ready: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR ${Client_} ready: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
@@ -709,7 +753,7 @@ function showTableList() {
         }
         if (isVisibleList) {
             listShow.style.cssText = 
-                'background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
+                'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
             listShowAbbr.title = `STATUS Lista: visivel`
             
             listButton.style.cssText =
@@ -736,7 +780,7 @@ function showTableList() {
         }
         if (isVisibleList !== true) {
             listShow.style.cssText = 
-                'background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
+                'display: inline-block; background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
             listShowAbbr.title = `STATUS Lista: escondido`
             
             listButton.style.cssText =
@@ -1166,8 +1210,6 @@ async function allPrint(isFromButton, isallerase) {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
-        await axios.post('/new-client')
-
         const status = document.querySelector('#status')
         let list = document.querySelector('table tbody')
         let counter = document.querySelector('thead > tr > td ')
@@ -1323,19 +1365,19 @@ function counterExceeds(QR_Counter_Exceeds) {
         const status = document.querySelector('#status')
         status.textContent = `Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!`
         displayOnConsole(`>  ℹ️ (status)Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!`)
-        /*setTimeout(function() {
-            status.textContent = `Tente novamente!`
-        }, 2000)*/
-        let buttonStart = document.querySelector('#start')
-        buttonStart.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
+        
+        if (!Is_From_New) {
+            let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
-                'display: inline-block; opacity: 1;'
-        }, 100)
-
-        Is_Started = false
-        isQrOff = true
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                buttonStart.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
+            Is_Started = false
+        } else {
+            Is_Started_New = false
+        }
 
         document.querySelector('#qrCode').innerText = ''
         const codeQr = document.querySelector('#qrCode')
@@ -1356,9 +1398,10 @@ function counterExceeds(QR_Counter_Exceeds) {
         resetLoadingBar()
     }
 }
-async function generateQrCode(QR_Counter) {
+//lembra pra deixar false o isQrOff = true pra dar certo o new client
+async function generateQrCode(QR_Counter, Clientt_) {
     if (isQrOff) {
-        displayOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        displayOnConsole(`>  ℹ️ ${Clientt_} not Ready qr.`, setLogError)
         return
     }
     try {
@@ -1366,25 +1409,29 @@ async function generateQrCode(QR_Counter) {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
-        document.title = `WhatsApp Web QR-Code(${QR_Counter})`
+        isQrOff = true
+
+        document.title = `${Clientt_} WhatsApp Web QR-Code(${QR_Counter})`
 
         const mainContent = document.querySelector('#innerContent')
-            mainContent.style.cssText =
-                'display: inline-block;'
+        mainContent.style.cssText =
+            'display: inline-block;'
 
-        let buttonStart = document.querySelector('#start')
-        buttonStart.style.cssText =
-            'display: none; opacity: 0;'
-        setTimeout(function() {
+        if (!Is_From_New) {
+            let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: none; opacity: 0;'
-        }, 300)
+            setTimeout(function() {
+                buttonStart.style.cssText =
+                'display: none; opacity: 0;'
+            }, 300)
+        }
         
         const status = document.querySelector('#status')
         const codeQr = document.querySelector('#qrCode')
 
-        status.textContent = `Gerando Qr-Code...`
-        displayOnConsole(`>  ℹ️ (status)Gerando Qr-Code...`)
+        status.textContent = `${Clientt_} Gerando Qr-Code...`
+        displayOnConsole(`>  ℹ️ (status)${Clientt_} Gerando Qr-Code...`)
         
         axios.get('/qr')
         .then(response => {
@@ -1392,8 +1439,8 @@ async function generateQrCode(QR_Counter) {
 
             if (Is_Conected) {
                 setTimeout(function() {
-                    status.textContent = `Client ja conectado!`
-                    displayOnConsole(`>  ℹ️ (status)Client ja conectado!`)
+                    status.textContent = `${Clientt_} ja conectado!`
+                    displayOnConsole(`>  ℹ️ (status)${Clientt_} ja conectado!`)
                 }, 100)
                 document.querySelector('#qrCode').innerText = ''
                 codeQr.style.cssText =
@@ -1404,8 +1451,8 @@ async function generateQrCode(QR_Counter) {
                 }, 300)
                 resetLoadingBar()
             } else {
-                status.textContent = `↓↓ Client tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`
-                displayOnConsole(`>  ℹ️ (status)↓↓ Client tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`)
+                status.textContent = `↓↓ ${Clientt_} tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`
+                displayOnConsole(`>  ℹ️ (status)↓↓ ${Clientt_} tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`)
                 
                 codeQr.style.cssText =
                     'display: inline-block; opacity: 0;'
@@ -1421,11 +1468,38 @@ async function generateQrCode(QR_Counter) {
             }
         })
         .catch(error => {
-            console.error(`> ⚠️ ERROR buscando Qr-Code: ${error}`)
-            displayOnConsole(`> ⚠️ ERROR buscando Qr-Code: ${error.message}`, setLogError)
+            console.error(`> ⚠️ ERROR buscando Qr-Code ${Clientt_}: ${error}`)
+            displayOnConsole(`> ⚠️ ERROR buscando Qr-Code ${Clientt_}: ${error.message}`, setLogError)
             document.title = 'ERROR'
-            status.textContent = `ERROR buscando Qr-Code!`
-            displayOnConsole(`>  ℹ️ (status)ERROR buscando Qr-Code!`)
+            status.textContent = `ERROR buscando Qr-Code ${Clientt_}!`
+            displayOnConsole(`>  ℹ️ (status)ERROR buscando Qr-Code ${Clientt_}!`)
+            if (!Is_From_New) {
+                let buttonStart = document.querySelector('#start')
+                buttonStart.style.cssText =
+                    'display: inline-block; opacity: 0;'
+                setTimeout(function() {
+                    buttonStart.style.cssText =
+                        'display: inline-block; opacity: 1;'
+                }, 100)
+                Is_Started = false
+            }
+            document.querySelector('#qrCode').innerText = ''
+            codeQr.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                codeQr.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
+            resetLoadingBar()
+        })
+    } catch (error) {
+        const status = document.querySelector('#status')
+        console.error(`> ⚠️ ERROR generateQrCode ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR generateQrCode ${Clientt_}: ${error.message}`, setLogError)
+        document.title = 'ERROR'
+        status.textContent = `ERROR Gerando Qr-Code ${Clientt_}!`
+        displayOnConsole(`>  ℹ️ (status)ERROR Gerando Qr-Code ${Clientt_}!`)
+        if (!Is_From_New) {
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 0;'
@@ -1434,31 +1508,7 @@ async function generateQrCode(QR_Counter) {
                     'display: inline-block; opacity: 1;'
             }, 100)
             Is_Started = false
-            document.querySelector('#qrCode').innerText = ''
-            codeQr.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                codeQr.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
-            isQrOff = true
-            resetLoadingBar()
-        })
-    } catch (error) {
-        const status = document.querySelector('#status')
-        console.error(`> ⚠️ ERROR generateQrCode: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR generateQrCode: ${error.message}`, setLogError)
-        document.title = 'ERROR'
-        status.textContent = `ERROR Gerando Qr-Code!`
-        displayOnConsole(`>  ℹ️ (status)ERROR Gerando Qr-Code!`)
-        let buttonStart = document.querySelector('#start')
-        buttonStart.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            buttonStart.style.cssText =
-                'display: inline-block; opacity: 1;'
-        }, 100)
-        Is_Started = false
+        }
         document.querySelector('#qrCode').innerText = ''
         const codeQr = document.querySelector('#qrCode')
         codeQr.style.cssText =
@@ -1467,10 +1517,37 @@ async function generateQrCode(QR_Counter) {
             codeQr.style.cssText =
                 'display: none; opacity: 0;'
         }, 300)
-        isQrOff = true
         resetLoadingBar() 
     }
 }
+
+async function newClients() {
+    if (Is_Started_New) {
+        displayOnConsole('>  ℹ️ Client not Ready.', setLogError)
+        return
+    }
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        Is_Started_New = true
+        Is_From_New = true
+
+        document.title = 'Criando novo Client'
+
+        await axios.post('/new-client')
+
+        resetLoadingBar()
+    } catch (error) {
+        document.title = 'ERROR'
+        console.error(`> ⚠️ ERROR newClients: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR newClients: ${error.message}`, setLogError)
+        Is_Started_New = false
+        resetLoadingBar()
+    }
+}
+
 async function startBot() {
     if (Is_Started) {
         displayOnConsole(`> ⚠️ Bot ja esta Iniciado`, setLogError)
@@ -1480,6 +1557,8 @@ async function startBot() {
             let barL = document.querySelector('#barLoading')
             barL.style.cssText =
                 'width: 100vw; visibility: visible;'
+
+            Is_Started = true
 
             displayOnConsole(`>  ℹ️  ${Name_Software} = v${Version_}`)
 
@@ -1519,9 +1598,8 @@ async function startBot() {
                 document.title = 'Iniciou o Bot Corretamente'
                 status.textContent = `Iniciou o Bot Corretamente!`
                 displayOnConsole(`>  ℹ️ (status)Iniciou o Bot Corretamente`)
-                
-                Is_Started = true
-                isQrOff = false
+
+                resetLoadingBar()
             } else {
                 buttonStart.style.cssText =
                     'display: inline-block; opacity: 0;'
@@ -1536,7 +1614,6 @@ async function startBot() {
                 displayOnConsole(`> ⚠️ ERROR ao iniciar o Bot`, setLogError)
                 
                 Is_Started = false
-                isQrOff = true
 
                 resetLoadingBar()
             }
@@ -1563,7 +1640,7 @@ async function startBot() {
                 codeQr.style.cssText =
                     'display: none; opacity: 0;'
             }, 300)
-            isQrOff = true
+            
             resetLoadingBar()
         }
     }
