@@ -323,7 +323,7 @@ main {
     border-radius: 0px 0px 50px 50px;
     outline: 2px solid rgba(0, 0, 0, 0);
     cursor: help;
-    pointer-events: none;
+    pointer-events: unset;
     opacity: 0;
     transition: var(--configTrasition03s);
 }

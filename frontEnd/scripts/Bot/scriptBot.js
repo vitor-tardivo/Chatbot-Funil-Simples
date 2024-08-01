@@ -678,37 +678,7 @@ function ready(Client_) {
             Is_Started = true
         }
 
-        isVisibleList = true
-        const listButton = document.querySelector('#list')
-        listButton.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            listButton.style.cssText =
-                'display: inline-block; opacity: 1;'
-        }, 100)
-        let tableList = document.querySelector('#listChatData')
-        tableList.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            tableList.style.cssText =
-                'display: inline-block; opacity: 1;'
-        }, 100)
-        let eraseButton = document.querySelector('#erase')
-        eraseButton.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            eraseButton.style.cssText =
-                'display: inline-block; opacity: 1;'
-        }, 100)
-        let listShow = document.querySelector('#showList')
-        let listShowAbbr = document.querySelector('#abbrShowList')
-        listShow.style.cssText = 
-            'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 0;'
-        setTimeout(function() {
-            listShow.style.cssText =
-                'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
-        }, 100)
-        listShowAbbr.title = `STATUS Lista: visivel`
+        loadTableStyles()
 
         Is_From_New = false 
         
@@ -729,6 +699,122 @@ function clsConsole() {
     } catch (error) {
         console.error(`> ⚠️ ERROR clsConsole: ${error}`)
         displayOnConsole(`> ⚠️ ERROR clsConsole: ${error.message}`, setLogError)
+    }
+}
+function saveTableStyles() {
+    try {
+        /*const consoleElement = document.querySelector('#console')
+        const buttonHideConsole = document.querySelector('#hideConsole')
+        const titleHideConsole = document.querySelector('#titleHide')*/
+
+
+        const listButton = document.querySelector('#list')
+        const tableList = document.querySelector('#listChatData')
+        const eraseButton = document.querySelector('#erase')
+
+        const listShow = document.querySelector('#showList')
+        const listShowAbbr = document.querySelector('#abbrShowList')
+
+        localStorage.setItem('tableStyles', JSON.stringify({
+            /*width: consoleElement.style.width,
+            title: titleHideConsole.title,
+            textContent: buttonHideConsole.textContent,
+            isVisibleHideButton: isVisibleHideButton*/
+
+
+            listButtonCssText: listButton.style.cssText,
+            tableListCssText: tableList.style.cssText,
+            eraseButtonCssText: eraseButton.style.cssText,
+            listShowCssText: listShow.style.cssText,
+            listShowAbbrTitle: listShowAbbr.title,
+            isVisibleList: isVisibleList
+        }))
+    } catch (error) {
+        console.error(`> ⚠️ ERROR saveTableStyles: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR saveTableStyles: ${error.message}`, setLogError)
+    }
+}
+function loadTableStyles() {
+    try {
+        const savedStyles = localStorage.getItem('tableStyles')
+        if (savedStyles) {
+            const parsedStyles = JSON.parse(savedStyles)
+            /*const consoleElement = document.querySelector('#console')
+            const buttonHideConsole = document.querySelector('#hideConsole')
+            const titleHideConsole = document.querySelector('#titleHide')*/
+
+
+            const listButton = document.querySelector('#list')
+            const tableList = document.querySelector('#listChatData')
+            const eraseButton = document.querySelector('#erase')
+
+            const listShow = document.querySelector('#showList')
+            const listShowAbbr = document.querySelector('#abbrShowList')
+
+            /*consoleElement.style.width = parsedStyles.width || '30.62vw'
+            titleHideConsole.title = parsedStyles.title || 'Esconder o Terminal'
+            buttonHideConsole.textContent = parsedStyles.textContent || '◀'
+            isVisibleHideButton = parsedStyles.isVisibleHideButton !== undefined ? parsedStyles.isVisibleHideButton : null*/
+
+
+            listButton.style.cssText = parsedStyles.listButtonCssText || 'display: inline-block; opacity: 1;' 
+            setTimeout(() => listButton.style.cssText = 'display: inline-block; opacity: 1;', 100)
+                        
+            tableList.style.cssText = parsedStyles.tableListCssText || 'display: inline-block; opacity: 1;'
+            setTimeout(() => tableList.style.cssText = 'display: inline-block; opacity: 1;', 100)
+
+            eraseButton.style.cssText = parsedStyles.eraseButtonCssText || 'display: inline-block; opacity: 1;'
+            setTimeout(() => eraseButton.style.cssText = 'display: inline-block; opacity: 1;', 100)
+
+            listShow.style.cssText = parsedStyles.listShowCssText || 'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
+            listShowAbbr.title = parsedStyles.listShowAbbrTitle || `STATUS Lista: visivel`
+
+            isVisibleList = parsedStyles.isVisibleList !== undefined ? parsedStyles.isVisibleList : null
+
+            if (isVisibleList === null) {
+                isVisibleList = true
+                showTableList()
+            } else {
+                if (isVisibleList) {
+                    /*consoleElement.style.width = '0'
+                    titleHideConsole.title = 'Mostrar o Terminal'
+                    buttonHideConsole.textContent = '▶'*/
+
+
+                    listButton.style.cssText = 'display: inline-block; opacity: 0;' 
+                    setTimeout(() => listButton.style.cssText = 'display: inline-block; opacity: 1;', 100)
+                                
+                    tableList.style.cssText = 'display: inline-block; opacity: 0;'
+                    setTimeout(() => tableList.style.cssText = 'display: inline-block; opacity: 1;', 100)
+
+                    eraseButton.style.cssText = 'display: inline-block; opacity: 0;'
+                    setTimeout(() => eraseButton.style.cssText = 'display: inline-block; opacity: 1;', 100)
+
+                    listShow.style.cssText = 'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
+                    listShowAbbr.title = `STATUS Lista: visivel`
+                } else {
+                    /*consoleElement.style.width = '30.62vw'
+                    titleHideConsole.title = 'Esconder o Terminal'
+                    buttonHideConsole.textContent = '◀'*/
+
+
+                    listButton.style.cssText = 'display: inline-block; opacity: 0;' 
+                    setTimeout(() => listButton.style.cssText = 'display: none; opacity: 0;', 100)
+                                
+                    tableList.style.cssText = 'display: inline-block; opacity: 0;'
+                    setTimeout(() => tableList.style.cssText = 'display: none; opacity: 0;', 100)
+
+                    eraseButton.style.cssText = 'display: inline-block; opacity: 0;'
+                    setTimeout(() => eraseButton.style.cssText = 'display: none; opacity: 0;', 100)
+
+                    listShow.style.cssText = 'display: inline-block; background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
+                    listShowAbbr.title = `STATUS Lista: escondido`                                                         
+                }
+            }
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR loadConsoleStyles: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR loadConsoleStyles: ${error.message}`, setLogError)
     }
 }
 function showTableList() {
@@ -776,6 +862,8 @@ function showTableList() {
             }, 100)
             
             isVisibleList = true
+
+            saveTableStyles()
             return
         }
         if (isVisibleList !== true) {
@@ -803,6 +891,8 @@ function showTableList() {
             }, 300)
 
             isVisibleList = false
+
+            saveTableStyles()
             return
         }
     } catch (error) {
@@ -1237,7 +1327,7 @@ async function allPrint(isFromButton, isallerase) {
         let ChatData = null
         const response = await axios.get('/all-print')
         if (isFromButton) {
-            let listShow = document.querySelector('#showList')
+            /*let listShow = document.querySelector('#showList')
             let listShowAbbr = document.querySelector('#abbrShowList')
             if (isVisibleList === null) {
                 isVisibleList = true
@@ -1264,7 +1354,7 @@ async function allPrint(isFromButton, isallerase) {
             setTimeout(function() {
                 eraseButton.style.cssText =
                 'display: inline-block; opacity: 1;'
-            }, 100)
+            }, 100)*/
             let sucess = response.data.sucess
             let empty = response.data.empty
             let chatdata = response.data.chatdata
