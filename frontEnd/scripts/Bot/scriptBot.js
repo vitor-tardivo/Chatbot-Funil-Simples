@@ -60,14 +60,14 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
             if (!Is_From_New) {
                 Is_Started = true
             }
-            authsucess()
+            authsucess(Clientt_)
             ready(Clientt_)
         }
         if (stage === 3) {
             if (!Is_From_New) {
                 Is_Started = true
             }
-            authsucess()
+            authsucess(Clientt_)
             ready(Clientt_)
             let Is_From_New = true
             isQrOff = false
@@ -149,6 +149,8 @@ let isVisibleList = null
 let isExceeds = true 
 
 let isQrOff = true
+
+let isAlreadyDir = false
 
 let Is_From_New = false
 let Is_Started_New = true
@@ -321,7 +323,7 @@ async function webSocket() {
         resetLoadingBar()
     }
 }
-function handleWebSocketData(dataWebSocket) {
+async function handleWebSocketData(dataWebSocket) {
     switch (dataWebSocket.type) {
         case 'exit':
             isReconectionOff = true
@@ -356,16 +358,22 @@ function handleWebSocketData(dataWebSocket) {
             //allPrint(Sucess, Is_Empty, ChatData, isFromButton, Is_From_All_Erase)
             allPrint(isFromButton2, Is_From_All_Erase)
             break
+        case 'clients_':
+            const Client_ = dataWebSocket.client
+            let isReadyInsert = false
+            isAlreadyDir = true
+            await insertClient_Front(isReadyInsert, Client_)
+            break
         case 'start':
-            startBot();
+            startBot()
             break
         case 'generate_qr_code':
             const QR_Counter = dataWebSocket.data
-            const Clientt_ = dataWebSocket.data2
+            const Client__ = dataWebSocket.data2
 
             isQrOff = false
             setTimeout(function() {
-                generateQrCode(QR_Counter, Clientt_)
+                generateQrCode(QR_Counter, Client__)
             }, 100)
             break
         case 'qr_exceeds':
@@ -374,15 +382,16 @@ function handleWebSocketData(dataWebSocket) {
             counterExceeds(QR_Counter_Exceeds)
             break
         case 'auth_autenticated':
-            authsucess();
+            const Client___ = dataWebSocket.client
+            authsucess(Client___);
             break
         case 'auth_failure':
             isReconectionOff = true
             authFailure()
             break
         case 'ready':
-            const Client_ = dataWebSocket.client
-            ready(Client_);
+            const Client____ = dataWebSocket.client
+            ready(Client____);
             break
         case 'search-search':
             //const Parse_Data = dataWebSocket.data
@@ -510,6 +519,11 @@ function exit() {
                 'display: none; opacity: 0;'
         }, 300)
 
+        const newClientDiv = document.querySelector('#divNewClient')
+        newClientDiv.style.cssText = 'display: flex; opacity: 0;' 
+        setTimeout(() => newClientDiv.style.cssText = 'display: none; opacity: 0;', 100)
+        document.querySelector('#Clients_').innerHTML = ''
+
         isVisibleList = null
         const listButton = document.querySelector('#list')
         listButton.style.cssText =
@@ -594,6 +608,11 @@ function authFailure() {
                 'display: none; opacity: 0;'
         }, 300)
 
+        const newClientDiv = document.querySelector('#divNewClient')
+        newClientDiv.style.cssText = 'display: flex; opacity: 0;' 
+        setTimeout(() => newClientDiv.style.cssText = 'display: none; opacity: 0;', 100)
+        document.querySelector('#Clients_').innerHTML = ''
+
         isVisibleList = null
         const listButton = document.querySelector('#list')
         listButton.style.cssText =
@@ -626,7 +645,7 @@ function authFailure() {
         resetLoadingBar()
     }
 } 
-function authsucess() {
+function authsucess(Client_) {
     try {
         if (!Is_From_New) {
             let buttonStart = document.querySelector('#start')
@@ -638,6 +657,10 @@ function authsucess() {
             }, 300)
             Is_Started = true
         }
+
+        const status = document.querySelector('#status')
+        status.textContent = `${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
+        displayOnConsole(`>  ℹ️ (status)${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
         
         document.querySelector('#qrCode').innerText = ''
         const codeQr = document.querySelector('#qrCode')
@@ -648,11 +671,11 @@ function authsucess() {
             'display: none; opacity: 0;'
         }, 300)
     } catch(error) {
-        console.error(`> ⚠️ ERROR authSucess: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR authSucess: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR ${Client_} authSucess: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR  ${Client_}authSucess: ${error.message}`, setLogError)
     }
 }
-function ready(Client_) {
+async function ready(Client_) {
     try {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
@@ -667,16 +690,32 @@ function ready(Client_) {
         const mainContent = document.querySelector('#innerContent')
         mainContent.style.cssText =
             'display: inline-block;'
-
-        const status = document.querySelector('#status')
-        status.textContent = `${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
-        displayOnConsole(`>  ℹ️ (status)${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
             
         Is_Started_New = false
 
         if (!Is_From_New) {
             Is_Started = true
         }
+
+        const newClientDiv = document.querySelector('#divNewClient')
+        newClientDiv.style.cssText = 'display: flex; opacity: 0;' 
+        setTimeout(() => newClientDiv.style.cssText = 'display: flex; opacity: 1;', 100)
+        if (!isAlreadyDir) {
+            const response = await axios.get('/dir-front')
+            const Directories_ = response.data.dirs
+            
+            if (Directories_.length-1 === -1) {
+                displayOnConsole(`> ⚠️ Directorie off Clients_ is empty.`)
+            } else {
+                let Counter_Clients_ = 0
+                for (let i = -1; i < Directories_.length-1; i++) {
+                    let isReadyInsert = false
+                    await insertClient_Front(isReadyInsert, Directories_[Counter_Clients_])
+                    Counter_Clients_++
+                }
+            }
+        }
+
 
         loadTableStyles()
 
@@ -1436,6 +1475,55 @@ async function allPrint(isFromButton, isallerase) {
     }
 }
 
+async function selectClient_(Clientt_) {
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const response = await axios.post('/select', { params: { Clientt_ } })
+        let Sucess = response.data.sucess
+        if (Sucess) {
+            status.textContent = `${Clientt_} Selecionado`
+            displayOnConsole(`>  ℹ️ (status)${Clientt_} Selecionado.`)
+        } else {
+            status.textContent = `ERROR selecionando ${Clientt_}`
+            displayOnConsole(`>  ℹ️ (status)ERROR selecionando ${Clientt_}.`, setLogError)
+        }
+
+        resetLoadingBar()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR selectClient_ ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR selectClient_ ${Clientt_}: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+
+async function insertClient_Front(isReadyInsert, Clientt_) {
+    if (isReadyInsert) {
+        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        return
+    }
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const ClientsDiv = document.querySelector('#Clients_')
+
+        let clientHTML = `<abbr title="${Clientt_}"><button class="Clients_" onclick="selectClient_(${Clientt_})">${Clientt_}</button></abbr>`
+        ClientsDiv.innerHTML += clientHTML
+
+        resetLoadingBar()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR insertClient_Front ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR insertClient_Front ${Clientt_}: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+
 function counterExceeds(QR_Counter_Exceeds) {
     if (isExceeds) {
         displayOnConsole('>  ℹ️ Client not Ready.', setLogError)
@@ -1621,6 +1709,12 @@ async function newClients() {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
+        let userConfirmation = confirm('Tem certeza de que deseja criar um novo Client_?')
+        if (!userConfirmation) {
+            resetLoadingBar()
+            return
+        }
+
         Is_Started_New = true
         Is_From_New = true
 
@@ -1747,3 +1841,4 @@ async function startBot() {
     //?//arrumar meios de n precisar dessas variaveis permanentes, ou pelo menos diminuir muito?
     //?//melhorar o problema de de vez em quando o a barra de loading do start n funciona direito?
     //funcoes multi instancias...
+    //coisa de design... o border bottom do #divNewClient n ta aparecendo seila

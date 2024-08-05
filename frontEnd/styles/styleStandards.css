@@ -186,7 +186,7 @@ li {
 }
 
 /* BUTTONS STYLIZATION */
-#see, #erase, #open, #start, #list, #newClient {
+#see, #erase, #open, #start, #list {
     border-radius: 50px;
     box-shadow: 2px 2px 6px var(--colorShadow);
     font-weight: bolder;

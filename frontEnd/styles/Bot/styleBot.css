@@ -283,6 +283,7 @@ main {
     flex-direction: row;
     justify-content: center;
     background-color: var(--colorContrast);
+    border-bottom: 2px solid var(--colorBlack);
 }
 .functionsDiv {
     margin: 0vw 1vw 0vw 1vw;
@@ -341,6 +342,8 @@ main {
 #divStatus {
     background-color: var(--colorContrast);
     border-top: 2px solid var(--colorBlack);
+    border-right: 2px solid rgba(5, 5, 5, 0);
+    border-left: 2px solid rgba(5, 5, 5, 0);
     border-bottom: 2px solid var(--colorBlack);
     box-shadow: 2px 2px 6px var(--colorShadow);
     opacity: 1;
@@ -356,8 +359,7 @@ main {
     transition: var(--configTrasition03s);
 }
 #divStatus:hover {
-    border-top: 2px solid var(--colorInteractionElements);
-    border-bottom: 2px solid var(--colorInteractionElements);
+    border: 2px solid var(--colorInteractionElements);
 }
 #pStatus {
     display: inline-block;
@@ -371,6 +373,96 @@ main {
     font-family: var(--fontMonoSerif);
     transition: var(--configTrasition03s);
 }
+#divNewClient {
+    display: none;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--colorContrast);
+    border-top: 2px solid var(--colorBlack);
+    border-right: 2px solid rgba(5, 5, 5, 0);
+    border-left: 2px solid rgba(5, 5, 5, 0);
+    border-bottom: 2px solid var(--colorBlack);
+    box-shadow: 2px 2px 6px var(--colorShadow);
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    opacity: 0;
+    transition: var(--configTrasition03s);
+}
+/*#divNewClient:hover {
+    border: 2px solid var(--colorInteractionElements);
+}*/
+#Clients_ {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transition: var(--configTrasition03s);
+}
+.Clients_ {
+    display: inline;
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 1px solid var(--colorBlack);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    padding: 3px 17px 3px 17px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    font-size: 1vw;
+    cursor: pointer;
+    font-weight: bolder;
+    font-family: var(--fontDisplay);
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.Clients_:hover {
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border: 1px solid var(--colorBlack);
+}
+.Clients_:active {
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border: 1px solid var(--colorBlack);
+    /*outline: 1px solid var(--colorWhite);*/
+    /*transform: translate(0px, 0px);*/
+    transition: var(--configTrasition01s);
+}
+.Clients_:focus {
+    border: 1px solid var(--colorWhite);
+    /*outline: 1px solid var(--colorWhite);*/
+}
+#newClient {
+    display: inline;
+    background-color: rgba(230, 230, 230, 0.5);
+    color: var(--colorBlack);
+    border: 1px solid var(--colorBlack);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    padding: 3px 17px 3px 17px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    font-size: 1vw;
+    cursor: pointer;
+    font-weight: bolder;
+    font-family: var(--fontDisplay);
+    transition: var(--configTrasition03s);
+}
+#newClient:hover {
+    color: var(--colorWhite);
+    /*border: 1px solid var(--colorWhite);*/
+    /*transform: translate(0px, 0px);*/
+}
+#newClient:active {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    /*outline: 1px solid var(--colorWhite);*/
+    /*transform: translate(0px, 0px);*/
+    transition: var(--configTrasition01s);
+}
+#newClient:focus {
+    border: 1px solid var(--colorWhite);
+    /*outline: 1px solid var(--colorWhite);*/
+}
+
 /* BUTTON START STYLIZATION */
 #divStart {
     display: flex;
@@ -395,13 +487,13 @@ main {
     transition: var(--configTrasition03s);
 }
 #start:hover {
-    background-color: var(--colorContrast);
+    background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorWhite);
     /*transform: translate(0px, 0px);*/
 }
 #start:active {
-    background-color: var(--colorContrast);
+    background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorWhite);
     outline: 2px solid var(--colorWhite);
@@ -413,46 +505,6 @@ main {
     outline: 2px solid var(--colorWhite);
 }
 
-/* BUTTON NEW CLIENT STYLIZATION */
-#divNewClient {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-#newClient {
-    display: inline-block;
-    background-color: var(--colorWhite);
-    color: var(--colorBlack);
-    border: 2px solid var(--colorBlack);
-    outline: 2px solid rgba(0, 0, 0, 0);
-    padding: 0px 17px 3px 17px;
-    margin-bottom: 20px;
-    font-size: 3vw;
-    word-break: break-word;
-    cursor: pointer;
-    /*transform: translate(0px, -10px);*/
-    opacity: 1;
-    transition: var(--configTrasition03s);
-}
-#newClient:hover {
-    background-color: var(--colorContrast);
-    color: var(--colorWhite);
-    border: 2px solid var(--colorWhite);
-    /*transform: translate(0px, 0px);*/
-}
-#newClient:active {
-    background-color: var(--colorContrast);
-    color: var(--colorWhite);
-    border: 2px solid var(--colorWhite);
-    outline: 2px solid var(--colorWhite);
-    /*transform: translate(0px, 0px);*/
-    transition: var(--configTrasition01s);
-}
-#newClient:focus {
-    border: 2px solid var(--colorBlack);
-    outline: 2px solid var(--colorWhite);
-}
 #qrCode {
     display: none;
     background-color: black;
@@ -498,13 +550,13 @@ main {
     transition: var(--configTrasition03s);
 }
 #list:hover {
-    background-color: var(--colorContrast);
+    background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorWhite);
     transform: translate(0px, 0px);
 }
 #list:active {
-    background-color: var(--colorContrast);
+    background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorWhite);
     outline: 2px solid var(--colorWhite);

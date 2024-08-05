@@ -22,6 +22,7 @@ const {
     Set_All_Erase_Callback,
     Set_Query_Erase_Callback,
     Set_Auth_Autenticated_Callback, 
+    List_Directories,
     Set_Ready_Callback,
     Set_Start_Callback,
     Erase_Chat_Data_By_Query,
@@ -31,6 +32,7 @@ const {
     Generate_Client_Name,
     Initialize_Client_,
     initialize,
+    Set_Clients_Callback,
 } = require('./src/app')
 
 process.on('uncaughtException', (error) => {
@@ -303,13 +305,13 @@ wss_Server.on('connection', async  function connection(wss) {
             }
         })
 
-        Set_Auth_Autenticated_Callback(function() {
+        Set_Auth_Autenticated_Callback(function(Clientt_) {
             const wss_Connection = wss_Connections.get(wss_Connection_Id)
             if (wss_Connection) {
                 try {
-                    wss_Connection.wss.send(JSON.stringify({ type: 'auth_autenticated' }));
+                    wss_Connection.wss.send(JSON.stringify({ type: 'auth_autenticated', client: Clientt_ }));
                 } catch (error) {
-                    console.error(`> ❌ ERROR sending auth_autenticated to WebSocket ${wss_Connection_Id}: ${error}`);
+                    console.error(`> ❌ ERROR sending auth_autenticated to WebSocket ${Clientt_} ${wss_Connection_Id}: ${error}`);
                 }
             } else {
                 console.error(`> ⚠️  WebSocket connection Set_Auth_Autenticated_Callback ${wss_Connection_Id} not found.`);
@@ -329,6 +331,20 @@ wss_Server.on('connection', async  function connection(wss) {
             }
             //wss_Connection.wss.send(JSON.stringify({ type: 'ready'}))
         })
+        
+        Set_Clients_Callback(function(Clientt_) {
+            const wss_Connection = wss_Connections.get(wss_Connection_Id) 
+            if (wss_Connection) {
+                try {
+                    wss_Connection.wss.send(JSON.stringify({ type: 'clients_', client: Clientt_ }));
+                } catch (error) {
+                    console.error(`> ❌ ERROR sending the ${Clientt_} to WebSocket ${wss_Connection_Id}: ${error}`);
+                }
+            } else {
+                console.error(`> ⚠️  WebSocket connection Set_Clients_Callback ${wss_Connection_Id} not found.`);
+            }
+        })
+
         Set_Start_Callback(function() {
             const wss_Connection = wss_Connections.get(wss_Connection_Id) 
             if (wss_Connection) {
@@ -452,6 +468,35 @@ app.get('/qr', (req, res) => {
     }
 })
 
+app.post('/select', async (req, res) => {
+    try {
+        const Clientt_ = req.query.Clientt_
+
+        global.File_Data = `Chat_Data-${Clientt_}.json`
+        global.Data_File = path.join(Directory_Dir, `Chat_Data-${Clientt_}.json`)
+
+        console.log(`> ℹ️  ${Clientt_} selected.`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ ${Clientt_} selected.`)
+        
+        res.status(200).send({ sucess: true, message: `${Clientt_} selected.`})
+    } catch (error) {
+        console.error(`> ❌ ERROR /select: ${error}`);
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`});
+    }
+})
+
+app.get('/dir-front', async (req, res) => {
+    try {
+        let Is_Client_Ready = false
+        const Directories_ = await List_Directories('Local_Auth', Is_Client_Ready)
+        
+        res.status(200).send({ sucess: true, message: `All Clients_ dir sent.`, dirs: Directories_ })
+    } catch (error) {
+        console.error(`> ❌ ERROR /dir-front: ${error}`);
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, dirs: [] });
+    }
+})
+
 app.post('/new-client', async (req, res) => {
     try {
         console.log('novo trem')
@@ -461,10 +506,10 @@ app.post('/new-client', async (req, res) => {
         console.log(Clientt_)
         await Initialize_Client_(Clientt_)
 
-        res.status(200).send({ success: true, message: `New Client ${Clientt_} initialized.` });
+        res.status(200).send({ sucess: true, message: `New Client ${Clientt_} initialized.` });
     } catch (error) {
         console.error(`> ❌ ERROR /new-client: ${error}`);
-        res.status(500).send({ success: false, message: `ERROR Internal server: ${error}` });
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` });
     }
 })
 app.post('/start-bot', async (req, res) => {
