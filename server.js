@@ -5,12 +5,13 @@ const http = require('http')
 const WebSocket = require('ws')
 const axios = require('axios')
 const path = require('path')
-const fse = require('fs-extra')
-const { v4: uuidv4 } = require('uuid')
 const {
     sleep,
+    generateUniqueId,
+    Set_Statuses_WS_Callback,
     Set_Log_Callback,
     Set_Exit_Callback, 
+    Reset_,
     Set_Auth_Failure_Callback, 
     Set_QrCode_On_Callback, 
     Set_QrCode_Exceeds_Callback, 
@@ -30,6 +31,8 @@ const {
     Reload_Front, 
     Input_Command, 
     Generate_Client_Name,
+    Erase_Client_,
+    Set_Erase_Client_Callback,
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
     Initialize_Client_,
@@ -38,32 +41,14 @@ const {
 } = require('./src/app')
 
 process.on('uncaughtException', (error) => {
-    //if (Exit_Callback) Exit_Callback()
     console.error(`> ❌ Uncaught Exception: ${error}`)
     if (global.Log_Callback) global.Log_Callback(`> ❌ Uncaught Exception: ${error}`)
-    //process.exit(1)
 })
-
-let Statuses_WS_Callback = null
-function Set_Statuses_WS_Callback(callback) {
-    Statuses_WS_Callback = callback
-}
-
-global.QR_Counter = 0
-global.Qr_String = ''
-global.Is_Conected = true
-global.Stage_ = 0
-global.Is_From_New = false
-global.Client_ = null
 
 const port = process.env.PORT || 3000
 
 const app = express()
 const server = http.createServer(app)
-
-function generateUniqueId() {
-    return uuidv4();
-}
 
 const wss_Server = new WebSocket.Server({ server })
 const wss_Connections = new Map()
@@ -99,17 +84,17 @@ wss_Server.on('connection', async  function connection(wss) {
             wss,
             reason: null
         })
-        console.log(`> ✅ Conectado Client ao WebSocket(back).`)
-        if (Statuses_WS_Callback) Statuses_WS_Callback(true)
+        console.log(`> ✅ Conectado Usuario ao WebSocket.`)
+        if (global.Statuses_WS_Callback) global.Statuses_WS_Callback(true)
         //if (global.Log_Callback) global.Log_Callback(`> ✅ Conectado Client ao WebSocket(back).`)
         wss.on('close', function() {
-            console.error(`> ⚠️  Desconectado Client do WebSocket(back).`)
+            console.error(`> ⚠️  Desconectado Usuario do WebSocket.`)
             //if (global.Log_Callback) global.Log_Callback(`> ⚠️ Desconectado Client do WebSocket(back).`)    
-            if (Statuses_WS_Callback) Statuses_WS_Callback(false)
+            if (global.Statuses_WS_Callback) global.Statuses_WS_Callback(false)
         
             setTimeout(function() {
                 wss_Connections.delete(wss_Connection_Id)
-            }, 600)
+            },1 * 1000)
         })
 
         Set_Log_Callback(function(log) {
@@ -336,13 +321,25 @@ wss_Server.on('connection', async  function connection(wss) {
             //wss_Connection.wss.send(JSON.stringify({ type: 'ready'}))
         })
 
+        Set_Erase_Client_Callback(function(Clientt_) {
+            const wss_Connection = wss_Connections.get(wss_Connection_Id) 
+            if (wss_Connection) {
+                try {
+                    wss_Connection.wss.send(JSON.stringify({ type: 'erase-client', client: Clientt_ }));
+                } catch (error) {
+                    console.error(`> ❌ ERROR erasing Client_ ${Clientt_} ${wss_Connection_Id}: ${error}`);
+                }
+            } else {
+                console.error(`> ⚠️  WebSocket connection Set_Erase_Client_Callback ${wss_Connection_Id} not found.`);
+            }
+        })
         Set_Select_Client_Callback(function(Clientt_) {
             const wss_Connection = wss_Connections.get(wss_Connection_Id) 
             if (wss_Connection) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'select', client: Clientt_ }));
                 } catch (error) {
-                    console.error(`> ❌ ERROR selecting the ${Clientt_} on FrontEnd ${wss_Connection_Id}: ${error}`);
+                    console.error(`> ❌ ERROR selecting Client_ ${Clientt_} on FrontEnd ${wss_Connection_Id}: ${error}`);
                 }
             } else {
                 console.error(`> ⚠️  WebSocket connection Set_Select_Client_Callback ${wss_Connection_Id} not found.`);
@@ -397,6 +394,17 @@ app.get('/what-stage', async (req, res) => {
         res.status(200).send({ sucess: true, message: `sucessfully get stage.`, data: global.Stage_, data2: global.QR_Counter, data3: global.Client_ })
     } catch (error) {
         console.error(`> ❌ ERROR /what-stage: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, data: null, data2: null, data3: null })
+    }
+})
+
+app.put('/reset-page', async (req, res) => {
+    try {
+        await Reset_()
+
+        res.status(200).send({ sucess: true, message: `sucessfully code reset.`})
+    } catch (error) {
+        console.error(`> ❌ ERROR /reset-page: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, data: null, data2: null, data3: null })
     }
 })
@@ -497,6 +505,22 @@ app.get('/qr', (req, res) => {
     }
 })
 
+app.delete('/client-erase', async (req, res) => {
+    try {
+        const Client_ = req.query.Clientt_
+        global.Client_Is_Not_Ready = false
+        let Is_From_End = false
+        const { Sucess, Is_Empty, Is_Empty_Input } = await Erase_Client_(Is_From_End, Client_)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `sucessfully erased ${Client_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, chatdatajson: `Chat_Data-${global.Client_}.jso` })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to erase ${Client_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, chatdatajson: `Chat_Data-${global.Client_}.jso` })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /erase-query: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null, chatdatajson: null })
+    }
+})
 app.post('/select', async (req, res) => {
     try {
         const { Client_ } = req.body
@@ -557,8 +581,8 @@ app.get('/start-bot', async (req, res) => {
 server.listen(port, () => {
     axios.get('https://api.ipify.org?format=json')
     .then(response => {
-        let data = response.data
-        console.log(`>  ℹ️ Server running ON: http://${data.ip}:${port}/ || http://localhost:${port}/`)
+        let Data_ = response.data
+        console.log(`>  ℹ️ Server running ON: http://${Data_.ip}:${port}/ || http://localhost:${port}/`)
     })
     .catch(error => {
         console.error(`> ❌ ERROR Listen server: ${error}`)

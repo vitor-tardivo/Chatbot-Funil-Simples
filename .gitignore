@@ -2,6 +2,7 @@ desktop.ini
 node_modules
 yarn.lock
 Clients_
-Chat_Datas
+Chat_Datas/Chat_Data-Client_1.json
+Chat_Datas\Chat_Data-Client_1.json
 Local_Auth
 .wwebjs_cache

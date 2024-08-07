@@ -391,6 +391,9 @@ main {
     opacity: 0;
     transition: var(--configTrasition03s);
 }
+#divNewClient::-webkit-scrollbar {
+    background-color: var(--colorBlack); 
+}
 /*#divNewClient:hover {
     border: 2px solid var(--colorInteractionElements);
 }*/

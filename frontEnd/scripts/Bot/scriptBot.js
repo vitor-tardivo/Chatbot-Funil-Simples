@@ -1,6 +1,4 @@
 //scriptBot.js frontEnd
-let Name_Software = 'bot'
-let Version_ = '0.1.0'
 
 function isMobile() {//IDENTIFY IF THE USER IS FROM A PHONE
     try {    
@@ -268,8 +266,8 @@ async function webSocket() {
         let reloadAbbr = document.querySelector('#abbrReload')
 
         wss.onopen = function(event) {
-            console.log(`> ✅ Conectado Client ao WebSocket: `, event)
-            displayOnConsole(`> ✅ Conectado Client ao WebSocket: ${event}`)
+            console.log(`> ✅ Conectado Usuario ao WebSocket: `, event)
+            displayOnConsole(`> ✅ Conectado Usuario ao WebSocket: ${event}`)
             reloadButton.style.cssText =
                 'color: var(--colorContrast); background-color: var(--colorGreen); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
             reloadAbbr.title = `WebSocket STATUS: conectado`
@@ -281,8 +279,8 @@ async function webSocket() {
             resetLoadingBar()
         }
         wss.onclose = function(event) {
-            console.log(`> ⚠️ Desconectado Client do WebSocket: `, event)
-            displayOnConsole(`> ⚠️ Desconectado Client do WebSocket: ${event}`, setLogError)
+            console.log(`> ⚠️ Desconectado Usuario do WebSocket: `, event)
+            displayOnConsole(`> ⚠️ Desconectado Usuario do WebSocket: ${event}`, setLogError)
             reloadButton.style.cssText =
                 'color: var(--colorContrast); background-color: var(--colorOrange); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
             reloadAbbr.title = `WebSocket STATUS: desconectou`
@@ -296,8 +294,8 @@ async function webSocket() {
             resetLoadingBar()
         }
         wss.onerror = function(event) {
-            console.error(`> ❌ ERROR ao reconectar Client ao WebSocket(front): `, event)
-            displayOnConsole(`> ❌ ERROR ao reconectar Client ao WebSocket(front): ${event}`, setLogError)
+            console.error(`> ❌ ERROR ao reconectar Usuario ao WebSocket(front): `, event)
+            displayOnConsole(`> ❌ ERROR ao reconectar Usuario ao WebSocket(front): ${event}`, setLogError)
             setTimeout(function() {
                 reloadButton.style.cssText =
                     'color: var(--colorContrast); background-color: var(-colorRed); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
@@ -331,7 +329,8 @@ async function handleWebSocketData(dataWebSocket) {
     switch (dataWebSocket.type) {
         case 'exit':
             isReconectionOff = true
-            exit()
+            let exitInten = false
+            await exit(exitInten)
             break
         case 'log':
             //console.log(logData.message)
@@ -416,10 +415,16 @@ async function handleWebSocketData(dataWebSocket) {
             const isFromTerminal3 = true
             eraseChatDataByQuery(isFromTerminal3, search2)
             break
-        case 'select':
+        case 'erase-client':
             const Client_____ = dataWebSocket.client
+            let isReadyErase = false
+            let isFromTerminal_ = true
+            eraseClient_(isFromTerminal_, isReadyErase, Client_____)
+            break
+        case 'select':
+            const Client______ = dataWebSocket.client
             let isReadySelect = false
-            selectClient_(isReadySelect, Client_____)
+            selectClient_(isReadySelect, Client______)
             break
         case 'new':
             newClients()
@@ -475,7 +480,7 @@ function statusesWs(statuses) {
     }
 }
 
-async function exit() {
+async function exit(exitInten) {
     try {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
@@ -483,13 +488,24 @@ async function exit() {
 
         Is_Not_Ready = true
 
-        if (isDisconected) {
-            reconnectWebSocket()
-        }
-        document.title = 'ERROR'
+        if (!exitInten) {
+            if (isDisconected) {
+                reconnectWebSocket()
+            }
+        } 
         
-        console.error(`> ❌ ERROR: BackEnd`)
-        displayOnConsole(`> ❌ ERROR: BackEnd`, setLogError)
+        if (exitInten) {
+            document.title = 'Reset page'
+        } else {
+            document.title = 'ERROR'
+        }
+        
+        if (exitInten) {
+            displayOnConsole(`> ⚠️ Reset page`)
+        } else {
+            console.error(`> ❌ ERROR: BackEnd`)
+            displayOnConsole(`> ❌ ERROR: BackEnd`, setLogError)
+        }
 
         const mainContent = document.querySelector('#innerContent')
         mainContent.style.cssText =
@@ -508,8 +524,13 @@ async function exit() {
         isVisibleHideButton = null
 
         const status = document.querySelector('#status')
-        status.textContent = `ERROR Back End!`
-        displayOnConsole(`>  ℹ️ (status)ERROR Back End!`)
+        if (exitInten) {
+            status.textContent = `Reset page!`
+            displayOnConsole(`>  ℹ️ (status)Reset page!`)
+        } else {
+            status.textContent = `ERROR Back End!`
+            displayOnConsole(`>  ℹ️ (status)ERROR Back End!`)
+        }
 
         let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
@@ -561,10 +582,15 @@ async function exit() {
 
         resetLoadingBar()
     } catch(error) {
-        document.title = 'ERROR'
-        console.error(`> ⚠️ ERROR exit: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR exit: ${error.message}`, setLogError)
+        if (exitInten) {
+            console.error(`> ⚠️ ERROR exit(Reset page): ${error}`)
+            displayOnConsole(`> ⚠️ ERROR exit(Reset page): ${error.message}`, setLogError)
+        } else {
+            console.error(`> ⚠️ ERROR exit: ${error}`)
+            displayOnConsole(`> ⚠️ ERROR exit: ${error.message}`, setLogError)
+        }
         Is_Not_Ready = true
+        document.title = 'ERROR'
         resetLoadingBar()
     }
 }
@@ -717,7 +743,10 @@ async function ready(Client_) {
             const Directories_ = response.data.dirs
             
             if (Directories_.length-1 === -1) {
-                displayOnConsole(`> ⚠️ Dir off Clients_ is empty.`)
+                displayOnConsole(`> ⚠️ Dir off Clients_ (${Directories_.length-1}) is empty.`)
+
+                let exitInten = true
+                await exit(exitInten)
             } else {
                 let Counter_Clients_ = 0
                 for (let i = -1; i < Directories_.length-1; i++) {
@@ -1495,7 +1524,7 @@ async function allPrint(isFromButton, isallerase) {
     }
 }
 
-function eraseClient_(isReadyErase, Clientt_) {
+async function eraseClient_(isFromTerminal, isReadyErase, Clientt_) {
     if (isReadyErase) {
         displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
         return
@@ -1506,12 +1535,71 @@ function eraseClient_(isReadyErase, Clientt_) {
             'width: 100vw; visibility: visible;'
 
         let userConfirmation = confirm(`Tem certeza de que deseja apagar o Client_ ${Clientt_}?\nsera apagada para sempre.`)
-        if (!userConfirmation) {
+        if (userConfirmation) {
+            const status = document.querySelector('#status')
+
+            const response = await axios.delete('/client-erase', { params: { Clientt_ } })
+            const Sucess = response.data.sucess
+            const Is_Empty = response.data.empty
+            const Is_Empty_Input = response.data.empty_input
+            if (Is_Empty) {
+                status.textContent = `Dados de ${Clientt_} esta vazio!`
+                displayOnConsole(`>  ℹ️ (status)Dados de ${Clientt_} esta vazio!`)
+
+                resetLoadingBar()
+                if (isFromTerminal) {
+                    isFromTerminal = false
+                }
+                return
+            }
+            if (Is_Empty_Input) {
+                status.textContent = `Client_ ${Clientt_} não foi encontrado em nenhum dado!`
+                displayOnConsole(`>  ℹ️ (status)Client_ ${Clientt_} não foi encontrado em nenhum dado!`)
+
+                resetLoadingBar()
+                if (isFromTerminal) {
+                    isFromTerminal = false
+                }
+                return  
+            } 
+            if (Sucess) {
+                const divClientt_ = document.querySelector(`#${Clientt_}`)
+                divClientt_.remove()
+
+                status.textContent = `Client_ ${Clientt_} foi Apagado!`
+                displayOnConsole(`>  ℹ️ (status)Client_ ${Clientt_} foi Apagado!`)
+
+                await sleep(1 * 1000)
+                const response = await axios.get('/dir-front')
+                const Directories_ = response.data.dirs
+
+                if (Directories_.length-1 === -1) {
+                    displayOnConsole(`> ⚠️ Dir off Clients_ (${Directories_.length-1}) is empty.`)
+
+                    let exitInten = true
+                    await exit(exitInten)
+                    await axios.put('/reset-page')
+                } else {
+                    //let isReadySelect = false
+                    //await selectClient_(isReadySelect, `Client_${1}`)
+                }
+            } else {
+                status.textContent = `ERROR ao Apagar Client_ ${Clientt_}!`
+                displayOnConsole(`>  ℹ️ (status)ERROR ao Apagar Client_ ${Clientt_}!`)
+            }
+
+            //document.querySelector('#inputList').value = ''
             resetLoadingBar()
+            if (isFromTerminal) {
+                isFromTerminal = false
+            }
+        } else {
+            resetLoadingBar()
+            if (isFromTerminal) {
+                isFromTerminal = false
+            }
             return
         }
-
-        //apagar tudo aqui e manda pra apaga o resto no back ou sla
 
         resetLoadingBar()
     } catch (error) {
@@ -1580,7 +1668,7 @@ async function insertClient_Front(isReadyInsert, Clientt_) {
             'width: 100vw; visibility: visible;'
 
         const ClientsDiv = document.querySelector('#Clients_')
-        let clientHTML = `<div id="${Clientt_}"><abbr title="${Clientt_}"><button class="Clients_" onclick="selectClient_(false, '${Clientt_}')">${Clientt_}</button></abbr><abbr title="Erase ${Clientt_}"><button class="Clients_Erase" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
+        let clientHTML = `<div id="${Clientt_}"><abbr title="${Clientt_}"><button class="Clients_" onclick="selectClient_(false, '${Clientt_}')">${Clientt_}</button></abbr><abbr title="Erase ${Clientt_}"><button class="Clients_Erase" onclick="eraseClient_(false, false, '${Clientt_}')"><</button></abbr></div>`
         ClientsDiv.innerHTML += clientHTML
 
         const divClientt_ = document.querySelector(`#${Clientt_}`)
@@ -1814,8 +1902,6 @@ async function startBot() {
                 'width: 100vw; visibility: visible;'
 
             Is_Started = true
-
-            displayOnConsole(`>  ℹ️  ${Name_Software} = v${Version_}`)
 
             if (isDisconected) {
                 reconnectWebSocket()
