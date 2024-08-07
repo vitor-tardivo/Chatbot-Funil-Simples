@@ -28,6 +28,9 @@ window.onbeforeunload = function(event) {
         displayOnConsole(`> ⚠️ ERROR onbeforeunload: ${error.message}`, setLogError)
     }
 }
+
+let Is_From_New = false
+
 document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA QUERY PHONE AND ELSE
     try {
         if (isMobile()) {
@@ -44,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         const response = await axios.get('/what-stage')
         const stage = response.data.data
         const QR_Counter = response.data.data2
-        const Clientt_ = response.data.data3
+        Clientt_ = response.data.data3
         
         if (stage === 0) {
             
@@ -60,15 +63,15 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
             if (!Is_From_New) {
                 Is_Started = true
             }
-            authsucess(Clientt_)
-            ready(Clientt_)
+            await authsucess(Clientt_)
+            await ready(Clientt_)
         }
         if (stage === 3) {
             if (!Is_From_New) {
                 Is_Started = true
             }
-            authsucess(Clientt_)
-            ready(Clientt_)
+            await authsucess(Clientt_)
+            await ready(Clientt_)
             let Is_From_New = true
             isQrOff = false
             generateQrCode(QR_Counter)
@@ -152,7 +155,8 @@ let isQrOff = true
 
 let isAlreadyDir = false
 
-let Is_From_New = false
+let Clientt_ = null
+
 let Is_Started_New = true
 
 let Is_Started = false
@@ -383,7 +387,7 @@ async function handleWebSocketData(dataWebSocket) {
             break
         case 'auth_autenticated':
             const Client___ = dataWebSocket.client
-            authsucess(Client___);
+            await authsucess(Client___);
             break
         case 'auth_failure':
             isReconectionOff = true
@@ -411,6 +415,14 @@ async function handleWebSocketData(dataWebSocket) {
             const search2 = dataWebSocket.Search.trim()
             const isFromTerminal3 = true
             eraseChatDataByQuery(isFromTerminal3, search2)
+            break
+        case 'select':
+            const Client_____ = dataWebSocket.client
+            let isReadySelect = false
+            selectClient_(isReadySelect, Client_____)
+            break
+        case 'new':
+            newClients()
             break
         case 'error':
             console.error(`> ⚠️ ERROR Return WebSocket Conection: ${dataWebSocket.message}`)
@@ -463,7 +475,7 @@ function statusesWs(statuses) {
     }
 }
 
-function exit() {
+async function exit() {
     try {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
@@ -556,7 +568,7 @@ function exit() {
         resetLoadingBar()
     }
 }
-function authFailure() {
+async function authFailure() {
     try {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
@@ -645,7 +657,7 @@ function authFailure() {
         resetLoadingBar()
     }
 } 
-function authsucess(Client_) {
+async function authsucess(Client_) {
     try {
         if (!Is_From_New) {
             let buttonStart = document.querySelector('#start')
@@ -705,15 +717,19 @@ async function ready(Client_) {
             const Directories_ = response.data.dirs
             
             if (Directories_.length-1 === -1) {
-                displayOnConsole(`> ⚠️ Directorie off Clients_ is empty.`)
+                displayOnConsole(`> ⚠️ Dir off Clients_ is empty.`)
             } else {
                 let Counter_Clients_ = 0
                 for (let i = -1; i < Directories_.length-1; i++) {
                     let isReadyInsert = false
                     await insertClient_Front(isReadyInsert, Directories_[Counter_Clients_])
+                    let isReadySelect = false
+                    await selectClient_(isReadySelect, Directories_[Counter_Clients_])
                     Counter_Clients_++
                 }
             }
+        } else {
+            isAlreadyDir = false
         }
 
 
@@ -1095,9 +1111,10 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             const Sucess = response.data.sucess
             const Is_Empty = response.data.empty
             const Is_Empty_Input = response.data.empty_input
+            const Chat_Data_json = response.data.chatdatajson
             if (Is_Empty) {
-                status.textContent = `Lista de Chat_Data.json esta vazia!`
-                displayOnConsole(`>  ℹ️ (status)Lista de Chat_Data.json esta vazia!`)
+                status.textContent = `Lista de ${Chat_Data_json} esta vazia!`
+                displayOnConsole(`>  ℹ️ (status)Lista de ${Chat_Data_json} esta vazia!`)
 
                 resetLoadingBar()
                 if (isFromTerminal) {
@@ -1106,8 +1123,8 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
                 return
             }
             if (Is_Empty_Input) {
-                status.textContent = `ChatData ${queryList} não foi encontrado na lista de Chat_Data.json!`
-                displayOnConsole(`>  ℹ️ (status)ChatData ${queryList} não foi encontrado na lista de Chat_Data.json!`)
+                status.textContent = `ChatData ${queryList} não foi encontrado na lista de ${Chat_Data_json}!`
+                displayOnConsole(`>  ℹ️ (status)ChatData ${queryList} não foi encontrado na lista de ${Chat_Data_json}!`)
 
                 resetLoadingBar()
                 if (isFromTerminal) {
@@ -1116,11 +1133,11 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
                 return  
             } 
             if (Sucess) {
-                status.textContent = `${queryList} de ChatData.json foi Apagado!`
-                displayOnConsole(`>  ℹ️ (status)${queryList} de ChatData.json foi Apagado!`)
+                status.textContent = `${queryList} de ${Chat_Data_json} foi Apagado!`
+                displayOnConsole(`>  ℹ️ (status)${queryList} de ${Chat_Data_json} foi Apagado!`)
             } else {
-                status.textContent = `ERROR ao Apagar ChatData ${queryList} de ChatData.json!`
-                displayOnConsole(`>  ℹ️ (status)ERROR ao Apagar ChatData ${queryList} de ChatData.json!`)
+                status.textContent = `ERROR ao Apagar ChatData ${queryList} de ${Chat_Data_json}!`
+                displayOnConsole(`>  ℹ️ (status)ERROR ao Apagar ChatData ${queryList} de ${Chat_Data_json}!`)
             }
 
             //document.querySelector('#inputList').value = ''
@@ -1136,8 +1153,8 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             return
         }
     } catch (error) {
-        console.error(`> ⚠️ ERROR eraseChatDataByQuery: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR eraseChatDataByQuery: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR eraseChatDataByQuery ${Chat_Data_json}: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR eraseChatDataByQuery ${Chat_Data_json}: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
@@ -1171,19 +1188,20 @@ async function allErase() {
             const response = await axios.delete('/all-erase')
             const Sucess = response.data.sucess
             const Is_Empty = response.data.empty
+            const Chat_Data_json = response.data.chatdatajson
             if (Is_Empty) {
-                status.textContent = `Lista de Chat_Data.json esta vazia!`
-                displayOnConsole(`>  ℹ️ (status)Lista de Chat_Data.json esta vazia!`)
+                status.textContent = `Lista de ${Chat_Data_json} esta vazia!`
+                displayOnConsole(`>  ℹ️ (status)Lista de ${Chat_Data_json} esta vazia!`)
 
                 resetLoadingBar()
                 return
             } 
             if (Sucess) {
-                status.textContent = `Todo o ChatData de Chat_Data.json foi Apagado!`
-                displayOnConsole(`>  ℹ️ (status)Todo o ChatData de Chat_Data.json foi Apagado!`)
+                status.textContent = `Todo o ChatData de ${Chat_Data_json} foi Apagado!`
+                displayOnConsole(`>  ℹ️ (status)Todo o ChatData de ${Chat_Data_json} foi Apagado!`)
             } else {
-                status.textContent = `ERROR ao Apagar todo ChatData de Chat_Data.json!`
-                displayOnConsole(`>  ℹ️ (status)ERROR ao Apagar todo ChatData de Chat_Data.json!`)
+                status.textContent = `ERROR ao Apagar todo ChatData de ${Chat_Data_json}!`
+                displayOnConsole(`>  ℹ️ (status)ERROR ao Apagar todo ChatData de ${Chat_Data_json}`)
             } 
         } else {
             resetLoadingBar()
@@ -1192,8 +1210,8 @@ async function allErase() {
         
         resetLoadingBar()
     } catch (error) {
-        console.error(`> ⚠️ ERROR allEraseList: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR allEraseList: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR allEraseList ${Chat_Data_json}: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR allEraseList ${Chat_Data_json}: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
@@ -1239,10 +1257,11 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
         const Is_Empty = response.data.empty
         const Is_Empty_Input = response.data.empty_input
         const ChatData = response.data.chatdata
+        const Chat_Data_json = response.data.chatdatajson
 
         if (Is_Empty) {
-            status.textContent = `Lista de Chat_Data.json esta vazia!`
-            displayOnConsole(`>  ℹ️ (status)Lista de Chat_Data.json esta vazia!`)
+            status.textContent = `Lista de ${Chat_Data_json} esta vazia!`
+            displayOnConsole(`>  ℹ️ (status)Lista de ${Chat_Data_json} esta vazia!`)
 
             list.innerHTML = ''
             
@@ -1263,8 +1282,8 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
             return
         }
         if (Is_Empty_Input) {
-            status.textContent = `ChatData ${Search} não foi encontrado na lista de Chat_Data.json!`
-            displayOnConsole(`>  ℹ️ (status)ChatData ${Search} não foi encontrado na lista de Chat_Data.json!`)
+            status.textContent = `ChatData ${Search} não foi encontrado na lista de ${Chat_Data_json}!`
+            displayOnConsole(`>  ℹ️ (status)ChatData ${Search} não foi encontrado na lista de ${Chat_Data_json}!`)
 
             list.innerHTML = ''
             
@@ -1285,8 +1304,8 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
             return  
         } 
         if (Sucess) {
-            status.textContent = `Listando ChatData ${Search} de ChatData.json...`
-            displayOnConsole(`>  ℹ️ (status)Listando ChatData ${Search} de ChatData.json...`)
+            status.textContent = `Listando ChatData ${Search} de ${Chat_Data_json}...`
+            displayOnConsole(`>  ℹ️ (status)Listando ChatData ${Search} de ${Chat_Data_json}...`)
             
             list.innerHTML = ''
             
@@ -1307,11 +1326,11 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
             bList.style.cssText =
                 'opacity: 1 pointer-events: unset;'*/
 
-            status.textContent = `Listado ChatData ${Search} de Chat_Data.json!`
-            displayOnConsole(`>  ℹ️ (status)Listado ChatData ${Search} de Chat_Data.json!`)
+            status.textContent = `Listado ChatData ${Search} de ${Chat_Data_json}!`
+            displayOnConsole(`>  ℹ️ (status)Listado ChatData ${Search} de ${Chat_Data_json}!`)
         } else {
-            status.textContent = `ERROR ao pesquisar ChatData ${Search} de Chat_Data.json!`
-            displayOnConsole(`>  ℹ️ (status)ERROR ao pesquisar ChatData ${Search} de Chat_Data.json!`)
+            status.textContent = `ERROR ao pesquisar ChatData ${Search} de ${Chat_Data_json}!`
+            displayOnConsole(`>  ℹ️ (status)ERROR ao pesquisar ChatData ${Search} de ${Chat_Data_json}!`)
         }
 
         //document.querySelector('#inputList').value = ''
@@ -1320,8 +1339,8 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
             isFromTerminal = false
         }
     } catch (error) {
-        console.error(`> ⚠️ ERROR searchChatDataBySearch: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR searchChatDataBySearch: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR searchChatDataBySearch ${Chat_Data_json}: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR searchChatDataBySearch ${Chat_Data_json}: ${error.message}`, setLogError)
         if (isFromTerminal) {
             isFromTerminal = false
         } 
@@ -1361,11 +1380,11 @@ async function allPrint(isFromButton, isallerase) {
             return
         }
 
-        let Sucess = null
+        /*let Sucess = null
         let Is_Empty = null
-        let ChatData = null
+        let ChatData = null*/
         const response = await axios.get('/all-print')
-        if (isFromButton) {
+        /*if (isFromButton) {
             /*let listShow = document.querySelector('#showList')
             let listShowAbbr = document.querySelector('#abbrShowList')
             if (isVisibleList === null) {
@@ -1393,7 +1412,7 @@ async function allPrint(isFromButton, isallerase) {
             setTimeout(function() {
                 eraseButton.style.cssText =
                 'display: inline-block; opacity: 1;'
-            }, 100)*/
+            }, 100)
             let sucess = response.data.sucess
             let empty = response.data.empty
             let chatdata = response.data.chatdata
@@ -1405,16 +1424,17 @@ async function allPrint(isFromButton, isallerase) {
             Is_Empty = empty
             ChatData = chatdata
         }*/
-        let sucess = response.data.sucess
-        let empty = response.data.empty
-        let chatdata = response.data.chatdata
-        Sucess = sucess
+        const Sucess = response.data.sucess
+        const Is_Empty = response.data.empty
+        const ChatData = response.data.chatdata
+        const Chat_Data_json = response.data.chatdatajson
+        /*Sucess = sucess
         Is_Empty = empty
-        ChatData = chatdata
+        ChatData = chatdata*/
 
         if (Is_Empty) {
-            status.textContent = `Lista de Chat_Data.json esta vazia!`
-            displayOnConsole(`>  ℹ️ (status)Lista de Chat_Data.json esta vazia!`)
+            status.textContent = `Lista de ${Chat_Data_json} esta vazia!`
+            displayOnConsole(`>  ℹ️ (status)Lista de ${Chat_Data_json} esta vazia!`)
 
             counter.textContent = `0`
             
@@ -1433,8 +1453,8 @@ async function allPrint(isFromButton, isallerase) {
         } 
         if (Sucess) {
             if (isFromButton) {
-                status.textContent = `Listando todo ChatData de ChatData.json...`
-                displayOnConsole(`>  ℹ️ (status)Listando todo ChatData de ChatData.json...`)
+                status.textContent = `Listando todo ChatData de ${Chat_Data_json}...`
+                displayOnConsole(`>  ℹ️ (status)Listando todo ChatData de ${Chat_Data_json}...`)
             }
 
             list.innerHTML = ''
@@ -1455,27 +1475,57 @@ async function allPrint(isFromButton, isallerase) {
             bList.style.cssText =
                 'opacity: 1 pointer-events: unset;'*/
             if (isFromButton) {
-                status.textContent = `Todo ChatData de ChatData.json Listado!`
-                displayOnConsole(`>  ℹ️ (status)Todo ChatData de ChatData.json Listado!`)
+                status.textContent = `Todo ChatData de ${Chat_Data_json} Listado!`
+                displayOnConsole(`>  ℹ️ (status)Todo ChatData de ${Chat_Data_json} Listado!`)
             }
             
             isFromButton = true
             resetLoadingBar()
         } else {
-            status.textContent = `ERROR ao listar todo ChatData de ChatData.json!`
-            displayOnConsole(`>  ℹ️ (status)ERROR ao listar todo ChatData de ChatData.json!`)
+            status.textContent = `ERROR ao listar todo ChatData de ${Chat_Data_json}!`
+            displayOnConsole(`>  ℹ️ (status)ERROR ao listar todo ChatData de ${Chat_Data_json}!`)
             isFromButton = true
             resetLoadingBar()
         } 
     } catch (error) {
-        console.error(`> ⚠️ ERROR  allPrint: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR  allPrint: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR  allPrint ${Chat_Data_json}: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR  allPrint ${Chat_Data_json}: ${error.message}`, setLogError)
         isFromButton = true
         resetLoadingBar()
     }
 }
 
-async function selectClient_(Clientt_) {
+function eraseClient_(isReadyErase, Clientt_) {
+    if (isReadyErase) {
+        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        return
+    }
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        let userConfirmation = confirm(`Tem certeza de que deseja apagar o Client_ ${Clientt_}?\nsera apagada para sempre.`)
+        if (!userConfirmation) {
+            resetLoadingBar()
+            return
+        }
+
+        //apagar tudo aqui e manda pra apaga o resto no back ou sla
+
+        resetLoadingBar()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR eraseClient_ ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR eraseClient_ ${Clientt_}: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+let Clientt_Temp = null
+async function selectClient_(isReadySelect, Clientt_) {
+    if (isReadySelect) {
+        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        return
+    }
     try {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
@@ -1483,14 +1533,33 @@ async function selectClient_(Clientt_) {
 
         const status = document.querySelector('#status')
 
-        const response = await axios.post('/select', { params: { Clientt_ } })
+        const divClientt_ = document.querySelector(`#${Clientt_}`)
+
+        const divClientt_Temp = document.querySelector(`#${Clientt_Temp}`)
+        if (divClientt_Temp !== null) {
+            divClientt_Temp.style.cssText =
+                'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+        }
+        if (divClientt_ === null) {
+            status.textContent = `Client_ ${Clientt_} Não existe`
+            displayOnConsole(`>  ℹ️ (status)Client_ ${Clientt_} Não existe`)
+            resetLoadingBar()
+            return
+        }
+
+        const response = await axios.post('/select', { Client_: Clientt_ })
         let Sucess = response.data.sucess
         if (Sucess) {
-            status.textContent = `${Clientt_} Selecionado`
-            displayOnConsole(`>  ℹ️ (status)${Clientt_} Selecionado.`)
+            divClientt_.style.cssText =
+                'border-top: 5px solid var(--colorBlue); border-bottom: 5px solid var(--colorBlue); transition: var(--configTrasition03s);'
+
+            Clientt_Temp = Clientt_
+
+            status.textContent = `Client_ ${Clientt_} Selecionado`
+            displayOnConsole(`>  ℹ️ (status)Client_ ${Clientt_} Selecionado.`)
         } else {
-            status.textContent = `ERROR selecionando ${Clientt_}`
-            displayOnConsole(`>  ℹ️ (status)ERROR selecionando ${Clientt_}.`, setLogError)
+            status.textContent = `ERROR selecionando Client_ ${Clientt_}`
+            displayOnConsole(`>  ℹ️ (status)ERROR selecionando Client_ ${Clientt_}.`, setLogError)
         }
 
         resetLoadingBar()
@@ -1500,7 +1569,6 @@ async function selectClient_(Clientt_) {
         resetLoadingBar()
     }
 }
-
 async function insertClient_Front(isReadyInsert, Clientt_) {
     if (isReadyInsert) {
         displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
@@ -1512,9 +1580,12 @@ async function insertClient_Front(isReadyInsert, Clientt_) {
             'width: 100vw; visibility: visible;'
 
         const ClientsDiv = document.querySelector('#Clients_')
-
-        let clientHTML = `<abbr title="${Clientt_}"><button class="Clients_" onclick="selectClient_(${Clientt_})">${Clientt_}</button></abbr>`
+        let clientHTML = `<div id="${Clientt_}"><abbr title="${Clientt_}"><button class="Clients_" onclick="selectClient_(false, '${Clientt_}')">${Clientt_}</button></abbr><abbr title="Erase ${Clientt_}"><button class="Clients_Erase" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
         ClientsDiv.innerHTML += clientHTML
+
+        const divClientt_ = document.querySelector(`#${Clientt_}`)
+        divClientt_.style.cssText =
+            'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
 
         resetLoadingBar()
     } catch (error) {
@@ -1776,7 +1847,7 @@ async function startBot() {
                 codeQr.style.cssText =
                     'display: none; opacity: 0;'
             }, 300)
-            const response = await axios.post('/start-bot')
+            const response = await axios.get('/start-bot')
             const Sucess = response.data.sucess
             if (Sucess) {
                 document.title = 'Iniciou o Bot Corretamente'
@@ -1832,8 +1903,9 @@ async function startBot() {
 
 //tarefas bot frontend 
 //em desenvolvimento...
-    
-    
+    //mandar certo os nomes certos dos json selecionado e client
+    //ao usar qualquer funcao colocar o client no lugar do CHATDATA da lista
+    //melhoras o tempo e utilizacao dos staus multi client e mais
     
 //a desenvolver...
     //arrumar meios de as coisas serem automaticas funcoes acionarem de acordo com certar coisas inves de prever todo cenario possivel em varias funcoes
@@ -1842,3 +1914,4 @@ async function startBot() {
     //?//melhorar o problema de de vez em quando o a barra de loading do start n funciona direito?
     //funcoes multi instancias...
     //coisa de design... o border bottom do #divNewClient n ta aparecendo seila
+    //usa websocket pra salvar numa var o client atual do back e os caralho inves de pega por dentro das funcao, fazer algo global sla, mas pode ser incerto ent sla kkk

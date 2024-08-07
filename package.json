@@ -10,6 +10,7 @@
   "author": "Vitor de Souza Tardivo",
   "description": "Bot WhatsApp automation, Digital marketing E-Commerce.",
   "dependencies": {
+    "flatted": "^3.3.1",
     "fs-extra": "^11.2.0",
     "path": "^0.12.7",
     "promises": "^0.2.5",

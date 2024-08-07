@@ -30,6 +30,8 @@ const {
     Reload_Front, 
     Input_Command, 
     Generate_Client_Name,
+    Set_Select_Client_Callback,
+    Set_New_Client_Callback,
     Initialize_Client_,
     initialize,
     Set_Clients_Callback,
@@ -77,6 +79,8 @@ app.use(
 )
 
 app.use(express.static(path.join(__dirname, 'frontEnd')))
+
+app.use(express.json())
 
 app.get('/', (req, res) => {
     try {
@@ -331,6 +335,31 @@ wss_Server.on('connection', async  function connection(wss) {
             }
             //wss_Connection.wss.send(JSON.stringify({ type: 'ready'}))
         })
+
+        Set_Select_Client_Callback(function(Clientt_) {
+            const wss_Connection = wss_Connections.get(wss_Connection_Id) 
+            if (wss_Connection) {
+                try {
+                    wss_Connection.wss.send(JSON.stringify({ type: 'select', client: Clientt_ }));
+                } catch (error) {
+                    console.error(`> ❌ ERROR selecting the ${Clientt_} on FrontEnd ${wss_Connection_Id}: ${error}`);
+                }
+            } else {
+                console.error(`> ⚠️  WebSocket connection Set_Select_Client_Callback ${wss_Connection_Id} not found.`);
+            }
+        })
+        Set_New_Client_Callback(function() {
+            const wss_Connection = wss_Connections.get(wss_Connection_Id) 
+            if (wss_Connection) {
+                try {
+                    wss_Connection.wss.send(JSON.stringify({ type: 'new' }));
+                } catch (error) {
+                    console.error(`> ❌ ERROR creating new Client_ ${global.Client_} ${wss_Connection_Id}: ${error}`);
+                }
+            } else {
+                console.error(`> ⚠️  WebSocket connection Set_New_Client_Callback ${wss_Connection_Id} not found.`);
+            }
+        })
         
         Set_Clients_Callback(function(Clientt_) {
             const wss_Connection = wss_Connections.get(wss_Connection_Id) 
@@ -378,13 +407,13 @@ app.delete('/erase-query', async (req, res) => {
         const Is_From_End = false
         const { Sucess, Is_Empty, Is_Empty_Input } = await Erase_Chat_Data_By_Query(query, Is_From_End)
         if (Sucess) {
-            res.status(200).send({ sucess: Sucess, message: `sucessfully erased ${query}.`, empty: Is_Empty, empty_input: Is_Empty_Input })
+            res.status(200).send({ sucess: Sucess, message: `sucessfully erased ${query}.`, empty: Is_Empty, empty_input: Is_Empty_Input, chatdatajson: `Chat_Data-${global.Client_}.jso` })
         } else {
-            res.status(200).send({ sucess: Sucess, message: `ERROR to erase ${query}.`, empty: Is_Empty, empty_input: Is_Empty_Input })
+            res.status(200).send({ sucess: Sucess, message: `ERROR to erase ${query}.`, empty: Is_Empty, empty_input: Is_Empty_Input, chatdatajson: `Chat_Data-${global.Client_}.jso` })
         }
     } catch (error) {
         console.error(`> ❌ ERROR /erase-query: ${error}`)
-        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null, chatdatajson: null })
     }
 })
 app.delete('/all-erase', async (req, res) => {
@@ -392,13 +421,13 @@ app.delete('/all-erase', async (req, res) => {
         const Is_From_End = false
         const { Sucess, Is_Empty } = await Erase_All_Chat_Data(Is_From_End)
         if (Sucess) {
-            res.status(200).send({ sucess: Sucess, message: 'Sucessfully erased all ChatData.', empty: Is_Empty })
+            res.status(200).send({ sucess: Sucess, message: 'Sucessfully erased all ChatData.', empty: Is_Empty, chatdatajson: `Chat_Data-${global.Client_}.jso` })
         } else {
-            res.status(200).send({ sucess: Sucess, message: `ERROR to erase all ChatData.`, empty: Is_Empty })
+            res.status(200).send({ sucess: Sucess, message: `ERROR to erase all ChatData.`, empty: Is_Empty, chatdatajson: `Chat_Data-${global.Client_}.jso` })
         }
     } catch (error) {
         console.error(`> ❌ ERROR /all-erase: ${error}`)
-        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdatajson: null })
     }
 })
 app.get('/search-search', async (req, res) => {
@@ -409,13 +438,13 @@ app.get('/search-search', async (req, res) => {
         }
         const { Sucess, Is_Empty, ChatData, Is_Empty_Input } = await Search_Chat_Data_By_Search(search)
         if (Sucess) {
-            res.status(200).send({ sucess: Sucess, message: `Sucessfully to sent the ChatData ${search}.`, empty: Is_Empty, chatdata: ChatData, empty_input: Is_Empty_Input })
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully to sent the ChatData ${search}.`, empty: Is_Empty, chatdata: ChatData, empty_input: Is_Empty_Input, chatdatajson: `Chat_Data-${global.Client_}.jso` })
         } else {
-            res.status(200).send({ sucess: Sucess, message: `ERROR to sent the ChatData ${search}.`, empty: Is_Empty, chatdata: ChatData, empty_input: Is_Empty_Input })
+            res.status(200).send({ sucess: Sucess, message: `ERROR to sent the ChatData ${search}.`, empty: Is_Empty, chatdata: ChatData, empty_input: Is_Empty_Input, chatdatajson: `Chat_Data-${global.Client_}.jso` })
         }         
     } catch (error) {
         console.error(`> ❌ ERROR /search-list: ${error}`)
-        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], empty_input: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], empty_input: null, chatdatajson: null })
     }    
 })
 app.get('/all-print', async (req, res) => {
@@ -423,13 +452,13 @@ app.get('/all-print', async (req, res) => {
         const isallerase = req.query.isallerase
         const { Sucess, Is_Empty, ChatData, Is_From_All_Erase } = await Print_All_Chat_Data(isallerase)
         if (Sucess) {
-            res.status(200).send({ sucess: Sucess, message: `Sucessfully send all ChatData.`, empty: Is_Empty, chatdata: ChatData, isallerase: Is_From_All_Erase })
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully send all ChatData.`, empty: Is_Empty, chatdata: ChatData, isallerase: Is_From_All_Erase, chatdatajson: `Chat_Data-${global.Client_}.jso` })
         } else {
-            res.status(200).send({ sucess: Sucess, message: `ERROR to send all ChatData.`, empty: Is_Empty, chatdata: ChatData, isallerase: Is_From_All_Erase })
+            res.status(200).send({ sucess: Sucess, message: `ERROR to send all ChatData.`, empty: Is_Empty, chatdata: ChatData, isallerase: Is_From_All_Erase, chatdatajson: `Chat_Data-${global.Client_}.jso` })
         }
     } catch (error) {
         console.error(`> ❌ ERROR /all-print: ${error}`)
-        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], isallerase: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], isallerase: null, chatdatajson: null })
     }
 })
 
@@ -470,15 +499,19 @@ app.get('/qr', (req, res) => {
 
 app.post('/select', async (req, res) => {
     try {
-        const Clientt_ = req.query.Clientt_
+        const { Client_ } = req.body
+        global.Client_ = Client_
 
-        global.File_Data = `Chat_Data-${Clientt_}.json`
-        global.Data_File = path.join(Directory_Dir, `Chat_Data-${Clientt_}.json`)
+        global.File_Data_Chat_Data = `Chat_Data-${Client_}.json`
+        global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data-${Client_}.json`)
 
-        console.log(`> ℹ️  ${Clientt_} selected.`)
-        if (global.Log_Callback) global.Log_Callback(`> ℹ️ ${Clientt_} selected.`)
+        global.File_Data_Clients_ = `Client_-${Client_}.json`
+        global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client_-${Client_}.json`)
+
+        console.log(`>  ℹ️ Client_ ${Client_} selected.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Client_ ${Client_} selected.`)
         
-        res.status(200).send({ sucess: true, message: `${Clientt_} selected.`})
+        res.status(200).send({ sucess: true, message: `Client_ ${Client_} selected.`})
     } catch (error) {
         console.error(`> ❌ ERROR /select: ${error}`);
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`});
@@ -499,11 +532,9 @@ app.get('/dir-front', async (req, res) => {
 
 app.post('/new-client', async (req, res) => {
     try {
-        console.log('novo trem')
         global.Is_From_New = true
         let Is_Client_Ready = false
         const Clientt_ = await Generate_Client_Name(Is_Client_Ready)
-        console.log(Clientt_)
         await Initialize_Client_(Clientt_)
 
         res.status(200).send({ sucess: true, message: `New Client ${Clientt_} initialized.` });
@@ -512,7 +543,7 @@ app.post('/new-client', async (req, res) => {
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` });
     }
 })
-app.post('/start-bot', async (req, res) => {
+app.get('/start-bot', async (req, res) => {
     try {
         const { Sucess } = await initialize()
         
