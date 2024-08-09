@@ -30,9 +30,10 @@ const {
     Erase_All_Chat_Data,
     Reload_Front, 
     Input_Command, 
-    Generate_Client_Name,
+    Generate_Client_Id,
     Erase_Client_,
     Set_Erase_Client_Callback,
+    Select_Client_,
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
     Initialize_Client_,
@@ -84,11 +85,11 @@ wss_Server.on('connection', async  function connection(wss) {
             wss,
             reason: null
         })
-        console.log(`> ✅ Conectado Usuario ao WebSocket.`)
+        console.log(`> ✅ Conectado Usuario ${wss_Connection_Id} ao WebSocket.`)
         if (global.Statuses_WS_Callback) global.Statuses_WS_Callback(true)
         //if (global.Log_Callback) global.Log_Callback(`> ✅ Conectado Client ao WebSocket(back).`)
         wss.on('close', function() {
-            console.error(`> ⚠️  Desconectado Usuario do WebSocket.`)
+            console.error(`> ⚠️  Desconectado Usuario ${wss_Connection_Id} do WebSocket.`)
             //if (global.Log_Callback) global.Log_Callback(`> ⚠️ Desconectado Client do WebSocket(back).`)    
             if (global.Statuses_WS_Callback) global.Statuses_WS_Callback(false)
         
@@ -524,16 +525,9 @@ app.delete('/client-erase', async (req, res) => {
 app.post('/select', async (req, res) => {
     try {
         const { Client_ } = req.body
-        global.Client_ = Client_
 
-        global.File_Data_Chat_Data = `Chat_Data-${Client_}.json`
-        global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data-${Client_}.json`)
-
-        global.File_Data_Clients_ = `Client_-${Client_}.json`
-        global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client_-${Client_}.json`)
-
-        console.log(`>  ℹ️ Client_ ${Client_} selected.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Client_ ${Client_} selected.`)
+        global.Client_Is_Not_Ready = false
+        await Select_Client_(Client_)
         
         res.status(200).send({ sucess: true, message: `Client_ ${Client_} selected.`})
     } catch (error) {
@@ -556,10 +550,11 @@ app.get('/dir-front', async (req, res) => {
 
 app.post('/new-client', async (req, res) => {
     try {
+        const NameClient_ = global.Client_Name
         global.Is_From_New = true
         let Is_Client_Ready = false
-        const Clientt_ = await Generate_Client_Name(Is_Client_Ready)
-        await Initialize_Client_(Clientt_)
+        const Id_Client_ = await Generate_Client_Id(Is_Client_Ready)
+        await Initialize_Client_(`_${Id_Client_}_${NameClient_}_`)
 
         res.status(200).send({ sucess: true, message: `New Client ${Clientt_} initialized.` });
     } catch (error) {

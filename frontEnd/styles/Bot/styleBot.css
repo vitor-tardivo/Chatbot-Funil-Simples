@@ -256,7 +256,7 @@ main {
     overflow: hidden;
 }
 #innerContent {
-    display: flex;
+    display: inline-block;
     justify-content: center;
     flex-direction: column;
     margin: 0 auto;
@@ -869,6 +869,18 @@ td {
 #erase:focus {
     border: 2px solid rgba(207, 44, 44, 0);
     outline: 2px solid var(--colorRed);
+}
+
+#divFunil {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+#h2Funil {
+    color: var(--colorWhite);
+    word-break: break-word;
 }
 
 /* FOOTER STYLIZATION */

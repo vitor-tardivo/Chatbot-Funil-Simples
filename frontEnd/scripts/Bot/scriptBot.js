@@ -27,7 +27,56 @@ window.onbeforeunload = function(event) {
     }
 }
 
-let Is_From_New = false
+function displayOnConsole(message, setLogError) {
+    try {
+        const logElement = document.createElement('div')
+        logElement.textContent = `${message}`
+        if (setLogError) {
+            logElement.style.cssText =
+                'color: var(--colorRed)'
+        }
+        document.querySelector('#log').appendChild(logElement)
+        autoScroll()
+    } catch(error) {
+        console.error(`> ⚠️ ERROR displayOnConsole: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR displayOnConsole: ${error.message}`, setLogError)
+    }
+}
+
+function sleep(time) {
+    try {
+        return new Promise((resolve) => setTimeout(resolve, time))
+    } catch(error) {
+        console.error(`> ⚠️ ERROR sleep: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR sleep: ${error.message}`, setLogError)
+    }
+}
+
+let wss = null
+
+let setLogError = true
+
+let isDisconected = false
+
+let isFromTerminal = false
+
+let isVisibleList = null
+
+let isExceeds = true 
+
+let isQrOff = true
+
+let isAlreadyDir = false
+
+let Is_From_New = false//
+
+let Clientt_ = null//
+
+let Is_Not_Ready = true//
+
+let Is_Started_New = true//
+
+let Is_Started = false
 
 document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA QUERY PHONE AND ELSE
     try {
@@ -119,54 +168,6 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
     }
 })
 
-function displayOnConsole(message, setLogError) {
-    try {
-        const logElement = document.createElement('div')
-        logElement.textContent = `${message}`
-        if (setLogError) {
-            logElement.style.cssText =
-                'color: var(--colorRed)'
-        }
-        document.querySelector('#log').appendChild(logElement)
-        autoScroll()
-    } catch(error) {
-        console.error(`> ⚠️ ERROR displayOnConsole: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR displayOnConsole: ${error.message}`, setLogError)
-    }
-}
-
-let wss = null
-
-let setLogError = true
-
-let isDisconected = false
-
-let isFromTerminal = false
-
-let Is_Not_Ready = true
-
-let isVisibleList = null
-
-let isExceeds = true 
-
-let isQrOff = true
-
-let isAlreadyDir = false
-
-let Clientt_ = null
-
-let Is_Started_New = true
-
-let Is_Started = false
-
-function sleep(time) {
-    try {
-        return new Promise((resolve) => setTimeout(resolve, time))
-    } catch(error) {
-        console.error(`> ⚠️ ERROR sleep: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR sleep: ${error.message}`, setLogError)
-    }
-}
 //Patterns for Miliseconds times:
 // Formated= 1 \ * 24 * 60 * 60 * 1000 = 1-Day
 // Formated= 1 \ * 60 * 60 * 1000 = 1-Hour
@@ -488,11 +489,26 @@ async function exit(exitInten) {
 
         Is_Not_Ready = true
 
+        Is_From_New = false
+
+        Clientt_ = null
+
+        Is_Not_Ready = true
+
+        Is_Started_New = true
+
+        Is_Started = false
+
         if (!exitInten) {
             if (isDisconected) {
                 reconnectWebSocket()
             }
         } 
+
+        if (exitInten) {
+            const capList = document.querySelector(`caption`)
+            capList.textContent = `CHATDATA`
+        }
         
         if (exitInten) {
             document.title = 'Reset page'
@@ -511,6 +527,7 @@ async function exit(exitInten) {
         mainContent.style.cssText =
             'display: inline-block;'
 
+        isVisibleHideButton = null
         let listShow = document.querySelector('#showList')
         let listShowAbbr = document.querySelector('#abbrShowList')
         listShow.style.cssText = 
@@ -520,16 +537,14 @@ async function exit(exitInten) {
                 'display: none; background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0;'
         }, 300)
         listShowAbbr.title = `STATUS Lista: null`
-        
-        isVisibleHideButton = null
 
         const status = document.querySelector('#status')
         if (exitInten) {
             status.textContent = `Reset page!`
-            displayOnConsole(`>  ℹ️ (status)Reset page!`)
+            displayOnConsole(`>  ℹ️  (status)Reset page!`)
         } else {
             status.textContent = `ERROR Back End!`
-            displayOnConsole(`>  ℹ️ (status)ERROR Back End!`)
+            displayOnConsole(`>  ℹ️  (status)ERROR Back End!`)
         }
 
         let buttonStart = document.querySelector('#start')
@@ -539,9 +554,6 @@ async function exit(exitInten) {
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 1;'
         }, 100)
-
-        Is_From_New = false 
-        Is_Started = false
         
         document.querySelector('#qrCode').innerText = ''
         const codeQr = document.querySelector('#qrCode')
@@ -590,6 +602,16 @@ async function exit(exitInten) {
             displayOnConsole(`> ⚠️ ERROR exit: ${error.message}`, setLogError)
         }
         Is_Not_Ready = true
+
+        Is_From_New = false
+
+        Clientt_ = null
+
+        Is_Not_Ready = true
+
+        Is_Started_New = true
+
+        Is_Started = false
         document.title = 'ERROR'
         resetLoadingBar()
     }
@@ -698,7 +720,7 @@ async function authsucess(Client_) {
 
         const status = document.querySelector('#status')
         status.textContent = `${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
-        displayOnConsole(`>  ℹ️ (status)${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
+        displayOnConsole(`>  ℹ️  (status)${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
         
         document.querySelector('#qrCode').innerText = ''
         const codeQr = document.querySelector('#qrCode')
@@ -1143,7 +1165,7 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             const Chat_Data_json = response.data.chatdatajson
             if (Is_Empty) {
                 status.textContent = `Lista de ${Chat_Data_json} esta vazia!`
-                displayOnConsole(`>  ℹ️ (status)Lista de ${Chat_Data_json} esta vazia!`)
+                displayOnConsole(`>  ℹ️  (status)Lista de ${Chat_Data_json} esta vazia!`)
 
                 resetLoadingBar()
                 if (isFromTerminal) {
@@ -1153,7 +1175,7 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             }
             if (Is_Empty_Input) {
                 status.textContent = `ChatData ${queryList} não foi encontrado na lista de ${Chat_Data_json}!`
-                displayOnConsole(`>  ℹ️ (status)ChatData ${queryList} não foi encontrado na lista de ${Chat_Data_json}!`)
+                displayOnConsole(`>  ℹ️  (status)ChatData ${queryList} não foi encontrado na lista de ${Chat_Data_json}!`)
 
                 resetLoadingBar()
                 if (isFromTerminal) {
@@ -1163,10 +1185,10 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             } 
             if (Sucess) {
                 status.textContent = `${queryList} de ${Chat_Data_json} foi Apagado!`
-                displayOnConsole(`>  ℹ️ (status)${queryList} de ${Chat_Data_json} foi Apagado!`)
+                displayOnConsole(`>  ℹ️  (status)${queryList} de ${Chat_Data_json} foi Apagado!`)
             } else {
                 status.textContent = `ERROR ao Apagar ChatData ${queryList} de ${Chat_Data_json}!`
-                displayOnConsole(`>  ℹ️ (status)ERROR ao Apagar ChatData ${queryList} de ${Chat_Data_json}!`)
+                displayOnConsole(`>  ℹ️  (status)ERROR ao Apagar ChatData ${queryList} de ${Chat_Data_json}!`)
             }
 
             //document.querySelector('#inputList').value = ''
@@ -1220,17 +1242,17 @@ async function allErase() {
             const Chat_Data_json = response.data.chatdatajson
             if (Is_Empty) {
                 status.textContent = `Lista de ${Chat_Data_json} esta vazia!`
-                displayOnConsole(`>  ℹ️ (status)Lista de ${Chat_Data_json} esta vazia!`)
+                displayOnConsole(`>  ℹ️  (status)Lista de ${Chat_Data_json} esta vazia!`)
 
                 resetLoadingBar()
                 return
             } 
             if (Sucess) {
                 status.textContent = `Todo o ChatData de ${Chat_Data_json} foi Apagado!`
-                displayOnConsole(`>  ℹ️ (status)Todo o ChatData de ${Chat_Data_json} foi Apagado!`)
+                displayOnConsole(`>  ℹ️  (status)Todo o ChatData de ${Chat_Data_json} foi Apagado!`)
             } else {
                 status.textContent = `ERROR ao Apagar todo ChatData de ${Chat_Data_json}!`
-                displayOnConsole(`>  ℹ️ (status)ERROR ao Apagar todo ChatData de ${Chat_Data_json}`)
+                displayOnConsole(`>  ℹ️  (status)ERROR ao Apagar todo ChatData de ${Chat_Data_json}`)
             } 
         } else {
             resetLoadingBar()
@@ -1290,7 +1312,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
 
         if (Is_Empty) {
             status.textContent = `Lista de ${Chat_Data_json} esta vazia!`
-            displayOnConsole(`>  ℹ️ (status)Lista de ${Chat_Data_json} esta vazia!`)
+            displayOnConsole(`>  ℹ️  (status)Lista de ${Chat_Data_json} esta vazia!`)
 
             list.innerHTML = ''
             
@@ -1312,7 +1334,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
         }
         if (Is_Empty_Input) {
             status.textContent = `ChatData ${Search} não foi encontrado na lista de ${Chat_Data_json}!`
-            displayOnConsole(`>  ℹ️ (status)ChatData ${Search} não foi encontrado na lista de ${Chat_Data_json}!`)
+            displayOnConsole(`>  ℹ️  (status)ChatData ${Search} não foi encontrado na lista de ${Chat_Data_json}!`)
 
             list.innerHTML = ''
             
@@ -1334,7 +1356,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
         } 
         if (Sucess) {
             status.textContent = `Listando ChatData ${Search} de ${Chat_Data_json}...`
-            displayOnConsole(`>  ℹ️ (status)Listando ChatData ${Search} de ${Chat_Data_json}...`)
+            displayOnConsole(`>  ℹ️  (status)Listando ChatData ${Search} de ${Chat_Data_json}...`)
             
             list.innerHTML = ''
             
@@ -1356,10 +1378,10 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
                 'opacity: 1 pointer-events: unset;'*/
 
             status.textContent = `Listado ChatData ${Search} de ${Chat_Data_json}!`
-            displayOnConsole(`>  ℹ️ (status)Listado ChatData ${Search} de ${Chat_Data_json}!`)
+            displayOnConsole(`>  ℹ️  (status)Listado ChatData ${Search} de ${Chat_Data_json}!`)
         } else {
             status.textContent = `ERROR ao pesquisar ChatData ${Search} de ${Chat_Data_json}!`
-            displayOnConsole(`>  ℹ️ (status)ERROR ao pesquisar ChatData ${Search} de ${Chat_Data_json}!`)
+            displayOnConsole(`>  ℹ️  (status)ERROR ao pesquisar ChatData ${Search} de ${Chat_Data_json}!`)
         }
 
         //document.querySelector('#inputList').value = ''
@@ -1463,7 +1485,7 @@ async function allPrint(isFromButton, isallerase) {
 
         if (Is_Empty) {
             status.textContent = `Lista de ${Chat_Data_json} esta vazia!`
-            displayOnConsole(`>  ℹ️ (status)Lista de ${Chat_Data_json} esta vazia!`)
+            displayOnConsole(`>  ℹ️  (status)Lista de ${Chat_Data_json} esta vazia!`)
 
             counter.textContent = `0`
             
@@ -1483,7 +1505,7 @@ async function allPrint(isFromButton, isallerase) {
         if (Sucess) {
             if (isFromButton) {
                 status.textContent = `Listando todo ChatData de ${Chat_Data_json}...`
-                displayOnConsole(`>  ℹ️ (status)Listando todo ChatData de ${Chat_Data_json}...`)
+                displayOnConsole(`>  ℹ️  (status)Listando todo ChatData de ${Chat_Data_json}...`)
             }
 
             list.innerHTML = ''
@@ -1505,14 +1527,14 @@ async function allPrint(isFromButton, isallerase) {
                 'opacity: 1 pointer-events: unset;'*/
             if (isFromButton) {
                 status.textContent = `Todo ChatData de ${Chat_Data_json} Listado!`
-                displayOnConsole(`>  ℹ️ (status)Todo ChatData de ${Chat_Data_json} Listado!`)
+                displayOnConsole(`>  ℹ️  (status)Todo ChatData de ${Chat_Data_json} Listado!`)
             }
             
             isFromButton = true
             resetLoadingBar()
         } else {
             status.textContent = `ERROR ao listar todo ChatData de ${Chat_Data_json}!`
-            displayOnConsole(`>  ℹ️ (status)ERROR ao listar todo ChatData de ${Chat_Data_json}!`)
+            displayOnConsole(`>  ℹ️  (status)ERROR ao listar todo ChatData de ${Chat_Data_json}!`)
             isFromButton = true
             resetLoadingBar()
         } 
@@ -1544,7 +1566,7 @@ async function eraseClient_(isFromTerminal, isReadyErase, Clientt_) {
             const Is_Empty_Input = response.data.empty_input
             if (Is_Empty) {
                 status.textContent = `Dados de ${Clientt_} esta vazio!`
-                displayOnConsole(`>  ℹ️ (status)Dados de ${Clientt_} esta vazio!`)
+                displayOnConsole(`>  ℹ️  (status)Dados de ${Clientt_} esta vazio!`)
 
                 resetLoadingBar()
                 if (isFromTerminal) {
@@ -1554,7 +1576,7 @@ async function eraseClient_(isFromTerminal, isReadyErase, Clientt_) {
             }
             if (Is_Empty_Input) {
                 status.textContent = `Client_ ${Clientt_} não foi encontrado em nenhum dado!`
-                displayOnConsole(`>  ℹ️ (status)Client_ ${Clientt_} não foi encontrado em nenhum dado!`)
+                displayOnConsole(`>  ℹ️  (status)Client_ ${Clientt_} não foi encontrado em nenhum dado!`)
 
                 resetLoadingBar()
                 if (isFromTerminal) {
@@ -1563,29 +1585,51 @@ async function eraseClient_(isFromTerminal, isReadyErase, Clientt_) {
                 return  
             } 
             if (Sucess) {
+                const response1 = await axios.get('/dir-front')
+                const Directories_1 = response1.data.dirs
+
                 const divClientt_ = document.querySelector(`#${Clientt_}`)
                 divClientt_.remove()
 
                 status.textContent = `Client_ ${Clientt_} foi Apagado!`
-                displayOnConsole(`>  ℹ️ (status)Client_ ${Clientt_} foi Apagado!`)
+                displayOnConsole(`>  ℹ️  (status)Client_ ${Clientt_} foi Apagado!`)
 
                 await sleep(1 * 1000)
-                const response = await axios.get('/dir-front')
-                const Directories_ = response.data.dirs
+                const response2 = await axios.get('/dir-front')
+                const Directories_2 = response2.data.dirs
 
-                if (Directories_.length-1 === -1) {
-                    displayOnConsole(`> ⚠️ Dir off Clients_ (${Directories_.length-1}) is empty.`)
+                if (Directories_2.length-1 === -1) {
+                    displayOnConsole(`> ⚠️ Dir off Clients_ (${Directories_2.length-1}) is empty.`)
 
                     let exitInten = true
                     await exit(exitInten)
                     await axios.put('/reset-page')
                 } else {
-                    //let isReadySelect = false
-                    //await selectClient_(isReadySelect, `Client_${1}`)
+                    const clientIdNumber = Clientt_.match(/\d+/g)
+
+                    let Counter_Clients_ = 0
+                    for (let i = -1; i < Directories_1.length-1; i++) {
+                        const clientDirIdNumber = Directories_2[Counter_Clients_-1].match(/\d+/g)
+
+                        if (clientIdNumber === clientDirIdNumber) {
+                            let posArrayClient = Counter_Clients_
+
+                            if (Directories_1[posArrayClient++] === null) {
+                                posArrayClient--
+                            } else {
+                                posArrayClient++
+                            }
+                        } else {
+                            Counter_Clients_++
+                        }
+                    }
+    
+                    let isReadySelect = false
+                    await selectClient_(isReadySelect, `Client_${posArrayClient}`)
                 }
             } else {
                 status.textContent = `ERROR ao Apagar Client_ ${Clientt_}!`
-                displayOnConsole(`>  ℹ️ (status)ERROR ao Apagar Client_ ${Clientt_}!`)
+                displayOnConsole(`>  ℹ️  (status)ERROR ao Apagar Client_ ${Clientt_}!`)
             }
 
             //document.querySelector('#inputList').value = ''
@@ -1622,6 +1666,7 @@ async function selectClient_(isReadySelect, Clientt_) {
         const status = document.querySelector('#status')
 
         const divClientt_ = document.querySelector(`#${Clientt_}`)
+        const capList = document.querySelector(`caption`)
 
         const divClientt_Temp = document.querySelector(`#${Clientt_Temp}`)
         if (divClientt_Temp !== null) {
@@ -1630,7 +1675,7 @@ async function selectClient_(isReadySelect, Clientt_) {
         }
         if (divClientt_ === null) {
             status.textContent = `Client_ ${Clientt_} Não existe`
-            displayOnConsole(`>  ℹ️ (status)Client_ ${Clientt_} Não existe`)
+            displayOnConsole(`>  ℹ️  (status)Client_ ${Clientt_} Não existe`)
             resetLoadingBar()
             return
         }
@@ -1641,13 +1686,15 @@ async function selectClient_(isReadySelect, Clientt_) {
             divClientt_.style.cssText =
                 'border-top: 5px solid var(--colorBlue); border-bottom: 5px solid var(--colorBlue); transition: var(--configTrasition03s);'
 
+            capList.textContent = `${Clientt_}`
+
             Clientt_Temp = Clientt_
 
             status.textContent = `Client_ ${Clientt_} Selecionado`
-            displayOnConsole(`>  ℹ️ (status)Client_ ${Clientt_} Selecionado.`)
+            displayOnConsole(`>  ℹ️  (status)Client_ ${Clientt_} Selecionado.`)
         } else {
             status.textContent = `ERROR selecionando Client_ ${Clientt_}`
-            displayOnConsole(`>  ℹ️ (status)ERROR selecionando Client_ ${Clientt_}.`, setLogError)
+            displayOnConsole(`>  ℹ️  (status)ERROR selecionando Client_ ${Clientt_}.`, setLogError)
         }
 
         resetLoadingBar()
@@ -1666,6 +1713,7 @@ async function insertClient_Front(isReadyInsert, Clientt_) {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
+        console.log(Clientt_)
 
         const ClientsDiv = document.querySelector('#Clients_')
         let clientHTML = `<div id="${Clientt_}"><abbr title="${Clientt_}"><button class="Clients_" onclick="selectClient_(false, '${Clientt_}')">${Clientt_}</button></abbr><abbr title="Erase ${Clientt_}"><button class="Clients_Erase" onclick="eraseClient_(false, false, '${Clientt_}')"><</button></abbr></div>`
@@ -1701,7 +1749,7 @@ function counterExceeds(QR_Counter_Exceeds) {
 
         const status = document.querySelector('#status')
         status.textContent = `Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!`
-        displayOnConsole(`>  ℹ️ (status)Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!`)
+        displayOnConsole(`>  ℹ️  (status)Excedido todas as tentativas (${QR_Counter_Exceeds}) de conexão pelo QR_Code ao WhatsApp Web, Tente novamente!`)
         
         if (!Is_From_New) {
             let buttonStart = document.querySelector('#start')
@@ -1768,7 +1816,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
         const codeQr = document.querySelector('#qrCode')
 
         status.textContent = `${Clientt_} Gerando Qr-Code...`
-        displayOnConsole(`>  ℹ️ (status)${Clientt_} Gerando Qr-Code...`)
+        displayOnConsole(`>  ℹ️  (status)${Clientt_} Gerando Qr-Code...`)
         
         axios.get('/qr')
         .then(response => {
@@ -1777,7 +1825,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
             if (Is_Conected) {
                 setTimeout(function() {
                     status.textContent = `${Clientt_} ja conectado!`
-                    displayOnConsole(`>  ℹ️ (status)${Clientt_} ja conectado!`)
+                    displayOnConsole(`>  ℹ️  (status)${Clientt_} ja conectado!`)
                 }, 100)
                 document.querySelector('#qrCode').innerText = ''
                 codeQr.style.cssText =
@@ -1789,7 +1837,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
                 resetLoadingBar()
             } else {
                 status.textContent = `↓↓ ${Clientt_} tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`
-                displayOnConsole(`>  ℹ️ (status)↓↓ ${Clientt_} tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`)
+                displayOnConsole(`>  ℹ️  (status)↓↓ ${Clientt_} tente se Conectar pela ${QR_Counter}º ao WhatsApp Web pelo QR-Code abaixo ↓↓`)
                 
                 codeQr.style.cssText =
                     'display: inline-block; opacity: 0;'
@@ -1809,7 +1857,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
             displayOnConsole(`> ⚠️ ERROR buscando Qr-Code ${Clientt_}: ${error.message}`, setLogError)
             document.title = 'ERROR'
             status.textContent = `ERROR buscando Qr-Code ${Clientt_}!`
-            displayOnConsole(`>  ℹ️ (status)ERROR buscando Qr-Code ${Clientt_}!`)
+            displayOnConsole(`>  ℹ️  (status)ERROR buscando Qr-Code ${Clientt_}!`)
             if (!Is_From_New) {
                 let buttonStart = document.querySelector('#start')
                 buttonStart.style.cssText =
@@ -1835,7 +1883,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
         displayOnConsole(`> ⚠️ ERROR generateQrCode ${Clientt_}: ${error.message}`, setLogError)
         document.title = 'ERROR'
         status.textContent = `ERROR Gerando Qr-Code ${Clientt_}!`
-        displayOnConsole(`>  ℹ️ (status)ERROR Gerando Qr-Code ${Clientt_}!`)
+        displayOnConsole(`>  ℹ️  (status)ERROR Gerando Qr-Code ${Clientt_}!`)
         if (!Is_From_New) {
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
@@ -1923,7 +1971,7 @@ async function startBot() {
             
             const status = document.querySelector('#status')
             status.textContent = `Iniciando...`
-            displayOnConsole(`>  ℹ️ (status)Iniciando...`)
+            displayOnConsole(`>  ℹ️  (status)Iniciando...`)
             
             document.querySelector('#qrCode').innerText = ''
             const codeQr = document.querySelector('#qrCode')
@@ -1938,7 +1986,7 @@ async function startBot() {
             if (Sucess) {
                 document.title = 'Iniciou o Bot Corretamente'
                 status.textContent = `Iniciou o Bot Corretamente!`
-                displayOnConsole(`>  ℹ️ (status)Iniciou o Bot Corretamente`)
+                displayOnConsole(`>  ℹ️  (status)Iniciou o Bot Corretamente`)
 
                 resetLoadingBar()
             } else {
@@ -1951,7 +1999,7 @@ async function startBot() {
 
                 document.title = 'ERROR'
                 status.textContent = `ERROR ao iniciar o Bot!`
-                displayOnConsole(`>  ℹ️ (status)ERROR ao iniciar o Bot!`)
+                displayOnConsole(`>  ℹ️  (status)ERROR ao iniciar o Bot!`)
                 displayOnConsole(`> ⚠️ ERROR ao iniciar o Bot`, setLogError)
                 
                 Is_Started = false
@@ -1964,7 +2012,7 @@ async function startBot() {
             displayOnConsole(`> ⚠️ ERROR startBot: ${error.message}`, setLogError)
             document.title = 'ERROR'
             status.textContent = `ERROR iniciando Bot!`
-            displayOnConsole(`>  ℹ️ (status)ERROR iniciando Bot!`)
+            displayOnConsole(`>  ℹ️  (status)ERROR iniciando Bot!`)
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 0;'
@@ -2001,3 +2049,4 @@ async function startBot() {
     //funcoes multi instancias...
     //coisa de design... o border bottom do #divNewClient n ta aparecendo seila
     //usa websocket pra salvar numa var o client atual do back e os caralho inves de pega por dentro das funcao, fazer algo global sla, mas pode ser incerto ent sla kkk
+    //melhora o sistema de local storage dos q tem

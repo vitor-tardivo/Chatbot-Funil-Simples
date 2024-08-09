@@ -54,7 +54,7 @@ async function Reset_() {
         timer_Schedule = {}
         Is_timer_On = false
 
-        //Counter_Name_Clients_ = 0
+        //Counter_Id_Clients_ = 0
         //Chat_States = {}
     } catch (error) {
         console.error(`> ❌ ERROR Reset_: ${error}`)
@@ -189,18 +189,19 @@ global.Is_Conected = true
 global.Stage_ = 0
 global.Is_From_New = false
 global.Client_ = null
+global.Client_Name = 'Client'
 
 global.Client_Is_Not_Ready = true
 
 let Is_Not_Ready = true
 
 global.Directory_Dir_Clients_ = path.join(Root_Dir, `Clients_`)
-global.File_Data_Clients_ = `Client_-.json`
-global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client_-.json`)
+global.File_Data_Clients_ = `Client= .json`
+global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client= .json`)
 
 global.Directory_Dir_Chat_Data = path.join(Root_Dir, `Chat_Datas`)
-global.File_Data_Chat_Data = `Chat_Data-.json`
-global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data-.json`)
+global.File_Data_Chat_Data = `Chat_Data= .json`
+global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data= .json`)
 
 const Clientts_ = {}
 
@@ -212,7 +213,7 @@ const timer_Duration_Type_Schedule = 'Seconds'
 const timer_Duration_Schedule_Type = 1000
 const timer_Duration_Schedule = 10 * timer_Duration_Schedule_Type
 
-let Counter_Name_Clients_ = 0
+let Counter_Id_Clients_ = 0
 const Chat_States = {}
 
 //let timer_Duration_Type_MSG_ = ''
@@ -324,8 +325,8 @@ async function Load_Client_(Clientt_) {
         try {
             global.Client_Is_Not_Ready = true
 
-            global.File_Data_Clients_ = `Client_-${Clientt_}.json`
-            global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client_-${Clientt_}.json`)
+            global.File_Data_Clients_ = `Client=${Clientt_}.json`
+            global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
 
             console.log(`>  ◌ Loading ChatData ${Clientt_} from ${global.File_Data_Clients_}...`)
             if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Loading Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
@@ -346,8 +347,8 @@ async function Load_Client_(Clientt_) {
             //return Parse_Data
         } catch (error) {
             if (error.code === 'ENOENT') {
-                global.File_Data_Clients_ = `Client_-${Clientt_}.json`
-                global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client_-${Clientt_}.json`)
+                global.File_Data_Clients_ = `Client=${Clientt_}.json`
+                global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
 
                 console.log(`> ⚠️  ${global.File_Data_Clients_} off ${Clientt_} does not exist: ${error}`)
                 if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)${global.File_Data_Clients_} off ${Clientt_} does not exist: ${error}`)
@@ -382,7 +383,7 @@ async function Save_Client_(id, Clientt_) {
             console.log(`>  ◌ Saving Client_ ${Clientt_} to ${global.File_Data_Clients_}...`)
             if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Saving Client_ ${Clientt_} to ${global.File_Data_Clients_}...`)
 
-            const filePath = path.join(global.Directory_Dir_Clients_, `Client_-${Clientt_}.json`)// testa se funfo a mudanca de salva vice versa com 2 whats for
+            const filePath = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)// testa se funfo a mudanca de salva vice versa com 2 whats for
             const Clients_ = JSON.parse(await fs.readFile(filePath, 'utf8'))
             const New_Client_ = [{ id, Clientt_ }, ...Clients_.filter(item => item.Clientt_ !== Clientt_)]
             const jsonString = '[\n' + New_Client_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
@@ -397,7 +398,7 @@ async function Save_Client_(id, Clientt_) {
     }
 }
 async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pra apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar o client criar no caso ou se n mas estiver la que iniciou ent iniciar pra apagar ou n vai dar, sistema de apagar do json memo ja existe so pegar
-    if (Client_Is_Not_Ready) {
+    if (global.Client_Is_Not_Ready) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
         if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Clientt_} not Ready.`)
         return { Sucess: false, Is_Empty: null, Is_Empty_Input: null }
@@ -431,8 +432,9 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
                     fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                     Clientts_[Clientt_].instance.destroy()
                     delete Clientts_[Clientt_].instance
+                    await sleep(1 * 1000)
                     fse.remove(`Local_Auth\\${Clientt_}`)
-                    Counter_Name_Clients_--//arrumar alguma forma de tirar o numero do client aqui, exponencial zas id de banco de dados
+                    Counter_Id_Clients_--//arrumar alguma forma de tirar o numero do client aqui, exponencial zas id de banco de dados
                     
                     Erased_ = true
                 } else if (answer.toLowerCase() === 'n') {
@@ -454,7 +456,7 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
                 delete Clientts_[Clientt_].instance
                 await sleep(1 * 1000)
                 fse.remove(`Local_Auth\\${Clientt_}`)
-                Counter_Name_Clients_--//arrumar alguma forma de tirar o numero do client aqui, exponencial zas id de banco de dados
+                Counter_Id_Clients_--//arrumar alguma forma de tirar o numero do client aqui, exponencial zas id de banco de dados
                 
                 Erased_ = true
             }
@@ -472,6 +474,30 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
         }
     }
 }
+async function Select_Client_(Clientt_) {
+    if (Client_Is_Not_Ready) {
+        console.log(`>  ℹ️ ${Clientt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Clientt_} not Ready.`)
+        return
+    } else {
+        try {
+            global.Client_Is_Not_Ready = true
+
+            global.Client_ = Clientt_
+
+            global.File_Data_Chat_Data = `Chat_Data=${Clientt_}.json`
+            global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`)
+
+            global.File_Data_Clients_ = `Client-${Clientt_}.json`
+            global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client-${Clientt_}.json`)
+
+            console.log(`>  ℹ️ Client_ ${Clientt_} selected.`)
+            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Client_ ${Clientt_} selected.`)
+        } catch (error) {
+            console.error(`> ❌ Select_Client_ ${Clientt_}: ${error}`)
+        }
+    }
+}
 
 async function Load_Chat_Data(Clientt_) {
     if (Is_Not_Ready) {
@@ -480,8 +506,8 @@ async function Load_Chat_Data(Clientt_) {
         return //[]
     } else {
         try {
-            global.File_Data_Chat_Data = `Chat_Data-${Clientt_}.json`
-            global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data-${Clientt_}.json`)
+            global.File_Data_Chat_Data = `Chat_Data=${Clientt_}.json`
+            global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`)
 
             console.log(`>  ◌ Loading ChatData ${Clientt_} from ${global.File_Data_Chat_Data}...`)
             if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Loading ChatData ${Clientt_} from ${global.File_Data_Chat_Data}...`)
@@ -506,8 +532,8 @@ async function Load_Chat_Data(Clientt_) {
             //return Parse_Data
         } catch (error) {
             if (error.code === 'ENOENT') {
-                global.File_Data_Chat_Data = `Chat_Data-${Clientt_}.json`
-                global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data-${Clientt_}.json`)
+                global.File_Data_Chat_Data = `Chat_Data=${Clientt_}.json`
+                global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`)
 
                 console.log(`> ⚠️  ${global.File_Data_Chat_Data} off ${Clientt_} does not exist: ${error}`)
                 if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)${global.File_Data_Chat_Data} off ${Clientt_} does not exist: ${error}`)
@@ -901,18 +927,18 @@ async function List_Directories(dir_Path, Is_Client_Ready) {
         }
     }
 }
-async function Generate_Client_Name(Is_Client_Ready) { //talves criar um meio de o usuario colocar um nome frontend, resolveria problemas talves
+async function Generate_Client_Id(Is_Client_Ready) { //talves criar um meio de o usuario colocar um nome frontend, resolveria problemas talves
     if (Is_Client_Ready) {
         console.log('>  ℹ️ Client_ not Ready.')
         if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Client_ not Ready.`)
         return null
     } else {
         try {
-            Counter_Name_Clients_++
-            const Client_ = `Client_${Counter_Name_Clients_}`
-            return Client_
+            Counter_Id_Clients_++
+            const Id_Client_ = Counter_Id_Clients_
+            return Id_Client_
         } catch (error) {
-            console.error(`> ❌ ERROR Generate_Client_Name: ${error}`)
+            console.error(`> ❌ ERROR Generate_Client_Id: ${error}`)
             return null
         }
     }
@@ -923,9 +949,9 @@ async function Initialize_Client_(Clientt_) {
         await Load_Client_(Clientt_)
         //const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))
         const MAX_Clients_ = 3
-        if (Counter_Name_Clients_ > MAX_Clients_) {
-            console.log(`> ⚠️  Max instances off Clients_ reached (${Counter_Name_Clients_}): MAX(${MAX_Clients_})`)
-            if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)Máx instances off Clients_ reached (${Counter_Name_Clients_}): MAX(${MAX_Clients_})`)
+        if (Counter_Id_Clients_ > MAX_Clients_) {
+            console.log(`> ⚠️  Max instances off Clients_ reached (${Counter_Id_Clients_}): MAX(${MAX_Clients_})`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)Máx instances off Clients_ reached (${Counter_Id_Clients_}): MAX(${MAX_Clients_})`)
             //if (_Callback) _Callback() // reagir ao front end caso
             fse.remove(`Clients_\\${global.File_Data_Clients_}`)
             return
@@ -989,13 +1015,13 @@ async function Initialize_Client_(Clientt_) {
                     
                     console.log(`> ❌ ${Clientt_} Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
                     if (global.Log_Callback) global.Log_Callback(`> ❌ (back)${Clientt_} Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
-                    
+                        
+                    fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                     if (Client_) Client_.destroy()
-                    Counter_Name_Clients_--
                     await sleep(1 * 1000)
                     fse.remove(`Local_Auth\\${Clientt_}`)
-                    await sleep(1 * 1000)
-                    
+                    Counter_Id_Clients_--//arrumar alguma forma de tirar o numero do client aqui, exponencial zas id de banco de dados
+
                     console.log(`>  ℹ️ Retry again.`)
                     if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Retry again.`)
                 }
@@ -1029,12 +1055,11 @@ async function Initialize_Client_(Clientt_) {
                 }
                 global.Is_From_New = false 
 
+                fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                 if (Client_) Client_.destroy()
-                Counter_Name_Clients_--
                 await sleep(1 * 1000)
                 fse.remove(`Local_Auth\\${Clientt_}`)
-                await sleep(1 * 1000)
-                fse.remove(`Clients_\\${Clientt_}`)
+                Counter_Id_Clients_--//arrumar alguma forma de tirar o numero do client aqui, exponencial zas id de banco de dados
                 
                 if (Auth_Failure_Callback) Auth_Failure_Callback()
                 console.error(`> ⚠️  ERROR Authentication ${Clientt_} to WhatsApp Web by the Local_Auth: ${error}`)
@@ -1426,6 +1451,7 @@ async function Initialize_Client_(Clientt_) {
             //console.error(`> ❌ ERROR Initialize_Client_ ${Clientt_} ProtocolError: ${error}`)
         } else {
             console.error(`> ❌ ERROR Initialize_Client_ ${Clientt_}: ${error}`)
+            Counter_Id_Clients_--
         }
     }
 }    
@@ -1438,22 +1464,25 @@ async function initialize() {
         try {
             let Is_Client_Ready = false
             const Directories_ = await List_Directories('Local_Auth', Is_Client_Ready)
-            
+            console.log(Directories_.length, Directories_)
+
             let Counter_Clients_ = 0
             if (Directories_.length-1 === -1) {
+                const NameClient_ = global.Client_Name
                 let Is_Client_Ready = false
-                const Clientt_ = await Generate_Client_Name(Is_Client_Ready)
-                await Initialize_Client_(Clientt_)
+                const Id_Client_ = await Generate_Client_Id(Is_Client_Ready)
+                await Initialize_Client_(`_${Id_Client_}_${NameClient_}_`)
             } else {
                 for (let i = -1; i < Directories_.length-1; i++) {
                     await Initialize_Client_(Directories_[Counter_Clients_])
                     Counter_Clients_++
-                    Counter_Name_Clients_++
+                    Counter_Id_Clients_++
                 }
             }
             return { Sucess: true }
         } catch (error) {
-            console.error(`> ❌ ERROR initialize Client_-?: ${error}`)
+            console.error(`> ❌ ERROR initialize: ${error}`)
+            Counter_Id_Clients_--
             return { Sucess: false }
         }
     } 
@@ -1484,9 +1513,10 @@ module.exports = {
     Erase_All_Chat_Data,
     Reload_Front, 
     Input_Command, 
-    Generate_Client_Name,
+    Generate_Client_Id,
     Erase_Client_,
     Set_Erase_Client_Callback,
+    Select_Client_,
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
     Initialize_Client_,
@@ -1504,6 +1534,8 @@ if (global.Log_Callback) global.Log_Callback(`> ✅ FINISHED(Starting functions)
         //criar varis instancias de Clients_ varios numeros e funcinando ao mesmo tempo instancias de modo dinamico
         //////varios problemas no multi clients instance ao testar realmente 2 whats ao mesmo tempo e tals, salvando o client dos 2 no outro e vice versa talves seja a variaveis globais talves fazer array pra cada client dos caminhos de diretorio mai e mt role ein, equanto ta criando um client novo ta mostra o 2 mas ta rodando o 1 as funcao ent arruma isso questao da variavel global caso da incerteza e tals, ta pegando os 2 numero oq ta mandando e oq ta recebendo pro chatdata com o message_create talves seja normal ou n mas ruim pra debug ne os 2 tao linkado or isso ta assim, logica do funil o esquema de mandar msg e n responde e mandar outra msg n ta funfando, erro burro cometido so vai salvar ou ent funfa certo o q tiver selecionado e tem que ta com o front aberto ent ne burro n vai dar certo resolver isso logo, pode ta salvando chatdata no outro se selecionado outro
         //quand for apagar outro client que n estiver selecionado ele bloqueia
+        //o funil ser de uma fila e oq tiver programado ali ele bate no codigo e executa na hora com oq tiver mandado e tals, sendo midias msg sleep contrapropostas e vai indo, um json programavel, ai ja as midias msg... como faco pra ta no json e rodas no zap assim?
+        //sucess false do star n ta funfando aparece o botao start dinovo
 
 //a desenvolver...
     //ver como bota num server finalmente frontend githubpages e back em algum canto ai google drive sla como e ver como junta os 2
