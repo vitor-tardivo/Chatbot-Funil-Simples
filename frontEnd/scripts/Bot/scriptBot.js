@@ -91,10 +91,19 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
             console.log('User is from a Desktop.')
         }
 
-        const response = await axios.get('/what-stage')
-        const stage = response.data.data
-        const QR_Counter = response.data.data2
-        Clientt_ = response.data.data3
+        const response = await axios.get('/app-data')
+        const Bot_Name = response.data.name
+        const dataName = document.querySelector('#appName')
+        dataName.textContent = `${Bot_Name.toUpperCase()}`
+        const Version_ = response.data.version
+        const dataVersion = document.querySelector('#appVersion')
+        dataVersion.textContent = 'v' +`${Version_}`
+
+
+        const response2 = await axios.get('/what-stage')
+        const stage = response2.data.data
+        const QR_Counter = response2.data.data2
+        Clientt_ = response2.data.data3
         
         if (stage === 0) {
             

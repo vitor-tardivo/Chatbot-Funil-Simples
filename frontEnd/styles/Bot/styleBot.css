@@ -47,6 +47,12 @@ header {
     margin-bottom: 0px;
     z-index: 9000;
 }
+#appVersion {
+    color: var(--colorInteractionElements);
+    font-family: var(--fontMonoSerif);
+    font-size: 1vw;
+    transition: var(--configTrasition03s);
+}
 
 main {
     display: flex;

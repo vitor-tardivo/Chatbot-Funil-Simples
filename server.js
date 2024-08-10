@@ -390,6 +390,15 @@ wss_Server.on('connection', async  function connection(wss) {
     }
 })
 
+app.get('/app-data', async (req, res) => {
+    try {
+        res.status(200).send({ sucess: true, message: `sucessfully sent the app data.`, name: global.Bot_Name, version: global.Bot_Version_ })
+    } catch (error) {
+        console.error(`> ❌ ERROR /what-stage: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, data: null, data2: null, data3: null })
+    }
+})
+
 app.get('/what-stage', async (req, res) => {
     try {
         res.status(200).send({ sucess: true, message: `sucessfully get stage.`, data: global.Stage_, data2: global.QR_Counter, data3: global.Client_ })

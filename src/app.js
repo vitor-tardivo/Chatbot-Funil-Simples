@@ -19,9 +19,11 @@ const readline = require('readline')
 const Root_Dir = path.resolve(__dirname, '..')
 
 const { name: Name_Software } = JSON.parse(fss.readFileSync(path.resolve(Root_Dir, 'package.json'), 'utf8'));
+global.Bot_Name = Name_Software
 const { version: Version_ } = JSON.parse(fss.readFileSync(path.resolve(Root_Dir, 'package.json'), 'utf8'))
+global.Bot_Version_ = Version_
 console.log(`>  ℹ️ ${Name_Software} = v${Version_}`)
-if (global.Log_Callback) global.Log_Callback(`>  ℹ️ (back)${Name_Software} = v${Version_}`)
+if (global.Log_Callback) global.Log_Callback(`>  ℹ️ (back)${global.Bot_Name} = v${global.Bot_Version_}`)
 
 function Reload_Front() {
     //console.error(`> ⚠️  Load FrontEnd page`)
