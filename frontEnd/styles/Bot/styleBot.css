@@ -138,8 +138,8 @@ main {
     display: flex;
     flex-direction: column;
     text-align: left;
-    color: #d0d0d0;
-    font-size: 0.85vw;
+    color: var(--colorWhite);
+    font-size: 0.76vw;
     white-space: pre-wrap;
     font-family: var(--fontConsole);
     word-wrap: break-word;
@@ -149,6 +149,9 @@ main {
 }
 #log::-webkit-scrollbar {
     background-color: #2b2b2b; 
+}
+.sobTextColor {
+    color: var(--colorInteractionElements);
 }
 #commandSendInput {
     display: flex;
@@ -195,7 +198,7 @@ main {
 }
 #commandInput {
     background-color: #2b2b2b;
-    color: #d0d0d0;
+    color: var(--colorWhite);
     border: 1px solid rgba(0, 0, 0, 0);
     outline: 1px solid rgba(0, 0, 0, 0);
     padding: 5px 10px 5px 10px;
@@ -665,7 +668,7 @@ main {
 }
 #inputList {
     background-color: #2b2b2b;
-    color: #d0d0d0;
+    color: var(--colorWhite);
     box-sizing: border-box;
     border: 1px solid rgba(0, 0, 0, 0);
     outline: 1px solid rgba(0, 0, 0, 0);

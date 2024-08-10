@@ -30,13 +30,12 @@ const {
     Erase_All_Chat_Data,
     Reload_Front, 
     Input_Command, 
-    Generate_Client_Id,
     Erase_Client_,
     Set_Erase_Client_Callback,
     Select_Client_,
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
-    Initialize_Client_,
+    New_Client_,
     initialize,
     Set_Clients_Callback,
 } = require('./src/app')
@@ -87,10 +86,10 @@ wss_Server.on('connection', async  function connection(wss) {
         })
         console.log(`> ✅ Conectado Usuario ${wss_Connection_Id} ao WebSocket.`)
         if (global.Statuses_WS_Callback) global.Statuses_WS_Callback(true)
-        //if (global.Log_Callback) global.Log_Callback(`> ✅ Conectado Client ao WebSocket(back).`)
+        //if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>Conectado Client ao WebSocket.`)
         wss.on('close', function() {
             console.error(`> ⚠️  Desconectado Usuario ${wss_Connection_Id} do WebSocket.`)
-            //if (global.Log_Callback) global.Log_Callback(`> ⚠️ Desconectado Client do WebSocket(back).`)    
+            //if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Desconectado Client do WebSocket.`)    
             if (global.Statuses_WS_Callback) global.Statuses_WS_Callback(false)
         
             setTimeout(function() {
@@ -410,6 +409,7 @@ app.get('/what-stage', async (req, res) => {
 
 app.put('/reset-page', async (req, res) => {
     try {
+        global.Is_Reset = false
         await Reset_()
 
         res.status(200).send({ sucess: true, message: `sucessfully code reset.`})
@@ -559,11 +559,8 @@ app.get('/dir-front', async (req, res) => {
 
 app.post('/new-client', async (req, res) => {
     try {
-        const NameClient_ = global.Client_Name
         global.Is_From_New = true
-        let Is_Client_Ready = false
-        const Id_Client_ = await Generate_Client_Id(Is_Client_Ready)
-        await Initialize_Client_(`_${Id_Client_}_${NameClient_}_`)
+        await New_Client_()
 
         res.status(200).send({ sucess: true, message: `New Client ${Clientt_} initialized.` });
     } catch (error) {
@@ -575,7 +572,7 @@ app.get('/start-bot', async (req, res) => {
     try {
         const { Sucess } = await initialize()
         
-        res.status(200).send({ sucess: Sucess, message: `sucessfully started bot.` })
+        res.status(200).send({ sucess: Sucess, message: `Sucessfully started ${global.Bot_Name}.` })
     } catch (error) {
         console.error(`> ❌ ERROR /start-bot: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })

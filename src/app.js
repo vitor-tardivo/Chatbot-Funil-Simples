@@ -5,7 +5,7 @@ function Set_Log_Callback(callback) {
 }
 
 console.log(`>  ◌ Starting functions...`)
-if (global.Log_Callback) global.Log_Callback(`>  ◌ (back)Starting functions...`)
+if (global.Log_Callback) global.Log_Callback(`>  ◌ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Starting functions</strong>...`)
 
 const { Client, LocalAuth, MessageMedia, Buttons } = require('whatsapp-web.js')
 const qrcode = require('qrcode-terminal')
@@ -18,12 +18,12 @@ const readline = require('readline')
 
 const Root_Dir = path.resolve(__dirname, '..')
 
-const { name: Name_Software } = JSON.parse(fss.readFileSync(path.resolve(Root_Dir, 'package.json'), 'utf8'));
+const { name: Name_Software } = JSON.parse(fss.readFileSync(path.resolve(Root_Dir, 'package.json'), 'utf8'))
 global.Bot_Name = Name_Software
 const { version: Version_ } = JSON.parse(fss.readFileSync(path.resolve(Root_Dir, 'package.json'), 'utf8'))
 global.Bot_Version_ = Version_
 console.log(`>  ℹ️ ${Name_Software} = v${Version_}`)
-if (global.Log_Callback) global.Log_Callback(`>  ℹ️ (back)${global.Bot_Name} = v${global.Bot_Version_}`)
+if (global.Log_Callback) global.Log_Callback(`>  ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Bot_Name}</strong> = <strong>v${global.Bot_Version_}</strong>`)
 
 function Reload_Front() {
     //console.error(`> ⚠️  Load FrontEnd page`)
@@ -31,7 +31,14 @@ function Reload_Front() {
     //process.exit(1)
 }
 async function Reset_() {
+    if (global.Is_Reset) {
+        console.log(`>  ℹ️ Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Client_</strong> not Ready.`)
+        return 
+    }
     try {
+        global.Is_Reset = true
+
         global.QR_Counter = 0
         global.Qr_String = ''
         global.Is_Conected = true
@@ -170,7 +177,7 @@ function Set_Ready_Callback(callback) {
 async function sleep(time) {
     if (Is_Not_Ready) {
         console.log(`>  ℹ️ ${global.Client_} not Ready.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${global.Client_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Client_}</strong> not Ready.`)
         return 
     } else {
         try {
@@ -184,6 +191,28 @@ async function sleep(time) {
 function generateUniqueId() {
     return uuidv4();
 }
+
+async function askForConfirmation(Clientt_) {
+    try {
+        if (Is_Not_Ready) {
+            console.log(`>  ℹ️ ${Clientt_} not Ready.`)
+            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
+            return
+        } else {
+            return new Promise((resolve) => {
+                console.log('>  ℹ️ Confirm(Y/N)')
+                if (global.Log_Callback) global.Log_Callback(`>  ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Confirm(Y/N)</strong>`)
+                rl.question('',(answer) => {
+                    resolve(answer.trim().toLowerCase())
+                })
+            })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR askForConfirmation: ${error}`)
+    }
+}
+
+global.Is_Reset = true
 
 global.QR_Counter = 0
 global.Qr_String = ''
@@ -260,32 +289,89 @@ async function commands(command, Is_Front_Back) {
             }
         }
 
-        console.log(`>  ℹ️ ${global.Client_} not Ready.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${global.Client_} not Ready.`)
+        console.log(`>  ℹ️ Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Client_</strong> not Ready.`)
         return
     } else {
         try {
-            if (global.Log_Callback) global.Log_Callback(`${command}`)
+            if (global.Log_Callback) global.Log_Callback(`<strong>${command}</strong>`)
             
             if (Is_Front_Back) {
+                /*if (command === null) {
+                    console.log('>  ℹ️ Command not recognized.')
+                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Command</strong> <strong>not</strong> recognized.`)
+                    return
+                } else if (command === 'start') {
+                    console.log(`> ⚠️  Bot already Initialized.`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Bot</strong> already <strong>Initialized</strong>.`)
+                }
+                else if (command.startsWith('erase ')) {
+                    const query = command.substring(6).trim()
+                    if (query !== null) {
+                        let Is_From_End = true
+                        await Erase_Chat_Data_By_Query(query, Is_From_End)
+                    } else {
+                        console.log(`> ⚠️  Specify a ChatName or ChatId to erase from ${global.File_Data_Chat_Data}, EXEMPLE:\nerase "number||name"`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>ChatName or ChatId</strong> to <strong>erase</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>, <strong>EXEMPLE:\nerase "contact||name"</strong>`)
+                    }
+                } else if (command === 'all erase') {
+                    let Is_From_End = true
+                    await Erase_All_Chat_Data(Is_From_End)
+                } else if (command.startsWith('print ')) {
+                    const search = command.substring(6).trim()
+                    if (search !== null) {
+                        await Search_Chat_Data_By_Search(search)
+                    } else {
+                        console.log(`> ⚠️  Specify a ChatName or ChatId to search from ${global.File_Data_Chat_Data}, EXEMPLE:\nprint "number||name"`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>ChatName or ChatId</strong> to <strong>erase</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>, <strong>EXEMPLE:\nprint "contact||name"</strong>`)
+                    }
+                } else if (command === 'all print') {
+                    let isallerase = false
+                    await Print_All_Chat_Data(isallerase)
+                } else if (command.startsWith('client erase ')) {
+                    const Clientt_ = command.substring(13).trim()
+                    if (Clientt_ !== null) {
+                        global.Client_Is_Not_Ready = false
+                        let Is_From_End = true
+                        await Erase_Client_(Is_From_End, Clientt_)
+                    } else {
+                        console.log(`> ⚠️  Specify a Client_ name to erase from ${global.Data_File_Clients_}, EXEMPLE:\nclient erase "client"`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>erase</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nclient erase "client"</strong>`)
+                    }
+                } else if (command.startsWith('select ')) {
+                    const Clientt_ = command.substring(7).trim()
+                    if (Clientt_ !== null) {
+                        global.Client_Is_Not_Ready = false
+                        await Select_Client_(Clientt_)
+                    } else {
+                        console.log(`> ⚠️  Specify a Client_ name to select from ${global.Data_File_Clients_}, EXEMPLE:\nselect "client"`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>select</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nselect "client"</strong>`)
+                    }
+                } else if (command === 'new client') {
+                    await New_Client_()
+                } else {
+                    console.log('>  ℹ️ Command not recognized.')
+                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Command</strong> <strong>not</strong> recognized.`)
+                }*/
+
                 console.log(`> ⚠️  ${command} Can not send commands from the BackEnd.`)
             } else {
                 console.log(`${command}`)
 
                 if (command === null) {
                     console.log('>  ℹ️ Command not recognized.')
-                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Command not recognized.`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Command</strong> <strong>not</strong> recognized.`)
                     return
                 } else if (command === 'start') {
-                    console.log(`> ⚠️  Bot already Initialized`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)Bot already Initialized`)
+                    console.log(`> ⚠️  ${global.Bot_Name} already Initialized`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Bot_Name}</strong> <strong>already</strong> Initialized`)
                 } else if (command.startsWith('erase ')) {
                     const query = command.substring(6).trim()
                     if (query !== null) {
                         if (Query_Erase_Callback) Query_Erase_Callback(query)
                     } else {
-                        console.log(`> ⚠️  Specify a ChatData to erase from ${global.File_Data_Chat_Data}, EXEMPLE:\nerase <number/name>`)
-                        if (global.Log_Callback) global.Log_Callback(`> ⚠️  (back)Specify a ChatName to erase ChatData from ${global.File_Data_Chat_Data}, EXEMPLE:\nerase <contact-name>`)
+                        console.log(`> ⚠️  Specify a ChatName or ChatId to erase from ${global.File_Data_Chat_Data}, EXEMPLE:\nerase "number||name"`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>ChatName of ChatId</strong> to <strong>erase</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>, <strong>EXEMPLE:\nerase "contact||name"</strong>`)
                     }
                 } else if (command === 'all erase') {
                     if (All_Erase_Callback) All_Erase_Callback()
@@ -294,22 +380,32 @@ async function commands(command, Is_Front_Back) {
                     if (Search !== null) {
                         if (Search_List_Callback) Search_List_Callback(Search)
                     } else {
-                        console.log(`> ⚠️  Specify a ChatData to search from ${global.File_Data_Chat_Data}, EXEMPLE:\nprint <number/name>`)
-                        if (global.Log_Callback) global.Log_Callback(`> ⚠️  (back)Specify a ChatName to erase ChatData from ${global.File_Data_Chat_Data}, EXEMPLE:\nerase <contact-name>`)
+                        console.log(`> ⚠️  Specify a ChatName or ChatId to search from ${global.File_Data_Chat_Data}, EXEMPLE:\nprint "number||name"`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>ChatName of ChatId</strong> to <strong>erase</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>, <strong>EXEMPLE:\nprint "contact||name"</strong>`)
                     }
                 } else if (command === 'all print') {
                     if (List_Callback) List_Callback()
                 } else if (command.startsWith('client erase ')) {
                     const Clientt_ = command.substring(13).trim()
-                    if (Erase_Client_Callback) Erase_Client_Callback(Clientt_)
+                    if (Clientt_ !== null) {
+                        if (Erase_Client_Callback) Erase_Client_Callback(Clientt_)
+                    } else {
+                        console.log(`> ⚠️  Specify a Client_ name to erase from ${global.Data_File_Clients_}, EXEMPLE:\nclient erase "client"`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>erase</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nclient erase "client"</strong>`)
+                    }
                 } else if (command.startsWith('select ')) {
                     const Clientt_ = command.substring(7).trim()
-                    if (Select_Client_Callback) Select_Client_Callback(Clientt_)
+                    if (Clientt_ !== null) {
+                        if (Select_Client_Callback) Select_Client_Callback(Clientt_)
+                    } else {
+                        console.log(`> ⚠️  Specify a Client_ name to select from ${global.Data_File_Clients_}, EXEMPLE:\nselect "client"`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>select</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nselect "client"</strong>`)
+                    } 
                 } else if (command === 'new client') {
                     if (New_Client_Callback) New_Client_Callback()
                 } else {
                     console.log('>  ℹ️ Command not recognized.')
-                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Command not recognized.`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Command</strong> <strong>not</strong> recognized.`)
                 }
             }
         } catch (error) {
@@ -321,7 +417,7 @@ async function commands(command, Is_Front_Back) {
 async function Load_Client_(Clientt_) {
     if (global.Client_Is_Not_Ready) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Clientt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
         return //[]
     } else {
         try {
@@ -331,19 +427,19 @@ async function Load_Client_(Clientt_) {
             global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
 
             console.log(`>  ◌ Loading ChatData ${Clientt_} from ${global.File_Data_Clients_}...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌ (back)Loading Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Loading</strong> Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
             
             const Clients_ = await fs.readFile(global.Data_File_Clients_, 'utf8')
 
             if (Clients_.length === 0) {
                 console.log(`> ⚠️  ${global.File_Data_Clients_} off ${Clientt_} is empty.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)${global.File_Data_Clients_} off ${Clientt_} is empty.`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.File_Data_Clients_}</strong> off <strong>${Clientt_}</strong> is <strong>empty</strong>.`)
                 await fs.writeFile(global.Data_File_Clients_, '[\n\n]', 'utf8')
                 return //[]
             }
             
             console.log(`> ✅ Client_ ${Clientt_} loaded from ${global.File_Data_Clients_}.`)
-            if (global.Log_Callback) global.Log_Callback(`> ✅ (back)Client_ ${Clientt_} loaded from ${global.File_Data_Clients_}.`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>loaded</strong> from <strong>${global.File_Data_Clients_}</strong>.`)
                 
             //const Parse_Data = JSON.parse(Clients_)
             //return Parse_Data
@@ -353,16 +449,16 @@ async function Load_Client_(Clientt_) {
                 global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
 
                 console.log(`> ⚠️  ${global.File_Data_Clients_} off ${Clientt_} does not exist: ${error}`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)${global.File_Data_Clients_} off ${Clientt_} does not exist: ${error}`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.File_Data_Clients_}</strong> off <strong>${Clientt_}</strong> does <strong>not</strong> exist: ${error}`)
                 
                 console.log(`>  ◌ Creating ${global.File_Data_Clients_} off ${Clientt_}...`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌ (back)Creating ${global.File_Data_Clients_} off ${Clientt_}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Creating</strong> <strong>${global.File_Data_Clients_}</strong> off <strong>${Clientt_}</strong>...`)
 
                 await fs.mkdir(global.Directory_Dir_Clients_, { recursive: true } )                
                 await fs.writeFile(global.Data_File_Clients_, '[\n\n]', 'utf8')
                 
-                console.log(`> 📄 Created: ${global.File_Data_Clients_} off ${Clientt_}`)
-                if (global.Log_Callback) global.Log_Callback(`> 📄 (back)Created: ${global.File_Data_Clients_} off ${Clientt_}`)
+                console.log(`> 📄 Created: ${global.File_Data_Clients_} off ${Clientt_}.`)
+                if (global.Log_Callback) global.Log_Callback(`> 📄 <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Created:</strong> <strong>${global.File_Data_Clients_}</strong> off <strong>${Clientt_}</strong>.`)
 
                 global.Client_Is_Not_Ready = false
                 Load_Client_(Clientt_)
@@ -376,14 +472,14 @@ async function Load_Client_(Clientt_) {
 async function Save_Client_(id, Clientt_) {
     if (global.Client_Is_Not_Ready) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Clientt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
         return
     } else {
         try {
             global.Client_Is_Not_Ready = true
 
             console.log(`>  ◌ Saving Client_ ${Clientt_} to ${global.File_Data_Clients_}...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Saving Client_ ${Clientt_} to ${global.File_Data_Clients_}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Saving Client_ <strong>${Clientt_}</strong> to <strong>${global.File_Data_Clients_}</strong>...`)
 
             const filePath = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)// testa se funfo a mudanca de salva vice versa com 2 whats for
             const Clients_ = JSON.parse(await fs.readFile(filePath, 'utf8'))
@@ -393,7 +489,7 @@ async function Save_Client_(id, Clientt_) {
             await fs.writeFile(filePath, jsonString, 'utf8')
             
             console.log(`> 💾 Client_ ${Clientt_} saved to ${global.File_Data_Clients_}.`)
-            if (global.Log_Callback) global.Log_Callback(`> 💾 (back)Client_ ${Clientt_} saved to ${global.File_Data_Clients_}.`)
+            if (global.Log_Callback) global.Log_Callback(`> 💾 <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>saved</strong> to <strong>${global.File_Data_Clients_}</strong>.`)
         } catch (error) {
             console.error(`> ❌ ERROR Save_Client_ ${Clientt_}: ${error}`)
         }
@@ -402,7 +498,7 @@ async function Save_Client_(id, Clientt_) {
 async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pra apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar o client criar no caso ou se n mas estiver la que iniciou ent iniciar pra apagar ou n vai dar, sistema de apagar do json memo ja existe so pegar
     if (global.Client_Is_Not_Ready) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Clientt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
         return { Sucess: false, Is_Empty: null, Is_Empty_Input: null }
     } else {
         try {
@@ -413,23 +509,23 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
         
             if (Clients_.length === 0 || null & Local_Auth === false & Clientts_[Clientt_] === 0 || null ) {
                 console.log(`> ⚠️  ${global.Data_File_Clients_}, Local_Auth(${Clientt_}), array(Clientts_[${Clientt_}]) is ALL empty, does not contain any data.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)${global.Data_File_Clients_}, Local_Auth(dir), array(Clientts_) is ALL empty, does not contain any data.`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Data_File_Clients_}, Local_Auth(dir), array(Clientts_)</strong> is <strong>ALL</strong> empty, does <strong>not</strong> <strong>contain</strong> any <strong>data</strong>.`)
                 return { Sucess: false, Is_Empty: true, Is_Empty_Input: false }
             }
             if (Clientt_.length === 0 || null) {
                 console.log(`> ⚠️  No Client_ found by the valor received: ${Clientt_}.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)No Client_ found by the valor received: ${Clientt_}.`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>No</strong> Client_ <strong>found</strong> by the valor <strong>received: ${Clientt_}</strong>.`)
                 return { Sucess: false, Is_Empty: false, Is_Empty_Input: true}
             }
 
             let Erased_ = false
             if (Is_From_End) {
                 console.log(`> ⚠️  Are you sure that you want to erase Client ${Clientt_} from ${global.File_Data_Clients_}?`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)Are you sure that you want to erase Client_ ${Clientt_} from ${global.File_Data_Clients_}?`)
-                const answer = await askForConfirmation()
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Are you <strong>sure</strong> that you <strong>want</strong> to <strong>erase</strong> Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>?`)
+                const answer = await askForConfirmation(Clientt_)
                 if (answer.toLowerCase() === 'y') {
                     console.log(`>  ◌ Erasing Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Erasing Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Erasing Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
                     
                     fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                     Clientts_[Clientt_].instance.destroy()
@@ -441,18 +537,18 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
                     
                     Erased_ = true
                 } else if (answer.toLowerCase() === 'n') {
-                    console.log(`> ⚠️  Client_ ${Clientt_} from ${global.File_Data_Clients_}: DECLINED.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)Client_ ${Clientt_} from ${global.File_Data_Clients_}: DECLINED.`)
+                    console.log(`> ⚠️  Client_ ${Clientt_} from ${global.File_Data_Clients_}: DECLINED`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}: DECLINED</strong>`)
                     return { Sucess: false, Is_Empty: false, Is_Empty_Input: false }
                 } else {
-                    console.log(`> ⚠️  Client_ ${Clientt_} from ${global.File_Data_Clients_}: NOT Answered to erase.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)Client_ ${Clientt_} from ${global.File_Data_Clients_}: NOT Answered to erase.`)
+                    console.log(`> ⚠️  Client_ ${Clientt_} from ${global.File_Data_Clients_}: NOT Answered to erase`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}: NOT Answered to erase</strong>`)
                     return { Sucess: false, Is_Empty: false, Is_Empty_Input: false }
                 }
                 
             } else {
                 console.log(`>  ◌ Erasing Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Erasing Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
                 
                 fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                 Clientts_[Clientt_].instance.destroy()
@@ -468,7 +564,7 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
 
             if (Erased_) {
                 console.log(`> ✅ Client_ ${Clientt_} from ${global.File_Data_Clients_}: ERASED`)
-                if (global.Log_Callback) global.Log_Callback(`> ✅ (back)Client_ ${Clientt_} from ${global.File_Data_Clients_}: ERASED`)
+                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}: ERASED</strong>`)
                 
                 return { Sucess: true, Is_Empty: false, Is_Empty_Input: false }
             }
@@ -481,7 +577,7 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
 async function Select_Client_(Clientt_) {
     if (Client_Is_Not_Ready) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Clientt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
         return
     } else {
         try {
@@ -496,9 +592,25 @@ async function Select_Client_(Clientt_) {
             global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
 
             console.log(`>  ℹ️ Client_ ${Clientt_} selected.`)
-            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Client_ ${Clientt_} selected.`)
+            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>selected</strong>.`)
         } catch (error) {
             console.error(`> ❌ Select_Client_ ${Clientt_}: ${error}`)
+        }
+    }
+}
+async function New_Client_() {
+    if (Client_Is_Not_Ready) {
+        console.log(`>  ℹ️ Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Client_</strong> not Ready.`)
+        return
+    } else {
+        try {
+            const NameClient_ = global.Client_Name
+            let Is_Client_Ready = false
+            const Id_Client_ = await Generate_Client_Id(Is_Client_Ready)
+            await Initialize_Client_(`_${Id_Client_}_${NameClient_}_`)
+        } catch (error) {
+            console.error(`> ❌ New_Client_: ${error}`)
         }
     }
 }
@@ -506,7 +618,7 @@ async function Select_Client_(Clientt_) {
 async function Load_Chat_Data(Clientt_) {
     if (Is_Not_Ready) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Clientt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
         return //[]
     } else {
         try {
@@ -514,20 +626,20 @@ async function Load_Chat_Data(Clientt_) {
             global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`)
 
             console.log(`>  ◌ Loading ChatData ${Clientt_} from ${global.File_Data_Chat_Data}...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Loading ChatData ${Clientt_} from ${global.File_Data_Chat_Data}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Loading</strong> ChatData <strong>${Clientt_}</strong> from <strong>${global.File_Data_Chat_Data}</strong>...`)
             
             const ChatData = await fs.readFile(global.Data_File_Chat_Data, 'utf8')
 
             if (ChatData.length === 0) {
                 console.log(`> ⚠️  ${global.File_Data_Chat_Data} off ${Clientt_} is empty.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)${global.File_Data_Chat_Data} off ${Clientt_} is empty.`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.File_Data_Chat_Data}</strong> off <strong>${Clientt_}</strong> is <strong>empty</strong>.`)
                 await fs.writeFile(global.Data_File_Chat_Data, '[\n\n]', 'utf8')
                 return //[]
             }
 
             
             console.log(`> ✅ ChatData ${Clientt_} loaded from ${global.File_Data_Chat_Data}.`)
-            if (global.Log_Callback) global.Log_Callback(`> ✅ (back)ChatData ${Clientt_} loaded from ${global.File_Data_Chat_Data}.`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>ChatData <strong>${Clientt_}</strong> <strong>loaded</strong> from <strong>${global.File_Data_Chat_Data}</strong>.`)
                 
             //global.Client_ = Clientt_
             if (Select_Client_Callback) Select_Client_Callback(Clientt_)
@@ -540,16 +652,16 @@ async function Load_Chat_Data(Clientt_) {
                 global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`)
 
                 console.log(`> ⚠️  ${global.File_Data_Chat_Data} off ${Clientt_} does not exist: ${error}`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)${global.File_Data_Chat_Data} off ${Clientt_} does not exist: ${error}`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.File_Data_Chat_Data}</strong> off <strong>${Clientt_}</strong> does <strong>not</strong> exist: ${error}`)
                 
                 console.log(`>  ◌ Creating ${global.File_Data_Chat_Data} off ${Clientt_}...`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌ (back)Creating ${global.File_Data_Chat_Data} off ${Clientt_}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Creating</strong> <strong>${global.File_Data_Chat_Data}</strong> off <strong>${Clientt_}</strong>...`)
 
                 await fs.mkdir(global.Directory_Dir_Chat_Data, { recursive: true } )                
                 await fs.writeFile(global.Data_File_Chat_Data, '[\n\n]', 'utf8')
                 
                 console.log(`> 📄 Created: ${global.File_Data_Chat_Data} off ${Clientt_}`)
-                if (global.Log_Callback) global.Log_Callback(`> 📄 (back)Created: ${global.File_Data_Chat_Data} off ${Clientt_}`)
+                if (global.Log_Callback) global.Log_Callback(`> 📄 <i><strong><span class="sobTextColor">(back)</span></strong></i>Created: ${global.File_Data_Chat_Data} off ${Clientt_}`)
                 await Load_Chat_Data(Clientt_)
             } else {
                 console.error(`> ❌ ERROR Load_Chat_Data ${Clientt_}: ${error}`)
@@ -561,12 +673,12 @@ async function Load_Chat_Data(Clientt_) {
 async function Save_Chat_Data(chatId, name, isallerase) {
     if (Is_Not_Ready) {
         console.log(`>  ℹ️ ${global.Client_} not Ready.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${global.Client_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Client_}</strong> not Ready.`)
         return
     } else {
         try {
             console.log(`>  ◌ Saving ChatData ${global.Client_} to ${global.File_Data_Chat_Data}...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Saving ChatData ${global.Client_} to ${global.File_Data_Chat_Data}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Saving</strong> ChatData <strong>${global.Client_}</strong> to <strong>${global.File_Data_Chat_Data}</strong>...`)
 
             const ChatData = JSON.parse(await fs.readFile(global.Data_File_Chat_Data, 'utf8'))
             const New_ChatData = [{ chatId, name }, ...ChatData.filter(item => item.chatId !== chatId)]
@@ -575,7 +687,7 @@ async function Save_Chat_Data(chatId, name, isallerase) {
             await fs.writeFile(global.Data_File_Chat_Data, jsonString, 'utf8')
             
             console.log(`> 💾 ChatData ${global.Client_} saved to ${global.File_Data_Chat_Data}.`)
-            if (global.Log_Callback) global.Log_Callback(`> 💾 (back)ChatData ${global.Client_} saved to ${global.File_Data_Chat_Data}.`)
+            if (global.Log_Callback) global.Log_Callback(`> 💾 <i><strong><span class="sobTextColor">(back)</span></strong></i>ChatData <strong>${global.Client_}</strong> <strong>saved</strong> to <strong>${global.File_Data_Chat_Data}</strong>.`)
 
             let Is_From_All_Erase = false
             if (isallerase) {    
@@ -587,29 +699,10 @@ async function Save_Chat_Data(chatId, name, isallerase) {
         }
     }
 }
-function askForConfirmation() {
-    try {
-        if (Is_Not_Ready) {
-            console.log(`>  ℹ️ ${global.Client_} not Ready.`)
-            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${global.Client_} not Ready.`)
-            return
-        } else {
-            return new Promise((resolve) => {
-                console.log('>  ℹ️ Confirm(Y/N)')
-                if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Confirm(Y/N)`)
-                rl.question('',(answer) => {
-                    resolve(answer.trim().toLowerCase())
-                })
-            })
-        }
-    } catch (error) {
-        console.error(`> ❌ ERROR askForConfirmation ${global.Client_}: ${error}`)
-    }
-}
 async function Erase_Chat_Data_By_Query(query, Is_From_End) {
     if (Is_Not_Ready) {
-        console.log('>  ℹ️ Client not Ready.')
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Client not Ready.`)
+        console.log(`>  ℹ️ ${global.Client_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Client_}</strong> not Ready.`)
         return { Sucess: false, Is_Empty: null, Is_Empty_Input: null }
     } else {
         try {
@@ -622,13 +715,13 @@ async function Erase_Chat_Data_By_Query(query, Is_From_End) {
             )
         
             if (ChatData.length === 0) {
-                console.log(`> ⚠️  ${global.File_Data_Chat_Data} is empty, does not contain any chat data.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️  (back)${global.File_Data_Chat_Data} is empty, does not contain any chat data.`)
+                console.log(`> ⚠️  ${global.File_Data_Chat_Data} is empty, does not contain any ChatCata.`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.File_Data_Chat_Data}</strong> is <strong>empty</strong>, does <strong>not</strong> contain any <strong>ChatData</strong>.`)
                 return { Sucess: false, Is_Empty: true, Is_Empty_Input: false }
             }
             if (Query_Entries.length === 0) {
-                console.log(`> ⚠️  No ChatData found for the search: ${query}.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️  (back)No ChatData found for the search: ${query}.`)
+                console.log(`> ⚠️  No ChatData found for the search: ${query}`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>No</strong> ChatData <strong>found</strong> for the <strong>search: ${query}</strong>`)
                 return { Sucess: false, Is_Empty: false, Is_Empty_Input: true }
             }
 
@@ -636,11 +729,11 @@ async function Erase_Chat_Data_By_Query(query, Is_From_End) {
             let chatIds_To_Erase = []
             if (Is_From_End) {
                 console.log(`> ⚠️  Are you sure that you want to erase ${query} from ${global.File_Data_Chat_Data}?`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️  (back)Are you sure that you want to erase ${query} from ${global.File_Data_Chat_Data}?`)
-                const answer = await askForConfirmation()
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i>Are you <strong>sure</strong> that you <strong>want</strong> to <strong>erase</strong> <strong>${query}</strong> from <strong>${global.File_Data_Chat_Data}</strong>?`)
+                const answer = await askForConfirmation(global.Client_)
                 if (answer.toLowerCase() === 'y') {
                     console.log(`>  ◌ Erasing ${query} ChatData from ${global.File_Data_Chat_Data}...`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Erasing ${query} ChatData from ${global.File_Data_Chat_Data}...`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> <strong>${query}</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>...`)
                     
                     chatIds_To_Erase = Query_Entries.map(entry => entry.chatId)
                     
@@ -655,18 +748,18 @@ async function Erase_Chat_Data_By_Query(query, Is_From_End) {
                     
                     Erased_ = true
                 } else if (answer.toLowerCase() === 'n') {
-                    console.log(`> ⚠️  ChatData for ${query} from ${global.File_Data_Chat_Data}: DECLINED.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⚠️  (back)ChatData for ${query} from ${global.File_Data_Chat_Data}: DECLINED.`)
+                    console.log(`> ⚠️  ChatData for ${query} from ${global.File_Data_Chat_Data}: DECLINED`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i>ChatData for <strong>${query}</strong> from <strong>${global.File_Data_Chat_Data}: DECLINED</strong>`)
                     return { Sucess: false, Is_Empty: false, Is_Empty_Input: false }
                 } else {
                     console.log(`> ⚠️  ChatData for ${query} from ${global.File_Data_Chat_Data}: NOT Answered to erase.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⚠️  (back)ChatData for ${query} from ${global.File_Data_Chat_Data}: NOT Answered to erase.`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i>ChatData for <strong>${query}</strong> from <strong>${global.File_Data_Chat_Data}: NOT Answered to erase</strong>`)
                     return { Sucess: false, Is_Empty: false, Is_Empty_Input: false }
                 }
                 
             } else {
                 console.log(`>  ◌ Erasing ${query} ChatData from ${global.File_Data_Chat_Data}...`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Erasing ${query} ChatData from ${global.File_Data_Chat_Data}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> <strong>${query}</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>...`)
             
                 chatIds_To_Erase = Query_Entries.map(entry => entry.chatId)
                     
@@ -690,73 +783,73 @@ async function Erase_Chat_Data_By_Query(query, Is_From_End) {
                 })
                 if (Is_timer_On) {
                     console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule} to ERASE ChatData for ${chatIds_To_Erase} from ${global.File_Data_Chat_Data}.`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Timer ended BEFORE ${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule} to ERASE ChatData for ${chatIds_To_Erase} from ${global.File_Data_Chat_Data}.`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>ended</strong> <strong>BEFORE ${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule}</strong> to <strong>ERASE</strong> ChatData for <strong>${chatIds_To_Erase}</strong> from <strong>${global.File_Data_Chat_Data}</strong>.`)
                     Is_timer_On = false
                 }
                 console.log(`> ✅ ChatData for ${query} from ${global.File_Data_Chat_Data}: ERASED`)
-                if (global.Log_Callback) global.Log_Callback(`> ✅ (back)ChatData for ${query} from ${global.File_Data_Chat_Data}: ERASED`)
+                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>ChatData for <strong>${query}</strong> from <strong>${global.File_Data_Chat_Data}: ERASED</strong>`)
                 let Is_From_All_Erase = false
                 if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase)
                 return { Sucess: true, Is_Empty: false, Is_Empty_Input: false }
             }
         } catch (error) {
-            console.error(`> ❌ ERROR Erase_Chat_Data_By_Query: ${error}`)
+            console.error(`> ❌ ERROR Erase_Chat_Data_By_Query ${global.Client_}: ${error}`)
             return { Sucess: false, Is_Empty: null, Is_Empty_Input: null }
         }
     }
 }
 async function Erase_All_Chat_Data(Is_From_End) {
     if (Is_Not_Ready) {
-        console.log('>  ℹ️ Client not Ready.')
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️ Client not Ready.`)
+        console.log(`>  ℹ️ ${global.Client_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Client_}</strong> not Ready.`)
         return { Sucess: false, Is_Empty: null }
     } else {
         try {
             const ChatData = JSON.parse(await fs.readFile(global.Data_File_Chat_Data, 'utf8'))
             if (ChatData.length === 0) {
-                console.log(`> ⚠️  ${global.File_Data_Chat_Data} is empty, does not contain any chat data.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)${global.File_Data_Chat_Data} is empty, does not contain any chat data.`)
+                console.log(`> ⚠️  ${global.File_Data_Chat_Data} is empty, does not contain any ChatData.`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>${global.File_Data_Chat_Data} is <strong>empty</strong>, does <strong>not</strong> contain any ChatData.`)
                 return { Sucess: false, Is_Empty: true }
             }
 
             let Erased_ = false
             if (Is_From_End) {
                 console.log(`> ⚠️  Are you sure that you want to erase all ChatData from ${global.File_Data_Chat_Data}?`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)Are you sure that you want to erase all ChatData from ${global.File_Data_Chat_Data}?`)
-                const answer = await askForConfirmation()
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Are you <strong>sure</strong> that you <strong>want</strong> to <strong>erase</strong> <strong>all</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>?`)
+                const answer = await askForConfirmation(global.Client_)
                 if (answer.toLowerCase() === 'y') {
                     console.log(`>  ◌ Erasing all ChatData from ${global.File_Data_Chat_Data}...`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ◌ (back)Erasing all ChatData from ${global.File_Data_Chat_Data}...`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ◌ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> <strong>all</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>...`)
                     
                     await fs.writeFile(global.Data_File_Chat_Data, '[\n\n]', 'utf8')
                     Erased_ = true
                 } else if (answer.toLowerCase() === 'n') {
-                    console.log(`> ⚠️  All ChatData from ${global.File_Data_Chat_Data}: DECLINED.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)All ChatData from ${global.File_Data_Chat_Data}: DECLINED.`)
+                    console.log(`> ⚠️  All ChatData from ${global.File_Data_Chat_Data}: DECLINED`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>All</strong> ChatData from <strong>${global.File_Data_Chat_Data}: DECLINED</strong>`)
                     return { Sucess: false, Is_Empty: false }
                 } else {
-                    console.log(`> ⚠️  All ChatData from ${global.File_Data_Chat_Data}: NOT Answered to erase.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)All ChatData from ${global.File_Data_Chat_Data}: NOT Answered to erase.`)
+                    console.log(`> ⚠️  All ChatData from ${global.File_Data_Chat_Data}: NOT Answered to erase`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>All</strong> ChatData from <strong>${global.File_Data_Chat_Data}: NOT Answered to erase</strong>`)
                     return { Sucess: false, Is_Empty: false }
                 }
             } else {
                 console.log(`>  ◌ Erasing all ChatData from ${global.File_Data_Chat_Data}...`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Erasing all ChatData from ${global.File_Data_Chat_Data}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> <strong>all</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>...`)
                 
                 await fs.writeFile(global.Data_File_Chat_Data, '[\n\n]', 'utf8')
                 Erased_ = true
             }
 
             if (Erased_) {    
-                console.log(`> ✅ All ChatData from ${global.File_Data_Chat_Data}: ERASED.`)
-                if (global.Log_Callback) global.Log_Callback(`> ✅ (back)All ChatData from ${global.File_Data_Chat_Data}: ERASED.`)
+                console.log(`> ✅ All ChatData from ${global.File_Data_Chat_Data}: ERASED`)
+                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>All</strong> ChatData from <strong>${global.File_Data_Chat_Data}: ERASED</strong>`)
                 
                 for (const chatId in timer_Schedule) {
                     clearTimeout(timer_Schedule[chatId])
                     delete timer_Schedule[chatId]
                     if (Is_timer_On) {
                         console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule} to ERASE ChatData for ${chatId} from ${global.File_Data_Chat_Data}.`)
-                        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Timer ended BEFORE ${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule} to ERASE ChatData for ${chatId} from ${global.File_Data_Chat_Data}.`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>ended</strong> <strone>BEFORE ${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule}</strone> to <strong>ERASE</strong> ChatData for <strong>${chatId}</strong> from <strong>${global.File_Data_Chat_Data}</strong>.`)
                     }
                     Is_timer_On = false
                 }
@@ -767,15 +860,15 @@ async function Erase_All_Chat_Data(Is_From_End) {
                 return { Sucess: true, Is_Empty: false }
             }
         } catch (error) {
-            console.error(`> ❌ ERROR Erase_All_Chat_Data: ${error}`)
+            console.error(`> ❌ ERROR Erase_All_Chat_Data ${global.Client_}: ${error}`)
             return { Sucess: false, Is_Empty: null }
         }
     }
 }
 async function Search_Chat_Data_By_Search(search) {
     if (Is_Not_Ready) {
-        console.log('>  ℹ️ Client not Ready.')
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Client not Ready.`)
+        console.log(`>  ℹ️ ${global.Client_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Client_}</strong> not Ready.`)
         return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, ChatData: [] }
     } else {
         try {
@@ -788,44 +881,44 @@ async function Search_Chat_Data_By_Search(search) {
             )
 
             if (ChatData.length === 0) {
-                console.log(`> ↓↓ 📄${global.File_Data_Chat_Data} is empty, does not contain any chat data📄 ↓↓`)
-                if (global.Log_Callback) global.Log_Callback(`> ↓↓ (back)📄${global.File_Data_Chat_Data} is empty, does not contain any chat data📄 ↓↓`)
+                console.log(`> ↓↓ 📄${global.File_Data_Chat_Data} is empty, does not contain any ChatCata📄 ↓↓`)
+                if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>${global.File_Data_Chat_Data}</strong> is <strong>empty</strong>, does <strong>not</strong> contain any ChatCata📄 ↓↓`)
                 console.log(`- Length: (0)`)
-                if (global.Log_Callback) global.Log_Callback(`- (back)Length: (0)`)
+                if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Length: (0)</strong>`)
                 console.log(`- chatId: N/A = name: N/A`)
-                if (global.Log_Callback) global.Log_Callback(`- (back)chatId: N/A = name: N/A`)
+                if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>chatId: N/A = name: N/A</strong>`)
 
                 return { Sucess: false, Is_Empty: true, Is_Empty_Input: false, ChatData: [] }
             }
             if (Search_Entries.length === 0) {
-                console.log(`> ⚠️  No ChatData found for the search: ${search}.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️  (back)No ChatData found for the search: ${search}.`)
+                console.log(`> ⚠️  No ChatData found for the search: ${search}`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>No</strong> ChatData <strong>found</strong> for the <strong>search: ${search}</strong>`)
                 return { Sucess: false, Is_Empty: false, Is_Empty_Input: true, ChatData: [] }
             }
     
             console.log(`>  ◌ Printing ChatData for ${search} from ${global.File_Data_Chat_Data}...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Printing ChatData for ${search} from ${global.File_Data_Chat_Data}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Printing</strong> ChatData for <strong>${search}</strong> from <strong>${global.File_Data_Chat_Data}</strong>...`)
             
             console.log(`> ↓↓ 📄${search} ChatData Printed📄 ↓↓`)
-            if (global.Log_Callback) global.Log_Callback(`> ↓↓ (back)📄${search} ChatData Printed📄 ↓↓`)
+            if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📄${search} ChatData <strong>Printed</strong>📄 ↓↓`)
             console.log(`- Length: (${Search_Entries.length})`)
-            if (global.Log_Callback) global.Log_Callback(`- (back)Length: (${Search_Entries.length})`)
+            if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Length: (${Search_Entries.length})</strong>`)
             Search_Entries.forEach(({chatId, name}) => {
                 console.log(`- chatId: ${chatId} = name: ${name}`)
-                if (global.Log_Callback) global.Log_Callback(`- (back)chatId: ${chatId} = name: ${name}`)
+                if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>chatId: ${chatId} = name: ${name}</strong>`)
             })
 
             return { Sucess: true, Is_Empty: false, Is_Empty_Input: false, ChatData: Search_Entries }
         } catch (error) {
-            console.error(`> ❌ ERROR Search_Chat_Data_By_Search: ${error}`)
+            console.error(`> ❌ ERROR Search_Chat_Data_By_Search ${global.Client_}: ${error}`)
             return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, ChatData: [] }
         } 
     }
 }
 async function Print_All_Chat_Data(isallerase) {
     if (Is_Not_Ready) {
-        console.log('>  ℹ️ Client not Ready.')
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Client not Ready.`)
+        console.log(`>  ℹ️ ${global.Client_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Client_}</strong> not Ready.`)
         return { Sucess: false, Is_Empty: null, ChatData: [], Is_From_All_Erase: null }
     } else {
         try {
@@ -833,39 +926,39 @@ async function Print_All_Chat_Data(isallerase) {
 
             if (isallerase) {
                 console.log(`> ↓↓ 📄ALL ChatData Erased📄 ↓↓`)
-                if (global.Log_Callback) global.Log_Callback(`> ↓↓ (back)📄ALL ChatData Erased📄 ↓↓`)
+                if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>ALL</strong> ChatData <strong>Erased</strong>📄 ↓↓`)
                 console.log(`- Length: (0)`)
-                if (global.Log_Callback) global.Log_Callback(`- (back)Length: (0)`)
+                if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Length: (0)</strong>`)
                 console.log(`- chatId: N/A = name: N/A`)
-                if (global.Log_Callback) global.Log_Callback(`- (back)chatId: N/A = name: N/A`)
+                if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>chatId: N/A = name: N/A</strong>`)
                     
                 return { Sucess: true, Is_Empty: false, ChatData: [], Is_From_All_Erase: true }
             }
             if (ChatData.length === 0) {
-                console.log(`> ↓↓ 📄${global.File_Data_Chat_Data} is empty, does not contain any chat data📄 ↓↓`)
-                if (global.Log_Callback) global.Log_Callback(`> ↓↓ (back)📄${global.File_Data_Chat_Data} is empty, does not contain any chat data📄 ↓↓`)
+                console.log(`> ↓↓ 📄${global.File_Data_Chat_Data} is empty, does not contain any ChatData📄 ↓↓`)
+                if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>${global.File_Data_Chat_Data}</strong> is <strong>empty</strong>, does <strong>not</strong> contain any ChatData📄 ↓↓`)
                 console.log(`- Length: (0)`)
-                if (global.Log_Callback) global.Log_Callback(`- (back)Length: (0)`)
+                if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Length: (0)</strong>`)
                 console.log(`- chatId: N/A = name: N/A`)
-                if (global.Log_Callback) global.Log_Callback(`- (back)chatId: N/A = name: N/A`)
+                if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>chatId: N/A = name: N/A</strong>`)
 
                 return { Sucess: false, Is_Empty: true, ChatData: [], Is_From_All_Erase: false }
             }
             
             console.log(`>  ◌ Printing ChatData from ${global.File_Data_Chat_Data}...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Printing ChatData from ${global.File_Data_Chat_Data}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Printing</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>...`)
             
             console.log(`> ↓↓ 📄ALL ChatData Printed📄 ↓↓`)
-            if (global.Log_Callback) global.Log_Callback(`> ↓↓ (back)📄ALL ChatData Printed📄 ↓↓`)
+            if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>ALL</strong> ChatData <strong>Printed</strong>📄 ↓↓`)
             console.log(`- Length: (${ChatData.length})`)
-            if (global.Log_Callback) global.Log_Callback(`- (back)Length: (${ChatData.length})`)
+            if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Length: (${ChatData.length})</strong>`)
             ChatData.forEach(entry => {
                 console.log(`- chatId: ${entry.chatId} = name: ${entry.name}`)
-                if (global.Log_Callback) global.Log_Callback(`- (back)chatId: ${entry.chatId} = name: ${entry.name}`)
+                if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>chatId: ${entry.chatId} = name: ${entry.name}</strong>`)
             })
             return { Sucess: true, Is_Empty: false, ChatData: ChatData, Is_From_All_Erase: false }
         } catch (error) {
-            console.error(`> ❌ ERROR Print_All_Chat_Data: ${error}`)
+            console.error(`> ❌ ERROR Print_All_Chat_Data ${global.Client_}: ${error}`)
             return { Sucess: false, Is_Empty: null, ChatData: [], Is_From_All_Erase: null }
         }
     }
@@ -873,8 +966,8 @@ async function Print_All_Chat_Data(isallerase) {
 
 async function Schedule_Erase_Chat_Data(chatId, time) {
     if (Is_Not_Ready) {
-        console.log(`>  ℹ️ ${global.Client_} not Ready.`)
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${global.Client_} not Ready.`)
+        console.log(`>  ℹ️ Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Client_</strong> not Ready.`)
         return
     } else {
         try {
@@ -901,7 +994,7 @@ async function Schedule_Erase_Chat_Data(chatId, time) {
                     await fs.writeFile(global.Data_File_Chat_Data, jsonString, 'utf8')
 
                     console.log(`> 🚮 Timer FINALIZED ChatData for ${chatId} ERASED after ${time / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule} from ${global.File_Data_Chat_Data}.`)
-                    if (global.Log_Callback) global.Log_Callback(`> 🚮 (back)Timer FINALIZED ChatData for ${chatId} ERASED after ${time / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule} from ${global.File_Data_Chat_Data}.`)
+                    if (global.Log_Callback) global.Log_Callback(`> 🚮 <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>FINALIZED</strong> ChatData for <strong>${chatId}</strong> <strong>ERASED</strong> <strong>after ${time / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule}</strong> from <strong>${global.File_Data_Chat_Data}</strong>.`)
 
                     let Is_From_All_Erase = false
                     if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase)
@@ -909,15 +1002,15 @@ async function Schedule_Erase_Chat_Data(chatId, time) {
                     delete timer_Schedule[chatId]
             }, time)
         } catch (error) {
-            console.error(`> ❌ ERROR Schedule_Erase_Chat_Data ${global.Client_}: ${error}`)
+            console.error(`> ❌ ERROR Schedule_Erase_Chat_Data: ${error}`)
         }
     }
 }
 
 async function List_Directories(dir_Path, Is_Client_Ready) {
     if (Is_Client_Ready) {
-        console.log('>  ℹ️ Client not Ready.')
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  Client not Ready.`)
+        console.log(`>  ℹ️ Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Client_</strong> not Ready.`)
         return []
     } else {
         try {
@@ -934,7 +1027,7 @@ async function List_Directories(dir_Path, Is_Client_Ready) {
 async function Generate_Client_Id(Is_Client_Ready) {
     if (Is_Client_Ready) {
         console.log('>  ℹ️ Client_ not Ready.')
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Client_</strong> not Ready.`)
         return null
     } else {
         try {
@@ -974,7 +1067,7 @@ async function Initialize_Client_(Clientt_) {
         const MAX_Clients_ = 3
         if (Counter_Id_Clients_ > MAX_Clients_) {
             console.log(`> ⚠️  Max instances off Clients_ reached (${Counter_Id_Clients_}): MAX(${MAX_Clients_})`)
-            if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)Máx instances off Clients_ reached (${Counter_Id_Clients_}): MAX(${MAX_Clients_})`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Máx</strong> <strong>instances</strong> off <strong>Clients_</strong> reached (<strong>${Counter_Id_Clients_}</strong>)<strong>: MAX</strong>(<strong>${MAX_Clients_}</strong>)`)
             fse.remove(`Clients_\\${global.File_Data_Clients_}`)
             const clientIdNumber = Clientt_.match(/\d+/g)
             Counter_Id_Clients_.splice(clientIdNumber-1, 1)
@@ -1013,7 +1106,7 @@ async function Initialize_Client_(Clientt_) {
 
                 if (global.QR_Counter <= QR_Counter_Exceeds) { 
                     console.log(`> ↓↓ 📸${Clientt_} try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code below📸 ↓↓`)
-                    if (global.Log_Callback) global.Log_Callback(`> ↓↓ (back)📸${Clientt_} try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code below📸 ↓↓`, Client_)
+                    if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📸<strong>${Clientt_}</strong> <strong>try</strong> to <strong>Connect</strong> for the <strong>${global.QR_Counter}</strong>º to <strong>WhatsApp Web</strong> by the <strong>QR-Code</strong> below📸 ↓↓`)
                     
                     qrcode.generate(qr, { small: true })
                     
@@ -1026,7 +1119,7 @@ async function Initialize_Client_(Clientt_) {
                     })
 
                     console.log(`> ↑↑ 📸${Clientt_} try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code above📸 ↑↑`)
-                    if (global.Log_Callback) global.Log_Callback(`> ↑↑ (back)📸${Clientt_} try to Connect for the ${global.QR_Counter}º to WhatsApp Web by the QR-Code above📸 ↑↑`)
+                    if (global.Log_Callback) global.Log_Callback(`> ↑↑ <i><strong><span class="sobTextColor">(back)</span></strong></i>📸<strong>${Clientt_}</strong> <strong>try</strong> to <strong>Connect</strong> for the <strong>${global.QR_Counter}</strong>º to <strong>WhatsApp Web</strong> by the <strong>QR-Code</strong> below📸 ↑↑`)
                 } else {
                     global.QR_Counter = 0
                     if (global.Is_From_New) {
@@ -1039,7 +1132,7 @@ async function Initialize_Client_(Clientt_) {
                     if (QrCode_Exceeds_Callback) QrCode_Exceeds_Callback(QR_Counter_Exceeds)
                     
                     console.log(`> ❌ ${Clientt_} Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
-                    if (global.Log_Callback) global.Log_Callback(`> ❌ (back)${Clientt_} Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
+                    if (global.Log_Callback) global.Log_Callback(`> ❌ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> <strong>Maximum</strong> <strong>QR_Code</strong> retries <strong>Exceeds</strong>(<strong>${QR_Counter_Exceeds}</strong>).`)
                         
                     fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                     if (Client_) Client_.destroy()
@@ -1049,7 +1142,7 @@ async function Initialize_Client_(Clientt_) {
                     Counter_Id_Clients_.splice(clientIdNumber-1, 1)
 
                     console.log(`>  ℹ️ Retry again.`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Retry again.`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Retry</strong> again.`)
                 }
             } catch (error) {
                 console.log(`> ❌ ERROR connecting ${Clientt_} to WhatsApp Web by the QR_Code LocalAuth: ${error}`)
@@ -1065,7 +1158,7 @@ async function Initialize_Client_(Clientt_) {
                 if (Auth_Autenticated_Callback) Auth_Autenticated_Callback(Clientt_)
                 
                 console.log(`> 🔑 SUCESSIFULLY Client_ ${Clientt_} Authenticated by the Local_Auth.`)
-                if (global.Log_Callback) global.Log_Callback(`> 🔑 (back)SUCESSIFULLY Client_ ${Clientt_} Authenticated by the Local_Auth.`)
+                if (global.Log_Callback) global.Log_Callback(`> 🔑 <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>SUCESSIFULLY</strong> Client_ <strong>${Clientt_}</strong> <strong>Authenticated</strong> by the <strong>Local_Auth</strong>.`)
             } catch (error) {
                 console.error(`> ❌ ERROR autenticated ${Clientt_}: ${error}`)
             } 
@@ -1091,7 +1184,7 @@ async function Initialize_Client_(Clientt_) {
                 global.QR_Counter = 1
                 
                 console.log(`> ✅ ${Clientt_} is READY.`)
-                if (global.Log_Callback) global.Log_Callback(`> ✅ (back)${Clientt_} is READY.`)
+                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> is READY.`)
                 
                 Is_Not_Ready = false
                 
@@ -1127,8 +1220,8 @@ async function Initialize_Client_(Clientt_) {
 
         function Actual_Time() {
             if (Is_Not_Ready) {
-                console.log(`>  ℹ️ ${Client_} not Ready.`)
-                if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Client_} not Ready.`)
+                console.log(`>  ℹ️ ${Clientt_} not Ready.`)
+                if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
                 return '??:??:??'
             } else {
                 try {
@@ -1149,7 +1242,7 @@ async function Initialize_Client_(Clientt_) {
                     return `${hours24}:${minutes}:${seconds}`
                     //return `${hours12}:${minutes}:${seconds} ${period}`
                 } catch(error) {
-                    console.error(`> ❌ ERROR Actual_Timer ${Client_}: ${error}`)
+                    console.error(`> ❌ ERROR Actual_Timer ${Clientt_}: ${error}`)
                 }
             }
         }
@@ -1157,7 +1250,7 @@ async function Initialize_Client_(Clientt_) {
         async function Sleep_Timer(time, Cancel_Sleep, chatId) {
             if (Is_Not_Ready) {
                 console.log(`>  ℹ️ ${Clientt_} not Ready.`)
-                if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Clientt_} not Ready.`)
+                if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
                 return 
             } else {
                 try {
@@ -1193,14 +1286,14 @@ async function Initialize_Client_(Clientt_) {
                     Chat_States[chatId].Timer_Sleep = null
                     Chat_States[chatId].Is_MSG_Started = false
                 } catch (error) {
-                    console.error(`> ❌ ERROR Sleep_Timer ${Client_}: ${error}`)
+                    console.error(`> ❌ ERROR Sleep_Timer ${Clientt_}: ${error}`)
                 }
             }
         }
         async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_) {
             if (Is_Not_Ready) {
                 console.log(`>  ℹ️ ${Clientt_} not Ready.`)
-                if (global.Log_Callback) global.Log_Callback(`>  ℹ️ ${Clientt_} not Ready.`)
+                if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
                 return 
             } else {
                 try {
@@ -1220,14 +1313,14 @@ async function Initialize_Client_(Clientt_) {
                     
                     Chat_Action = '(NEW)'
                     console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:</strong>\n${Content_}`)
                     console.log(`>  ◌ Sending ALL Messages...`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Sending ALL Messages...`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>ALL</strong> Messages...`)
 
                     
 
                     console.log(`>  ◌ Sending .Message_debug....`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Sending .Message_debug....`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
 
                     await sleep(1.5 * 1000)
                     chat.sendStateTyping()
@@ -1235,20 +1328,20 @@ async function Initialize_Client_(Clientt_) {
                     Client_.sendMessage(msg.from, 'debug1', 'utf8')
 
                     console.log(`> ✅ .Message_debug. Sent.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ✅ (back).Message_debug. Sent.`)
+                    if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
 
                     
                     console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⏲️ (back)Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message...`)
                     
                     timer = setTimeout (async () => {
                         await sleep(1 * 1000)
                         console.log(`> ⏰ Timer FINALIZED ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
-                        if (global.Log_Callback) global.Log_Callback(`> ⏰ (back)Timer FINALIZED ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⏰ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>FINALIZED</strong> <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
                 
                             
                         console.log(`>  ◌ Sending .Message_debug....`)
-                        if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Sending .Message_debug....`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
             
                         await sleep(1.5 * 1000)
                         chat.sendStateTyping()
@@ -1256,7 +1349,7 @@ async function Initialize_Client_(Clientt_) {
                         Client_.sendMessage(msg.from, 'debug2', 'utf8')
             
                         console.log(`> ✅ .Message_debug. Sent.`)
-                        if (global.Log_Callback) global.Log_Callback(`> ✅ (back).Message_debug. Sent.`)
+                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
 
                         MSG = false
                     }, timer_Duration_debug)
@@ -1269,11 +1362,11 @@ async function Initialize_Client_(Clientt_) {
                         clearTimeout(timer)
                 
                         console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
-                        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Timer ended BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>ended</strong> <strong>BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
                         
 
                         console.log(`>  ◌ Sending .Message_debug....`)
-                        if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Sending .Message_debug....`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
             
                         await sleep(1.5 * 1000)
                         chat.sendStateTyping()
@@ -1281,14 +1374,14 @@ async function Initialize_Client_(Clientt_) {
                         Client_.sendMessage(msg.from, 'debug22', 'utf8')
             
                         console.log(`> ✅ .Message_debug. Sent.`)
-                        if (global.Log_Callback) global.Log_Callback(`> ✅ (back).Message_debug. Sent.`)
+                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
                     }
                     MSG = true 
 
 
 
                     console.log(`> ✅ ALL Messages Sent.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ✅ ALL (back)Messages Sent.`)
+                    if (global.Log_Callback) global.Log_Callback(`> ✅ ALL <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Messages</strong> <strong>Sent</strong>.`)
 
 
 
@@ -1297,7 +1390,7 @@ async function Initialize_Client_(Clientt_) {
                     if (Is_Schedule) { //&& Is_New) {
                         //Is_New = false  
                         console.log(`> ⏲️  Timer STARTING for ${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule} to ERASE ChatData for ${chatId} from ${global.File_Data_Chat_Data}...`)
-                        if (global.Log_Callback) global.Log_Callback(`> ⏲️ (back)Timer STARTING for ${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule} to ERASE ChatData for ${chatId} from ${global.File_Data_Chat_Data}...`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule}</strong> to <strong>ERASE</strong> ChatData for <strong>${chatId}</strong> from <strong>${global.File_Data_Chat_Data}</strong>...`)
                         
                         await Schedule_Erase_Chat_Data(chatId, timer_Duration_Schedule)
                     }
@@ -1354,7 +1447,7 @@ async function Initialize_Client_(Clientt_) {
                         Content_ = '📄 ' + (msg.body || 'FILE')
                     } else {
                         console.log(`> ⚠️  NEW MEDIA TYPE`)
-                        if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)NEW MEDIA`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>NEW MEDIA TYPE</strong>`)
                         Content_ = '❓ ' + (msg.body || 'UNKNOWN')
                     }
                 } else if (msg.type === 'audio') {
@@ -1369,7 +1462,7 @@ async function Initialize_Client_(Clientt_) {
                     Content_ = '💬 ' + (msg.body || 'TEXT')
                 } else {
                     console.log(`> ⚠️  NEW MSG TYPE`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)NEW MSG TYPE`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>NEW MSG TYPE</strong>`)
                     Content_ = '❓ ' + (msg.body || 'UNKNOWN')
                 }
                 
@@ -1403,7 +1496,7 @@ async function Initialize_Client_(Clientt_) {
 
                 if (chat.isGroup || chat.isGroupCall || chat.isStatusV3 || msg.broadcast) {
                     console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:</strong>\n${Content_}`)
 
                     delete Chat_States[chatId]
                     return
@@ -1417,7 +1510,7 @@ async function Initialize_Client_(Clientt_) {
                     if (existingEntry.name !== name) {
                         Chat_Action = '(DFN)'
                         console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
-                        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:</strong>\n${Content_}`)
                         
                         let isallerase = false
                         await Save_Chat_Data(chatId, name, isallerase)
@@ -1485,8 +1578,8 @@ async function Initialize_Client_(Clientt_) {
 }    
 async function initialize() {
     if (!Is_Not_Ready) {
-        console.log('>  ℹ️ Client not Ready.')
-        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Client not Ready.`)
+        console.log('>  ℹ️ Client_ not Ready.')
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Client_</strong> not Ready.`)
         return { Sucess: false }
     } else {
         try {
@@ -1495,10 +1588,7 @@ async function initialize() {
 
             let Counter_Clients_ = 0
             if (Directories_.length-1 === -1) {
-                const NameClient_ = global.Client_Name
-                let Is_Client_Ready = false
-                const Id_Client_ = await Generate_Client_Id(Is_Client_Ready)
-                await Initialize_Client_(`_${Id_Client_}_${NameClient_}_`)
+                await New_Client_()
             } else {
                 for (let i = -1; i < Directories_.length-1; i++) {
                     await Initialize_Client_(Directories_[Counter_Clients_])
@@ -1540,13 +1630,12 @@ module.exports = {
     Erase_All_Chat_Data,
     Reload_Front, 
     Input_Command, 
-    Generate_Client_Id,
     Erase_Client_,
     Set_Erase_Client_Callback,
     Select_Client_,
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
-    Initialize_Client_,
+    New_Client_,
     initialize,
     Set_Clients_Callback,
 }
