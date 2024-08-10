@@ -51,10 +51,10 @@ async function Reset_() {
 
         //Clientts_ = {}
 
-        timer_Schedule = {}
+        //timer_Schedule = {}
         Is_timer_On = false
 
-        //Counter_Id_Clients_ = 0
+        //Counter_Id_Clients_ = []
         //Chat_States = {}
     } catch (error) {
         console.error(`> ❌ ERROR Reset_: ${error}`)
@@ -206,14 +206,14 @@ global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Dat
 const Clientts_ = {}
 
 const Is_Schedule = false//true-On/false-Off = Schedule_Erase_Chat_Data
-let timer_Schedule = {}
+const timer_Schedule = {}
 let Is_timer_On = false
 
 const timer_Duration_Type_Schedule = 'Seconds'
 const timer_Duration_Schedule_Type = 1000
 const timer_Duration_Schedule = 10 * timer_Duration_Schedule_Type
 
-let Counter_Id_Clients_ = 0
+let Counter_Id_Clients_ = []
 const Chat_States = {}
 
 //let timer_Duration_Type_MSG_ = ''
@@ -329,7 +329,7 @@ async function Load_Client_(Clientt_) {
             global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
 
             console.log(`>  ◌ Loading ChatData ${Clientt_} from ${global.File_Data_Clients_}...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌  (back)Loading Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌ (back)Loading Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
             
             const Clients_ = await fs.readFile(global.Data_File_Clients_, 'utf8')
 
@@ -434,7 +434,8 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
                     delete Clientts_[Clientt_].instance
                     await sleep(1 * 1000)
                     fse.remove(`Local_Auth\\${Clientt_}`)
-                    Counter_Id_Clients_--//arrumar alguma forma de tirar o numero do client aqui, exponencial zas id de banco de dados
+                    const clientIdNumber = Clientt_.match(/\d+/g)
+                    Counter_Id_Clients_.splice(clientIdNumber-1, 1)
                     
                     Erased_ = true
                 } else if (answer.toLowerCase() === 'n') {
@@ -456,7 +457,8 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
                 delete Clientts_[Clientt_].instance
                 await sleep(1 * 1000)
                 fse.remove(`Local_Auth\\${Clientt_}`)
-                Counter_Id_Clients_--//arrumar alguma forma de tirar o numero do client aqui, exponencial zas id de banco de dados
+                const clientIdNumber = Clientt_.match(/\d+/g)
+                Counter_Id_Clients_.splice(clientIdNumber-1, 1)
                 
                 Erased_ = true
             }
@@ -488,8 +490,8 @@ async function Select_Client_(Clientt_) {
             global.File_Data_Chat_Data = `Chat_Data=${Clientt_}.json`
             global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`)
 
-            global.File_Data_Clients_ = `Client-${Clientt_}.json`
-            global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client-${Clientt_}.json`)
+            global.File_Data_Clients_ = `Client=${Clientt_}.json`
+            global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
 
             console.log(`>  ℹ️ Client_ ${Clientt_} selected.`)
             if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Client_ ${Clientt_} selected.`)
@@ -927,15 +929,34 @@ async function List_Directories(dir_Path, Is_Client_Ready) {
         }
     }
 }
-async function Generate_Client_Id(Is_Client_Ready) { //talves criar um meio de o usuario colocar um nome frontend, resolveria problemas talves
+async function Generate_Client_Id(Is_Client_Ready) {
     if (Is_Client_Ready) {
         console.log('>  ℹ️ Client_ not Ready.')
         if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Client_ not Ready.`)
         return null
     } else {
         try {
-            Counter_Id_Clients_++
-            const Id_Client_ = Counter_Id_Clients_
+            let Id_Client_ = null
+            let Counter_Clients_ = 1
+            let i = false
+            while (!i) {
+                if (Counter_Id_Clients_[Counter_Clients_-1] === undefined) {
+                    Id_Client_ = Counter_Clients_
+                    Counter_Id_Clients_.push(Id_Client_)
+
+                    i = true
+                } else {
+                    if (Counter_Clients_ !== Counter_Id_Clients_[Counter_Clients_-1]) {
+                        Id_Client_ = Counter_Clients_
+                        Counter_Id_Clients_.splice(Counter_Clients_-1, 0, Id_Client_)
+                        
+                        i = true
+                    } else {
+                        Counter_Clients_++
+                    }
+                }
+            }
+           
             return Id_Client_
         } catch (error) {
             console.error(`> ❌ ERROR Generate_Client_Id: ${error}`)
@@ -952,8 +973,10 @@ async function Initialize_Client_(Clientt_) {
         if (Counter_Id_Clients_ > MAX_Clients_) {
             console.log(`> ⚠️  Max instances off Clients_ reached (${Counter_Id_Clients_}): MAX(${MAX_Clients_})`)
             if (global.Log_Callback) global.Log_Callback(`> ⚠️ (back)Máx instances off Clients_ reached (${Counter_Id_Clients_}): MAX(${MAX_Clients_})`)
-            //if (_Callback) _Callback() // reagir ao front end caso
             fse.remove(`Clients_\\${global.File_Data_Clients_}`)
+            const clientIdNumber = Clientt_.match(/\d+/g)
+            Counter_Id_Clients_.splice(clientIdNumber-1, 1)
+            //if (_Callback) _Callback() // reagir ao front end caso
             return
         }
         let Client_ = Clientt_
@@ -1020,7 +1043,8 @@ async function Initialize_Client_(Clientt_) {
                     if (Client_) Client_.destroy()
                     await sleep(1 * 1000)
                     fse.remove(`Local_Auth\\${Clientt_}`)
-                    Counter_Id_Clients_--//arrumar alguma forma de tirar o numero do client aqui, exponencial zas id de banco de dados
+                    const clientIdNumber = Clientt_.match(/\d+/g)
+                    Counter_Id_Clients_.splice(clientIdNumber-1, 1)
 
                     console.log(`>  ℹ️ Retry again.`)
                     if (global.Log_Callback) global.Log_Callback(`>  ℹ️  (back)Retry again.`)
@@ -1038,33 +1062,10 @@ async function Initialize_Client_(Clientt_) {
                 
                 if (Auth_Autenticated_Callback) Auth_Autenticated_Callback(Clientt_)
                 
-                console.log(`> 🔑 SUCESSIFULLY ${Clientt_} Authenticated by the Local_Auth.`)
-                if (global.Log_Callback) global.Log_Callback(`> 🔑 (back)SUCESSIFULLY ${Clientt_} Authenticated by the Local_Auth.`)
+                console.log(`> 🔑 SUCESSIFULLY Client_ ${Clientt_} Authenticated by the Local_Auth.`)
+                if (global.Log_Callback) global.Log_Callback(`> 🔑 (back)SUCESSIFULLY Client_ ${Clientt_} Authenticated by the Local_Auth.`)
             } catch (error) {
                 console.error(`> ❌ ERROR autenticated ${Clientt_}: ${error}`)
-            } 
-        })
-        Client_.on('auth_failure', async error => {
-            try {
-                global.Qr_String = ''
-                global.QR_Counter = 0
-                if (global.Is_From_New) {
-                    global.Stage_ = 2
-                } else {
-                    global.Stage_ = 0
-                }
-                global.Is_From_New = false 
-
-                fse.remove(`Clients_\\${global.File_Data_Clients_}`)
-                if (Client_) Client_.destroy()
-                await sleep(1 * 1000)
-                fse.remove(`Local_Auth\\${Clientt_}`)
-                Counter_Id_Clients_--//arrumar alguma forma de tirar o numero do client aqui, exponencial zas id de banco de dados
-                
-                if (Auth_Failure_Callback) Auth_Failure_Callback()
-                console.error(`> ⚠️  ERROR Authentication ${Clientt_} to WhatsApp Web by the Local_Auth: ${error}`)
-            } catch (error) {
-                console.error(`> ❌ ERROR auth_failure ${Clientt_}: ${error}`)
             } 
         })
         Client_.on('ready', async () => {
@@ -1095,6 +1096,30 @@ async function Initialize_Client_(Clientt_) {
                 await Load_Chat_Data(Clientt_)
             } catch (error) {
                 console.error(`> ❌ ERROR ready ${Clientt_}: ${error}`)
+            } 
+        })
+        Client_.on('auth_failure', async error => {
+            try {
+                global.Qr_String = ''
+                global.QR_Counter = 0
+                if (global.Is_From_New) {
+                    global.Stage_ = 2
+                } else {
+                    global.Stage_ = 0
+                }
+                global.Is_From_New = false 
+
+                fse.remove(`Clients_\\${global.File_Data_Clients_}`)
+                if (Client_) Client_.destroy()
+                await sleep(1 * 1000)
+                fse.remove(`Local_Auth\\${Clientt_}`)
+                const clientIdNumber = Clientt_.match(/\d+/g)
+                Counter_Id_Clients_.splice(clientIdNumber-1, 1)
+                
+                if (Auth_Failure_Callback) Auth_Failure_Callback()
+                console.error(`> ⚠️  ERROR Authentication ${Clientt_} to WhatsApp Web by the Local_Auth: ${error}`)
+            } catch (error) {
+                console.error(`> ❌ ERROR auth_failure ${Clientt_}: ${error}`)
             } 
         })
 
@@ -1451,7 +1476,8 @@ async function Initialize_Client_(Clientt_) {
             //console.error(`> ❌ ERROR Initialize_Client_ ${Clientt_} ProtocolError: ${error}`)
         } else {
             console.error(`> ❌ ERROR Initialize_Client_ ${Clientt_}: ${error}`)
-            Counter_Id_Clients_--
+            const clientIdNumber = Clientt_.match(/\d+/g)
+            Counter_Id_Clients_.splice(clientIdNumber-1, 1)
         }
     }
 }    
@@ -1464,7 +1490,6 @@ async function initialize() {
         try {
             let Is_Client_Ready = false
             const Directories_ = await List_Directories('Local_Auth', Is_Client_Ready)
-            console.log(Directories_.length, Directories_)
 
             let Counter_Clients_ = 0
             if (Directories_.length-1 === -1) {
@@ -1476,13 +1501,13 @@ async function initialize() {
                 for (let i = -1; i < Directories_.length-1; i++) {
                     await Initialize_Client_(Directories_[Counter_Clients_])
                     Counter_Clients_++
-                    Counter_Id_Clients_++
                 }
             }
             return { Sucess: true }
         } catch (error) {
             console.error(`> ❌ ERROR initialize: ${error}`)
-            Counter_Id_Clients_--
+            const clientIdNumber = Clientt_.match(/\d+/g)
+            Counter_Id_Clients_.splice(clientIdNumber-1, 1)
             return { Sucess: false }
         }
     } 

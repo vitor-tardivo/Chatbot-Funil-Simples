@@ -615,6 +615,99 @@ async function exit(exitInten) {
         document.title = 'ERROR'
         resetLoadingBar()
     }
+} 
+async function authsucess(Client_) {
+    try {
+        if (!Is_From_New) {
+            let buttonStart = document.querySelector('#start')
+            buttonStart.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                buttonStart.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
+            Is_Started = true
+        }
+
+        const status = document.querySelector('#status')
+        status.textContent = `Client_ ${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
+        displayOnConsole(`>  ℹ️  (status)Client_ ${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
+        
+        document.querySelector('#qrCode').innerText = ''
+        const codeQr = document.querySelector('#qrCode')
+        codeQr.style.cssText =
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            codeQr.style.cssText =
+            'display: none; opacity: 0;'
+        }, 300)
+    } catch(error) {
+        console.error(`> ⚠️ ERROR ${Client_} authSucess: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR  ${Client_}authSucess: ${error.message}`, setLogError)
+    }
+}
+async function ready(Client_) {
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        Is_Not_Ready = false
+
+        if (isDisconected) {
+            reconnectWebSocket()
+        }
+
+        const mainContent = document.querySelector('#innerContent')
+        mainContent.style.cssText =
+            'display: inline-block;'
+            
+        Is_Started_New = false
+
+        if (!Is_From_New) {
+            Is_Started = true
+        }
+
+        const newClientDiv = document.querySelector('#divNewClient')
+        newClientDiv.style.cssText = 'display: flex; opacity: 0;' 
+        setTimeout(() => newClientDiv.style.cssText = 'display: flex; opacity: 1;', 100)
+        if (!isAlreadyDir) {
+            const response = await axios.get('/dir-front')
+            const Directories_ = response.data.dirs
+            
+            if (Directories_.length-1 === -1) {
+                displayOnConsole(`> ⚠️ Dir off Clients_ (${Directories_.length-1}) is empty.`)
+
+                let exitInten = true
+                await exit(exitInten)
+            } else {
+                let Counter_Clients_ = 0
+                for (let i = -1; i < Directories_.length-1; i++) {
+                    let isReadyInsert = false
+                    await insertClient_Front(isReadyInsert, Directories_[Counter_Clients_])
+                    let isReadySelect = false
+                    await selectClient_(isReadySelect, Directories_[Counter_Clients_])
+                    Counter_Clients_++
+                }
+            }
+        } else {
+            isAlreadyDir = false
+        }
+
+
+        loadTableStyles()
+
+        Is_From_New = false 
+        
+        document.title = `Bot ${Client_} pronto`
+
+        resetLoadingBar()
+    } catch(error) {
+        document.title = 'ERROR'
+        console.error(`> ⚠️ ERROR ${Client_} ready: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR ${Client_} ready: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
 }
 async function authFailure() {
     try {
@@ -702,99 +795,6 @@ async function authFailure() {
         console.error(`> ⚠️ ERROR authFailure: ${error}`)
         displayOnConsole(`> ⚠️ ERROR authFailure: ${error.message}`, setLogError)
         Is_Not_Ready = true
-        resetLoadingBar()
-    }
-} 
-async function authsucess(Client_) {
-    try {
-        if (!Is_From_New) {
-            let buttonStart = document.querySelector('#start')
-            buttonStart.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                buttonStart.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
-            Is_Started = true
-        }
-
-        const status = document.querySelector('#status')
-        status.textContent = `${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`
-        displayOnConsole(`>  ℹ️  (status)${Client_} Realizado com Sucesso Autenticação ao WhatsApp Web pelo Local_Auth!`)
-        
-        document.querySelector('#qrCode').innerText = ''
-        const codeQr = document.querySelector('#qrCode')
-        codeQr.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            codeQr.style.cssText =
-            'display: none; opacity: 0;'
-        }, 300)
-    } catch(error) {
-        console.error(`> ⚠️ ERROR ${Client_} authSucess: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR  ${Client_}authSucess: ${error.message}`, setLogError)
-    }
-}
-async function ready(Client_) {
-    try {
-        let barL = document.querySelector('#barLoading')
-        barL.style.cssText =
-            'width: 100vw; visibility: visible;'
-
-        Is_Not_Ready = false
-
-        if (isDisconected) {
-            reconnectWebSocket()
-        }
-
-        const mainContent = document.querySelector('#innerContent')
-        mainContent.style.cssText =
-            'display: inline-block;'
-            
-        Is_Started_New = false
-
-        if (!Is_From_New) {
-            Is_Started = true
-        }
-
-        const newClientDiv = document.querySelector('#divNewClient')
-        newClientDiv.style.cssText = 'display: flex; opacity: 0;' 
-        setTimeout(() => newClientDiv.style.cssText = 'display: flex; opacity: 1;', 100)
-        if (!isAlreadyDir) {
-            const response = await axios.get('/dir-front')
-            const Directories_ = response.data.dirs
-            
-            if (Directories_.length-1 === -1) {
-                displayOnConsole(`> ⚠️ Dir off Clients_ (${Directories_.length-1}) is empty.`)
-
-                let exitInten = true
-                await exit(exitInten)
-            } else {
-                let Counter_Clients_ = 0
-                for (let i = -1; i < Directories_.length-1; i++) {
-                    let isReadyInsert = false
-                    await insertClient_Front(isReadyInsert, Directories_[Counter_Clients_])
-                    let isReadySelect = false
-                    await selectClient_(isReadySelect, Directories_[Counter_Clients_])
-                    Counter_Clients_++
-                }
-            }
-        } else {
-            isAlreadyDir = false
-        }
-
-
-        loadTableStyles()
-
-        Is_From_New = false 
-        
-        document.title = `Bot ${Client_} pronto`
-
-        resetLoadingBar()
-    } catch(error) {
-        document.title = 'ERROR'
-        console.error(`> ⚠️ ERROR ${Client_} ready: ${error}`)
-        displayOnConsole(`> ⚠️ ERROR ${Client_} ready: ${error.message}`, setLogError)
         resetLoadingBar()
     }
 }
@@ -1594,12 +1594,13 @@ async function eraseClient_(isFromTerminal, isReadyErase, Clientt_) {
                 status.textContent = `Client_ ${Clientt_} foi Apagado!`
                 displayOnConsole(`>  ℹ️  (status)Client_ ${Clientt_} foi Apagado!`)
 
-                await sleep(1 * 1000)
+                await sleep(1.5 * 1000)
                 const response2 = await axios.get('/dir-front')
                 const Directories_2 = response2.data.dirs
 
                 if (Directories_2.length-1 === -1) {
-                    displayOnConsole(`> ⚠️ Dir off Clients_ (${Directories_2.length-1}) is empty.`)
+                    status.textContent = `Dir off Clients_ (${Directories_2.length}) is empty!`
+                    displayOnConsole(`>  ℹ️  (status)Dir off Clients_ (${Directories_2.length}) is empty.`)
 
                     let exitInten = true
                     await exit(exitInten)
@@ -1713,7 +1714,6 @@ async function insertClient_Front(isReadyInsert, Clientt_) {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
-        console.log(Clientt_)
 
         const ClientsDiv = document.querySelector('#Clients_')
         let clientHTML = `<div id="${Clientt_}"><abbr title="${Clientt_}"><button class="Clients_" onclick="selectClient_(false, '${Clientt_}')">${Clientt_}</button></abbr><abbr title="Erase ${Clientt_}"><button class="Clients_Erase" onclick="eraseClient_(false, false, '${Clientt_}')"><</button></abbr></div>`
@@ -2040,6 +2040,8 @@ async function startBot() {
     //mandar certo os nomes certos dos json selecionado e client
     //ao usar qualquer funcao colocar o client no lugar do CHATDATA da lista
     //melhoras o tempo e utilizacao dos staus multi client e mais
+    //melhorar o visual do texto no console, adiciona strong italic talves cores a palavras e tals
+    //fazer do id do name um array a cada novo adiciona um e se for apagar apaga e se um novo adionar do que tiver vazio na ordem de 1 a 10 e vai indo se tiver o numero que apago mais um ou menos um ent ser ouotro, o contrario no caso se n tiver sla oq
     
 //a desenvolver...
     //arrumar meios de as coisas serem automaticas funcoes acionarem de acordo com certar coisas inves de prever todo cenario possivel em varias funcoes

@@ -765,8 +765,8 @@ caption {
     font-size: 2.5vw;
     font-family: var(--fontDisplay);
     font-weight: bolder;
-    cursor: help;
-    pointer-events: none;
+    cursor: auto;
+    /*pointer-events: none;*/
     transition: var(--configTrasition03s);
 }
 thead {
@@ -790,7 +790,7 @@ th {
     font-family: var(--fontDisplay);
     width: 100vw;
     cursor: help;
-    pointer-events: none;
+    /*pointer-events: none;*/
     transition: var(--configTrasition03s);
 }
 tbody {
