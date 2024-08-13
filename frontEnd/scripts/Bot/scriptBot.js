@@ -62,6 +62,8 @@ let isFromTerminal = false
 
 let isVisibleList = null
 
+let isVisibleHideButton = null
+
 let isExceeds = true 
 
 let isQrOff = true
@@ -70,15 +72,17 @@ let isAlreadyDir = false
 
 let Clientt_Temp = null
 
-let Is_From_New = false//
+let isFromNew = false
 
-let Clientt_ = null//
+let Client_ = null
 
-let Is_Not_Ready = true//
+let ChatDataNotReady = true
 
-let Is_Started_New = true//
+let isStartedNew = true
 
-let Is_Started = false
+let isHideAP = true
+
+let isStarted = false
 
 let nameApp = null
 let versionApp = null
@@ -110,32 +114,32 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         const response2 = await axios.get('/what-stage')
         const stage = response2.data.data
         const QR_Counter = response2.data.data2
-        Clientt_ = response2.data.data3
+        Client_ = response2.data.data3
         
         if (stage === 0) {
             
         }
         if (stage === 1) {
-            if (!Is_From_New) {
-                Is_Started = true
+            if (!isFromNew) {
+                isStarted = true
             }
             isQrOff = false
-            generateQrCode(QR_Counter, Clientt_)
+            generateQrCode(QR_Counter, Client_)
         }
         if (stage === 2) {
-            if (!Is_From_New) {
-                Is_Started = true
+            if (!isFromNew) {
+                isStarted = true
             }
-            await authsucess(Clientt_)
-            await ready(Clientt_)
+            await authsucess(Client_)
+            await ready(Client_)
         }
         if (stage === 3) {
-            if (!Is_From_New) {
-                Is_Started = true
+            if (!isFromNew) {
+                isStarted = true
             }
-            await authsucess(Clientt_)
-            await ready(Clientt_)
-            let Is_From_New = true
+            await authsucess(Client_)
+            await ready(Client_)
+            let isFromNew = true
             isQrOff = false
             generateQrCode(QR_Counter)
         }
@@ -324,7 +328,6 @@ async function webSocket() {
             }, 100)
 
             isDisconected = true
-            reconectAttempts = 0
             
             resetLoadingBar()
         }
@@ -380,9 +383,9 @@ async function handleWebSocketData(dataWebSocket) {
             break
         case 'clients_':
             const Client_ = dataWebSocket.client
-            let isReadyInsert = false
             isAlreadyDir = true
-            await insertClient_Front(isReadyInsert, Client_)
+            Client_NotReady = true
+            await insertClient_Front(Client_)
             break
         case 'start':
             startBot()
@@ -434,14 +437,13 @@ async function handleWebSocketData(dataWebSocket) {
             break
         case 'erase-client':
             const Client_____ = dataWebSocket.client
-            let isReadyErase = false
             let isFromTerminal_ = true
-            eraseClient_(isFromTerminal_, isReadyErase, Client_____)
+            eraseClient_(isFromTerminal_, Client_____)
             break
         case 'select':
             const Client______ = dataWebSocket.client
             let isReadySelect = false
-            selectClient_(isReadySelect, Client______)
+            await selectClient_(isReadySelect, Client______)
             break
         case 'new':
             newClients()
@@ -503,17 +505,19 @@ async function exit(exitInten) {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
-        Is_Not_Ready = true
+        ChatDataNotReady = true
 
-        Is_From_New = false
+        isFromNew = false
 
-        Clientt_ = null
+        Client_ = null
 
-        Is_Not_Ready = true
+        ChatDataNotReady = true
 
-        Is_Started_New = true
+        isStartedNew = true
 
-        Is_Started = false
+        isHideAP = true
+
+        isStarted = false
 
         if (!exitInten) {
             if (isDisconected) {
@@ -617,24 +621,28 @@ async function exit(exitInten) {
             console.error(`> ⚠️ ERROR exit: ${error}`)
             displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> exit: ${error.message}`, setLogError)
         }
-        Is_Not_Ready = true
+        ChatDataNotReady = true
 
-        Is_From_New = false
+        isFromNew = false
 
-        Clientt_ = null
+        Client_ = null
 
-        Is_Not_Ready = true
+        ChatDataNotReady = true
 
-        Is_Started_New = true
+        isStartedNew = true
 
-        Is_Started = false
+        isStarted = false
+
+        isHideAP = true
+
+        isStarted = false
         document.title = 'ERROR'
         resetLoadingBar()
     }
 } 
 async function authsucess(Client_) {
     try {
-        if (!Is_From_New) {
+        if (!isFromNew) {
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 0;'
@@ -642,7 +650,7 @@ async function authsucess(Client_) {
                 buttonStart.style.cssText =
                     'display: none; opacity: 0;'
             }, 300)
-            Is_Started = true
+            isStarted = true
         }
 
         const status = document.querySelector('#status')
@@ -668,7 +676,7 @@ async function ready(Client_) {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
-        Is_Not_Ready = false
+        ChatDataNotReady = false
 
         if (isDisconected) {
             reconnectWebSocket()
@@ -678,10 +686,10 @@ async function ready(Client_) {
         mainContent.style.cssText =
             'display: inline-block;'
             
-        Is_Started_New = false
+        isStartedNew = false
 
-        if (!Is_From_New) {
-            Is_Started = true
+        if (!isFromNew) {
+            isStarted = true
         }
 
         const newClientDiv = document.querySelector('#divNewClient')
@@ -699,10 +707,9 @@ async function ready(Client_) {
             } else {
                 let Counter_Clients_ = 0
                 for (let i = -1; i < Directories_.length-1; i++) {
-                    let isReadyInsert = false
-                    await insertClient_Front(isReadyInsert, Directories_[Counter_Clients_])
-                    let isReadySelect = false
-                    await selectClient_(isReadySelect, Directories_[Counter_Clients_])
+                    Client_NotReady = true
+                    await insertClient_Front(Directories_[Counter_Clients_])
+                    await selectClient_(Directories_[Counter_Clients_])
                     Counter_Clients_++
                 }
             }
@@ -710,10 +717,9 @@ async function ready(Client_) {
             isAlreadyDir = false
         }
 
-
         loadTableStyles()
 
-        Is_From_New = false 
+        isFromNew = false 
         
         document.title = `${nameApp} ${Client_} pronto`
 
@@ -731,7 +737,7 @@ async function authFailure() {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
-        Is_Not_Ready = true
+        ChatDataNotReady = true
 
         if (isDisconected) {
             reconnectWebSocket()
@@ -757,7 +763,7 @@ async function authFailure() {
 
         isVisibleHideButton = null
 
-        if (!Is_From_New) {
+        if (!isFromNew) {
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 0;'
@@ -765,7 +771,7 @@ async function authFailure() {
                 buttonStart.style.cssText =
                     'display: inline-block; opacity: 1;'
             }, 100)
-            Is_Started = false
+            isStarted = false
         }
         
         document.querySelector('#qrCode').innerText = ''
@@ -810,7 +816,6 @@ async function authFailure() {
         document.title = 'ERROR'
         console.error(`> ⚠️ ERROR authFailure: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> authFailure: ${error.message}`, setLogError)
-        Is_Not_Ready = true
         resetLoadingBar()
     }
 }
@@ -916,6 +921,8 @@ function loadTableStyles() {
 
                     listShow.style.cssText = 'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
                     listShowAbbr.title = `STATUS Lista: visivel`
+                    
+                    isHideAP = false
                 } else {
                     /*consoleElement.style.width = '30.62vw'
                     titleHideConsole.title = 'Esconder o Terminal'
@@ -932,8 +939,10 @@ function loadTableStyles() {
                     setTimeout(() => eraseButton.style.cssText = 'display: none; opacity: 0;', 100)
 
                     listShow.style.cssText = 'display: inline-block; background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
-                    listShowAbbr.title = `STATUS Lista: escondido`                                                         
-                }
+                    listShowAbbr.title = `STATUS Lista: escondido`                                                   
+                    
+                    isHideAP = true      
+           }
             }
         }
     } catch (error) {
@@ -942,8 +951,8 @@ function loadTableStyles() {
     }
 }
 function showTableList() {
-    if (Is_Not_Ready) {
-        displayOnConsole('>  ℹ️ <strong>Client_</strong> not Ready.', setLogError)
+    if (ChatDataNotReady) {
+        displayOnConsole('>  ℹ️ <strong>showTableList</strong> not Ready.', setLogError)
         return
     }
     try {
@@ -986,6 +995,7 @@ function showTableList() {
             }, 100)
             
             isVisibleList = true
+            isHideAP = false
 
             saveTableStyles()
             return
@@ -1015,6 +1025,7 @@ function showTableList() {
             }, 300)
 
             isVisibleList = false
+            isHideAP = true
 
             saveTableStyles()
             return
@@ -1075,7 +1086,6 @@ function loadConsoleStyles() {
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> loadConsoleStyles: ${error.message}`, setLogError)
     }
 }
-let isVisibleHideButton = null
 function hideConsole() {
     try {
         let consoleElement = document.querySelector('#console')
@@ -1156,11 +1166,13 @@ async function sendCommand() {
 }
 
 async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
-    if (Is_Not_Ready) {
-        displayOnConsole('>  ℹ️ <strong>Client_</strong> not Ready.', setLogError)
+    if (ChatDataNotReady) {
+        displayOnConsole(`>  ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
         return
     }
     try {
+        ChatDataNotReady = true
+
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -1168,7 +1180,7 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
         const status = document.querySelector('#status')
 
         let queryList = null
-        let userConfirmation = confirm(`Tem certeza de que deseja apagar o ChatData de ${queryList} da lista?\nsera apagada para sempre.`)
+        let userConfirmation = confirm(`Tem certeza de que deseja apagar o ChatData <strong>${Client_}</strong> de ${queryList} da lista?\nsera apagado para sempre.`)
         if (userConfirmation) {
             if (isFromTerminal) {
                 queryList = queryFromTerminal
@@ -1182,65 +1194,69 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             const Is_Empty_Input = response.data.empty_input
             const Chat_Data_json = response.data.chatdatajson
             if (Is_Empty) {
-                status.innerHTML = `Lista de <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Lista de <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`)
+                status.innerHTML = `Lista de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> esta <strong>vazia</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Lista de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> esta <strong>vazia</strong>!`)
 
                 resetLoadingBar()
-                if (isFromTerminal) {
-                    isFromTerminal = false
-                }
+                if (isFromTerminal) isFromTerminal = false
+                ChatDataNotReady = false
                 return
             }
             if (Is_Empty_Input) {
-                status.innerHTML = `ChatData <strong>${queryList}</strong> não foi encontrado na lista de <strong>${Chat_Data_json}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData <strong>${queryList}</strong> não foi encontrado na lista de <strong>${Chat_Data_json}</strong>!`)
+                status.innerHTML = `ChatData <strong>${queryList}</strong> <strong>não</strong> foi <strong>encontrado</strong> na lista de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData <strong>${queryList}</strong> <strong>não</strong> foi <strong>encontrado</strong> na lista de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong>!`)
 
                 resetLoadingBar()
-                if (isFromTerminal) {
-                    isFromTerminal = false
-                }
+                if (isFromTerminal) isFromTerminal = false
+                ChatDataNotReady = false
                 return  
             } 
             if (Sucess) {
-                status.innerHTML = `<strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong> foi <strong>Apagado</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong> foi <strong>Apagado</strong>!`)
+                status.innerHTML = `<strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> foi <strong>Apagado</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> foi <strong>Apagado</strong>!`)
             } else {
-                status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> ChatData <strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> ChatData <strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong>!`)
-            }
-
-            //document.querySelector('#inputList').value = ''
-            resetLoadingBar()
-            if (isFromTerminal) {
-                isFromTerminal = false
+                status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> ChatData <strong>${Client_}</strong> <strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> ChatData <strong>${Client_}</strong> <strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong>!`)
             }
         } else {
             resetLoadingBar()
-            if (isFromTerminal) {
-                isFromTerminal = false
-            }
+            if (isFromTerminal) isFromTerminal = false
+            
+            ChatDataNotReady = false
+            
             return
         }
+        
+        //document.querySelector('#inputList').value = ''
+        resetLoadingBar()
+        if (isFromTerminal) isFromTerminal = false
+
+        ChatDataNotReady = false
+
+        return
     } catch (error) {
-        console.error(`> ⚠️ ERROR eraseChatDataByQuery ${Chat_Data_json}: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> eraseChatDataByQuery ${Chat_Data_json}: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR eraseChatDataByQuery ${Client_} ${Chat_Data_json}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> eraseChatDataByQuery ${Client_} ${Chat_Data_json}: ${error.message}`, setLogError)
+        ChatDataNotReady = false
         resetLoadingBar()
     }
 }
 //async function allErase(sucess, empty, isFromTerminal) {
 async function allErase() {
-    if (Is_Not_Ready) {
-        displayOnConsole('>  ℹ️  <strong>Client_</strong> not Ready.', setLogError)
+    if (ChatDataNotReady) {
+        displayOnConsole(`>  ℹ️  <strong>${Client_}</strong> not Ready.`, setLogError)
         return
     }
     try {
+        ChatDataNotReady = true
+
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
     
         const status = document.querySelector('#status')
 
-        let userConfirmation = confirm('Tem certeza de que deseja apagar a lista?\nsera apagada para sempre.')
+        let userConfirmation = confirm(`Tem certeza de que deseja apagar todo o ChatData de <strong>${Client_}</strong>?\nsera apagado para sempre.`)
         if (userConfirmation) {
             /*const response = await axios.delete('/all-erase')
             let Sucess = null
@@ -1259,38 +1275,48 @@ async function allErase() {
             const Is_Empty = response.data.empty
             const Chat_Data_json = response.data.chatdatajson
             if (Is_Empty) {
-                status.innerHTML = `Lista de <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Lista de <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`)
+                status.innerHTML = `ChatData de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> esta <strong>vazia</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> esta <strong>vazia</strong>!`)
 
                 resetLoadingBar()
+
+                ChatDataNotReady = false
+
                 return
             } 
             if (Sucess) {
-                status.innerHTML = `<strong>Todo</strong> o ChatData de <strong>${Chat_Data_json}</strong> foi <strong>Apagado</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Todo</strong> o ChatData de <strong>${Chat_Data_json}</strong> foi <strong>Apagado</strong>!`)
+                status.innerHTML = `<strong>Todo</strong> o ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> foi <strong>Apagado</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Todo</strong> o ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> foi <strong>Apagado</strong>!`)
             } else {
-                status.innerHTML = `<i><strong>ERROR</strong></i> ao Apagar <strong>todo</strong> ChatData de <strong>${Chat_Data_json}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao Apagar <strong>todo</strong> ChatData de <strong>${Chat_Data_json}</strong>!`)
+                status.innerHTML = `<i><strong>ERROR</strong></i> ao Apagar <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao Apagar <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>!`)
             } 
         } else {
             resetLoadingBar()
+
+            ChatDataNotReady = false
+
             return
         }
         
+        ChatDataNotReady = false
         resetLoadingBar()
     } catch (error) {
-        console.error(`> ⚠️ ERROR allEraseList ${Chat_Data_json}: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> allEraseList <strong>${Chat_Data_json}</strong>: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR allEraseList <strong>${Client_}</strong> ${Chat_Data_json}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> allEraseList <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>: ${error.message}`, setLogError)
+        ChatDataNotReady = false
         resetLoadingBar()
     }
 }
 //async function searchChatDataBySearch(isFromTerminal, dataFromTerminal, searchFromTerminal) {
 async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
-    if (Is_Not_Ready) {
-        displayOnConsole('>  ℹ️ <strong>Client_</strong> not Ready.', setLogError)
+    if (ChatDataNotReady) {
+        displayOnConsole(`>  ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
         return
     }
     try {
+        ChatDataNotReady = true
+
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -1345,9 +1371,10 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
             cell2.textContent = 'N/A'
 
             resetLoadingBar()
-            if (isFromTerminal) {
-                isFromTerminal = false
-            }
+            if (isFromTerminal) isFromTerminal = false
+
+            ChatDataNotReady = false
+
             return
         }
         if (Is_Empty_Input) {
@@ -1367,9 +1394,10 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
             cell2.textContent = 'N/A'
 
             resetLoadingBar()
-            if (isFromTerminal) {
-                isFromTerminal = false
-            }
+            if (isFromTerminal) isFromTerminal = false
+
+            ChatDataNotReady = false
+
             return  
         } 
         if (Sucess) {
@@ -1403,26 +1431,29 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
         }
 
         //document.querySelector('#inputList').value = ''
+        if (isFromTerminal) isFromTerminal = false
+        ChatDataNotReady = false
         resetLoadingBar()
-        if (isFromTerminal) {
-            isFromTerminal = false
-        }
     } catch (error) {
         console.error(`> ⚠️ ERROR searchChatDataBySearch ${Chat_Data_json}: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> searchChatDataBySearch ${Chat_Data_json}: ${error.message}`, setLogError)
-        if (isFromTerminal) {
-            isFromTerminal = false
-        } 
+        if (isFromTerminal) isFromTerminal = false
+        ChatDataNotReady = false
         resetLoadingBar()
     }
 }
 //async function allPrint(Sucess, Is_Empty, ChatData, isFromButton, isallerase) {
 async function allPrint(isFromButton, isallerase) {
-    if (Is_Not_Ready) {
-        displayOnConsole('>  ℹ️ <strong>Client_</strong> not Ready.', setLogError)
+    if (ChatDataNotReady) {
+        displayOnConsole(`>  ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
+        return
+    }
+    if (isHideAP) {
         return
     }
     try {
+        ChatDataNotReady = true
+
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -1446,6 +1477,9 @@ async function allPrint(isFromButton, isallerase) {
             cell2.textContent = 'N/A'
             
             resetLoadingBar()
+
+            ChatDataNotReady = false
+
             return
         }
 
@@ -1502,8 +1536,8 @@ async function allPrint(isFromButton, isallerase) {
         ChatData = chatdata*/
 
         if (Is_Empty) {
-            status.innerHTML = `Lista de <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Lista de <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`)
+            status.innerHTML = `ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`)
 
             counter.textContent = `0`
             
@@ -1518,12 +1552,15 @@ async function allPrint(isFromButton, isallerase) {
             cell2.textContent = 'N/A'
             
             resetLoadingBar()
+
+            ChatDataNotReady = false
+            
             return
         } 
         if (Sucess) {
             if (isFromButton) {
-                status.innerHTML = `Listando <strong>todo</strong> ChatData de <strong>${Chat_Data_json}</strong>...`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Listando <strong>todo</strong> ChatData de <strong>${Chat_Data_json}</strong>...`)
+                status.innerHTML = `Listando <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>...`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Listando <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>...`)
             }
 
             list.innerHTML = ''
@@ -1544,32 +1581,34 @@ async function allPrint(isFromButton, isallerase) {
             bList.style.cssText =
                 'opacity: 1 pointer-events: unset;'*/
             if (isFromButton) {
-                status.innerHTML = `<strong>Todo</strong> ChatData de <strong>${Chat_Data_json}</strong> Listado!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Todo</strong> ChatData de <strong>${Chat_Data_json}</strong> Listado`)
+                status.innerHTML = `<strong>Todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> Listado!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> Listado`)
             }
-            
-            isFromButton = true
-            resetLoadingBar()
         } else {
-            status.innerHTML = `<i><strong>ERROR</strong></i> ao listar <strong>todo</strong> ChatData de <strong>${Chat_Data_json}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao listar <strong>todo</strong> ChatData de <strong>${Chat_Data_json}</strong>!`)
-            isFromButton = true
-            resetLoadingBar()
+            status.innerHTML = `<i><strong>ERROR</strong></i> ao listar <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao listar <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>!`)
         } 
-    } catch (error) {
-        console.error(`> ⚠️ ERROR allPrint ${Chat_Data_json}: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> allPrint <strong>${Chat_Data_json}</strong>: ${error.message}`, setLogError)
+
         isFromButton = true
+        ChatDataNotReady = false
+        resetLoadingBar()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR allPrint <strong>${Client_}</strong> ${Chat_Data_json}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> allPrint <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>: ${error.message}`, setLogError)
+        isFromButton = true
+        ChatDataNotReady = false
         resetLoadingBar()
     }
 }
 
-async function eraseClient_(isFromTerminal, isReadyErase, Clientt_) {
-    if (isReadyErase) {
+async function eraseClient_(isFromTerminal, Clientt_) {
+    if (Client_NotReady) {
         displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
         return
     }
     try {
+        Client_NotReady = true
+
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -1582,14 +1621,27 @@ async function eraseClient_(isFromTerminal, isReadyErase, Clientt_) {
             const Sucess = response.data.sucess
             const Is_Empty = response.data.empty
             const Is_Empty_Input = response.data.empty_input
+            const Not_Selected = response.nselected
+            if (Not_Selected) {
+                status.innerHTML = `O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`)
+                
+                resetLoadingBar()
+                if (isFromTerminal) isFromTerminal = false
+                
+                Client_NotReady = false
+
+                return
+            }
             if (Is_Empty) {
                 status.innerHTML = `Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>!`
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
 
                 resetLoadingBar()
-                if (isFromTerminal) {
-                    isFromTerminal = false
-                }
+                if (isFromTerminal) isFromTerminal = false
+                
+                Client_NotReady = false
+                
                 return
             }
             if (Is_Empty_Input) {
@@ -1597,9 +1649,10 @@ async function eraseClient_(isFromTerminal, isReadyErase, Clientt_) {
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
 
                 resetLoadingBar()
-                if (isFromTerminal) {
-                    isFromTerminal = false
-                }
+                if (isFromTerminal) isFromTerminal = false
+                
+                Client_NotReady = false
+                
                 return  
             } 
             if (Sucess) {
@@ -1643,8 +1696,7 @@ async function eraseClient_(isFromTerminal, isReadyErase, Clientt_) {
                         }
                     }
     
-                    let isReadySelect = false
-                    await selectClient_(isReadySelect, `Client_${posArrayClient}`)
+                    await selectClient_(`Client_${posArrayClient}`)
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`
@@ -1652,31 +1704,28 @@ async function eraseClient_(isFromTerminal, isReadyErase, Clientt_) {
             }
 
             //document.querySelector('#inputList').value = ''
-            resetLoadingBar()
-            if (isFromTerminal) {
-                isFromTerminal = false
-            }
         } else {
-            resetLoadingBar()
-            if (isFromTerminal) {
-                isFromTerminal = false
-            }
             return
         }
 
         resetLoadingBar()
+        Client_NotReady = false
+        if (isFromTerminal) isFromTerminal = false
     } catch (error) {
         console.error(`> ⚠️ ERROR eraseClient_ ${Clientt_}: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> eraseClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
+        Client_NotReady = false
         resetLoadingBar()
     }
 }
-async function selectClient_(isReadySelect, Clientt_) {
-    if (isReadySelect) {
+async function selectClient_(Clientt_) {
+    if (Client_NotReady = false) {
         displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
         return
     }
     try {
+        Client_NotReady = true
+
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -1695,6 +1744,9 @@ async function selectClient_(isReadySelect, Clientt_) {
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Não</strong> existe!`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Não</strong> existe!`)
             resetLoadingBar()
+
+            Client_NotReady = false
+            
             return
         }
 
@@ -1707,6 +1759,7 @@ async function selectClient_(isReadySelect, Clientt_) {
             capList.innerHTML = `<stronger>${Clientt_}</stronger>`
 
             Clientt_Temp = Clientt_
+            Client_ = Clientt_
 
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>.`)
@@ -1716,18 +1769,22 @@ async function selectClient_(isReadySelect, Clientt_) {
         }
 
         resetLoadingBar()
+        Client_NotReady = false
     } catch (error) {
         console.error(`> ⚠️ ERROR selectClient_ ${Clientt_}: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> selectClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
+        Client_NotReady = false
         resetLoadingBar()
     }
 }
-async function insertClient_Front(isReadyInsert, Clientt_) {
-    if (isReadyInsert) {
+async function insertClient_Front(Clientt_) {
+    if (!Client_NotReady) {
         displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
         return
     }
     try {
+        Client_NotReady = false
+
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -1768,7 +1825,7 @@ function counterExceeds(QR_Counter_Exceeds) {
         status.innerHTML = `Excedido <strong>todas</strong> as tentativas (<strong>${QR_Counter_Exceeds}</strong>) de conexão pelo <strong>QR_Code</strong> ao <strong>WhatsApp Web</strong>, <strong>Tente novamente</strong>!`
         displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Excedido <strong>todas</strong> as tentativas (<strong>${QR_Counter_Exceeds}</strong>) de conexão pelo <strong>QR_Code</strong> ao <strong>WhatsApp Web</strong>, <strong>Tente novamente</strong>!`)
         
-        if (!Is_From_New) {
+        if (!isFromNew) {
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 0;'
@@ -1776,9 +1833,9 @@ function counterExceeds(QR_Counter_Exceeds) {
                 buttonStart.style.cssText =
                     'display: inline-block; opacity: 1;'
             }, 100)
-            Is_Started = false
+            isStarted = false
         } else {
-            Is_Started_New = false
+            isStartedNew = false
         }
 
         document.querySelector('#qrCode').innerText = ''
@@ -1819,7 +1876,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
         mainContent.style.cssText =
             'display: inline-block;'
 
-        if (!Is_From_New) {
+        if (!isFromNew) {
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: none; opacity: 0;'
@@ -1836,64 +1893,39 @@ async function generateQrCode(QR_Counter, Clientt_) {
         displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${Clientt_}</strong> Gerando <strong>Qr-Code</strong>...`)
         
         axios.get('/qr')
-        .then(response => {
-            const { qrString, Is_Conected } = response.data
-
-            if (Is_Conected) {
-                setTimeout(function() {
-                    status.innerHTML = `<strong>${Clientt_}</strong> ja <strong>conectado</strong>!`
-                    displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${Clientt_}</strong> ja <strong>conectado</strong>!`)
-                }, 100)
-                document.querySelector('#qrCode').innerText = ''
-                codeQr.style.cssText =
-                    'display: inline-block; opacity: 0;'
-                setTimeout(function() {
-                    codeQr.style.cssText =
-                        'display: none; opacity: 0;'
-                }, 300)
-                resetLoadingBar()
-            } else {
-                status.innerHTML = `↓↓ <strong>${Clientt_}</strong> tente se <strong>Conectar</strong> pela <strong>${QR_Counter}</strong>º ao <strong>WhatsApp Web</strong> pelo <strong>QR-Code</strong> abaixo ↓↓`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>↓↓ <strong>${Clientt_}</strong> tente se <strong>Conectar</strong> pela <strong>${QR_Counter}</strong>º ao <strong>WhatsApp Web</strong> pelo <strong>QR-Code</strong> abaixo ↓↓`)
-                
-                codeQr.style.cssText =
-                    'display: inline-block; opacity: 0;'
-                setTimeout(function() {
-                    codeQr.style.cssText =
-                        'display: inline-block; opacity: 1;'
-                }, 100)
-                    
-                document.querySelector('#qrCode').innerText = qrString
-                //displayOnConsole(qrString)
-                
-                resetLoadingBar()
-            }
-        })
-        .catch(error => {
-            console.error(`> ⚠️ ERROR buscando Qr-Code ${Clientt_}: ${error}`)
-            displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> buscando <strong>Qr-Code</strong> <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
-            document.title = 'ERROR'
-            status.innerHTML = `<i><strong>ERROR</strong></i> Buscando <strong>Qr-Code</strong> <strong>${Clientt_}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> Buscando <strong>Qr-Code</strong> <strong>${Clientt_}</strong>!`)
-            if (!Is_From_New) {
-                let buttonStart = document.querySelector('#start')
-                buttonStart.style.cssText =
-                    'display: inline-block; opacity: 0;'
-                setTimeout(function() {
-                    buttonStart.style.cssText =
-                        'display: inline-block; opacity: 1;'
-                }, 100)
-                Is_Started = false
-            }
+        const { qrString, Is_Conected } = response.data
+        if (Is_Conected) {
+            setTimeout(function() {
+                status.innerHTML = `<strong>${Clientt_}</strong> ja <strong>conectado</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${Clientt_}</strong> ja <strong>conectado</strong>!`)
+            }, 100)
+            
             document.querySelector('#qrCode').innerText = ''
+
             codeQr.style.cssText =
                 'display: inline-block; opacity: 0;'
             setTimeout(function() {
                 codeQr.style.cssText =
                     'display: none; opacity: 0;'
             }, 300)
+
             resetLoadingBar()
-        })
+        } else {
+            status.innerHTML = `↓↓ <strong>${Clientt_}</strong> tente se <strong>Conectar</strong> pela <strong>${QR_Counter}</strong>º ao <strong>WhatsApp Web</strong> pelo <strong>QR-Code</strong> abaixo ↓↓`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>↓↓ <strong>${Clientt_}</strong> tente se <strong>Conectar</strong> pela <strong>${QR_Counter}</strong>º ao <strong>WhatsApp Web</strong> pelo <strong>QR-Code</strong> abaixo ↓↓`)
+            
+            codeQr.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                codeQr.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
+                
+            document.querySelector('#qrCode').innerText = qrString
+            //displayOnConsole(qrString)
+            
+            resetLoadingBar()
+        }
     } catch (error) {
         const status = document.querySelector('#status')
         console.error(`> ⚠️ ERROR generateQrCode ${Clientt_}: ${error}`)
@@ -1901,7 +1933,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
         document.title = 'ERROR'
         status.innerHTML = `<i><strong>ERROR</strong></i> Gerando <strong>Qr-Code</strong> <strong>${Clientt_}</strong>!`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> Gerando <strong>Qr-Code</strong> <strong>${Clientt_}</strong>!`)
-        if (!Is_From_New) {
+        if (!isFromNew) {
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 0;'
@@ -1909,7 +1941,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
                 buttonStart.style.cssText =
                     'display: inline-block; opacity: 1;'
             }, 100)
-            Is_Started = false
+            isStarted = false
         }
         document.querySelector('#qrCode').innerText = ''
         const codeQr = document.querySelector('#qrCode')
@@ -1924,11 +1956,13 @@ async function generateQrCode(QR_Counter, Clientt_) {
 }
 
 async function newClients() {
-    if (Is_Started_New) {
+    if (isStartedNew) {
         displayOnConsole('>  ℹ️ <strong>Client_</strong> not Ready.', setLogError)
         return
     }
     try {
+        isStartedNew = true
+
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
@@ -1936,11 +1970,13 @@ async function newClients() {
         let userConfirmation = confirm('Tem certeza de que deseja criar um novo Client_?')
         if (!userConfirmation) {
             resetLoadingBar()
+
+            isStartedNew = false
+
             return
         }
 
-        Is_Started_New = true
-        Is_From_New = true
+        isFromNew = true
 
         document.title = 'Criando novo Client'
 
@@ -1951,120 +1987,113 @@ async function newClients() {
         document.title = 'ERROR'
         console.error(`> ⚠️ ERROR newClients: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> newClients: ${error.message}`, setLogError)
-        Is_Started_New = false
         resetLoadingBar()
     }
 }
 
 async function startBot() {
-    if (Is_Started) {
+    if (isStarted) {
         displayOnConsole(`> ⚠️ <strong>${nameApp}</strong> ja esta <strong>Iniciado</strong>.`, setLogError)
         return        
-    } else {
-        try {
-            let barL = document.querySelector('#barLoading')
-            barL.style.cssText =
-                'width: 100vw; visibility: visible;'
+    }
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
 
-            Is_Started = true
+        isStarted = true
 
-            if (isDisconected) {
-                reconnectWebSocket()
-            }
+        if (isDisconected) {
+            reconnectWebSocket()
+        }
 
-            document.title = 'Iniciando ${nameApp}'
+        document.title = 'Iniciando ${nameApp}'
 
-            const mainContent = document.querySelector('#innerContent')
-            mainContent.style.cssText =
-                'display: inline-block;'
+        const mainContent = document.querySelector('#innerContent')
+        mainContent.style.cssText =
+            'display: inline-block;'
 
-            let buttonStart = document.querySelector('#start')
+        let buttonStart = document.querySelector('#start')
+        buttonStart.style.cssText =
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
             buttonStart.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                buttonStart.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
-            
-            const status = document.querySelector('#status')
-            status.innerHTML = `<strong>Iniciando</strong>...`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciando</strong>...`)
-            
-            document.querySelector('#qrCode').innerText = ''
-            const codeQr = document.querySelector('#qrCode')
+                'display: none; opacity: 0;'
+        }, 300)
+        
+        const status = document.querySelector('#status')
+        status.innerHTML = `<strong>Iniciando</strong>...`
+        displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciando</strong>...`)
+        
+        document.querySelector('#qrCode').innerText = ''
+        const codeQr = document.querySelector('#qrCode')
+        codeQr.style.cssText =
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
             codeQr.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                codeQr.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
-            const response = await axios.get('/start-bot')
-            const Sucess = response.data.sucess
-            if (Sucess) {
-                document.title = 'Iniciou o ${nameApp} Corretamente'
-                status.innerHTML = `<strong>Iniciou</strong> o ${nameApp} <strong>Corretamente</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciou</strong> o ${nameApp} <strong>Corretamente</strong>!`)
+                'display: none; opacity: 0;'
+        }, 300)
+        const response = await axios.get('/start-bot')
+        const Sucess = response.data.sucess
+        if (Sucess) {
+            document.title = 'Iniciou o ${nameApp} Corretamente'
+            status.innerHTML = `<strong>Iniciou</strong> o ${nameApp} <strong>Corretamente</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciou</strong> o ${nameApp} <strong>Corretamente</strong>!`)
 
-                resetLoadingBar()
-            } else {
-                buttonStart.style.cssText =
-                    'display: inline-block; opacity: 0;'
-                setTimeout(function() {
-                    buttonStart.style.cssText =
-                        'display: inline-block; opacity: 1;'
-                }, 100)
-
-                document.title = 'ERROR'
-                status.innerHTML = `<i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp}</strong>!`)
-                
-                Is_Started = false
-
-                resetLoadingBar()
-            }
-        } catch (error) {
-            const status = document.querySelector('#status')
-            console.error(`> ⚠️ ERROR startBot: ${error}`)
-            displayOnConsole(`> ⚠️ ERROR startBot: ${error.message}`, setLogError)
-            document.title = 'ERROR'
-            status.innerHTML = `<i><strong>ERROR</strong></i> iniciando <strong>${nameApp}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> iniciando <strong>${nameApp}</strong>!`)
-            let buttonStart = document.querySelector('#start')
+            resetLoadingBar()
+        } else {
             buttonStart.style.cssText =
                 'display: inline-block; opacity: 0;'
             setTimeout(function() {
                 buttonStart.style.cssText =
                     'display: inline-block; opacity: 1;'
             }, 100)
-            Is_Started = false
-            document.querySelector('#qrCode').innerText = ''
-            const codeQr = document.querySelector('#qrCode')
-            codeQr.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                codeQr.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
+
+            document.title = 'ERROR'
+            status.innerHTML = `<i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp}</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp}</strong>!`)
             
+            isStarted = false
+
             resetLoadingBar()
         }
+    } catch (error) {
+        const status = document.querySelector('#status')
+        console.error(`> ⚠️ ERROR startBot: ${error}`)
+        displayOnConsole(`> ⚠️ ERROR startBot: ${error.message}`, setLogError)
+        document.title = 'ERROR'
+        status.innerHTML = `<i><strong>ERROR</strong></i> iniciando <strong>${nameApp}</strong>!`
+        displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> iniciando <strong>${nameApp}</strong>!`)
+        let buttonStart = document.querySelector('#start')
+        buttonStart.style.cssText =
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            buttonStart.style.cssText =
+                'display: inline-block; opacity: 1;'
+        }, 100)
+        isStarted = false
+        document.querySelector('#qrCode').innerText = ''
+        const codeQr = document.querySelector('#qrCode')
+        codeQr.style.cssText =
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            codeQr.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
+        
+        resetLoadingBar()
     }
 }
 
 //tarefas bot frontend 
 //em desenvolvimento...
-    //mandar certo os nomes certos dos json selecionado e client
-    //ao usar qualquer funcao colocar o client no lugar do CHATDATA da lista
-    //melhoras o tempo e utilizacao dos staus multi client e mais
-    //melhorar o visual do texto no console, adiciona strong italic talves cores a palavras e tals
-    //fazer do id do name um array a cada novo adiciona um e se for apagar apaga e se um novo adionar do que tiver vazio na ordem de 1 a 10 e vai indo se tiver o numero que apago mais um ou menos um ent ser ouotro, o contrario no caso se n tiver sla oq
-    
+
+
 //a desenvolver...
+    //?//melhoras o tempo e utilizacao dos status multi client e mais?
     //arrumar meios de as coisas serem automaticas funcoes acionarem de acordo com certar coisas inves de prever todo cenario possivel em varias funcoes
     //talves algum dia fazer ums sistema frontend de commands igual no backend com requesicao http usando as funcoes padrao de funcao do backend e tals
     //?//arrumar meios de n precisar dessas variaveis permanentes, ou pelo menos diminuir muito?
     //?//melhorar o problema de de vez em quando o a barra de loading do start n funciona direito?
-    //funcoes multi instancias...
     //coisa de design... o border bottom do #divNewClient n ta aparecendo seila
-    //usa websocket pra salvar numa var o client atual do back e os caralho inves de pega por dentro das funcao, fazer algo global sla, mas pode ser incerto ent sla kkk
     //melhora o sistema de local storage dos q tem
