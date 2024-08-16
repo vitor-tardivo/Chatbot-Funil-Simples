@@ -6,6 +6,7 @@ html, body {
     height: 100%;
     margin: 0;
     overflow: hidden;
+    transition: var(--configTrasition03s);
 }
 
 /* LOADING BAR STYLIZATION */
@@ -46,6 +47,7 @@ html, body {
 header {
     margin-bottom: 0px;
     z-index: 9000;
+    transition: var(--configTrasition03s);
 }
 #appVersion {
     color: var(--colorInteractionElements);
@@ -60,6 +62,7 @@ main {
     /*flex-direction: column;*/
     height: 100%;
     overflow: hidden;
+    transition: var(--configTrasition03s);
 }
 
 #articleConsole {
@@ -67,12 +70,32 @@ main {
     flex-direction: row;
     box-sizing: border-box;
     z-index: 8000;
+    transition: var(--configTrasition03s);
 }
 #functionsConsole {
     display: flex;
     flex-direction: row;
     justify-content: center;
     background-color: #2b2b2b00;
+    transition: var(--configTrasition03s);
+}
+.functionsDiv {
+    margin: 0vw 1vw 0vw 1vw;
+    padding: 7px;
+    font-size: 1vw;
+    font-family: var(--fontMonoSerif);
+    font-weight: bold;
+    z-index: 8000;
+    transition: var(--configTrasition03s);
+}
+.functionsDivStart {
+    margin: 0vw 2vw 0vw 0vw;
+    padding: 7px;
+    font-size: 1vw;
+    font-family: var(--fontMonoSerif);
+    font-weight: bold;
+    z-index: 8000;
+    transition: var(--configTrasition03s);
 }
 #clearConsole {
     background-color: var(--colorWhite);
@@ -83,12 +106,6 @@ main {
     cursor: pointer;
     pointer-events: unset;
     opacity: 1;
-    transition: var(--configTrasition03s);
-    padding: 7px;
-    margin: 0vw 1vw 0vw 1vw;
-    font-size: 1vw;
-    font-family: var(--fontMonoSerif);
-    font-weight: bold;
     z-index: 8000;
     transition: var(--configTrasition03s);
 }
@@ -133,6 +150,7 @@ main {
     padding: 30px 15px 30px 15px;
     height: 100%;
     overflow: auto;
+    transition: var(--configTrasition03s);
 }
 #log {
     display: flex;
@@ -152,6 +170,7 @@ main {
 }
 .sobTextColor {
     color: var(--colorInteractionElements);
+    transition: var(--configTrasition03s);
 }
 #commandSendInput {
     display: flex;
@@ -164,6 +183,7 @@ main {
 #divSend {
     flex: 0 1 auto;
     box-sizing: border-box;
+    transition: var(--configTrasition03s);
 }
 #commandSend {
     display: flex;
@@ -195,6 +215,7 @@ main {
 #divInput {
     flex: 1 1 auto;
     box-sizing: border-box;
+    transition: var(--configTrasition03s);
 }
 #commandInput {
     background-color: #2b2b2b;
@@ -217,6 +238,7 @@ main {
     height: 100%;
     background-color: #2b2b2b;
     box-shadow: 2px 2px 10px var(--colorShadow);
+    transition: var(--configTrasition03s);
 }
 /*#contentHide {
     transition: var(--configTrasition03s);
@@ -263,6 +285,7 @@ main {
     max-width: 100%;
     z-index: 1000;
     overflow: hidden;
+    transition: var(--configTrasition03s);
 }
 #innerContent {
     display: inline-block;
@@ -282,10 +305,12 @@ main {
     transition: var(--configTrasition03s);
     padding: 0px 30px 30px 30px;
     overflow: auto;
+    transition: var(--configTrasition03s);
 }
 .divs {
     display: block;
     max-width: 100%;
+    transition: var(--configTrasition03s);
 }
 #divFunctions {
     display: flex;
@@ -293,14 +318,6 @@ main {
     justify-content: center;
     background-color: var(--colorContrast);
     border-bottom: 2px solid var(--colorBlack);
-}
-.functionsDiv {
-    margin: 0vw 1vw 0vw 1vw;
-    padding: 7px;
-    font-size: 1vw;
-    font-family: var(--fontMonoSerif);
-    font-weight: bold;
-    z-index: 8000;
     transition: var(--configTrasition03s);
 }
 #reload {
@@ -411,6 +428,7 @@ main {
     flex-direction: row;
     align-items: center;
     /*?*/
+    transition: var(--configTrasition03s);
 }
 .Clients_ {
     display: inline;
@@ -551,6 +569,7 @@ main {
     justify-content: center;
     align-items: center;
     margin-top: 30px;
+    transition: var(--configTrasition03s);
 }
 #start {
     display: inline-block;
@@ -610,14 +629,22 @@ main {
     border: 2px solid var(--colorInteractionElements);
 }
 
+#listTable {
+    display: none;
+    margin-top: 10px;
+    margin-bottom: 22px;
+    opacity: 0;
+    transition: var(--configTrasition03s)
+}
 #divButtonList {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    transition: var(--configTrasition03s);
 }
 #list {
-    display: none;
+    display: inline-block;
     background-color: var(--colorWhite);
     color: var(--colorBlack);
     border: 2px solid var(--colorBlack);
@@ -627,7 +654,7 @@ main {
     word-break: break-word;
     cursor: pointer;
     transform: translate(0px, -10px);
-    opacity: 0;
+    opacity: 1;
     transition: var(--configTrasition03s);
 }
 #list:hover {
@@ -650,7 +677,7 @@ main {
 }
 
 #listChatData {
-    display: none;
+    display: inline-block;
     width: 100%;
     box-shadow: 2px 2px 10px var(--colorShadow);
     border-top: 1px solid var(--colorBlack);
@@ -659,7 +686,7 @@ main {
     border-bottom: 1px solid var(--colorBlack);
     margin-top: 10px;
     margin-bottom: 10px;
-    opacity: 0;
+    opacity: 1;
     transition: var(--configTrasition03s);
 }
 #divInputList {
@@ -695,6 +722,7 @@ main {
 #divSendList {
     flex: 0 1 auto;
     box-sizing: border-box;
+    transition: var(--configTrasition03s);
 }
 #sendSearchList {
     display: flex;
@@ -727,6 +755,7 @@ main {
 #divEraseSearchList {
     flex: 0 1 auto;
     box-sizing: border-box;
+    transition: var(--configTrasition03s);
 }
 #eraseSearchList {
     display: flex;
@@ -786,6 +815,7 @@ thead {
 .tableTitle {
     position: sticky;
     top: -0.1px;
+    transition: var(--configTrasition03s);
 }
 th {
     background-color: var(--colorContrastOpacity);
@@ -805,12 +835,15 @@ th {
 tbody {
     border-top: 0px solid var(--colorBlack);
     border-bottom: 1px solid var(--colorBlack);
+    transition: var(--configTrasition03s);
 }
 tbody > tr:nth-child(even) td {
     background-color: rgb(39, 39, 39);
+    transition: var(--configTrasition03s);
 }
 tbody > tr:nth-child(odd) td {
     background-color: rgb(56, 56, 56);
+    transition: var(--configTrasition03s);
 }
 thead > tr > td {
     background-color: rgb(56, 56, 56);
@@ -847,9 +880,10 @@ td {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    transition: var(--configTrasition03s);
 }
 #erase {
-    display: none;
+    display: inline-block;
     background-color: var(--colorWhite);
     color: var(--colorBlack);
     border: 2px solid var(--colorBlack);
@@ -860,7 +894,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     transform: translate(0px, 10px);    
-    opacity: 0;
+    opacity: 1;
     transition: var(--configTrasition03s);
 }
 #erase:hover {
@@ -884,12 +918,289 @@ td {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
-#h2Funil {
-    color: var(--colorWhite);
+    align-items: start;
+    background-color: var(--colorContrast);
+    box-shadow: 2px 2px 10px var(--colorShadow);
+    border: 1px solid var(--colorBlack);
+    box-sizing: border-box;
     word-break: break-word;
+    width: 100vw;
+    transition: var(--configTrasition03s);
+}
+#divInnerFunil {
+    width: 100%;
+    transition: var(--configTrasition03s);
+}
+#divFunilFunctions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    word-break: break-word;
+    transition: var(--configTrasition03s);
+}
+#OnOffScheduleErase {
+    background-color: var(--colorContrast);
+    /*background-color: var(--colorGreen);*/
+    /*background-color: var(--colorRed);*/
+    color: var(--colorInteractionElements);
+    /*color: var(--colorBlack);*/
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: help;
+    /*cursor: pointer;*/
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+#OnOffScheduleErase:hover {
+    border: 2px solid var(--colorWhite);
+}
+#OnOffScheduleErase:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+#OnOffScheduleErase:focus {
+    border: 2px solid var(--colorWhite);
+}
+#divCreateFunctionFunil {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-top: 3.6px solid var(--colorBlack);
+    padding: 20px;
+    box-sizing: border-box;
+    word-break: break-word;
+    transition: var(--configTrasition03s);
+}
+#titleFunil {
+    color: var(--colorWhite);
+    font-size: 2.5vw;
+    font-family: var(--fontDisplay);
+    margin-bottom: 30px;
+    transition: var(--configTrasition03s);
+}
+.delayTypeMSG {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    border: 2px solid var(--colorBlack);
+    padding-bottom: 5px;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    width: 100%;
+    transition: var(--configTrasition03s);
+}
+.delayTitle {
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: default;
+    transition: var(--configTrasition03s);
+}
+.delayTime {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    padding-top: 1px;
+    margin-right: 10px;
+    width: 3.5em;
+    font-size: 1.3vw;
+    font-family: var(--fontConsole);
+    transition: var(--configTrasition03s);
+}
+.delayTime:hover {
+    border: 1px solid var(--colorWhite);
+}
+.delayTime:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
+.delayLabelSeconds {
+    color: var(--colorInteractionElements);
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayLabelSeconds:hover {
+    color: var(--colorWhite);
+}
+.delayRadioSeconds {
+    margin-right: 10px;
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayLabelMinutes {
+    color: var(--colorInteractionElements);
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayLabelMinutes:hover {
+    color: var(--colorWhite);
+}
+.delayRadioMinutes {
+    margin-right: 10px;
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayLabelDays:hover {
+    color: var(--colorWhite);
+}
+.delayLabelHours {
+    color: var(--colorInteractionElements);
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayLabelHours:hover {
+    color: var(--colorWhite);
+}
+.delayRadioHours {
+    margin-right: 10px;
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayLabelDays {
+    color: var(--colorInteractionElements);
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayLabelDays:hover {
+    color: var(--colorWhite);
+}
+.delayRadioDays {
+    margin-right: 10px;
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.textAreaTypeMSG {
+    background-color: rgb(54, 54, 54);  
+    color: rgb(240, 240, 240);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    border: 2px solid var(--colorBlack);
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    word-break: break-word;
+    max-width: 100%;
+    width: 100%;
+    /*width: 43.65em;*//*PC Full screen vertical*/
+    /*width: 23.35em;*//*Phone Full screen vertical*/
+    line-height: 1.2em;
+    padding: 6px;
+    font-size: 1vw;
+    font-family: Helvetica;
+    transition: var(--configTrasition03s);
+}
+.textAreaTypeMSG:hover {
+    border: 2px solid rgb(54, 54, 54);
+}
+.textAreaTypeMSG:focus-within {
+    border: 2px solid rgb(54, 54, 54);
+    outline: 2px solid rgb(54, 54, 54);
+}
+.fileTypeDropZoneMSG {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(230, 230, 230, 0.10);
+    color: var(--colorWhite);
+    border: 2px dashed var(--colorWhite);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    height: 200px;
+    font-size: 1.3vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.fileTypeDropZoneMSG:hover {
+    background-color: rgba(230, 230, 230, 0.400);
+}
+.fileTypeDropZoneMSG.dragenter {
+    background-color: rgba(230, 230, 230, 0.400);
+    cursor: cell;
+}
+#fileName {
+    font-family: var(--fontMonoSerif);
+    font-size: 1vw;
+    transition: var(--configTrasition03s);
+}
+#fileTypeMSGAux {
+    display: none;
+    transition: var(--configTrasition03s);
+}
+/*#fileTypeMSGAux {//pra o input file no caso
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 50px;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    word-break: break-word;
+    font-size: 1vw;
+    font-family: var(--fontMonoSerif);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+#fileTypeMSGAux:hover {
+    border: 2px solid var(--colorWhite);
+}
+#fileTypeMSGAux:active {
+    border-radius: 0px;
+    transition: 0s;
+}
+#fileTypeMSGAux:focus {
+    border: 2px solid var(--colorWhite);
+}*/
+#addTypeMSG {
+    background-color: rgba(230, 230, 230, 0.5);
+    color: var(--colorBlack);
+    border: 2px solid var(--colorBlack);
+    border-radius: 50px;
+    padding: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    word-break: break-word;
+    width: 100%;
+    font-size: 2vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+#addTypeMSG:hover {
+    color: var(--colorWhite);
+}
+#addTypeMSG:active {
+    border-radius: 0px;
+    color: var(--colorWhite);
+    border: 2px solid var(--colorWhite);
+    transition: color var(--configTrasition03s), border var(--configTrasition03s), 0s;
+}
+#addTypeMSG:focus {
+    border: 2px solid var(--colorWhite);
 }
 
 /* FOOTER STYLIZATION */
@@ -913,6 +1224,7 @@ footer {
 /* CREDITS STYLIZATION */
 #credits {
     padding: 7px 0px 0px 0px;
+    transition: var(--configTrasition03s);
 }
 #linkCredits {
     color: var(--colorWhite);

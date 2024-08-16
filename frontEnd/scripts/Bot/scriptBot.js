@@ -1,56 +1,6 @@
 //scriptBot.js frontEnd
 
-function isMobile() {//IDENTIFY IF THE USER IS FROM A PHONE
-    try {    
-        const userAgent = navigator.userAgent
-        return /Mobi|Android|iPhone|iPod|iPad|Windows\sPhone|Windows\sCE|BlackBerry|BB10|IEMobile|Opera\sMini|Mobile\sSafari|webOS|Mobile|Tablet|CriOS/i.test(userAgent)
-    } catch(error) {
-        console.error(`> ⚠️ ERROR isMobile: ${error}`)
-        displayOnConsole(`> ⚠️ <i><i><strong>ERROR</strong></i></i> isMobile: ${error.message}`, setLogError)
-    }
-}
-
-window.onload = function(event) {
-    try {
-        axios.get('/reload')
-    } catch(error) {
-        console.error(`> ⚠️ ERROR onload: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> onload: ${error.message}`, setLogError)
-    }
-}
-window.onbeforeunload = function(event) {
-    try {    
-        event.preventDefault()
-    } catch(error) {
-        console.error(`> ⚠️ ERROR onbeforeunload: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> onbeforeunload: ${error.message}`, setLogError)
-    }
-}
-
-function displayOnConsole(message, setLogError) {
-    try {
-        const logElement = document.createElement('div')
-        logElement.innerHTML = `${message}`
-        if (setLogError) {
-            logElement.style.cssText =
-                'color: var(--colorRed)'
-        }
-        document.querySelector('#log').appendChild(logElement)
-        autoScroll()
-    } catch(error) {
-        console.error(`> ⚠️ ERROR displayOnConsole: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> displayOnConsole: ${error.message}`, setLogError)
-    }
-}
-
-function sleep(time) {
-    try {
-        return new Promise((resolve) => setTimeout(resolve, time))
-    } catch(error) {
-        console.error(`> ⚠️ ERROR sleep: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> sleep: ${error.message}`, setLogError)
-    }
-}
+let userAgent = null
 
 let wss = null
 
@@ -60,9 +10,9 @@ let isDisconected = false
 
 let isFromTerminal = false
 
-let isVisibleList = null
+let isTableHidden = null
 
-let isVisibleHideButton = null
+let isConsoleHidden = null
 
 let isExceeds = true 
 
@@ -87,29 +37,59 @@ let isStarted = false
 let nameApp = null
 let versionApp = null
 
+function isMobile() {//IDENTIFY IF THE USER IS FROM A PHONE
+    try {    
+        userAgent = navigator.userAgent
+        return /Android|iPhone|iPad|Windows\sPhone|Windows\sCE|Mobile\sSafari|webOS|Mobile|Tablet/i.test(userAgent)
+    } catch(error) {
+        console.error(`> ⚠️ ERROR isMobile: ${error}`)
+        displayOnConsole(`> ⚠️ <i><i><strong>ERROR</strong></i></i> isMobile: ${error.message}`, setLogError)
+    }
+}
+
+window.onerror = function(event) {
+    console.error(`> ❌ Uncaught Exception: ${event}`)
+    displayOnConsole(`> ❌ Uncaught Exception: ${event}`, setLogError)
+}
+window.onload = function(event) {
+    try {
+        axios.get('/reload')
+    } catch(error) {
+        console.error(`> ⚠️ ERROR onload: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> onload: ${error.message}`, setLogError)
+    }
+}
+window.onbeforeunload = function(event) {
+    try {    
+        event.preventDefault()
+    } catch(error) {
+        console.error(`> ⚠️ ERROR onbeforeunload: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> onbeforeunload: ${error.message}`, setLogError)
+    }
+}
 document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA QUERY PHONE AND ELSE
     try {
         if (isMobile()) {
-            console.log('User is from a Phone.')
+            console.log(`User is from a Phone(${userAgent}).`)
             
             var link = document.createElement('link')
             link.rel = 'stylesheet'
             link.href = '../styles/Bot/mediaQueryBot.css'
             document.head.appendChild(link)
         } else {
-            console.log('User is from a Desktop.')
+            console.log(`User is from a Desktop(${userAgent}).`)
         }
 
         const response = await axios.get('/app-data')
         const Bot_Name = response.data.name
         const dataName = document.querySelector('#appName')
         nameApp = `${Bot_Name.toUpperCase()}`
-        dataName.textContent = nameApp
+        document.title = `Inicie o ${nameApp || 'BOT'}`
+        dataName.textContent = nameApp || 'BOT'
         const Version_ = response.data.version
         const dataVersion = document.querySelector('#appVersion')
-        versionApp = 'v' +`${Version_}`
+        versionApp = 'v' +`${Version_ || '?.?.?'}`
         dataVersion.textContent = versionApp
-
 
         const response2 = await axios.get('/what-stage')
         const stage = response2.data.data
@@ -181,78 +161,12 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         }
         })
 
-        loadConsoleStyles()
+        await loadConsoleStyles()
     } catch (error) {
         console.error(`> ⚠️ ERROR DOMContentLoaded: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> DOMContentLoaded: ${error.message}`, setLogError)
     }
 })
-
-//Patterns for Miliseconds times:
-// Formated= 1 \ * 24 * 60 * 60 * 1000 = 1-Day
-// Formated= 1 \ * 60 * 60 * 1000 = 1-Hour
-// Formated= 1 \ * 60 * 1000 = 1-Minute
-// Formated= 1 \ * 1000 = 1-Second
-
-/*window.onscroll = function() { scrollFunction() }// CALL FUNCTION FOR HEADER AND FOOTER CUSTOMS
-
-function scrollFunction() {// SHOW THE SCROLLS BUTTONS AND FOOTER
-    let head = document.querySelector('header')
-    
-    if (window.scrollY > 35) {
-        head.style.cssText =
-            'border-radius: 0px 0px 0px 0px'
-    } else {
-        head.style.cssText =
-            'border-radius: 0px 0px 50px 0px'
-    }
-
-    let foot = document.querySelector('footer')
-    let lO = document.querySelector('#linklOuKo')
-    
-    if (document.body.scrollHeight - (window.scrollY + window.innerHeight) < 27) {
-        foot.style.cssText =
-            'opacity: 1 visibility: visible border-radius: 0px 50px 0px 0px'
-
-        lO.style.cssText =
-            'pointer-events: unset'
-    } else {
-        foot.style.cssText =
-            'opacity: 1 visibility: visible border-radius: 0px 0px 0px 0px'
-
-        lO.style.cssText =
-            'pointer-events: none'
-    }
-}*/
-function autoScroll() {
-    try {
-        const consoleLog = document.querySelector('#divLog')
-        const currentScroll = consoleLog.scrollTop
-        const targetScroll = consoleLog.scrollHeight - consoleLog.clientHeight
-        const scrollDifference = targetScroll - currentScroll
-        const duration = 300
-
-        let startTime
-
-        function scrollStep(timestamp) {
-            if (!startTime) {
-                startTime = timestamp
-            }
-
-            const progress = Math.min((timestamp - startTime) / duration, 1)
-            consoleLog.scrollTop = currentScroll + scrollDifference * progress
-
-            if (progress < 1) {
-                requestAnimationFrame(scrollStep)
-            }
-        }
-
-        requestAnimationFrame(scrollStep)
-    } catch(error) {
-        console.error(`> ⚠️ ERROR autoScroll: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> autoSroll: ${error.message}`, setLogError)
-    }
-}
 
 function reconnectWebSocket() {
     try {
@@ -287,7 +201,7 @@ async function webSocket() {
         let reloadAbbr = document.querySelector('#abbrReload')
 
         wss.onopen = function(event) {
-            console.log(`> ✅ Conectado Usuario ao <strong>WebSocket</strong>: `, event)
+            console.log(`> ✅ Conectado Usuario ao WebSocket: `, event)
             displayOnConsole(`> ✅ Conectado <strong>Usuario</strong> ao <strong>WebSocket</strong>: ${event}`)
             reloadButton.style.cssText =
                 'color: var(--colorContrast); background-color: var(--colorGreen); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
@@ -300,7 +214,7 @@ async function webSocket() {
             resetLoadingBar()
         }
         wss.onclose = function(event) {
-            console.log(`> ⚠️ Desconectado Usuario do <strong>WebSocket</strong>: `, event)
+            console.log(`> ⚠️ Desconectado Usuario do WebSocket: `, event)
             displayOnConsole(`> ⚠️ Desconectado <strong>Usuario</strong> do <strong>WebSocket</strong>: ${event}`, setLogError)
             reloadButton.style.cssText =
                 'color: var(--colorContrast); background-color: var(--colorOrange); cursor: not-allowed; pointer-events: none; opacity: 0.5;'
@@ -315,7 +229,7 @@ async function webSocket() {
             resetLoadingBar()
         }
         wss.onerror = function(event) {
-            console.error(`> ❌ ERROR ao reconectar Usuario ao <strong>WebSocket</strong>: `, event)
+            console.error(`> ❌ ERROR ao reconectar Usuario ao WebSocket: `, event)
             displayOnConsole(`> ❌ <i><strong>ERROR</strong></i> ao reconectar <strong>Usuario</strong> ao <strong>WebSocket</strong>: ${event}`, setLogError)
             setTimeout(function() {
                 reloadButton.style.cssText =
@@ -442,8 +356,7 @@ async function handleWebSocketData(dataWebSocket) {
             break
         case 'select':
             const Client______ = dataWebSocket.client
-            let isReadySelect = false
-            await selectClient_(isReadySelect, Client______)
+            await selectClient_(Client______)
             break
         case 'new':
             newClients()
@@ -547,7 +460,9 @@ async function exit(exitInten) {
         mainContent.style.cssText =
             'display: inline-block;'
 
-        isVisibleHideButton = null
+        isConsoleHidden = null
+
+        isTableHidden = null
         let listShow = document.querySelector('#showList')
         let listShowAbbr = document.querySelector('#abbrShowList')
         listShow.style.cssText = 
@@ -556,7 +471,15 @@ async function exit(exitInten) {
             listShow.style.cssText =
                 'display: none; background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0;'
         }, 300)
+        listShow.textContent = '-O'
         listShowAbbr.title = `STATUS Lista: null`
+        const list = document.querySelector('#listTable')
+        list.style.cssText =
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            list.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
 
         const status = document.querySelector('#status')
         if (exitInten) {
@@ -588,29 +511,6 @@ async function exit(exitInten) {
         newClientDiv.style.cssText = 'display: flex; opacity: 0;' 
         setTimeout(() => newClientDiv.style.cssText = 'display: none; opacity: 0;', 100)
         document.querySelector('#Clients_').innerHTML = ''
-
-        isVisibleList = null
-        const listButton = document.querySelector('#list')
-        listButton.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            listButton.style.cssText =
-                'display: none; opacity: 0;'
-        }, 300)
-        let tableList = document.querySelector('#listChatData')
-        tableList.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            tableList.style.cssText =
-                'display: none; opacity: 0;'
-        }, 300)
-        let eraseButton = document.querySelector('#erase')
-        eraseButton.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            eraseButton.style.cssText =
-                'display: none; opacity: 0;'
-        }, 300)
 
         resetLoadingBar()
     } catch(error) {
@@ -700,28 +600,31 @@ async function ready(Client_) {
             const Directories_ = response.data.dirs
             
             if (Directories_.length-1 === -1) {
-                displayOnConsole(`> ⚠️ <strong>Dir</strong> off Clients_ <strong>(${Directories_.length-1})</strong> is <strong>empty</strong>.`)
-
+                displayOnConsole(`> ⚠️ <strong>Dir</strong> Clients_ (<strong>${Directories_.length}</strong>) is <strong>empty</strong>.`)
+                
                 let exitInten = true
                 await exit(exitInten)
             } else {
+                displayOnConsole(`>  ℹ️  <strong>Dir</strong> Clients_ has (<strong>${Directories_.length}</strong>) loading <strong>ALL</strong>...`)
                 let Counter_Clients_ = 0
                 for (let i = -1; i < Directories_.length-1; i++) {
                     Client_NotReady = true
                     await insertClient_Front(Directories_[Counter_Clients_])
                     await selectClient_(Directories_[Counter_Clients_])
+                    
                     Counter_Clients_++
                 }
+                displayOnConsole(`> ✅ <strong>Dir</strong> Clients_ loaded <strong>ALL</strong> (<strong>${Directories_.length}</strong>).`)
             }
         } else {
             isAlreadyDir = false
         }
 
-        loadTableStyles()
+        await loadTableStyles()
 
         isFromNew = false 
         
-        document.title = `${nameApp} ${Client_} pronto`
+        document.title = `${nameApp || 'BOT'} ${Client_} pronto`
 
         resetLoadingBar()
     } catch(error) {
@@ -750,7 +653,10 @@ async function authFailure() {
         const mainContent = document.querySelector('#innerContent')
         mainContent.style.cssText =
             'display: inline-block;'
+        
+        isConsoleHidden = null
 
+        isTableHidden = null
         let listShow = document.querySelector('#showList')
         let listShowAbbr = document.querySelector('#abbrShowList')
         listShow.style.cssText = 
@@ -759,9 +665,16 @@ async function authFailure() {
             listShow.style.cssText =
                 'display: none; background-color: var(--colorContrast); color: var(--colorInteractionElements); cursor: help; pointer-events: none; opacity: 0;'
         }, 300)
+        listShow.textContent = '-O'
         listShowAbbr.title = `STATUS Lista: null`
+        const list = document.querySelector('#listTable')
+        list.style.cssText =
+            'display: inline-block; opacity: 0;'
+        setTimeout(function() {
+            list.style.cssText =
+                'display: none; opacity: 0;'
+        }, 300)
 
-        isVisibleHideButton = null
 
         if (!isFromNew) {
             let buttonStart = document.querySelector('#start')
@@ -788,29 +701,6 @@ async function authFailure() {
         setTimeout(() => newClientDiv.style.cssText = 'display: none; opacity: 0;', 100)
         document.querySelector('#Clients_').innerHTML = ''
 
-        isVisibleList = null
-        const listButton = document.querySelector('#list')
-        listButton.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            listButton.style.cssText =
-                'display: none; opacity: 0;'
-        }, 300)
-        let tableList = document.querySelector('#listChatData')
-        tableList.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            tableList.style.cssText =
-                'display: none; opacity: 0;'
-        }, 300)
-        let eraseButton = document.querySelector('#erase')
-        eraseButton.style.cssText =
-            'display: inline-block; opacity: 0;'
-        setTimeout(function() {
-            eraseButton.style.cssText =
-            'display: none; opacity: 0;'
-        }, 300)
-
         resetLoadingBar()
     } catch(error) {
         document.title = 'ERROR'
@@ -820,7 +710,206 @@ async function authFailure() {
     }
 }
 
-function clsConsole() {
+//Patterns for Miliseconds times:
+// Formated= 1 \ * 24 * 60 * 60 * 1000 = 1-Day
+// Formated= 1 \ * 60 * 60 * 1000 = 1-Hour
+// Formated= 1 \ * 60 * 1000 = 1-Minute
+// Formated= 1 \ * 1000 = 1-Second
+
+function sleep(time) {
+    try {
+        return new Promise((resolve) => setTimeout(resolve, time))
+    } catch(error) {
+        console.error(`> ⚠️ ERROR sleep: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> sleep: ${error.message}`, setLogError)
+    }
+}
+
+function displayOnConsole(message, setLogError) {
+    try {
+        const logElement = document.createElement('div')
+        logElement.innerHTML = `${message}`
+        if (setLogError) {
+            logElement.style.cssText =
+                'color: var(--colorRed)'
+        }
+        document.querySelector('#log').appendChild(logElement)
+        autoScroll()
+    } catch(error) {
+        console.error(`> ⚠️ ERROR displayOnConsole: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> displayOnConsole: ${error.message}`, setLogError)
+    }
+}
+
+async function saveTableStyles() {
+    try {
+        localStorage.setItem('tableStyles', JSON.stringify({
+            tableStateHidden: isTableHidden
+        }))
+    } catch (error) {
+        console.error(`> ⚠️ ERROR saveTableStyles: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> saveTableStyles: ${error.message}`, setLogError)
+    }
+}
+async function loadTableStyles() {
+    try {
+        const savedStylesTable = JSON.parse(localStorage.getItem('tableStyles'))
+        if (savedStylesTable) {
+            isTableHidden = savedStylesTable.tableStateHidden
+        }
+        await showTableList()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR loadConsoleStyles: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> loadConsoleStyles: ${error.message}`, setLogError)
+    }
+}
+async function showTableList() {
+    if (ChatDataNotReady) {
+        displayOnConsole('>  ℹ️ <strong>showTableList</strong> not Ready.', setLogError)
+        return
+    }
+    try {
+        const listShow = document.querySelector('#showList')
+        const listShowAbbr = document.querySelector('#abbrShowList')
+        const list = document.querySelector('#listTable')
+        
+        if (isTableHidden === null || undefined) {
+            isTableHidden = true 
+        }
+
+        if (isTableHidden) {
+            listShow.style.cssText = 
+                'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
+            listShow.textContent = '-'
+            listShowAbbr.title = `STATUS Lista: visivel`
+            
+            list.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                list.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
+
+            /*listButton.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                listButton.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
+            tableList.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                tableList.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)
+            eraseButton.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                eraseButton.style.cssText =
+                    'display: inline-block; opacity: 1;'
+            }, 100)*/
+            
+            await saveTableStyles()
+            isTableHidden = false
+            isHideAP = false
+        } else {
+            listShow.style.cssText = 
+                'display: inline-block; background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
+            listShow.textContent = 'O'
+            listShowAbbr.title = `STATUS Lista: escondido`
+            
+            list.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                list.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
+
+            /*listButton.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                listButton.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
+            tableList.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                tableList.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
+            eraseButton.style.cssText =
+                'display: inline-block; opacity: 0;'
+            setTimeout(function() {
+                eraseButton.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)*/
+
+            await saveTableStyles()
+            isTableHidden = true
+            isHideAP = true
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR showTableList: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> showTableList: ${error.message}`, setLogError)
+    }
+}
+
+async function saveConsoleStyles() {
+    try {
+        localStorage.setItem('consoleStyles', JSON.stringify({
+            consoleStateHidden: isConsoleHidden
+        }))
+    } catch (error) {
+        console.error(`> ⚠️ ERROR saveConsoleStyles: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> saveConsoleStyles: ${error.message}`, setLogError)
+    }
+}
+async function loadConsoleStyles() {
+    try {
+        const savedStylesConsole = JSON.parse(localStorage.getItem('consoleStyles'))
+        if (savedStylesConsole) {
+            isConsoleHidden = savedStylesConsole.consoleStateHidden   
+        }
+        await hideConsole()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR loadConsoleStyles: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> loadConsoleStyles: ${error.message}`, setLogError)
+    }
+}
+async function hideConsole() {
+    try {
+        const consoleElement = document.querySelector('#console')
+        const buttonHideConsole = document.querySelector('#hideConsole')
+        const titleHideConsole = document.querySelector('#titleHide')
+    
+        if (isConsoleHidden === null || undefined) {
+            isConsoleHidden = false
+        }
+        
+        if (isConsoleHidden) {    
+            consoleElement.style.cssText =
+                'width: 30.62vw;'
+            buttonHideConsole.textContent = `◀`
+            titleHideConsole.title = `Esconder o Terminal`
+        
+            await saveConsoleStyles()
+            isConsoleHidden = false
+        } else {
+            consoleElement.style.cssText = 
+                'width: 0vw;' 
+            buttonHideConsole.textContent = `▶`
+            titleHideConsole.title = `Mostrar o Terminal`
+           
+            await saveConsoleStyles()
+            isConsoleHidden = true
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR hideConsole: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> hideConsole: ${error.message}`, setLogError)
+    }
+}
+
+async function clsConsole() {
     try {
         displayOnConsole(`cls/clear`)
         document.querySelector('#log').innerHTML = ''
@@ -830,304 +919,64 @@ function clsConsole() {
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> clsConsole: ${error.message}`, setLogError)
     }
 }
-function saveTableStyles() {
-    try {
-        /*const consoleElement = document.querySelector('#console')
-        const buttonHideConsole = document.querySelector('#hideConsole')
-        const titleHideConsole = document.querySelector('#titleHide')*/
 
+/*window.onscroll = function() { scrollFunction() }// CALL FUNCTION FOR HEADER AND FOOTER CUSTOMS
 
-        const listButton = document.querySelector('#list')
-        const tableList = document.querySelector('#listChatData')
-        const eraseButton = document.querySelector('#erase')
-
-        const listShow = document.querySelector('#showList')
-        const listShowAbbr = document.querySelector('#abbrShowList')
-
-        localStorage.setItem('tableStyles', JSON.stringify({
-            /*width: consoleElement.style.width,
-            title: titleHideConsole.title,
-            textContent: buttonHideConsole.textContent,
-            isVisibleHideButton: isVisibleHideButton*/
-
-
-            listButtonCssText: listButton.style.cssText,
-            tableListCssText: tableList.style.cssText,
-            eraseButtonCssText: eraseButton.style.cssText,
-            listShowCssText: listShow.style.cssText,
-            listShowAbbrTitle: listShowAbbr.title,
-            isVisibleList: isVisibleList
-        }))
-    } catch (error) {
-        console.error(`> ⚠️ ERROR saveTableStyles: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> saveTableStyles: ${error.message}`, setLogError)
+function scrollFunction() {// SHOW THE SCROLLS BUTTONS AND FOOTER
+    let head = document.querySelector('header')
+    
+    if (window.scrollY > 35) {
+        head.style.cssText =
+            'border-radius: 0px 0px 0px 0px'
+    } else {
+        head.style.cssText =
+            'border-radius: 0px 0px 50px 0px'
     }
-}
-function loadTableStyles() {
+
+    let foot = document.querySelector('footer')
+    let lO = document.querySelector('#linklOuKo')
+    
+    if (document.body.scrollHeight - (window.scrollY + window.innerHeight) < 27) {
+        foot.style.cssText =
+            'opacity: 1 visibility: visible border-radius: 0px 50px 0px 0px'
+
+        lO.style.cssText =
+            'pointer-events: unset'
+    } else {
+        foot.style.cssText =
+            'opacity: 1 visibility: visible border-radius: 0px 0px 0px 0px'
+
+        lO.style.cssText =
+            'pointer-events: none'
+    }
+}*/
+function autoScroll() {
     try {
-        const savedStyles = localStorage.getItem('tableStyles')
-        if (savedStyles) {
-            const parsedStyles = JSON.parse(savedStyles)
-            /*const consoleElement = document.querySelector('#console')
-            const buttonHideConsole = document.querySelector('#hideConsole')
-            const titleHideConsole = document.querySelector('#titleHide')*/
+        const consoleLog = document.querySelector('#divLog')
+        const currentScroll = consoleLog.scrollTop
+        const targetScroll = consoleLog.scrollHeight - consoleLog.clientHeight
+        const scrollDifference = targetScroll - currentScroll
+        const duration = 300
 
+        let startTime
 
-            const listButton = document.querySelector('#list')
-            const tableList = document.querySelector('#listChatData')
-            const eraseButton = document.querySelector('#erase')
+        function scrollStep(timestamp) {
+            if (!startTime) {
+                startTime = timestamp
+            }
 
-            const listShow = document.querySelector('#showList')
-            const listShowAbbr = document.querySelector('#abbrShowList')
+            const progress = Math.min((timestamp - startTime) / duration, 1)
+            consoleLog.scrollTop = currentScroll + scrollDifference * progress
 
-            /*consoleElement.style.width = parsedStyles.width || '30.62vw'
-            titleHideConsole.title = parsedStyles.title || 'Esconder o Terminal'
-            buttonHideConsole.textContent = parsedStyles.textContent || '◀'
-            isVisibleHideButton = parsedStyles.isVisibleHideButton !== undefined ? parsedStyles.isVisibleHideButton : null*/
-
-
-            listButton.style.cssText = parsedStyles.listButtonCssText || 'display: inline-block; opacity: 1;' 
-            setTimeout(() => listButton.style.cssText = 'display: inline-block; opacity: 1;', 100)
-                        
-            tableList.style.cssText = parsedStyles.tableListCssText || 'display: inline-block; opacity: 1;'
-            setTimeout(() => tableList.style.cssText = 'display: inline-block; opacity: 1;', 100)
-
-            eraseButton.style.cssText = parsedStyles.eraseButtonCssText || 'display: inline-block; opacity: 1;'
-            setTimeout(() => eraseButton.style.cssText = 'display: inline-block; opacity: 1;', 100)
-
-            listShow.style.cssText = parsedStyles.listShowCssText || 'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
-            listShowAbbr.title = parsedStyles.listShowAbbrTitle || `STATUS Lista: visivel`
-
-            isVisibleList = parsedStyles.isVisibleList !== undefined ? parsedStyles.isVisibleList : null
-
-            if (isVisibleList === null) {
-                isVisibleList = true
-                showTableList()
-            } else {
-                if (isVisibleList) {
-                    /*consoleElement.style.width = '0'
-                    titleHideConsole.title = 'Mostrar o Terminal'
-                    buttonHideConsole.textContent = '▶'*/
-
-
-                    listButton.style.cssText = 'display: inline-block; opacity: 0;' 
-                    setTimeout(() => listButton.style.cssText = 'display: inline-block; opacity: 1;', 100)
-                                
-                    tableList.style.cssText = 'display: inline-block; opacity: 0;'
-                    setTimeout(() => tableList.style.cssText = 'display: inline-block; opacity: 1;', 100)
-
-                    eraseButton.style.cssText = 'display: inline-block; opacity: 0;'
-                    setTimeout(() => eraseButton.style.cssText = 'display: inline-block; opacity: 1;', 100)
-
-                    listShow.style.cssText = 'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
-                    listShowAbbr.title = `STATUS Lista: visivel`
-                    
-                    isHideAP = false
-                } else {
-                    /*consoleElement.style.width = '30.62vw'
-                    titleHideConsole.title = 'Esconder o Terminal'
-                    buttonHideConsole.textContent = '◀'*/
-
-
-                    listButton.style.cssText = 'display: inline-block; opacity: 0;' 
-                    setTimeout(() => listButton.style.cssText = 'display: none; opacity: 0;', 100)
-                                
-                    tableList.style.cssText = 'display: inline-block; opacity: 0;'
-                    setTimeout(() => tableList.style.cssText = 'display: none; opacity: 0;', 100)
-
-                    eraseButton.style.cssText = 'display: inline-block; opacity: 0;'
-                    setTimeout(() => eraseButton.style.cssText = 'display: none; opacity: 0;', 100)
-
-                    listShow.style.cssText = 'display: inline-block; background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
-                    listShowAbbr.title = `STATUS Lista: escondido`                                                   
-                    
-                    isHideAP = true      
-           }
+            if (progress < 1) {
+                requestAnimationFrame(scrollStep)
             }
         }
-    } catch (error) {
-        console.error(`> ⚠️ ERROR loadConsoleStyles: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> loadConsoleStyles: ${error.message}`, setLogError)
-    }
-}
-function showTableList() {
-    if (ChatDataNotReady) {
-        displayOnConsole('>  ℹ️ <strong>showTableList</strong> not Ready.', setLogError)
-        return
-    }
-    try {
-        const listButton = document.querySelector('#list')
-        let tableList = document.querySelector('#listChatData')
-        let eraseButton = document.querySelector('#erase')
 
-        let listShow = document.querySelector('#showList')
-        let listShowAbbr = document.querySelector('#abbrShowList')
-        
-        if (isVisibleList === null) {
-            isVisibleList = true
-        } else if (isVisibleList === true) {
-            isVisibleList = false
-        } else if (isVisibleList === false) {
-            isVisibleList = true
-        }
-        if (isVisibleList) {
-            listShow.style.cssText = 
-                'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
-            listShowAbbr.title = `STATUS Lista: visivel`
-            
-            listButton.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                listButton.style.cssText =
-                    'display: inline-block; opacity: 1;'
-            }, 100)
-            tableList.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                tableList.style.cssText =
-                    'display: inline-block; opacity: 1;'
-            }, 100)
-            eraseButton.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                eraseButton.style.cssText =
-                    'display: inline-block; opacity: 1;'
-            }, 100)
-            
-            isVisibleList = true
-            isHideAP = false
-
-            saveTableStyles()
-            return
-        }
-        if (isVisibleList !== true) {
-            listShow.style.cssText = 
-                'display: inline-block; background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
-            listShowAbbr.title = `STATUS Lista: escondido`
-            
-            listButton.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                listButton.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
-            tableList.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                tableList.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
-            eraseButton.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                eraseButton.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
-
-            isVisibleList = false
-            isHideAP = true
-
-            saveTableStyles()
-            return
-        }
-    } catch (error) {
-        console.error(`> ⚠️ ERROR showTableList: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> showTableList: ${error.message}`, setLogError)
-    }
-}
-function saveConsoleStyles() {
-    try {
-        const consoleElement = document.querySelector('#console')
-        const buttonHideConsole = document.querySelector('#hideConsole')
-        const titleHideConsole = document.querySelector('#titleHide')
-
-        localStorage.setItem('consoleStyles', JSON.stringify({
-            width: consoleElement.style.width,
-            title: titleHideConsole.title,
-            textContent: buttonHideConsole.textContent,
-            isVisibleHideButton: isVisibleHideButton
-        }))
-    } catch (error) {
-        console.error(`> ⚠️ ERROR saveConsoleStyles: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> saveConsoleStyles: ${error.message}`, setLogError)
-    }
-}
-function loadConsoleStyles() {
-    try {
-        const savedStyles = localStorage.getItem('consoleStyles')
-        if (savedStyles) {
-            const parsedStyles = JSON.parse(savedStyles)
-            const consoleElement = document.querySelector('#console')
-            const buttonHideConsole = document.querySelector('#hideConsole')
-            const titleHideConsole = document.querySelector('#titleHide')
-
-            consoleElement.style.width = parsedStyles.width || '30.62vw'
-            titleHideConsole.title = parsedStyles.title || 'Esconder o Terminal'
-            buttonHideConsole.textContent = parsedStyles.textContent || '◀'
-            isVisibleHideButton = parsedStyles.isVisibleHideButton !== undefined ? parsedStyles.isVisibleHideButton : null
-            
-            if (isVisibleHideButton === null) {
-                isVisibleHideButton = true
-                hideConsole()
-            } else {
-                if (isVisibleHideButton) {
-                    consoleElement.style.width = '0'
-                    titleHideConsole.title = 'Mostrar o Terminal'
-                    buttonHideConsole.textContent = '▶'
-                } else {
-                    consoleElement.style.width = '30.62vw'
-                    titleHideConsole.title = 'Esconder o Terminal'
-                    buttonHideConsole.textContent = '◀'
-                }
-            }
-        }
-    } catch (error) {
-        console.error(`> ⚠️ ERROR loadConsoleStyles: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> loadConsoleStyles: ${error.message}`, setLogError)
-    }
-}
-function hideConsole() {
-    try {
-        let consoleElement = document.querySelector('#console')
-    
-        let buttonHideConsole = document.querySelector('#hideConsole')
-        let titleHideConsole = document.querySelector('#titleHide')
-    
-        if (isVisibleHideButton === null) {
-            isVisibleHideButton = true
-        } else if (isVisibleHideButton === true) {
-            isVisibleHideButton = false
-        } else if (isVisibleHideButton === false) {
-            isVisibleHideButton = true
-        }
-        
-        if (isVisibleHideButton) {
-            consoleElement.style.cssText = 
-                'width: 0;'
-            
-            titleHideConsole.title = `Mostrar o Terminal`
-            buttonHideConsole.textContent = `▶`
-            /*buttonHideConsole.cssText =
-                'transform: rotate(180deg) border-left: 2px solid var(--colorBlack) border-right: 0px solid var(--colorBlack)'*/
-            isVisibleHideButton = true
-            saveConsoleStyles()
-            return
-        }
-        if (isVisibleHideButton !== true) {    
-            consoleElement.style.cssText =
-                'width: 30.62vw;'
-            
-            titleHideConsole.title = `Esconder o Terminal`
-            buttonHideConsole.textContent = `◀`
-            /*buttonHideConsole.cssText =
-                'transform: rotate(0deg) border-left: 0px solid var(--colorBlack) border-right: 2px solid var(--colorBlack)'*/
-            isVisibleHideButton = false
-            saveConsoleStyles()
-            return
-        }
-    } catch (error) {
-        console.error(`> ⚠️ ERROR hideConsole: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> hideConsole: ${error.message}`, setLogError)
+        requestAnimationFrame(scrollStep)
+    } catch(error) {
+        console.error(`> ⚠️ ERROR autoScroll: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> autoSroll: ${error.message}`, setLogError)
     }
 }
 
@@ -1162,6 +1011,245 @@ async function sendCommand() {
     } catch (error) {
         console.error(`> ⚠️ ERROR sendCommand: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> sendCommand: ${error.message}`, setLogError)
+    }
+}
+
+async function delayLimitLength(input) {
+    let inputNumberDelay = input
+
+    if (inputNumberDelay.value.length > 5) {
+        const newValue = inputNumberDelay.value.slice(0, 5)
+        inputNumberDelay.value = newValue
+    }
+}
+
+//pro sistemas de mandar arquivo, as funcoes a adicionar... um botao que deseleciona o arquivo e um pra apagar do funil o card(isso de apagar o card vai ter em todos os tipos de cards do funil) e pra poder apagar o card tera que deseleciona primeiro entao faze um esquema de desgin que no lugar do botao pra deseleciona dps de clical muda pro apagar, e tbm algum esqueme de dps de selecionar mandar enviar ele retrai o tamanho pra n ficar mt grande na tela ne e talves tirar a funcao de arrasta pra mandar ou sla, e claro em todos os card tem do lado um lugar que vc pega seleciona segurando e deixa onde na posica odo funil ele vai ficar e tals personalizavel
+async function fileTypeAction(event, isClick) {
+    document.querySelector('.fileTypeDropZoneMSG').classList.remove('dragenter')
+    document.querySelector('.fileTypeDropZoneMSG').classList.remove('dragleave')
+    const fileInput = document.querySelector('#fileTypeMSGAux')
+    const nameFile = document.querySelector('#fileName')
+    
+    let file = null
+    if (isClick) {
+        file = fileInput.files[0]
+    } else {
+        event.preventDefault()
+        event.stopPropagation()
+        
+        file = event.dataTransfer.files[0]
+    }
+
+    console.log(file)
+    if (file) {
+        const dataTransfer = new DataTransfer()
+        dataTransfer.items.add(file)
+        fileInput.files = dataTransfer.files
+
+        nameFile.textContent = `${file.name}`
+        displayOnConsole(`Arquivo: ${file.name}`)
+    } else {
+        nameFile.textContent = `...`
+        displayOnConsole(`Arquivo: ...`)
+    }
+}
+async function fileHandleDragLeave(event) {//fica ativando quando mexe rapido dentro inves de quando sai mesmo da area
+    event.preventDefault()
+    event.stopPropagation()
+
+    document.querySelector('.fileTypeDropZoneMSG').classList.remove('dragenter')
+    
+    const abbrFileZone = document.querySelector('#abbrfileDropZone')
+    abbrFileZone.title = `Clique ou arraste e solte aqui para poder enviar um arquivo`
+}
+async function fileHandleDragEnter(event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    document.querySelector('.fileTypeDropZoneMSG').classList.add('dragenter')
+    
+    const abbrFileZone = document.querySelector('#abbrfileDropZone')
+    abbrFileZone.title = `Solte para enviar`
+}
+async function fileAuxAction() {
+    const fileType = document.querySelector('#fileTypeMSGAux')
+    await fileType.click()
+}
+
+async function eraseClient_(isFromTerminal, Clientt_) {
+    if (Client_NotReady) {
+        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        return
+    }
+    try {
+        Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        let userConfirmation = confirm(`Tem certeza de que deseja apagar o Client_ ${Clientt_}?\nsera apagada para sempre.`)
+        if (userConfirmation) {
+            const status = document.querySelector('#status')
+
+            const response = await axios.delete('/client-erase', { params: { Clientt_ } })
+            const Sucess = response.data.sucess
+            const Is_Empty = response.data.empty
+            const Is_Empty_Input = response.data.empty_input
+            const Not_Selected = response.nselected
+            if (Not_Selected) {
+                status.innerHTML = `O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`)
+                
+                resetLoadingBar()
+                if (isFromTerminal) isFromTerminal = false
+                
+                Client_NotReady = false
+
+                return
+            }
+            if (Is_Empty) {
+                status.innerHTML = `Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
+
+                resetLoadingBar()
+                if (isFromTerminal) isFromTerminal = false
+                
+                Client_NotReady = false
+                
+                return
+            }
+            if (Is_Empty_Input) {
+                status.innerHTML = `Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
+
+                resetLoadingBar()
+                if (isFromTerminal) isFromTerminal = false
+                
+                Client_NotReady = false
+                
+                return  
+            } 
+            if (Sucess) {
+                const response1 = await axios.get('/dir-front')
+                const Directories_1 = response1.data.dirs
+
+                const divClientt_ = document.querySelector(`#${Clientt_}`)
+                divClientt_.remove()
+
+                status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`)
+
+                await sleep(1.5 * 1000)
+                const response2 = await axios.get('/dir-front')
+                const Directories_2 = response2.data.dirs
+
+                if (Directories_2.length-1 === -1) {
+                    status.innerHTML = `<strong>Dir</strong> off Clients_ (<strong>${Directories_2.length}</strong>) is <strong>empty</strong>!`
+                    displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Clients_ (<strong>${Directories_2.length}</strong>) is <strong>empty</strong>!`)
+
+                    let exitInten = true
+                    await exit(exitInten)
+                    await axios.put('/reset-page')
+                } else {
+                    const clientIdNumber = Clientt_.match(/\d+/g)
+
+                    let Counter_Clients_ = 0
+                    for (let i = -1; i < Directories_1.length-1; i++) {
+                        const clientDirIdNumber = Directories_2[Counter_Clients_-1].match(/\d+/g)
+
+                        if (clientIdNumber === clientDirIdNumber) {
+                            let posArrayClient = Counter_Clients_
+
+                            if (Directories_1[posArrayClient++] === null) {
+                                posArrayClient--
+                            } else {
+                                posArrayClient++
+                            }
+                        } else {
+                            Counter_Clients_++
+                        }
+                    }
+    
+                    await selectClient_(`Client_${posArrayClient}`)
+                }
+            } else {
+                status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`)
+            }
+
+            //document.querySelector('#inputList').value = ''
+        } else {
+            return
+        }
+
+        resetLoadingBar()
+        Client_NotReady = false
+        if (isFromTerminal) isFromTerminal = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR eraseClient_ ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> eraseClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
+        Client_NotReady = false
+        resetLoadingBar()
+    }
+}
+async function selectClient_(Clientt_) {
+    if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
+        return
+    }
+    try {
+        Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const divClientt_ = document.querySelector(`#${Clientt_}`)
+        const capList = document.querySelector(`caption`)
+
+        const divClientt_Temp = document.querySelector(`#${Clientt_Temp}`)
+        if (divClientt_Temp !== null) {
+            divClientt_Temp.style.cssText =
+                'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+        }
+        if (divClientt_ === null) {
+            status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Não</strong> existe!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Não</strong> existe!`)
+            resetLoadingBar()
+
+            Client_NotReady = false
+            
+            return
+        }
+
+        const response = await axios.post('/select', { Client_: Clientt_ })
+        let Sucess = response.data.sucess
+        if (Sucess) {
+            divClientt_.style.cssText =
+                'border-top: 5px solid var(--colorBlue); border-bottom: 5px solid var(--colorBlue); transition: var(--configTrasition03s);'
+
+            capList.innerHTML = `<stronger>${Clientt_}</stronger>`
+
+            Clientt_Temp = Clientt_
+            Client_ = Clientt_
+
+            status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>.`)
+        } else {
+            status.innerHTML = `<i><strong>ERROR</strong></i> <strong>selecionando</strong> Client_ <strong>${Clientt_}</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Client_ <strong>${Clientt_}</strong>!`)
+        }
+
+        resetLoadingBar()
+        Client_NotReady = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR selectClient_ ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> selectClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
+        Client_NotReady = false
+        resetLoadingBar()
     }
 }
 
@@ -1490,13 +1578,13 @@ async function allPrint(isFromButton, isallerase) {
         /*if (isFromButton) {
             /*let listShow = document.querySelector('#showList')
             let listShowAbbr = document.querySelector('#abbrShowList')
-            if (isVisibleList === null) {
-                isVisibleList = true
+            if (isTableHidden === null) {
+                isTableHidden = true
                 listShow.style.cssText = 
                 'background-color: var(--colorWhite); color: var(--colorBlack); pointer-events: auto; opacity: 1;'
                 listShowAbbr.title = `STATUS Lista: visivel`
-            } else if (isVisibleList = true) {
-                isVisibleList = true
+            } else if (isTableHidden = true) {
+                isTableHidden = true
                 listShow.style.cssText = 
                 'background-color: var(--colorWhite); color: var(--colorBlack); pointer-events: auto; opacity: 1;'
                 listShowAbbr.title = `STATUS Lista: visivel`
@@ -1601,210 +1689,6 @@ async function allPrint(isFromButton, isallerase) {
     }
 }
 
-async function eraseClient_(isFromTerminal, Clientt_) {
-    if (Client_NotReady) {
-        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
-        return
-    }
-    try {
-        Client_NotReady = true
-
-        let barL = document.querySelector('#barLoading')
-        barL.style.cssText =
-            'width: 100vw; visibility: visible;'
-
-        let userConfirmation = confirm(`Tem certeza de que deseja apagar o Client_ ${Clientt_}?\nsera apagada para sempre.`)
-        if (userConfirmation) {
-            const status = document.querySelector('#status')
-
-            const response = await axios.delete('/client-erase', { params: { Clientt_ } })
-            const Sucess = response.data.sucess
-            const Is_Empty = response.data.empty
-            const Is_Empty_Input = response.data.empty_input
-            const Not_Selected = response.nselected
-            if (Not_Selected) {
-                status.innerHTML = `O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`)
-                
-                resetLoadingBar()
-                if (isFromTerminal) isFromTerminal = false
-                
-                Client_NotReady = false
-
-                return
-            }
-            if (Is_Empty) {
-                status.innerHTML = `Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
-
-                resetLoadingBar()
-                if (isFromTerminal) isFromTerminal = false
-                
-                Client_NotReady = false
-                
-                return
-            }
-            if (Is_Empty_Input) {
-                status.innerHTML = `Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
-
-                resetLoadingBar()
-                if (isFromTerminal) isFromTerminal = false
-                
-                Client_NotReady = false
-                
-                return  
-            } 
-            if (Sucess) {
-                const response1 = await axios.get('/dir-front')
-                const Directories_1 = response1.data.dirs
-
-                const divClientt_ = document.querySelector(`#${Clientt_}`)
-                divClientt_.remove()
-
-                status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`)
-
-                await sleep(1.5 * 1000)
-                const response2 = await axios.get('/dir-front')
-                const Directories_2 = response2.data.dirs
-
-                if (Directories_2.length-1 === -1) {
-                    status.innerHTML = `<strong>Dir</strong> off Clients_ (<strong>${Directories_2.length}</strong>) is <strong>empty</strong>!`
-                    displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Clients_ (<strong>${Directories_2.length}</strong>) is <strong>empty</strong>!`)
-
-                    let exitInten = true
-                    await exit(exitInten)
-                    await axios.put('/reset-page')
-                } else {
-                    const clientIdNumber = Clientt_.match(/\d+/g)
-
-                    let Counter_Clients_ = 0
-                    for (let i = -1; i < Directories_1.length-1; i++) {
-                        const clientDirIdNumber = Directories_2[Counter_Clients_-1].match(/\d+/g)
-
-                        if (clientIdNumber === clientDirIdNumber) {
-                            let posArrayClient = Counter_Clients_
-
-                            if (Directories_1[posArrayClient++] === null) {
-                                posArrayClient--
-                            } else {
-                                posArrayClient++
-                            }
-                        } else {
-                            Counter_Clients_++
-                        }
-                    }
-    
-                    await selectClient_(`Client_${posArrayClient}`)
-                }
-            } else {
-                status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`)
-            }
-
-            //document.querySelector('#inputList').value = ''
-        } else {
-            return
-        }
-
-        resetLoadingBar()
-        Client_NotReady = false
-        if (isFromTerminal) isFromTerminal = false
-    } catch (error) {
-        console.error(`> ⚠️ ERROR eraseClient_ ${Clientt_}: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> eraseClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
-        Client_NotReady = false
-        resetLoadingBar()
-    }
-}
-async function selectClient_(Clientt_) {
-    if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
-        return
-    }
-    try {
-        Client_NotReady = true
-
-        let barL = document.querySelector('#barLoading')
-        barL.style.cssText =
-            'width: 100vw; visibility: visible;'
-
-        const status = document.querySelector('#status')
-
-        const divClientt_ = document.querySelector(`#${Clientt_}`)
-        const capList = document.querySelector(`caption`)
-
-        const divClientt_Temp = document.querySelector(`#${Clientt_Temp}`)
-        if (divClientt_Temp !== null) {
-            divClientt_Temp.style.cssText =
-                'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
-        }
-        if (divClientt_ === null) {
-            status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Não</strong> existe!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Não</strong> existe!`)
-            resetLoadingBar()
-
-            Client_NotReady = false
-            
-            return
-        }
-
-        const response = await axios.post('/select', { Client_: Clientt_ })
-        let Sucess = response.data.sucess
-        if (Sucess) {
-            divClientt_.style.cssText =
-                'border-top: 5px solid var(--colorBlue); border-bottom: 5px solid var(--colorBlue); transition: var(--configTrasition03s);'
-
-            capList.innerHTML = `<stronger>${Clientt_}</stronger>`
-
-            Clientt_Temp = Clientt_
-            Client_ = Clientt_
-
-            status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>.`)
-        } else {
-            status.innerHTML = `<i><strong>ERROR</strong></i> <strong>selecionando</strong> Client_ <strong>${Clientt_}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Client_ <strong>${Clientt_}</strong>!`)
-        }
-
-        resetLoadingBar()
-        Client_NotReady = false
-    } catch (error) {
-        console.error(`> ⚠️ ERROR selectClient_ ${Clientt_}: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> selectClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
-        Client_NotReady = false
-        resetLoadingBar()
-    }
-}
-async function insertClient_Front(Clientt_) {
-    if (!Client_NotReady) {
-        displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
-        return
-    }
-    try {
-        Client_NotReady = false
-
-        let barL = document.querySelector('#barLoading')
-        barL.style.cssText =
-            'width: 100vw; visibility: visible;'
-
-        const ClientsDiv = document.querySelector('#Clients_')
-        let clientHTML = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}"><button class="Clients_" onclick="selectClient_(false, '${Clientt_}')">${Clientt_}</button></abbr><abbr title="Erase ${Clientt_}"><button class="Clients_Erase" onclick="eraseClient_(false, false, '${Clientt_}')"><</button></abbr></div>`
-        ClientsDiv.innerHTML += clientHTML
-
-        const divClientt_ = document.querySelector(`#${Clientt_}`)
-        divClientt_.style.cssText =
-            'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
-
-        resetLoadingBar()
-    } catch (error) {
-        console.error(`> ⚠️ ERROR insertClient_Front ${Clientt_}: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> insertClient_Front <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
-        resetLoadingBar()
-    }
-}
-
 function counterExceeds(QR_Counter_Exceeds) {
     if (isExceeds) {
         displayOnConsole('>  ℹ️  <strong>Client_</strong> not Ready.', setLogError)
@@ -1857,7 +1741,7 @@ function counterExceeds(QR_Counter_Exceeds) {
         resetLoadingBar()
     }
 }
-//lembra pra deixar false o isQrOff = true pra dar certo o new client
+
 async function generateQrCode(QR_Counter, Clientt_) {
     if (isQrOff) {
         displayOnConsole(`>  ℹ️ <strong>${Clientt_}</strong> not Ready.`, setLogError)
@@ -1955,9 +1839,36 @@ async function generateQrCode(QR_Counter, Clientt_) {
     }
 }
 
+async function insertClient_Front(Clientt_) {
+    if (!Client_NotReady) {
+        displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
+        return
+    }
+    try {
+        Client_NotReady = false
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const ClientsDiv = document.querySelector('#Clients_')
+        let clientHTML = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}"><button class="Clients_" onclick="selectClient_(false, '${Clientt_}')">${Clientt_}</button></abbr><abbr title="Erase ${Clientt_}"><button class="Clients_Erase" onclick="eraseClient_(false, false, '${Clientt_}')"><</button></abbr></div>`
+        ClientsDiv.innerHTML += clientHTML
+
+        const divClientt_ = document.querySelector(`#${Clientt_}`)
+        divClientt_.style.cssText =
+            'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+
+        resetLoadingBar()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR insertClient_Front ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> insertClient_Front <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
 async function newClients() {
     if (isStartedNew) {
-        displayOnConsole('>  ℹ️ <strong>Client_</strong> not Ready.', setLogError)
+        displayOnConsole('>  ℹ️ <strong>newClients</strong> not Ready.', setLogError)
         return
     }
     try {
@@ -2007,7 +1918,7 @@ async function startBot() {
             reconnectWebSocket()
         }
 
-        document.title = 'Iniciando ${nameApp}'
+        document.title = `Iniciando ${nameApp}`
 
         const mainContent = document.querySelector('#innerContent')
         mainContent.style.cssText =
@@ -2037,8 +1948,8 @@ async function startBot() {
         const Sucess = response.data.sucess
         if (Sucess) {
             document.title = 'Iniciou o ${nameApp} Corretamente'
-            status.innerHTML = `<strong>Iniciou</strong> o ${nameApp} <strong>Corretamente</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciou</strong> o ${nameApp} <strong>Corretamente</strong>!`)
+            status.innerHTML = `<strong>Iniciou</strong> o ${nameApp || 'BOT'} <strong>Corretamente</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciou</strong> o ${nameApp || 'BOT'} <strong>Corretamente</strong>!`)
 
             resetLoadingBar()
         } else {
@@ -2050,8 +1961,8 @@ async function startBot() {
             }, 100)
 
             document.title = 'ERROR'
-            status.innerHTML = `<i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp}</strong>!`)
+            status.innerHTML = `<i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp || 'BOT'}</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp || 'BOT'}</strong>!`)
             
             isStarted = false
 
@@ -2062,8 +1973,8 @@ async function startBot() {
         console.error(`> ⚠️ ERROR startBot: ${error}`)
         displayOnConsole(`> ⚠️ ERROR startBot: ${error.message}`, setLogError)
         document.title = 'ERROR'
-        status.innerHTML = `<i><strong>ERROR</strong></i> iniciando <strong>${nameApp}</strong>!`
-        displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> iniciando <strong>${nameApp}</strong>!`)
+        status.innerHTML = `<i><strong>ERROR</strong></i> iniciando <strong>${nameApp || 'BOT'}</strong>!`
+        displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> iniciando <strong>${nameApp || 'BOT'}</strong>!`)
         let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
             'display: inline-block; opacity: 0;'
@@ -2087,7 +1998,13 @@ async function startBot() {
 
 //tarefas bot frontend 
 //em desenvolvimento...
-
+    //na pagina separar por secoes, secao do qr code do start da lista e do funil e ser possivel mover entre elas mudar as posicao as ordem, e fazer algo igual ao funil ne, por mouse mesmo selecionando e segurnado, e a ordem que ficar ser salvo e quando voltar da load em tudo, talves pra fazer isso implementar um sistema que inves de display e opacity que seja automatico com javacript colado as funcoes na pagina, pode melhora a seguranca e tals ne
+    //desenvolver o desenvolvimento de funils padroes de msg automaticas para o bot e implantar front end, principalmente front end so vai ser possivel mexer com isso la
+        //filetypes, dps que for selecionado ele muda o design pra outro, e se for um audio ele da opcao e o tempo de delay e tals usa a mesma logica do delay padrao por MSG pro staterecording, e para apagar tem que deselecionar o arquivo ent fazer um esquema de design que o botao que apagar primeiro deseleciona e dps libera pra apagar, ma so substitui por outro botao n preccisa criar uma loucura na funcao de apagar so pra isso
+        //texareas, tem uma opcao pro typing la e usa o delay padrao MSG e tals logica, e ter modos de tamanhos especificos selecionaveis da area de texto iguais do chat do whatsapp balao e tals, 
+        //delay, meio que ja ta feito sla
+        //em cada card ter um botao pra apagar o proprio
+        //implementar toda a logica tudo e tals disso tudo quando acabar o design e planejamento da logica do funil
 
 //a desenvolver...
     //?//melhoras o tempo e utilizacao dos status multi client e mais?
@@ -2096,4 +2013,3 @@ async function startBot() {
     //?//arrumar meios de n precisar dessas variaveis permanentes, ou pelo menos diminuir muito?
     //?//melhorar o problema de de vez em quando o a barra de loading do start n funciona direito?
     //coisa de design... o border bottom do #divNewClient n ta aparecendo seila
-    //melhora o sistema de local storage dos q tem

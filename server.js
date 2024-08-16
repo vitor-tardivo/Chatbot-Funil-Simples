@@ -5,6 +5,7 @@ const http = require('http')
 const WebSocket = require('ws')
 const axios = require('axios')
 const path = require('path')
+const os = require('os')
 const {
     sleep,
     generateUniqueId,
@@ -77,6 +78,7 @@ app.get('/', (req, res) => {
     }
 })
 
+
 wss_Server.on('connection', async  function connection(wss) {
     try {
         const wss_Connection_Id = generateUniqueId()
@@ -84,11 +86,11 @@ wss_Server.on('connection', async  function connection(wss) {
             wss,
             reason: null
         })
-        console.log(`> ✅ Conectado Usuario ${wss_Connection_Id} ao WebSocket.`)
+        console.log(`> ✅ Conectado Usuario (${wss_Connection_Id}) ao WebSocket.`)
         if (global.Statuses_WS_Callback) global.Statuses_WS_Callback(true)
         //if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>Conectado Client ao WebSocket.`)
         wss.on('close', function() {
-            console.error(`> ⚠️  Desconectado Usuario ${wss_Connection_Id} do WebSocket.`)
+            console.error(`> ⚠️  Desconectado Usuario (${wss_Connection_Id}) do WebSocket.`)
             //if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Desconectado Client do WebSocket.`)    
             if (global.Statuses_WS_Callback) global.Statuses_WS_Callback(false)
         
@@ -103,10 +105,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'log', message: log }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR sending log to WebSocket ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR sending log to WebSocket (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_Log_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_Log_Callback (${wss_Connection_Id}) not found.`)
             }
             //wss_Connection.wss.send(JSON.stringify({ type: 'log', message: log}))
         })
@@ -117,10 +119,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'statues-ws', data: status }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR sending status to WebSocket ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR sending status to WebSocket (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_Statuses_WS_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_Statuses_WS_Callback (${wss_Connection_Id}) not found.`)
             } 
             //wss_Connection.wss.send(JSON.stringify({ type: 'statues-ws', data: status}))
         })
@@ -131,10 +133,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'exit' }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR sending exit to WebSocket ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR sending exit to WebSocket (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_Exit_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_Exit_Callback (${wss_Connection_Id}) not found.`)
             } 
             //wss_Connection.wss.send(JSON.stringify({ type: 'exit'}))
         })
@@ -144,10 +146,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'auth_failure' }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR sending auth_failure to WebSocket ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR sending auth_failure to WebSocket (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_Auth_Failure_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_Auth_Failure_Callback (${wss_Connection_Id}) not found.`)
             }
             //wss_Connection.wss.send(JSON.stringify({ type: 'auth_failure'}))
         })
@@ -159,10 +161,10 @@ wss_Server.on('connection', async  function connection(wss) {
                     try {
                         wss_Connection.wss.send(JSON.stringify({ type: 'generate_qr_code', data: QR_Counter, data2: Clientt_ }))
                     } catch (error) {
-                        console.error(`> ❌ ERROR sending generate_qr_code to WebSocket ${wss_Connection_Id}: ${error}`)
+                        console.error(`> ❌ ERROR sending generate_qr_code to WebSocket (${wss_Connection_Id}): ${error}`)
                     }
                 } else {
-                    console.error(`> ⚠️  WebSocket connection Set_QrCode_On_Callback ${wss_Connection_Id} not found.`)
+                    console.error(`> ⚠️  WebSocket connection Set_QrCode_On_Callback (${wss_Connection_Id}) not found.`)
                 }
                 //wss_Connection.wss.send(JSON.stringify({ type: 'generate_qr_code', data: QR_Counter}))
             }
@@ -173,10 +175,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'qr_exceeds', data: QR_Counter_Exceeds }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR sending qr_exceeds to WebSocket ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR sending qr_exceeds to WebSocket (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_QrCode_Exceeds_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_QrCode_Exceeds_Callback (${wss_Connection_Id}) not found.`)
             }
             //wss_Connection.wss.send(JSON.stringify({ type: 'qr_exceeds', data: QR_Counter_Exceeds }))
         })
@@ -197,10 +199,10 @@ wss_Server.on('connection', async  function connection(wss) {
                     try {
                         wss_Connection.wss.send(JSON.stringify({ type: 'all-print'}))//, isallerase: Is_From_All_Erase}))
                     } catch (error) {
-                        console.error(`> ❌ ERROR sending List to WebSocket ${wss_Connection_Id}: ${error}`)
+                        console.error(`> ❌ ERROR sending List to WebSocket (${wss_Connection_Id}): ${error}`)
                     }
                 } else {
-                    console.error(`> ⚠️  WebSocket connection Set_List_Callback ${wss_Connection_Id} not found.`)
+                    console.error(`> ⚠️  WebSocket connection Set_List_Callback (${wss_Connection_Id}) not found.`)
                 }
             } catch (error) {
                 console.error(`> ❌ ERROR Set all-print: ${error}`)
@@ -217,10 +219,10 @@ wss_Server.on('connection', async  function connection(wss) {
                     try {
                         wss_Connection.wss.send(JSON.stringify({ type: 'all-print-auxiliar', isallerase: Is_From_All_Erase }))
                     } catch (error) {
-                        console.error(`> ❌ ERROR sending all-print-auxiliar to WebSocket ${wss_Connection_Id}: ${error}`)
+                        console.error(`> ❌ ERROR sending all-print-auxiliar to WebSocket (${wss_Connection_Id}): ${error}`)
                     }
                 } else {
-                    console.error(`> ⚠️  WebSocket connection Set_List_Auxiliar_Callback ${wss_Connection_Id} not found.`)
+                    console.error(`> ⚠️  WebSocket connection Set_List_Auxiliar_Callback (${wss_Connection_Id}) not found.`)
                 }
                 //wss_Connection.wss.send(JSON.stringify({ type: 'all-print-auxiliar', isallerase: Is_From_All_Erase}))
             } catch (error) {
@@ -241,10 +243,10 @@ wss_Server.on('connection', async  function connection(wss) {
                     try {
                         wss_Connection.wss.send(JSON.stringify({ type: 'search-search', search: Search }))
                     } catch (error) {
-                        console.error(`> ❌ ERROR sending search-search to WebSocket ${wss_Connection_Id}: ${error}`)
+                        console.error(`> ❌ ERROR sending search-search to WebSocket (${wss_Connection_Id}): ${error}`)
                     }
                 } else {
-                    console.error(`> ⚠️  WebSocket connection Set_Search_List_Callback ${wss_Connection_Id} not found.`)
+                    console.error(`> ⚠️  WebSocket connection Set_Search_List_Callback (${wss_Connection_Id}) not found.`)
                 }
                 //wss_Connection.wss.send(JSON.stringify({ type: 'search-search', search: Search }))
             } catch (error) {
@@ -266,10 +268,10 @@ wss_Server.on('connection', async  function connection(wss) {
                     try {
                         wss_Connection.wss.send(JSON.stringify({ type: 'all-erase'}))
                     } catch (error) {
-                        console.error(`> ❌ ERROR sending all erase to WebSocket ${wss_Connection_Id}: ${error}`)
+                        console.error(`> ❌ ERROR sending all erase to WebSocket (${wss_Connection_Id}): ${error}`)
                     }
                 } else {
-                    console.error(`> ⚠️  WebSocket connection Set_All_Erase_Callback ${wss_Connection_Id} not found.`)
+                    console.error(`> ⚠️  WebSocket connection Set_All_Erase_Callback (${wss_Connection_Id}) not found.`)
                 }
             } catch (error) {
                 console.error(`> ❌ ERROR Set all-erase: ${error}`)
@@ -283,10 +285,10 @@ wss_Server.on('connection', async  function connection(wss) {
                     try {
                         wss_Connection.wss.send(JSON.stringify({ type: 'erase-query', Search: query }))
                     } catch (error) {
-                        console.error(`> ❌ ERROR sending erase-query to WebSocket ${wss_Connection_Id}: ${error}`)
+                        console.error(`> ❌ ERROR sending erase-query to WebSocket (${wss_Connection_Id}): ${error}`)
                     }
                 } else {
-                    console.error(`> ⚠️  WebSocket connection Set_Query_Erase_Callback ${wss_Connection_Id} not found.`)
+                    console.error(`> ⚠️  WebSocket connection Set_Query_Erase_Callback (${wss_Connection_Id}) not found.`)
                 }
                 //wss_Connection.wss.send(JSON.stringify({ type: 'erase-query', Search: query }))
             } catch (error) {
@@ -300,10 +302,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'auth_autenticated', client: Clientt_ }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR sending auth_autenticated to WebSocket ${Clientt_} ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR sending auth_autenticated to WebSocket ${Clientt_} (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_Auth_Autenticated_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_Auth_Autenticated_Callback (${wss_Connection_Id}) not found.`)
             }
             //wss_Connection.wss.send(JSON.stringify({ type: 'auth_autenticated'}))
         })
@@ -313,10 +315,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'ready', client: Clientt_ }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR Set_Ready_Callback ${Clientt_} ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR Set_Ready_Callback ${Clientt_} (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_Ready_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_Ready_Callback (${wss_Connection_Id}) not found.`)
             }
             //wss_Connection.wss.send(JSON.stringify({ type: 'ready'}))
         })
@@ -327,10 +329,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'erase-client', client: Clientt_ }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR erasing Client_ ${Clientt_} ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR erasing Client_ ${Clientt_} (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_Erase_Client_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_Erase_Client_Callback (${wss_Connection_Id}) not found.`)
             }
         })
         Set_Select_Client_Callback(function(Clientt_) {
@@ -339,10 +341,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'select', client: Clientt_ }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR selecting Client_ ${Clientt_} on FrontEnd ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR selecting Client_ ${Clientt_} on FrontEnd (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_Select_Client_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_Select_Client_Callback (${wss_Connection_Id}) not found.`)
             }
         })
         Set_New_Client_Callback(function() {
@@ -351,10 +353,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'new' }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR creating new Client_ ${global.Client_} ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR creating new Client_ (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_New_Client_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_New_Client_Callback (${wss_Connection_Id}) not found.`)
             }
         })
         
@@ -364,10 +366,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'clients_', client: Clientt_ }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR sending the ${Clientt_} to WebSocket ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR sending the ${Clientt_} to WebSocket (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_Clients_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_Clients_Callback (${wss_Connection_Id}) not found.`)
             }
         })
 
@@ -377,10 +379,10 @@ wss_Server.on('connection', async  function connection(wss) {
                 try {
                     wss_Connection.wss.send(JSON.stringify({ type: 'start' }))
                 } catch (error) {
-                    console.error(`> ❌ ERROR sending start to WebSocket ${wss_Connection_Id}: ${error}`)
+                    console.error(`> ❌ ERROR sending start to WebSocket (${wss_Connection_Id}): ${error}`)
                 }
             } else {
-                console.error(`> ⚠️  WebSocket connection Set_Start_Callback ${wss_Connection_Id} not found.`)
+                console.error(`> ⚠️  WebSocket connection Set_Start_Callback (${wss_Connection_Id}) not found.`)
             }
             //wss_Connection.wss.send(JSON.stringify({ type: 'start'}))
         })
@@ -391,7 +393,7 @@ wss_Server.on('connection', async  function connection(wss) {
 
 app.get('/app-data', async (req, res) => {
     try {
-        res.status(200).send({ sucess: true, message: `sucessfully sent the app data.`, name: global.Bot_Name, version: global.Bot_Version_ })
+        res.status(200).send({ sucess: true, message: `sucessfully sent the app data.`, name: global.Bot_Name || 'BOT', version: global.Bot_Version_ || '?.?.?' })
     } catch (error) {
         console.error(`> ❌ ERROR /what-stage: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, data: null, data2: null, data3: null })
@@ -431,7 +433,7 @@ app.delete('/erase-query', async (req, res) => {
         }
     } catch (error) {
         console.error(`> ❌ ERROR /erase-query: ${error}`)
-        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null, chatdatajson: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null, chatdatajson: global.File_Data_Chat_Data })
     }
 })
 app.delete('/all-erase', async (req, res) => {
@@ -445,15 +447,12 @@ app.delete('/all-erase', async (req, res) => {
         }
     } catch (error) {
         console.error(`> ❌ ERROR /all-erase: ${error}`)
-        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdatajson: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdatajson: global.File_Data_Chat_Data })
     }
 })
 app.get('/search-search', async (req, res) => {
     try {
         const search = req.query.Search
-        if (!search) {
-            return res.status(200).send({ sucess: false, message: `The ChatData ${search} is not in List.`, empty: false, chatdata: [], empty_input: true })
-        }
         const { Sucess, Is_Empty, ChatData, Is_Empty_Input } = await Search_Chat_Data_By_Search(search)
         if (Sucess) {
             res.status(200).send({ sucess: Sucess, message: `Sucessfully to sent the ChatData ${search}.`, empty: Is_Empty, chatdata: ChatData, empty_input: Is_Empty_Input, chatdatajson: global.File_Data_Chat_Data })
@@ -462,7 +461,7 @@ app.get('/search-search', async (req, res) => {
         }         
     } catch (error) {
         console.error(`> ❌ ERROR /search-list: ${error}`)
-        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], empty_input: null, chatdatajson: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], empty_input: null, chatdatajson: global.File_Data_Chat_Data })
     }    
 })
 app.get('/all-print', async (req, res) => {
@@ -476,7 +475,7 @@ app.get('/all-print', async (req, res) => {
         }
     } catch (error) {
         console.error(`> ❌ ERROR /all-print: ${error}`)
-        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], isallerase: null, chatdatajson: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], isallerase: null, chatdatajson: global.File_Data_Chat_Data })
     }
 })
 
@@ -570,22 +569,21 @@ app.get('/start-bot', async (req, res) => {
     try {
         const { Sucess } = await initialize()
         
-        res.status(200).send({ sucess: Sucess, message: `Sucessfully started ${global.Bot_Name}.` })
+        res.status(200).send({ sucess: Sucess, message: `Sucessfully started ${global.Bot_Name || 'BOT'}.` })
     } catch (error) {
         console.error(`> ❌ ERROR /start-bot: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
 
+
 server.listen(port, () => {
-    axios.get('https://api.ipify.org?format=json')
-    .then(response => {
-        let Data_ = response.data
-        console.log(`>  ℹ️ Server running ON: http://${Data_.ip}:${port}/ || http://localhost:${port}/`)
-    })
-    .catch(error => {
+    try  {
+        const iIp = Object.values(os.networkInterfaces()).flat().filter(details => details.family === 'IPv4' && !details.internal).map(details => details.address)
+        console.log(`>  ℹ️ Server running ON: http://${iIp}:${port}/ || http://localhost:${port}/`)
+    } catch(error) {
         console.error(`> ❌ ERROR Listen server: ${error}`)
-    })
+    }
 })
 
 //tarefas bot backend 

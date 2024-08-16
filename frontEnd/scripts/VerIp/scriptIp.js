@@ -1,3 +1,5 @@
+import os from 'os'
+
 function isMobile() {//IDENTIFY WITH THE USER IS FROM A PHONE
     const userAgent = navigator.userAgent;
     return /Mobi|Android|iPhone|iPod|iPad|Windows\sPhone|Windows\sCE|BlackBerry|BB10|IEMobile|Opera\sMini|Mobile\sSafari|webOS|Mobile|Tablet|CriOS/i.test(userAgent);
@@ -397,34 +399,27 @@ function confirmEraseListItens(max) {// CONFIRM ERASE ITENS OF THE LIST
 }
 
 function getIP(max) {// CALL AN EXTERNAL API TO GET YOUR IP AND LOAD ALL THE FUNCTIONS
-    let barL = document.querySelector('#barLoading')
+    try {
+        let barL = document.querySelector('#barLoading')
 
-    barL.style.cssText =
-        'width: 100vw; visibility: visible;'
-    
-    //axios.get('https://ipapi.co/json/') Diferent IP
-    //https://api.ipify.org?format=json IP
-    //fetch('https://api.ipify.org?format=json') 
-    axios.get('https://api.ipify.org?format=json')
-    .then(response => {
-        let data = response.data
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
 
+        const iIp = Object.values(os.networkInterfaces()).flat().filter(details => details.family === 'IPv4' && !details.internal).map(details => details.address)
+        
         dTimer++
         console.log(`Previous-IP(${dTimer}): ${previousIp}`)
-        console.log(`Actual-IP(${dTimer}): ${data.ip}`)
+        console.log(`Actual-IP(${dTimer}): ${iIp}`)
 
         console.log(`API Response: ${JSON.stringify(data)}`)
 
-        showIP(data.ip)
-        verifyRepeatedListIP(data.ip)
-        verifyEqualIPEnterListIp(data.ip, max)
+        showIP(iIp)
+        verifyRepeatedListIP(iIp)
+        verifyEqualIPEnterListIp(iIp, max)
         
         resetLoadingBar()
-    })
-    .catch(error => {
+    } catch(error) {
         alert('ERROR: ' + error.message)
-
         resetLoadingBar()
-    })
-
+    }
 }

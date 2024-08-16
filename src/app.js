@@ -23,7 +23,7 @@ global.Bot_Name = Name_Software
 const { version: Version_ } = JSON.parse(fss.readFileSync(path.resolve(Root_Dir, 'package.json'), 'utf8'))
 global.Bot_Version_ = Version_
 console.log(`>  ℹ️ ${Name_Software} = v${Version_}`)
-if (global.Log_Callback) global.Log_Callback(`>  ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Bot_Name}</strong> = <strong>v${global.Bot_Version_}</strong>`)
+if (global.Log_Callback) global.Log_Callback(`>  ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Bot_Name || 'BOT'}</strong> = <strong>v${global.Bot_Version_ || '?.?.?'}</strong>`)
 
 function Reload_Front() {
     //console.error(`> ⚠️  Load FrontEnd page`)
@@ -75,38 +75,28 @@ async function Reset_() {
     }
 }
 process.on('exit', (code) => {
-    /*if (Is_Exceeds) {
-        ChatData_Not_Ready = true
-        Is_Exceeds = true
-        if (Exit_Callback) Exit_Callback()
-    }*/
-    ChatData_Not_Ready = true
     console.error(`> ⚠️  Process exited with code(${code})`)
+    global.Is_Reset = false
+    Reset_()
 })
 process.on('uncaughtException', (error) => {
-    //if (Exit_Callback) Exit_Callback()
     console.error(`> ❌ Uncaught Exception: ${error}`)
-    //process.exit(1)
 })
 process.on('SIGUSR2', () => {// nodemon
     if (Exit_Callback) Exit_Callback()
     console.error('> ❌ Process interrupted: (SIGUSR2)')
-    //process.exit(0)
 })
 process.on('SIGINT', () => {// Ctrl+C
     if (Exit_Callback) Exit_Callback()
     console.error('> ❌ Process interrupted: (SIGINT)')
-    //process.exit(0)
 })
 process.on('SIGTERM', () => {// kill
     if (Exit_Callback) Exit_Callback()
     console.error('> ❌ Process interrupted: (SIGTERM)')
-    //process.exit(0)
 })
 process.on('SIGHUP', () => {// terminal closed
     if (Exit_Callback) Exit_Callback()
     console.error('> ❌ Process interrupted: (SIGHUP)')
-    //process.exit(0)
 })
 
 global.Statuses_WS_Callback = null
@@ -369,8 +359,8 @@ async function commands(command, Is_Front_Back) {
                 if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Command</strong> <strong>not</strong> recognized.`)
                 return
             } else if (command === 'start') {
-                console.log(`> ⚠️  ${global.Bot_Name} already Initialized`)
-                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Bot_Name}</strong> <strong>already</strong> Initialized`)
+                console.log(`> ⚠️  ${global.Bot_Name || 'BOT'} already Initialized`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Bot_Name || 'BOT'}</strong> <strong>already</strong> Initialized`)
             } else if (command.startsWith('erase ')) {
                 const query = command.substring(6).trim()
                 if (query !== null) {
@@ -473,12 +463,14 @@ async function Load_Client_(Client_Not_Ready_Aux, Clientt_) {
     }
 }
 async function Save_Client_(id, Clientt_) {
-    if (Client_Not_Ready || Client_Not_Ready === null) {
+    if (!Client_Not_Ready || Client_Not_Ready === null) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
         if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
         return 
     }
     try {
+        //Client_Not_Ready = true
+
         console.log(`>  ◌ Saving Client_ ${Clientt_} to ${global.File_Data_Clients_}...`)
         if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Saving Client_ <strong>${Clientt_}</strong> to <strong>${global.File_Data_Clients_}</strong>...`)
 
@@ -503,18 +495,8 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
     try {
         Client_Not_Ready = true
 
-        if (global.Client_ !== Clientt_) {
-            console.log(`> ⚠️  The Client_ ${Clientt_} is to be erase it is not selected, the Client_ selected is ${global.Client_} so select ${Clientt_} to erase it.}`)
-            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>The Client_ <strong>${Clientt_}</strong> is to be <strong>erase</strong> it is <strong>not</strong> <strong>selected</strong>, the Client_ <strong>selected</strong> is <strong>${global.Client_}</strong> so <strong>select</strong> <strong>${Clientt_}</strong> to <strong>erase</strong> it.`)
-
-            Client_Not_Ready = false
-
-            return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: true }
-        }
-
         const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))   
         const Local_Auth = (await fs.access(`Local_Auth\\${Clientt_}`, fs.constants.F_OK).then(() => true).catch(() => false))
-    
         if (Clients_.length === 0 || null & Local_Auth === false & Clientts_[Clientt_] === 0 || null ) {
             console.log(`> ⚠️  ${global.Data_File_Clients_}, Local_Auth(${Clientt_}), array(Clientts_[${Clientt_}]) is ALL empty, does not contain any data.`)
             if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Data_File_Clients_}, Local_Auth(dir), array(Clientts_)</strong> is <strong>ALL</strong> empty, does <strong>not</strong> <strong>contain</strong> any <strong>data</strong>.`)
@@ -522,6 +504,14 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
             Client_Not_Ready = false
             
             return { Sucess: false, Is_Empty: true, Is_Empty_Input: false, Not_Selected: false }
+        }
+        if (global.Client_ !== Clientt_) {
+            console.log(`> ⚠️  The Client_ ${Clientt_} is to be erase it is not selected, the Client_ selected is ${global.Client_} so select ${Clientt_} to erase it.}`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>The Client_ <strong>${Clientt_}</strong> is to be <strong>erase</strong> it is <strong>not</strong> <strong>selected</strong>, the Client_ <strong>selected</strong> is <strong>${global.Client_}</strong> so <strong>select</strong> <strong>${Clientt_}</strong> to <strong>erase</strong> it.`)
+
+            Client_Not_Ready = false
+
+            return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: true }
         }
         if (Clientt_.length === 0 || null) {
             console.log(`> ⚠️  No Client_ found by the valor received: ${Clientt_}.`)
@@ -636,6 +626,7 @@ async function New_Client_() {
         const NameClient_ = global.Client_Name
         Generate_Id_Not_Ready = false
         const Id_Client_ = await Generate_Client_Id()
+        console.log(Id_Client_)
         initialize_Client_Not_Ready = false
         await Initialize_Client_(`_${Id_Client_}_${NameClient_}_`)
     } catch (error) {
@@ -1126,7 +1117,7 @@ async function Generate_Client_Id() {
                 }
             }
         }
-        
+        console.log(Id_Client_)
         return Id_Client_
     } catch (error) {
         console.error(`> ❌ ERROR Generate_Client_Id: ${error}`)
@@ -1269,6 +1260,7 @@ async function Initialize_Client_(Clientt_) {
                 if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> is READY.`)
                 
                 await Load_Chat_Data(ChatData_Not_Ready_Aux, Clientt_)
+                ChatData_Not_Ready = false
             } catch (error) {
                 console.error(`> ❌ ERROR ready ${Clientt_}: ${error}`)
             } 
@@ -1619,7 +1611,6 @@ async function Initialize_Client_(Clientt_) {
                 if (Chat_States[chatId].Is_MSG_Initiate) {
                     let isallerase = false
                     await Save_Chat_Data(chatId, name, Clientt_, isallerase)
-
                 
                     Chat_States[chatId].Is_MSG_Initiate = false
                     
@@ -1732,6 +1723,7 @@ if (global.Log_Callback) global.Log_Callback(`> ✅ FINISHED(Starting functions)
         //////varios problemas no multi clients instance ao testar realmente 2 whats ao mesmo tempo e tals, salvando o client dos 2 no outro e vice versa talves seja a variaveis globais talves fazer array pra cada client dos caminhos de diretorio mai e mt role ein, equanto ta criando um client novo ta mostra o 2 mas ta rodando o 1 as funcao ent arruma isso questao da variavel global caso da incerteza e tals, ta pegando os 2 numero oq ta mandando e oq ta recebendo pro chatdata com o message_create talves seja normal ou n mas ruim pra debug ne os 2 tao linkado or isso ta assim, logica do funil o esquema de mandar msg e n responde e mandar outra msg n ta funfando, erro burro cometido so vai salvar ou ent funfa certo o q tiver selecionado e tem que ta com o front aberto ent ne burro n vai dar certo resolver isso logo, pode ta salvando chatdata no outro se selecionado outro
         //talves um sistema de for repeticao e vai mandando oq tiver na fila pra manda sla estando em uma funcao ou sla json
         //o funil ser de uma fila e oq tiver programado ali ele bate no codigo e executa na hora com oq tiver mandado e tals, sendo midias msg sleep contrapropostas e vai indo, um json programavel, ai ja as midias msg... como faco pra ta no json e rodas no zap assim?
+        //lembrar dos erros do multi client, lembrar de resolver quando voltar nisso, no caso faze um sistema de cadastro ne e tals.... modifica tudo o codigo o beleza kaka////////////////////////////
         
 //a desenvolver...
     //sucess false do start n ta funfando aparece o botao start dinovo
