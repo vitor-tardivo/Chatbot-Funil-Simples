@@ -278,7 +278,7 @@ async function Input_Command(command, Is_Front_Back) {
         console.error(`> ❌ ERROR Input_Command: ${error}`)
     }   
 }
-async function commands(command, Is_Front_Back) {
+async function commands(command, Is_Front_Back) {//muda pra na funcao de comando ter o is front back tendeu? e talves mudar pra switch case inves de if, talves n por causa dos start with mais ai mua a logica de reconhecer o comando talves sla hehe
     if (ChatData_Not_Ready) {
         if (!Is_Front_Back) {
             if (command === 'start') {
@@ -295,7 +295,7 @@ async function commands(command, Is_Front_Back) {
         if (global.Log_Callback) global.Log_Callback(`<strong>${command}</strong>`)
         
         if (Is_Front_Back) {
-            /*if (command === null) {
+            /*if (command.length === 0) {
                 console.log('>  ℹ️ Command not recognized.')
                 if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Command</strong> <strong>not</strong> recognized.`)
                 return
@@ -305,43 +305,43 @@ async function commands(command, Is_Front_Back) {
             }
             else if (command.startsWith('erase ')) {
                 const query = command.substring(6).trim()
-                if (query !== null) {
-                    let Is_From_End = true
-                    await Erase_Chat_Data_By_Query(query, Is_From_End)
-                } else {
+                if (query.length === 0) {
                     console.log(`> ⚠️  Specify a ChatName or ChatId to erase from ${global.File_Data_Chat_Data}, EXEMPLE:\nerase "number||name"`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>ChatName or ChatId</strong> to <strong>erase</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>, <strong>EXEMPLE:\nerase "contact||name"</strong>`)
+                } else {
+                    let Is_From_End = true
+                    await Erase_Chat_Data_By_Query(query, Is_From_End)
                 }
             } else if (command === 'all erase') {
                 let Is_From_End = true
                 await Erase_All_Chat_Data(Is_From_End)
             } else if (command.startsWith('print ')) {
                 const search = command.substring(6).trim()
-                if (search !== null) {
-                    await Search_Chat_Data_By_Search(search)
-                } else {
+                if (search.length === 0) {
                     console.log(`> ⚠️  Specify a ChatName or ChatId to search from ${global.File_Data_Chat_Data}, EXEMPLE:\nprint "number||name"`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>ChatName or ChatId</strong> to <strong>erase</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>, <strong>EXEMPLE:\nprint "contact||name"</strong>`)
+                } else {
+                    await Search_Chat_Data_By_Search(search)
                 }
             } else if (command === 'all print') {
                 let isallerase = false
                 await Print_All_Chat_Data(isallerase)
             } else if (command.startsWith('client erase ')) {
                 const Clientt_ = command.substring(13).trim()
-                if (Clientt_ !== null) {
-                    let Is_From_End = true
-                    await Erase_Client_(Is_From_End, Clientt_)
-                } else {
+                if (Clientt_.length === 0) {
                     console.log(`> ⚠️  Specify a Client_ name to erase from ${global.Data_File_Clients_}, EXEMPLE:\nclient erase "client"`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>erase</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nclient erase "client"</strong>`)
+                } else {
+                    let Is_From_End = true
+                    await Erase_Client_(Is_From_End, Clientt_)
                 }
             } else if (command.startsWith('select ')) {
                 const Clientt_ = command.substring(7).trim()
-                if (Clientt_ !== null) {
-                    await Select_Client_(Clientt_)
-                } else {
+                if (Clientt_.length === 0) {
                     console.log(`> ⚠️  Specify a Client_ name to select from ${global.Data_File_Clients_}, EXEMPLE:\nselect "client"`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>select</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nselect "client"</strong>`)
+                } else {
+                    await Select_Client_(Clientt_)
                 }
             } else if (command === 'new client') {
                 await New_Client_()
@@ -354,48 +354,48 @@ async function commands(command, Is_Front_Back) {
         } else {
             console.log(`${command}`)
 
-            if (command === null) {
-                console.log('>  ℹ️ Command not recognized.')
-                if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Command</strong> <strong>not</strong> recognized.`)
+            if (command.length === 0) {
+                console.log('>  ℹ️ Command is empty.')
+                if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Command</strong> is <strong>empty</strong>.`)
                 return
             } else if (command === 'start') {
                 console.log(`> ⚠️  ${global.Bot_Name || 'BOT'} already Initialized`)
                 if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Bot_Name || 'BOT'}</strong> <strong>already</strong> Initialized`)
             } else if (command.startsWith('erase ')) {
                 const query = command.substring(6).trim()
-                if (query !== null) {
-                    if (Query_Erase_Callback) Query_Erase_Callback(query)
-                } else {
+                if (query.length === 0) {
                     console.log(`> ⚠️  Specify a ChatName or ChatId to erase from ${global.File_Data_Chat_Data}, EXEMPLE:\nerase "number||name"`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>ChatName of ChatId</strong> to <strong>erase</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>, <strong>EXEMPLE:\nerase "contact||name"</strong>`)
+                } else {
+                    if (Query_Erase_Callback) Query_Erase_Callback(query)
                 }
             } else if (command === 'all erase') {
                 if (All_Erase_Callback) All_Erase_Callback()
             } else if (command.startsWith('print ')) {
                 const Search = command.substring(6).trim()
-                if (Search !== null) {
-                    if (Search_List_Callback) Search_List_Callback(Search)
-                } else {
+                if (Search.length === 0) {
                     console.log(`> ⚠️  Specify a ChatName or ChatId to search from ${global.File_Data_Chat_Data}, EXEMPLE:\nprint "number||name"`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>ChatName of ChatId</strong> to <strong>erase</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>, <strong>EXEMPLE:\nprint "contact||name"</strong>`)
+                } else {
+                    if (Search_List_Callback) Search_List_Callback(Search)
                 }
             } else if (command === 'all print') {
                 if (List_Callback) List_Callback()
             } else if (command.startsWith('client erase ')) {
                 const Clientt_ = command.substring(13).trim()
-                if (Clientt_ !== null) {
-                    if (Erase_Client_Callback) Erase_Client_Callback(Clientt_)
-                } else {
+                if (Clientt_.length === 0) {
                     console.log(`> ⚠️  Specify a Client_ name to erase from ${global.Data_File_Clients_}, EXEMPLE:\nclient erase "client"`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>erase</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nclient erase "client"</strong>`)
+                } else {
+                    if (Erase_Client_Callback) Erase_Client_Callback(Clientt_)
                 }
             } else if (command.startsWith('select ')) {
                 const Clientt_ = command.substring(7).trim()
-                if (Clientt_ !== null) {
-                    if (Select_Client_Callback) Select_Client_Callback(Clientt_)
-                } else {
+                if (Clientt_.length === 0) {
                     console.log(`> ⚠️  Specify a Client_ name to select from ${global.Data_File_Clients_}, EXEMPLE:\nselect "client"`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>select</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nselect "client"</strong>`)
+                } else {
+                    if (Select_Client_Callback) Select_Client_Callback(Clientt_)
                 } 
             } else if (command === 'new client') {
                 if (New_Client_Callback) New_Client_Callback()

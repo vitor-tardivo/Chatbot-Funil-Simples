@@ -415,6 +415,7 @@ main {
     overflow-x: auto;
     /*opacity: 1;*/
     opacity: 0;
+    z-index: 8000;
     transition: var(--configTrasition03s);
 }
 #divNewClient::-webkit-scrollbar {
@@ -569,6 +570,7 @@ main {
     justify-content: center;
     align-items: center;
     margin-top: 30px;
+    z-index: 1000;
     transition: var(--configTrasition03s);
 }
 #start {
@@ -613,7 +615,7 @@ main {
     border: 2px solid black;
     box-sizing: border-box;
     padding: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     text-align: center;
     max-width: 100%;
     /*font-size: 0.85vw;*/
@@ -623,6 +625,7 @@ main {
     font-family: var(--fontConsole);
     cursor: help;
     opacity: 0;
+    z-index: 1000;
     transition: var(--configTrasition03s);
 }
 #qrCode:hover {
@@ -632,8 +635,9 @@ main {
 #listTable {
     display: none;
     margin-top: 10px;
-    margin-bottom: 22px;
+    margin-bottom: 42px;
     opacity: 0;
+    z-index: 1000;
     transition: var(--configTrasition03s)
 }
 #divButtonList {
@@ -815,6 +819,7 @@ thead {
 .tableTitle {
     position: sticky;
     top: -0.1px;
+    z-index: 2000;
     transition: var(--configTrasition03s);
 }
 th {
@@ -830,6 +835,7 @@ th {
     width: 100vw;
     cursor: help;
     /*pointer-events: none;*/
+    z-index: 2000;
     transition: var(--configTrasition03s);
 }
 tbody {
@@ -922,6 +928,7 @@ td {
     background-color: var(--colorContrast);
     box-shadow: 2px 2px 10px var(--colorShadow);
     border: 1px solid var(--colorBlack);
+    margin-bottom: 40px;
     box-sizing: border-box;
     word-break: break-word;
     width: 100vw;
@@ -980,10 +987,10 @@ td {
     color: var(--colorWhite);
     font-size: 2.5vw;
     font-family: var(--fontDisplay);
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     transition: var(--configTrasition03s);
 }
-.delayTypeMSG {
+.divDelayTypeMSG {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -994,38 +1001,112 @@ td {
     border: 2px solid var(--colorBlack);
     padding-bottom: 5px;
     border-radius: 50px;
-    margin-bottom: 20px;
-    width: 100%;
+    margin-top: 20px;
+    height: 2vw;
     transition: var(--configTrasition03s);
 }
-.delayTitle {
+.delayMSGTitle {
+    margin-right: 10px;
     margin-bottom: 5px;
     font-size: 1.5vw;
     font-family: var(--fontDisplay);
     cursor: default;
     transition: var(--configTrasition03s);
 }
-.delayTime {
+.delayMSGLabelTime {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: text;
+    transition: var(--configTrasition03s);
+}
+.delayMSGLabelTime:hover {
+    color: var(--colorWhite);
+}
+.delayMSGTime {
     background-color: var(--colorBlack);
     color: var(--colorInteractionElements);
     outline: 1px solid rgba(0, 0, 0, 0);
     border: 1px solid var(--colorBlack);
     padding-top: 1px;
+    padding-right: 0.8px;
     margin-right: 10px;
     width: 3.5em;
     font-size: 1.3vw;
     font-family: var(--fontConsole);
     transition: var(--configTrasition03s);
 }
-.delayTime:hover {
+.delayMSGLabelSeconds {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayMSGTime:hover {
     border: 1px solid var(--colorWhite);
 }
-.delayTime:focus-within {
+.delayMSGTime:focus-within {
     color: var(--colorWhite);
     border: 1px solid var(--colorWhite);
     outline: 1px solid var(--colorWhite);
 }
-.delayLabelSeconds {
+.delayMSGLabelSeconds {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayMSGLabelSeconds:hover {
+    color: var(--colorWhite);
+}
+.delayMSGRadioSeconds {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayMSGLabelMinutes {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayMSGLabelMinutes:hover {
+    color: var(--colorWhite);
+}
+.delayMSGRadioMinutes {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayMSGLabelDays:hover {
+    color: var(--colorWhite);
+}
+.delayMSGLabelHours {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayMSGLabelHours:hover {
+    color: var(--colorWhite);
+}
+.delayMSGRadioHours {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayMSGLabelDays {
     color: var(--colorInteractionElements);
     margin-bottom: 5px;
     font-size: 1.5vw;
@@ -1033,15 +1114,266 @@ td {
     cursor: pointer;
     transition: var(--configTrasition03s);
 }
-.delayLabelSeconds:hover {
+.delayMSGLabelDays:hover {
     color: var(--colorWhite);
 }
-.delayRadioSeconds {
-    margin-right: 10px;
+.delayMSGRadioDays {
     cursor: pointer;
     transition: var(--configTrasition03s);
 }
-.delayLabelMinutes {
+.divTextarea {    
+    margin-top: 20px;
+}
+.divTextareaFunctions {
+    position: sticky;
+    top: -0.1px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    background-color: var(--colorContrastOpacity);
+    border: 2px solid var(--colorBlack);
+    border-bottom: 4px solid var(--colorBlack);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    word-break: break-word;
+    transition: 0s;
+}
+.OnOffResetScreenSetup {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffResetScreenSetup:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffResetScreenSetup:active {
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffResetScreenSetup:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffVLockScreenSetup {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffVLockScreenSetup:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffVLockScreenSetup:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffVLockScreenSetup:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffDesktopScreenSetup {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffDesktopScreenSetup:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffDesktopScreenSetup:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffDesktopScreenSetup:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffPhoneScreenSetup {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffPhoneScreenSetup:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffPhoneScreenSetup:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffPhoneScreenSetup:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffStateTyping {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffStateTyping:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffStateTyping:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffStateTyping:focus {
+    border: 2px solid var(--colorWhite);
+}
+.divDelayText {
+    display: none;
+    flex-direction: row;
+    justify-content: center;
+    align-items: end;
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    outline: 0px solid rgba(0, 0, 0, 0);
+    border: 0px solid var(--colorBlack);
+    padding-bottom: 0px;
+    height: 0vw;
+    transition: var(--configTrasition03s);
+}
+.delayTextTitle {
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: default;
+    transition: var(--configTrasition03s);
+}
+.delayTextLabelTime {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: text;
+    transition: var(--configTrasition03s);
+}
+.delayTextLabelTime:hover {
+    color: var(--colorWhite);
+}
+.delayTextTime {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    padding-top: 1px;
+    padding-right: 0.8px;
+    margin-right: 10px;
+    width: 3.5em;
+    font-size: 1.3vw;
+    font-family: var(--fontConsole);
+    transition: var(--configTrasition03s);
+}
+.delayTextLabelSeconds {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextTime:hover {
+    border: 1px solid var(--colorWhite);
+}
+.delayTextTime:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
+.delayTextLabelSeconds {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextLabelSeconds:hover {
+    color: var(--colorWhite);
+}
+.delayTextRadioSeconds {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextLabelMinutes {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextLabelMinutes:hover {
+    color: var(--colorWhite);
+}
+.delayTextRadioMinutes {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextLabelDays:hover {
+    color: var(--colorWhite);
+}
+.delayTextLabelHours {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextLabelHours:hover {
+    color: var(--colorWhite);
+}
+.delayTextRadioHours {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextLabelDays {
     color: var(--colorInteractionElements);
     margin-bottom: 5px;
     font-size: 1.5vw;
@@ -1049,46 +1381,10 @@ td {
     cursor: pointer;
     transition: var(--configTrasition03s);
 }
-.delayLabelMinutes:hover {
+.delayTextLabelDays:hover {
     color: var(--colorWhite);
 }
-.delayRadioMinutes {
-    margin-right: 10px;
-    cursor: pointer;
-    transition: var(--configTrasition03s);
-}
-.delayLabelDays:hover {
-    color: var(--colorWhite);
-}
-.delayLabelHours {
-    color: var(--colorInteractionElements);
-    margin-bottom: 5px;
-    font-size: 1.5vw;
-    font-family: var(--fontDisplay);
-    cursor: pointer;
-    transition: var(--configTrasition03s);
-}
-.delayLabelHours:hover {
-    color: var(--colorWhite);
-}
-.delayRadioHours {
-    margin-right: 10px;
-    cursor: pointer;
-    transition: var(--configTrasition03s);
-}
-.delayLabelDays {
-    color: var(--colorInteractionElements);
-    margin-bottom: 5px;
-    font-size: 1.5vw;
-    font-family: var(--fontDisplay);
-    cursor: pointer;
-    transition: var(--configTrasition03s);
-}
-.delayLabelDays:hover {
-    color: var(--colorWhite);
-}
-.delayRadioDays {
-    margin-right: 10px;
+.delayTextRadioDays {
     cursor: pointer;
     transition: var(--configTrasition03s);
 }
@@ -1098,17 +1394,18 @@ td {
     outline: 2px solid rgba(0, 0, 0, 0);
     border: 2px solid var(--colorBlack);
     border-radius: 5px;
-    margin-bottom: 20px;
     box-sizing: border-box;
     word-break: break-word;
     max-width: 100%;
     width: 100%;
-    /*width: 43.65em;*//*PC Full screen vertical*/
+    height: 13em;
+    /*width: 43.65em;*//*Desktop Full screen vertical*/
     /*width: 23.35em;*//*Phone Full screen vertical*/
     line-height: 1.2em;
     padding: 6px;
     font-size: 1vw;
     font-family: Helvetica;
+    resize: both;
     transition: var(--configTrasition03s);
 }
 .textAreaTypeMSG:hover {
@@ -1127,7 +1424,7 @@ td {
     color: var(--colorWhite);
     border: 2px dashed var(--colorWhite);
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-top: 20px;
     height: 200px;
     font-size: 1.3vw;
     font-family: var(--fontDisplay);
@@ -1181,7 +1478,7 @@ td {
     border: 2px solid var(--colorBlack);
     border-radius: 50px;
     padding: 10px;
-    margin-top: 10px;
+    margin-top: 40px;
     box-sizing: border-box;
     word-break: break-word;
     width: 100%;

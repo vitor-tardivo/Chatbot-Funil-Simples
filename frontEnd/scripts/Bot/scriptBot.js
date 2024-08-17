@@ -789,25 +789,6 @@ async function showTableList() {
                 list.style.cssText =
                     'display: inline-block; opacity: 1;'
             }, 100)
-
-            /*listButton.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                listButton.style.cssText =
-                    'display: inline-block; opacity: 1;'
-            }, 100)
-            tableList.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                tableList.style.cssText =
-                    'display: inline-block; opacity: 1;'
-            }, 100)
-            eraseButton.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                eraseButton.style.cssText =
-                    'display: inline-block; opacity: 1;'
-            }, 100)*/
             
             await saveTableStyles()
             isTableHidden = false
@@ -824,25 +805,6 @@ async function showTableList() {
                 list.style.cssText =
                     'display: none; opacity: 0;'
             }, 300)
-
-            /*listButton.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                listButton.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
-            tableList.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                tableList.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
-            eraseButton.style.cssText =
-                'display: inline-block; opacity: 0;'
-            setTimeout(function() {
-                eraseButton.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)*/
 
             await saveTableStyles()
             isTableHidden = true
@@ -1014,12 +976,244 @@ async function sendCommand() {
     }
 }
 
-async function delayLimitLength(input) {
-    let inputNumberDelay = input
+let ScreenSetup = -1
+async function resetScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
+    const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
+    const abbrDesktopScreen2 = document.querySelector(`#${abbrDesktopScreenElement2}`)
+    const buttonDesktopScreen3 = document.querySelector(`#${buttonElement3}`)
+    const abbrDesktopScreen3 = document.querySelector(`#${abbrDesktopScreenElement3}`)
+    const buttonDesktopScreen4 = document.querySelector(`#${buttonElement4}`)
+    const abbrDesktopScreen4 = document.querySelector(`#${abbrDesktopScreenElement4}`)
+    
+    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
 
-    if (inputNumberDelay.value.length > 5) {
-        const newValue = inputNumberDelay.value.slice(0, 5)
-        inputNumberDelay.value = newValue
+    if (ScreenSetup === 2 || ScreenSetup === 3 || ScreenSetup === 4) {
+        ScreenSetup = -1
+
+        buttonDesktopScreen2.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen2.textContent = `O`
+        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+        buttonDesktopScreen3.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen3.textContent = `O`
+        abbrDesktopScreen3.title = `PC Tela STATUS: off`
+        buttonDesktopScreen4.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen4.textContent = `O`
+        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+    }
+
+    textAreaMSG.style.cssText =
+        `width: 100%; height: 13em; resize: both;`
+}
+async function VLockScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
+    const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
+    const abbrDesktopScreen2 = document.querySelector(`#${abbrDesktopScreenElement2}`)
+    const buttonDesktopScreen3 = document.querySelector(`#${buttonElement3}`)
+    const abbrDesktopScreen3 = document.querySelector(`#${abbrDesktopScreenElement3}`)
+    const buttonDesktopScreen4 = document.querySelector(`#${buttonElement4}`)
+    const abbrDesktopScreen4 = document.querySelector(`#${abbrDesktopScreenElement4}`)
+    
+    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
+    const currentTextAreaWidth = textAreaMSG.style.width
+    const currentTextAreaHeight = textAreaMSG.style.height
+
+    if (ScreenSetup === -1) {
+        ScreenSetup = 0
+    } else if (ScreenSetup === 3 || ScreenSetup === 4) {
+        ScreenSetup = 0
+
+        buttonDesktopScreen3.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen3.textContent = `O`
+        abbrDesktopScreen3.title = `PC Tela STATUS: off`
+        buttonDesktopScreen4.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen4.textContent = `O`
+        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+    }
+
+    if (ScreenSetup === 0) {
+        buttonDesktopScreen2.style.cssText =
+            'background-color: var(--colorWhite); color: var(--colorBlack);'
+        buttonDesktopScreen2.textContent = `-`
+        abbrDesktopScreen2.title = `VLock Tela STATUS: on`
+    
+        textAreaMSG.style.cssText =
+            `width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: vertical;`
+
+        ScreenSetup = 2
+    } else if (ScreenSetup === 2) {
+        buttonDesktopScreen2.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen2.textContent = `O`
+    
+        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+        
+        textAreaMSG.style.cssText =
+            `width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: both;`
+        
+        ScreenSetup = 0
+    }
+}
+async function desktopScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
+    const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
+    const abbrDesktopScreen2 = document.querySelector(`#${abbrDesktopScreenElement2}`)
+    const buttonDesktopScreen3 = document.querySelector(`#${buttonElement3}`)
+    const abbrDesktopScreen3 = document.querySelector(`#${abbrDesktopScreenElement3}`)
+    const buttonDesktopScreen4 = document.querySelector(`#${buttonElement4}`)
+    const abbrDesktopScreen4 = document.querySelector(`#${abbrDesktopScreenElement4}`)
+    
+    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
+    const currentTextAreaHeight = textAreaMSG.style.height
+
+    if (ScreenSetup === -1) {
+        ScreenSetup = 0
+    } else if (ScreenSetup === 2 || ScreenSetup === 4) {
+        ScreenSetup = 0
+
+        buttonDesktopScreen2.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen2.textContent = `O`
+        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+        buttonDesktopScreen4.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen4.textContent = `O`
+        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+    }
+
+    if (ScreenSetup === 0) {
+        buttonDesktopScreen3.style.cssText =
+            'background-color: var(--colorWhite); color: var(--colorBlack);'
+        buttonDesktopScreen3.textContent = `-`
+        abbrDesktopScreen3.title = `PC Tela STATUS: on`
+    
+        textAreaMSG.style.cssText =
+            `width: 43.65em; height: ${currentTextAreaHeight}; resize: vertical;`
+
+        ScreenSetup = 3
+    } else if (ScreenSetup === 3) {
+        buttonDesktopScreen3.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen3.textContent = `O`
+    
+        abbrDesktopScreen3.title = `PC Tela STATUS: off`
+        
+        textAreaMSG.style.cssText =
+            `width: 100%; height: ${currentTextAreaHeight}; resize: both;`
+        
+        ScreenSetup = 0
+    }
+}
+let StateTyping = null
+async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTextElement, textareaFunctionsElement) {//tem um pequeno flick nas transicoes
+    const buttonStateTyping = document.querySelector(`#${buttonElement}`)
+    const abbrStateTyping = document.querySelector(`#${abbrStateTypingElement}`)
+    
+    const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
+    const divTextareaFunctions = document.querySelector(`#${textareaFunctionsElement}`)
+
+
+    if (StateTyping === null || undefined) {
+        StateTyping = true
+    } 
+
+    if (StateTyping) {
+        buttonStateTyping.style.cssText =
+            'background-color: var(--colorWhite); color: var(--colorBlack);'
+        buttonStateTyping.textContent = `-`
+        
+        abbrStateTyping.title = `StateTyping Tela STATUS: on`
+
+        divTextareaFunctions.style.cssText =
+            'background-color: var(--colorContrast);'
+        setTimeout(function() {
+        }, 300)
+        divDelayTextStateTyping.style.cssText =
+            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding-bottom: 0px;'
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: flex; height: 0vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding-bottom: 5px;'
+        }, 1)
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: flex; height: 2vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding-bottom: 5px;'
+        }, 100)
+        setTimeout(function() {
+            divTextareaFunctions.style.cssText =
+                'background-color: var(--colorContrastOpacity);'
+        }, 300)
+
+        StateTyping = false
+    } else {
+        buttonStateTyping.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonStateTyping.textContent = `O`
+
+        abbrStateTyping.title = `StateTyping Tela STATUS: off`
+
+        divTextareaFunctions.style.cssText =
+            'background-color: var(--colorContrast);'
+        divDelayTextStateTyping.style.cssText =
+            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding-bottom: 0px;'
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding-bottom: 0px;'
+            divTextareaFunctions.style.cssText =
+                'background-color: var(--colorContrastOpacity);'
+        }, 300)
+        
+        StateTyping = true
+    }
+}
+async function phoneScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
+    const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
+    const abbrDesktopScreen2 = document.querySelector(`#${abbrDesktopScreenElement2}`)
+    const buttonDesktopScreen3 = document.querySelector(`#${buttonElement3}`)
+    const abbrDesktopScreen3 = document.querySelector(`#${abbrDesktopScreenElement3}`)
+    const buttonDesktopScreen4 = document.querySelector(`#${buttonElement4}`)
+    const abbrDesktopScreen4 = document.querySelector(`#${abbrDesktopScreenElement4}`)
+    
+    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
+    const currentTextAreaHeight = textAreaMSG.style.height
+
+    if (ScreenSetup === -1) {
+        ScreenSetup = 0
+    } else if (ScreenSetup === 2 || ScreenSetup === 3) {
+        ScreenSetup = 0
+
+        buttonDesktopScreen2.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen2.textContent = `O`
+        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+        buttonDesktopScreen3.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen3.textContent = `O`
+        abbrDesktopScreen3.title = `PC Tela STATUS: off`
+    }
+
+    if (ScreenSetup === 0) {
+        buttonDesktopScreen4.style.cssText =
+            'background-color: var(--colorWhite); color: var(--colorBlack);'
+        buttonDesktopScreen4.textContent = `-`
+        abbrDesktopScreen4.title = `Celular Tela STATUS: on`
+    
+        textAreaMSG.style.cssText =
+            `width: 23.35em; height: ${currentTextAreaHeight}; resize: vertical;`
+
+        ScreenSetup = 4
+    } else if (ScreenSetup === 4) {
+        buttonDesktopScreen4.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonDesktopScreen4.textContent = `O`
+    
+        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+        
+        textAreaMSG.style.cssText =
+            `width: 100%; height: ${currentTextAreaHeight}; resize: both;`
+        
+        ScreenSetup = 0
     }
 }
 
@@ -1074,6 +1268,14 @@ async function fileHandleDragEnter(event) {
 async function fileAuxAction() {
     const fileType = document.querySelector('#fileTypeMSGAux')
     await fileType.click()
+}
+async function delayLimitLength(input) {
+    let inputNumberDelay = input
+
+    if (inputNumberDelay.value.length > 5) {
+        const newValue = inputNumberDelay.value.slice(0, 5)
+        inputNumberDelay.value = newValue
+    }
 }
 
 async function eraseClient_(isFromTerminal, Clientt_) {
@@ -2000,9 +2202,10 @@ async function startBot() {
 //em desenvolvimento...
     //na pagina separar por secoes, secao do qr code do start da lista e do funil e ser possivel mover entre elas mudar as posicao as ordem, e fazer algo igual ao funil ne, por mouse mesmo selecionando e segurnado, e a ordem que ficar ser salvo e quando voltar da load em tudo, talves pra fazer isso implementar um sistema que inves de display e opacity que seja automatico com javacript colado as funcoes na pagina, pode melhora a seguranca e tals ne
     //desenvolver o desenvolvimento de funils padroes de msg automaticas para o bot e implantar front end, principalmente front end so vai ser possivel mexer com isso la
-        //filetypes, dps que for selecionado ele muda o design pra outro, e se for um audio ele da opcao e o tempo de delay e tals usa a mesma logica do delay padrao por MSG pro staterecording, e para apagar tem que deselecionar o arquivo ent fazer um esquema de design que o botao que apagar primeiro deseleciona e dps libera pra apagar, ma so substitui por outro botao n preccisa criar uma loucura na funcao de apagar so pra isso
+        //filetypes, dps que for selecionado ele muda o design pra outro, e se for um audio ele da opcao e o tempo de delay e tals usa a mesma logica do delay padrao por MSG pro staterecording, e para apagar tem que deselecionar o arquivo ent fazer um esquema de design que o botao que apagar primeiro deseleciona e dps libera pra apagar, ma so substitui por outro botao n preccisa criar uma loucura na funcao de apagar so pra isso, e em questao de legendas pra documentos fotos videos ter tipo um textarea imbutido ali pra isso
         //texareas, tem uma opcao pro typing la e usa o delay padrao MSG e tals logica, e ter modos de tamanhos especificos selecionaveis da area de texto iguais do chat do whatsapp balao e tals, 
         //delay, meio que ja ta feito sla
+        //counter, um sistemas semelhante ao delay pra pegar as info valor, e um sistemas de da pra selecionar outros card pra entra dentro do type counter ne pra ambos os caminhos e os que n tiver dps de acabar tudo vai continuar rodar normal, agora um sistemas de couter dentro do outro ja n sei como fazeria talves um igual? ai teria q ter um sistema de acumulo e ordem de selecoes counter kakakakaak meu deus du ceu
         //em cada card ter um botao pra apagar o proprio
         //implementar toda a logica tudo e tals disso tudo quando acabar o design e planejamento da logica do funil
 

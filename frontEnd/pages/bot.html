@@ -128,8 +128,10 @@
                                 </thead>
                             
                                 <tbody title="Itens">
-                                    <td>N/A</td><!-- Numero --> 
-                                    <td>N/A</td><!-- Nome --> 
+                                    <tr>
+                                        <td>N/A</td><!-- Numero --> 
+                                        <td>N/A</td><!-- Nome --> 
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -142,21 +144,38 @@
                 <div class="divs" id="divFunil">
                     <div id="divInnerFunil">
                         <div id="divFunilFunctions">
-                            <abbr title="Schedule Erase STATUS: null"><button class="functionsDivStart" id="OnOffScheduleErase" onclick="">-O</button></abbr><!--Schedule Erase STATUS: on Schedule Erase STATUS: off-->
+                            <abbr title="Schedule Erase STATUS: null" id="abbrScheduleErase"><button class="functionsDivStart" id="OnOffScheduleErase" onclick="">-O</button></abbr>
                         </div>
                         <div id="divCreateFunctionFunil">
                             <h2 id="titleFunil">Criação e customização do Funil</h2>
 
                             <div id="funilArea">
-                                <div class="delayTypeMSG">
-                                    <abbr title="Determine um tempo para o Delay"><span class="delayTitle">DELAY-</span><input type="number" class="delayTime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></abbr> 
-                                    <abbr title="Selecione em Segundos"><label for="delayRadioSeconds" class="delayLabelSeconds">Segundos-</label><input type="radio" name="delayRadio" id="delayRadioSeconds" class="delayRadioSeconds" placeholder="s"></abbr> 
-                                    <abbr title="Selecione em Minutos"><label for="delayRadioMinutes" class="delayLabelMinutes">Minutos-</label><input type="radio" name="delayRadio" id="delayRadioMinutes" class="delayRadioMinutes" placeholder="m"> </abbr>
-                                    <abbr title="Selecione em Horas"><label for="delayRadioHours" class="delayLabelHours">Horas-</label><input type="radio" id="delayRadioHours" name="delayRadio" class="delayRadioHours" placeholder="h"> </abbr>
-                                    <abbr title="Selecione em Dias"><label for="delayRadioDays" class="delayLabelDays">Dias-</label><input type="radio" name="delayRadio" id="delayRadioDays" class="delayRadioDays" placeholder="d"></abbr>
+                                <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
+                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle">DELAY-MSG:</span><label for="delayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="delayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                    <abbr title="Selecione duração em Segundos"><label for="delayMSGRadioSeconds" class="delayMSGLabelSeconds">Segundos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioSeconds" class="delayMSGRadioSeconds" placeholder="s">)</label></abbr> 
+                                    <abbr title="Selecione duração em Minutos"><label for="delayMSGRadioMinutes" class="delayMSGLabelMinutes">Minutos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioMinutes" class="delayMSGRadioMinutes" placeholder="m">)</label></abbr>
+                                    <abbr title="Selecione duração em Horas"><label for="delayMSGRadioHours" class="delayMSGLabelHours">Horas-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioHours" class="delayMSGRadioHours" placeholder="h">)</label></abbr>
+                                    <abbr title="Selecione duração em Dias"><label for="delayMSGRadioDays" class="delayMSGLabelDays">Dias-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioDays" class="delayMSGRadioDays" placeholder="d">)</label></abbr>
                                 </div>
 
-                                <textarea class="textAreaTypeMSG" placeholder="Escreva uma MSG..." rows="10" oninput=""></textarea>
+                                <div class="divTextarea">
+                                    <div class="divTextareaFunctions" id="idivTextareaFunctions">
+                                        <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetup" id="iOnOffResetScreenSetup1" onclick="resetScreenSetup('iOnOffVLockScreenSetup2', 'iabbrOnOffVLockScreenSetup2', 'iOnOffDesktopScreenSetup3', 'iabbrOnOffDesktopScreenSetup3', 'iOnOffPhoneScreenSetup4', 'iabbrOnOffPhoneScreenSetup4', 'itextAreaTypeMSG')">R</button></abbr>
+                                        <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetup2"><button class="functionsDivStart OnOffVLockScreenSetup" id="iOnOffVLockScreenSetup2" onclick="VLockScreenSetup('iOnOffVLockScreenSetup2', 'iabbrOnOffVLockScreenSetup2', 'iOnOffDesktopScreenSetup3', 'iabbrOnOffDesktopScreenSetup3', 'iOnOffPhoneScreenSetup4', 'iabbrOnOffPhoneScreenSetup4', 'itextAreaTypeMSG')">O</button></abbr>
+                                        <abbr title="Desktop Tela STATUS: off" id="iabbrOnOffDesktopScreenSetup3"><button class="functionsDivStart OnOffDesktopScreenSetup" id="iOnOffDesktopScreenSetup3" onclick="desktopScreenSetup('iOnOffVLockScreenSetup2', 'iabbrOnOffVLockScreenSetup2', 'iOnOffDesktopScreenSetup3', 'iabbrOnOffDesktopScreenSetup3', 'iOnOffPhoneScreenSetup4', 'iabbrOnOffPhoneScreenSetup4', 'itextAreaTypeMSG')">O</button></abbr>
+                                        <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetup4"><button class="functionsDivStart OnOffPhoneScreenSetup" id="iOnOffPhoneScreenSetup4" onclick="phoneScreenSetup('iOnOffVLockScreenSetup2', 'iabbrOnOffVLockScreenSetup2', 'iOnOffDesktopScreenSetup3', 'iabbrOnOffDesktopScreenSetup3', 'iOnOffPhoneScreenSetup4', 'iabbrOnOffPhoneScreenSetup4', 'itextAreaTypeMSG')">O</button></abbr>
+                                        <abbr title="StateTyping Tela STATUS: off" id="iabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iOnOffStateTyping" onclick="StateTypingMSG('iOnOffStateTyping', 'iabbrOnOffStateTyping', 'idivDelayText', 'idivTextareaFunctions')">O</button></abbr>
+                                    </div>
+
+                                    <div class="divDelayText" id="idivDelayText">
+                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle">DELAY-StateTyping:</span><label for="delayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="delayTTextime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                        <abbr title="Selecione duração em Segundos"><label for="delayTextRadioSeconds" class="delayTextLabelSeconds">Segundos-(<input type="radio" name="delayTextRadio" id="delayTextRadioSeconds" class="delayTextRadioSeconds" placeholder="s">)</label></abbr> 
+                                        <abbr title="Selecione duração em Minutos"><label for="delayTextRadioMinutes" class="delayTextLabelMinutes">Minutos-(<input type="radio" name="delayTextRadio" id="delayTextRadioMinutes" class="delayTextRadioMinutes" placeholder="m">)</label></abbr>
+                                        <abbr title="Selecione duração em Horas"><label for="delayTextRadioHours" class="delayTextLabelHours">Horas-(<input type="radio" name="delayTextRadio" id="delayTextRadioHours" class="delayTextRadioHours" placeholder="h">)</label></abbr>
+                                        <abbr title="Selecione duração em Dias"><label for="delayTextRadioDays" class="delayTextLabelDays">Dias-(<input type="radio" name="delayTextRadio" id="delayTextRadioDays" class="delayTextRadioDays" placeholder="d">)</label></abbr>
+                                    </div>
+                                    <textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="Escreva uma MSG..." oninput=""></textarea>
+                                </div>
 
                                 <abbr title="Clique ou arraste e solte aqui para poder enviar um arquivo" id="abbrfileDropZone"><div class="fileTypeDropZoneMSG" ondragover="fileHandleDragEnter(event)" ondragleave="fileHandleDragLeave(event)" onmouseleave="fileHandleDragLeave(event)" ondrop="fileTypeAction(event, false)" onclick="fileAuxAction()">
                                     <p>Clique ou arraste um arquivo</p>
