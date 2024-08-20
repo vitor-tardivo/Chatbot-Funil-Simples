@@ -483,10 +483,10 @@ async function exit(exitInten) {
 
         const status = document.querySelector('#status')
         if (exitInten) {
-            status.textContent = `<strong>Reset page</strong>!`
+            status.innerHTML = `<strong>Reset page</strong>!`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Reset page</strong>!`)
         } else {
-            status.textContent = `<i><strong>ERROR</strong></i> Back End!`
+            status.innerHTML = `<i><strong>ERROR</strong></i> Back End!`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> Back End!`)
         }
 
@@ -1090,7 +1090,7 @@ async function desktopScreenSetup(buttonElement2, abbrDesktopScreenElement2, but
         abbrDesktopScreen3.title = `PC Tela STATUS: on`
     
         textAreaMSG.style.cssText =
-            `width: 43.65em; height: ${currentTextAreaHeight}; resize: vertical;`
+            `width: 44.35em; height: ${currentTextAreaHeight}; resize: vertical;`
 
         ScreenSetup = 3
     } else if (ScreenSetup === 3) {
@@ -1104,67 +1104,6 @@ async function desktopScreenSetup(buttonElement2, abbrDesktopScreenElement2, but
             `width: 100%; height: ${currentTextAreaHeight}; resize: both;`
         
         ScreenSetup = 0
-    }
-}
-let StateTyping = null
-async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTextElement, textareaFunctionsElement) {//tem um pequeno flick nas transicoes
-    const buttonStateTyping = document.querySelector(`#${buttonElement}`)
-    const abbrStateTyping = document.querySelector(`#${abbrStateTypingElement}`)
-    
-    const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
-    const divTextareaFunctions = document.querySelector(`#${textareaFunctionsElement}`)
-
-
-    if (StateTyping === null || undefined) {
-        StateTyping = true
-    } 
-
-    if (StateTyping) {
-        buttonStateTyping.style.cssText =
-            'background-color: var(--colorWhite); color: var(--colorBlack);'
-        buttonStateTyping.textContent = `-`
-        
-        abbrStateTyping.title = `StateTyping Tela STATUS: on`
-
-        divTextareaFunctions.style.cssText =
-            'background-color: var(--colorContrast);'
-        setTimeout(function() {
-        }, 300)
-        divDelayTextStateTyping.style.cssText =
-            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding-bottom: 0px;'
-        setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: flex; height: 0vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding-bottom: 5px;'
-        }, 1)
-        setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: flex; height: 2vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding-bottom: 5px;'
-        }, 100)
-        setTimeout(function() {
-            divTextareaFunctions.style.cssText =
-                'background-color: var(--colorContrastOpacity);'
-        }, 300)
-
-        StateTyping = false
-    } else {
-        buttonStateTyping.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
-        buttonStateTyping.textContent = `O`
-
-        abbrStateTyping.title = `StateTyping Tela STATUS: off`
-
-        divTextareaFunctions.style.cssText =
-            'background-color: var(--colorContrast);'
-        divDelayTextStateTyping.style.cssText =
-            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding-bottom: 0px;'
-        setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding-bottom: 0px;'
-            divTextareaFunctions.style.cssText =
-                'background-color: var(--colorContrastOpacity);'
-        }, 300)
-        
-        StateTyping = true
     }
 }
 async function phoneScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
@@ -1214,6 +1153,128 @@ async function phoneScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
             `width: 100%; height: ${currentTextAreaHeight}; resize: both;`
         
         ScreenSetup = 0
+    }
+}
+let StateTyping = null
+async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTextElement, textareaFunctionsElement) {//tem um pequeno flick nas transicoes
+    const buttonStateTyping = document.querySelector(`#${buttonElement}`)
+    const abbrStateTyping = document.querySelector(`#${abbrStateTypingElement}`)
+    
+    const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
+    const divTextareaFunctions = document.querySelector(`#${textareaFunctionsElement}`)
+
+
+    if (StateTyping === null || undefined) {
+        StateTyping = true
+    } 
+
+    if (StateTyping) {
+        buttonStateTyping.style.cssText =
+            'background-color: var(--colorWhite); color: var(--colorBlack);'
+        buttonStateTyping.textContent = `-`
+        
+        abbrStateTyping.title = `StateTyping STATUS: on`
+
+        divTextareaFunctions.style.cssText =
+            'background-color: var(--colorContrast);'
+        setTimeout(function() {
+        }, 300)
+        divDelayTextStateTyping.style.cssText =
+            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: flex; height: 0vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+        }, 1)
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: flex; height: 3.13vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+        }, 100)
+        setTimeout(function() {
+            divTextareaFunctions.style.cssText =
+                'background-color: var(--colorContrastOpacity);'
+        }, 300)
+
+        StateTyping = false
+    } else {
+        buttonStateTyping.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonStateTyping.textContent = `O`
+
+        abbrStateTyping.title = `StateTyping STATUS: off`
+
+        divTextareaFunctions.style.cssText =
+            'background-color: var(--colorContrast);'
+        divDelayTextStateTyping.style.cssText =
+            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            divTextareaFunctions.style.cssText =
+                'background-color: var(--colorContrastOpacity);'
+        }, 300)
+        
+        StateTyping = true
+    }
+}
+let StateRecording = null
+async function StateRecordingMSG(buttonElement, abbrStateTypingElement, divDelayTextElement, textareaFunctionsElement) {//tem um pequeno flick nas transicoes
+    const buttonStateTyping = document.querySelector(`#${buttonElement}`)
+    const abbrStateTyping = document.querySelector(`#${abbrStateTypingElement}`)
+    
+    const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
+    const divTextareaFunctions = document.querySelector(`#${textareaFunctionsElement}`)
+
+
+    if (StateRecording === null || undefined) {
+        StateRecording = true
+    } 
+
+    if (StateRecording) {
+        buttonStateTyping.style.cssText =
+            'background-color: var(--colorWhite); color: var(--colorBlack);'
+        buttonStateTyping.textContent = `-`
+        
+        abbrStateTyping.title = `StateTyping STATUS: on`
+
+        divTextareaFunctions.style.cssText =
+            'background-color: var(--colorContrast);'
+        setTimeout(function() {
+        }, 300)
+        divDelayTextStateTyping.style.cssText =
+            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: flex; height: 0vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+        }, 1)
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: flex; height: 3.13vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+        }, 100)
+        setTimeout(function() {
+            divTextareaFunctions.style.cssText =
+                'background-color: var(--colorContrastOpacity);'
+        }, 300)
+
+        StateRecording = false
+    } else {
+        buttonStateTyping.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonStateTyping.textContent = `O`
+
+        abbrStateTyping.title = `StateTyping STATUS: off`
+
+        divTextareaFunctions.style.cssText =
+            'background-color: var(--colorContrast);'
+        divDelayTextStateTyping.style.cssText =
+            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            divTextareaFunctions.style.cssText =
+                'background-color: var(--colorContrastOpacity);'
+        }, 300)
+        
+        StateRecording = true
     }
 }
 
@@ -1401,6 +1462,7 @@ async function selectClient_(Clientt_) {
         return
     }
     try {
+        displayOnConsole(`${Clientt_}`)
         Client_NotReady = true
 
         let barL = document.querySelector('#barLoading')
@@ -2054,7 +2116,7 @@ async function insertClient_Front(Clientt_) {
             'width: 100vw; visibility: visible;'
 
         const ClientsDiv = document.querySelector('#Clients_')
-        let clientHTML = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}"><button class="Clients_" onclick="selectClient_(false, '${Clientt_}')">${Clientt_}</button></abbr><abbr title="Erase ${Clientt_}"><button class="Clients_Erase" onclick="eraseClient_(false, false, '${Clientt_}')"><</button></abbr></div>`
+        let clientHTML = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}"><button class="Clients_" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Erase ${Clientt_}"><button class="Clients_Erase" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
         ClientsDiv.innerHTML += clientHTML
 
         const divClientt_ = document.querySelector(`#${Clientt_}`)
@@ -2208,6 +2270,10 @@ async function startBot() {
         //counter, um sistemas semelhante ao delay pra pegar as info valor, e um sistemas de da pra selecionar outros card pra entra dentro do type counter ne pra ambos os caminhos e os que n tiver dps de acabar tudo vai continuar rodar normal, agora um sistemas de couter dentro do outro ja n sei como fazeria talves um igual? ai teria q ter um sistema de acumulo e ordem de selecoes counter kakakakaak meu deus du ceu
         //em cada card ter um botao pra apagar o proprio
         //implementar toda a logica tudo e tals disso tudo quando acabar o design e planejamento da logica do funil
+        //arrumar a barra horizontal dos atraso-...
+        //adicionar modo escuro e claro e cor do balao verde o whatsapp nos textarea funcoes opcoes
+        //arrumar meio de onoff pq com uma varavel true false n vai dar pra todos tem comflito usando
+        //alguma forma de junta o type file selected com o select dinamicamente num so inves de separado por display none iiii foda com as permisao tbm
 
 //a desenvolver...
     //?//melhoras o tempo e utilizacao dos status multi client e mais?
@@ -2216,3 +2282,4 @@ async function startBot() {
     //?//arrumar meios de n precisar dessas variaveis permanentes, ou pelo menos diminuir muito?
     //?//melhorar o problema de de vez em quando o a barra de loading do start n funciona direito?
     //coisa de design... o border bottom do #divNewClient n ta aparecendo seila
+    //quando ta fechado o server ao reconectar o estilo do botao WS some, arruma pra n sumir e so fazer oq tem que fazer que e deixa vermelhor ou laranja sla pisca e tals ne po

@@ -698,12 +698,13 @@ async function Save_Chat_Data(chatId, name, Clientt_, isallerase) {
     try {
         console.log(`>  ◌ Saving ChatData ${global.Client_} to Chat_Data=${Clientt_}.json...`)
         if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Saving</strong> ChatData <strong>${Clientt_}</strong> to <strong>Chat_Data=${Clientt_}.json</strong>...`)
-
-        const ChatData = JSON.parse(await fs.readFile(path.join(global.Directory_Dir_Chat_Data), `Chat_Data=${Clientt_}.json`, 'utf8'))
+        
+        const Data_File_Chat_Data = `Chat_Data=${Clientt_}.json`
+        const ChatData = JSON.parse(await fs.readFile(path.join(global.Directory_Dir_Chat_Data, Data_File_Chat_Data), 'utf8'))
         const New_ChatData = [{ chatId, name }, ...ChatData.filter(item => item.chatId !== chatId)]
         const jsonString = '[\n' + New_ChatData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         
-        await fs.writeFile(path.join(global.Directory_Dir_Chat_Data), `Chat_Data=${Clientt_}.json`, jsonString, 'utf8')
+        await fs.writeFile(path.join(global.Directory_Dir_Chat_Data, Data_File_Chat_Data), jsonString, 'utf8')
         
         console.log(`> 💾 ChatData ${global.Client_} saved to Chat_Data=${Clientt_}.json.`)
         if (global.Log_Callback) global.Log_Callback(`> 💾 <i><strong><span class="sobTextColor">(back)</span></strong></i>ChatData <strong>${global.Client_}</strong> <strong>saved</strong> to <strong>Chat_Data=${Clientt_}.json</strong>.`)
@@ -1724,6 +1725,7 @@ if (global.Log_Callback) global.Log_Callback(`> ✅ FINISHED(Starting functions)
         //talves um sistema de for repeticao e vai mandando oq tiver na fila pra manda sla estando em uma funcao ou sla json
         //o funil ser de uma fila e oq tiver programado ali ele bate no codigo e executa na hora com oq tiver mandado e tals, sendo midias msg sleep contrapropostas e vai indo, um json programavel, ai ja as midias msg... como faco pra ta no json e rodas no zap assim?
         //lembrar dos erros do multi client, lembrar de resolver quando voltar nisso, no caso faze um sistema de cadastro ne e tals.... modifica tudo o codigo o beleza kaka////////////////////////////
+        //um ifzao com os codigos ja e so recebe as info tipo se for file audio staterecording o tempo do delay e o asvoice true e manda carregando do funil dos arquivo salvos nas pastas os caminhos dados infos no json na ordem e tals
         
 //a desenvolver...
     //sucess false do start n ta funfando aparece o botao start dinovo

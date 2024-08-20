@@ -77,6 +77,9 @@ main {
     flex-direction: row;
     justify-content: center;
     background-color: #2b2b2b00;
+    /*white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: auto;*/
     transition: var(--configTrasition03s);
 }
 .functionsDiv {
@@ -318,6 +321,9 @@ main {
     justify-content: center;
     background-color: var(--colorContrast);
     border-bottom: 2px solid var(--colorBlack);
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: auto;
     transition: var(--configTrasition03s);
 }
 #reload {
@@ -371,7 +377,7 @@ main {
     border-right: 2px solid rgba(5, 5, 5, 0);
     border-left: 2px solid rgba(5, 5, 5, 0);
     border-bottom: 2px solid var(--colorBlack);
-    box-shadow: 2px 2px 6px var(--colorShadow);
+    box-shadow: 0px 6px 6px var(--colorShadow);
     opacity: 1;
     visibility: visible;
     position: unset;
@@ -409,9 +415,11 @@ main {
     border-right: 2px solid rgba(5, 5, 5, 0);
     border-left: 2px solid rgba(5, 5, 5, 0);
     border-bottom: 2px solid var(--colorBlack);
-    box-shadow: 2px 2px 6px var(--colorShadow);
+    box-shadow: 0px 6px 6px var(--colorShadow);
     max-width: 100%;
     box-sizing: border-box;
+    white-space: nowrap;
+    overflow-y: hidden;
     overflow-x: auto;
     /*opacity: 1;*/
     opacity: 0;
@@ -942,7 +950,10 @@ td {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    word-break: break-word;
+    box-shadow: 0px 6px 6px var(--colorShadow);
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: auto;
     transition: var(--configTrasition03s);
 }
 #OnOffScheduleErase {
@@ -985,9 +996,10 @@ td {
 }
 #titleFunil {
     color: var(--colorWhite);
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px var(--colorShadow);
     font-size: 2.5vw;
     font-family: var(--fontDisplay);
-    margin-bottom: 10px;
     transition: var(--configTrasition03s);
 }
 .divDelayTypeMSG {
@@ -999,10 +1011,14 @@ td {
     color: var(--colorWhite);
     outline: 2px solid rgba(0, 0, 0, 0);
     border: 2px solid var(--colorBlack);
-    padding-bottom: 5px;
+    padding: 5px 5px 10px 5px;
     border-radius: 50px;
     margin-top: 20px;
-    height: 2vw;
+    box-shadow: 2px 2px 4px var(--colorShadow);
+    height: 3.13vw;
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: auto;
     transition: var(--configTrasition03s);
 }
 .delayMSGTitle {
@@ -1041,7 +1057,6 @@ td {
 .delayMSGLabelSeconds {
     color: var(--colorInteractionElements);
     margin-right: 10px;
-    margin-bottom: 5px;
     font-size: 1.5vw;
     font-family: var(--fontDisplay);
     cursor: pointer;
@@ -1058,7 +1073,6 @@ td {
 .delayMSGLabelSeconds {
     color: var(--colorInteractionElements);
     margin-right: 10px;
-    margin-bottom: 5px;
     font-size: 1.5vw;
     font-family: var(--fontDisplay);
     cursor: pointer;
@@ -1074,7 +1088,6 @@ td {
 .delayMSGLabelMinutes {
     color: var(--colorInteractionElements);
     margin-right: 10px;
-    margin-bottom: 5px;
     font-size: 1.5vw;
     font-family: var(--fontDisplay);
     cursor: pointer;
@@ -1093,7 +1106,6 @@ td {
 .delayMSGLabelHours {
     color: var(--colorInteractionElements);
     margin-right: 10px;
-    margin-bottom: 5px;
     font-size: 1.5vw;
     font-family: var(--fontDisplay);
     cursor: pointer;
@@ -1108,7 +1120,7 @@ td {
 }
 .delayMSGLabelDays {
     color: var(--colorInteractionElements);
-    margin-bottom: 5px;
+    margin-right: 10px;
     font-size: 1.5vw;
     font-family: var(--fontDisplay);
     cursor: pointer;
@@ -1121,8 +1133,23 @@ td {
     cursor: pointer;
     transition: var(--configTrasition03s);
 }
+.delayMSGLabelNone {
+    color: var(--colorInteractionElements);
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayMSGLabelNone:hover {
+    color: var(--colorWhite);
+}
+.delayMSGRadioNone {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
 .divTextarea {    
     margin-top: 20px;
+    transition: var(--configTrasition03s);
 }
 .divTextareaFunctions {
     position: sticky;
@@ -1132,108 +1159,13 @@ td {
     justify-content: flex-start;
     background-color: var(--colorContrastOpacity);
     border: 2px solid var(--colorBlack);
-    border-bottom: 4px solid var(--colorBlack);
+    border-bottom: 3.5px solid var(--colorBlack);
     outline: 2px solid rgba(0, 0, 0, 0);
-    word-break: break-word;
+    box-shadow: 2px 2px 4px var(--colorShadow);
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: auto;
     transition: 0s;
-}
-.OnOffResetScreenSetup {
-    background-color: var(--colorBlack);
-    color: var(--colorWhite);
-    border: 2px solid var(--colorBlack);
-    border-radius: 0px 0px 50px 50px;
-    outline: 2px solid rgba(0, 0, 0, 0);
-    box-sizing: border-box;
-    word-break: break-word;
-    cursor: pointer;
-    pointer-events: unset;
-    opacity: 1;
-    transition: var(--configTrasition03s);
-}
-.OnOffResetScreenSetup:hover {
-    border: 2px solid var(--colorWhite);
-}
-.OnOffResetScreenSetup:active {
-    background-color: var(--colorWhite);
-    color: var(--colorBlack);
-    border-radius: 0px 0px 0px 0px;
-    outline: 2px solid var(--colorWhite);
-    transition: 0s;
-}
-.OnOffResetScreenSetup:focus {
-    border: 2px solid var(--colorWhite);
-}
-.OnOffVLockScreenSetup {
-    background-color: var(--colorBlack);
-    color: var(--colorWhite);
-    border: 2px solid var(--colorBlack);
-    border-radius: 0px 0px 50px 50px;
-    outline: 2px solid rgba(0, 0, 0, 0);
-    box-sizing: border-box;
-    word-break: break-word;
-    cursor: pointer;
-    pointer-events: unset;
-    opacity: 1;
-    transition: var(--configTrasition03s);
-}
-.OnOffVLockScreenSetup:hover {
-    border: 2px solid var(--colorWhite);
-}
-.OnOffVLockScreenSetup:active {
-    border-radius: 0px 0px 0px 0px;
-    outline: 2px solid var(--colorWhite);
-    transition: 0s;
-}
-.OnOffVLockScreenSetup:focus {
-    border: 2px solid var(--colorWhite);
-}
-.OnOffDesktopScreenSetup {
-    background-color: var(--colorBlack);
-    color: var(--colorWhite);
-    border: 2px solid var(--colorBlack);
-    border-radius: 0px 0px 50px 50px;
-    outline: 2px solid rgba(0, 0, 0, 0);
-    box-sizing: border-box;
-    word-break: break-word;
-    cursor: pointer;
-    pointer-events: unset;
-    opacity: 1;
-    transition: var(--configTrasition03s);
-}
-.OnOffDesktopScreenSetup:hover {
-    border: 2px solid var(--colorWhite);
-}
-.OnOffDesktopScreenSetup:active {
-    border-radius: 0px 0px 0px 0px;
-    outline: 2px solid var(--colorWhite);
-    transition: 0s;
-}
-.OnOffDesktopScreenSetup:focus {
-    border: 2px solid var(--colorWhite);
-}
-.OnOffPhoneScreenSetup {
-    background-color: var(--colorBlack);
-    color: var(--colorWhite);
-    border: 2px solid var(--colorBlack);
-    border-radius: 0px 0px 50px 50px;
-    outline: 2px solid rgba(0, 0, 0, 0);
-    box-sizing: border-box;
-    word-break: break-word;
-    cursor: pointer;
-    pointer-events: unset;
-    opacity: 1;
-    transition: var(--configTrasition03s);
-}
-.OnOffPhoneScreenSetup:hover {
-    border: 2px solid var(--colorWhite);
-}
-.OnOffPhoneScreenSetup:active {
-    border-radius: 0px 0px 0px 0px;
-    outline: 2px solid var(--colorWhite);
-    transition: 0s;
-}
-.OnOffPhoneScreenSetup:focus {
-    border: 2px solid var(--colorWhite);
 }
 .OnOffStateTyping {
     background-color: var(--colorBlack);
@@ -1259,17 +1191,119 @@ td {
 .OnOffStateTyping:focus {
     border: 2px solid var(--colorWhite);
 }
+.OnOffResetScreenSetupText {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffResetScreenSetupText:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffResetScreenSetupText:active {
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffResetScreenSetupText:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffVLockScreenSetupText {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffVLockScreenSetupText:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffVLockScreenSetupText:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffVLockScreenSetupText:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffDesktopScreenSetupText {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffDesktopScreenSetupText:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffDesktopScreenSetupText:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffDesktopScreenSetupText:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffPhoneScreenSetupText {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffPhoneScreenSetupText:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffPhoneScreenSetupText:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffPhoneScreenSetupText:focus {
+    border: 2px solid var(--colorWhite);
+}
 .divDelayText {
     display: none;
     flex-direction: row;
     justify-content: center;
-    align-items: end;
+    align-items: center;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     outline: 0px solid rgba(0, 0, 0, 0);
     border: 0px solid var(--colorBlack);
-    padding-bottom: 0px;
+    padding: 0px 0px 0px 0px;
+    box-shadow: 2px 2px 4px var(--colorShadow);
     height: 0vw;
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: auto;
     transition: var(--configTrasition03s);
 }
 .delayTextTitle {
@@ -1325,7 +1359,6 @@ td {
 .delayTextLabelSeconds {
     color: var(--colorInteractionElements);
     margin-right: 10px;
-    margin-bottom: 5px;
     font-size: 1.5vw;
     font-family: var(--fontDisplay);
     cursor: pointer;
@@ -1341,7 +1374,6 @@ td {
 .delayTextLabelMinutes {
     color: var(--colorInteractionElements);
     margin-right: 10px;
-    margin-bottom: 5px;
     font-size: 1.5vw;
     font-family: var(--fontDisplay);
     cursor: pointer;
@@ -1360,7 +1392,6 @@ td {
 .delayTextLabelHours {
     color: var(--colorInteractionElements);
     margin-right: 10px;
-    margin-bottom: 5px;
     font-size: 1.5vw;
     font-family: var(--fontDisplay);
     cursor: pointer;
@@ -1375,7 +1406,7 @@ td {
 }
 .delayTextLabelDays {
     color: var(--colorInteractionElements);
-    margin-bottom: 5px;
+    margin-right: 10px;
     font-size: 1.5vw;
     font-family: var(--fontDisplay);
     cursor: pointer;
@@ -1388,6 +1419,20 @@ td {
     cursor: pointer;
     transition: var(--configTrasition03s);
 }
+.delayTextLabelNone {
+    color: var(--colorInteractionElements);
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextLabelNone:hover {
+    color: var(--colorWhite);
+}
+.delayTextRadioNone {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
 .textAreaTypeMSG {
     background-color: rgb(54, 54, 54);  
     color: rgb(240, 240, 240);
@@ -1397,10 +1442,10 @@ td {
     box-sizing: border-box;
     word-break: break-word;
     max-width: 100%;
+    /*width: 44.35em;*//*Desktop Full screen vertical MSG*/
+    /*width: 23.35em;*//*Phone Full screen vertical MSG*/
     width: 100%;
     height: 13em;
-    /*width: 43.65em;*//*Desktop Full screen vertical*/
-    /*width: 23.35em;*//*Phone Full screen vertical*/
     line-height: 1.2em;
     padding: 6px;
     font-size: 1vw;
@@ -1415,35 +1460,385 @@ td {
     border: 2px solid rgb(54, 54, 54);
     outline: 2px solid rgb(54, 54, 54);
 }
-.fileTypeDropZoneMSG {
+.fileTypeSelectedMSG {
+    margin-top: 20px;
+    transition: var(--configTrasition03s);
+}
+.divFileFunctions {
+    position: sticky;
+    top: -0.1px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    background-color: var(--colorContrastOpacity);
+    border: 2px solid var(--colorBlack);
+    border-bottom: 3.5px solid var(--colorBlack);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-shadow: 2px 2px 4px var(--colorShadow);
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: auto;
+    transition: 0s;
+}
+.OnOffStateRecording {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffStateRecording:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffStateRecording:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffStateRecording:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffResetScreenSetupCaption {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffResetScreenSetupCaption:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffResetScreenSetupCaption:active {
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffResetScreenSetupCaption:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffVLockScreenSetupCaption {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffVLockScreenSetupCaption:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffVLockScreenSetupCaption:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffVLockScreenSetupCaption:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffDesktopScreenSetupCaption {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffDesktopScreenSetupCaption:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffDesktopScreenSetupCaption:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffDesktopScreenSetupCaption:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffPhoneScreenSetupCaption {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffPhoneScreenSetupCaption:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffPhoneScreenSetupCaption:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffPhoneScreenSetupCaption:focus {
+    border: 2px solid var(--colorWhite);
+}
+.divDelayTextAudio {
+    display: none;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    outline: 0px solid rgba(0, 0, 0, 0);
+    border: 0px solid var(--colorBlack);
+    padding: 0px 0px 0px 0px;
+    box-shadow: 2px 2px 4px var(--colorShadow);
+    height: 0vw;
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: auto;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioTitle {
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: default;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelTime {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: text;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelTime:hover {
+    color: var(--colorWhite);
+}
+.delayTextAudioTime {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    padding-top: 1px;
+    padding-right: 0.8px;
+    margin-right: 10px;
+    width: 3.5em;
+    font-size: 1.3vw;
+    font-family: var(--fontConsole);
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelSeconds {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioTime:hover {
+    border: 1px solid var(--colorWhite);
+}
+.delayTextAudioTime:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
+.delayTextAudioLabelSeconds {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelSeconds:hover {
+    color: var(--colorWhite);
+}
+.delayTextAudioRadioSeconds {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelMinutes {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelMinutes:hover {
+    color: var(--colorWhite);
+}
+.delayTextAudioRadioMinutes {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelHours {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelHours:hover {
+    color: var(--colorWhite);
+}
+.delayTextAudioRadioHours {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelDays {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelDays:hover {
+    color: var(--colorWhite);
+}
+.delayTextAudioRadioDays {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelNone {
+    color: var(--colorInteractionElements);
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioLabelNone:hover {
+    color: var(--colorWhite);
+}
+.delayTextAudioRadioNone {
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.fileSelectedInfo {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border-radius: 5px;
+    /*border-radius: 0px 0px 0px 0px;se tiver textarea ent...*/
+    padding: 10px;
+    box-shadow: 2px 2px 4px var(--colorShadow);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    border: 2px dashed var(--colorWhite);
+    cursor: help;
+    transition: var(--configTrasition03s);
+}
+.fileTitleSelected {
+    color: var(--colorWhite);
+    padding-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    transition: var(--configTrasition03s);
+}
+.fileTypeSelected {
+    color: var(--colorWhite);
+    padding-bottom: 5px;
+    font-size: 1vw;
+    font-family: var(--fontMonoSerif);
+    transition: var(--configTrasition03s);
+}
+.fileNameSelected {
+    color: var(--colorWhite);
+    padding-bottom: 5px;
+    font-size: 1vw;
+    font-family: var(--fontMonoSerif);
+    transition: var(--configTrasition03s);
+}
+.textAreaCaption {
+    background-color: rgb(54, 54, 54);  
+    color: rgb(240, 240, 240);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    border: 2px solid var(--colorBlack);
+    border-radius: 5px;
+    box-sizing: border-box;
+    word-break: break-word;
+    max-width: 100%;
+    /*width: 25em;*//*Desktop Full screen vertical Caption*/
+    /*width: 23.35em;*//*Phone Full screen vertical Caption*/
+    width: 100%;
+    height: 13em;
+    line-height: 1.2em;
+    padding: 6px;
+    font-size: 1vw;
+    font-family: Helvetica;
+    resize: both;
+    transition: var(--configTrasition03s);
+}
+.textAreaCaption:hover {
+    border: 2px solid rgb(54, 54, 54);
+}
+.textAreaCaption:focus-within {
+    border: 2px solid rgb(54, 54, 54);
+    outline: 2px solid rgb(54, 54, 54);
+}
+.fileTypeSelectMSG {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: rgba(230, 230, 230, 0.10);
     color: var(--colorWhite);
+    outline: 2px solid rgba(0, 0, 0, 0);
     border: 2px dashed var(--colorWhite);
     border-radius: 8px;
     margin-top: 20px;
+    box-shadow: 2px 2px 4px var(--colorShadow);
     height: 200px;
-    font-size: 1.3vw;
-    font-family: var(--fontDisplay);
     cursor: pointer;
     transition: var(--configTrasition03s);
 }
-.fileTypeDropZoneMSG:hover {
+.fileTypeSelectMSG:hover {
     background-color: rgba(230, 230, 230, 0.400);
 }
-.fileTypeDropZoneMSG.dragenter {
+.fileTypeSelectMSG.dragenter {
     background-color: rgba(230, 230, 230, 0.400);
     cursor: cell;
 }
-#fileName {
-    font-family: var(--fontMonoSerif);
-    font-size: 1vw;
+.fileTitleSelect {
+    color: var(--colorWhite);
+    font-size: 1.3vw;
+    font-family: var(--fontDisplay);
     transition: var(--configTrasition03s);
 }
-#fileTypeMSGAux {
+.fileNameSelect {
+    color: var(--colorWhite);
+    font-size: 1vw;
+    font-family: var(--fontMonoSerif);
+    transition: var(--configTrasition03s);
+}
+.fileTypeMSGAux {
     display: none;
     transition: var(--configTrasition03s);
 }
@@ -1479,6 +1874,7 @@ td {
     border-radius: 50px;
     padding: 10px;
     margin-top: 40px;
+    box-shadow: 2px 2px 4px var(--colorShadow);
     box-sizing: border-box;
     word-break: break-word;
     width: 100%;
