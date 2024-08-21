@@ -1013,7 +1013,7 @@ td {
     border: 2px solid var(--colorBlack);
     padding: 5px 5px 10px 5px;
     border-radius: 50px;
-    margin-top: 20px;
+    margin-top: 50px;
     box-shadow: 2px 2px 4px var(--colorShadow);
     height: 3.13vw;
     white-space: nowrap;
@@ -1148,7 +1148,7 @@ td {
     transition: var(--configTrasition03s);
 }
 .divTextarea {    
-    margin-top: 20px;
+    margin-top: 50px;
     transition: var(--configTrasition03s);
 }
 .divTextareaFunctions {
@@ -1189,6 +1189,54 @@ td {
     transition: 0s;
 }
 .OnOffStateTyping:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffLightDarkMSG {
+    background-color: rgb(33, 33, 33); 
+    color: rgb(240, 240, 240);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffLightDarkMSG:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffLightDarkMSG:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffLightDarkMSG:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffLightDarkColorMSG {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffLightDarkColorMSG:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffLightDarkColorMSG:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffLightDarkColorMSG:focus {
     border: 2px solid var(--colorWhite);
 }
 .OnOffResetScreenSetupText {
@@ -1434,7 +1482,7 @@ td {
     transition: var(--configTrasition03s);
 }
 .textAreaTypeMSG {
-    background-color: rgb(54, 54, 54);  
+    background-color: rgb(33, 33, 33);  
     color: rgb(240, 240, 240);
     outline: 2px solid rgba(0, 0, 0, 0);
     border: 2px solid var(--colorBlack);
@@ -1454,14 +1502,14 @@ td {
     transition: var(--configTrasition03s);
 }
 .textAreaTypeMSG:hover {
-    border: 2px solid rgb(54, 54, 54);
+    border: 2px solid rgba(0, 0, 0, 0);
 }
 .textAreaTypeMSG:focus-within {
-    border: 2px solid rgb(54, 54, 54);
-    outline: 2px solid rgb(54, 54, 54);
+    border: 2px solid rgba(0, 0, 0, 0);
+    outline: 2px solid var(--colorBlack);
 }
 .fileTypeSelectedMSG {
-    margin-top: 20px;
+    margin-top: 50px;
     transition: var(--configTrasition03s);
 }
 .divFileFunctions {
@@ -1502,6 +1550,78 @@ td {
     transition: 0s;
 }
 .OnOffStateRecording:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffCaption {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffCaption:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffStateCaption:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffCaption:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffLightDarkCaption {
+    background-color: rgb(33, 33, 33); 
+    color: rgb(240, 240, 240);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffLightDarkCaption:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffLightDarkCaption:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffLightDarkCaption:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffLightDarkColorCaption {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffLightDarkColorCaption:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffLightDarkColorCaption:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffLightDarkColorCaption:focus {
     border: 2px solid var(--colorWhite);
 }
 .OnOffResetScreenSetupCaption {
@@ -1777,18 +1897,20 @@ td {
     transition: var(--configTrasition03s);
 }
 .textAreaCaption {
-    background-color: rgb(54, 54, 54);  
+    display: none;
+    background-color: rgb(33, 33, 33);  
     color: rgb(240, 240, 240);
     outline: 2px solid rgba(0, 0, 0, 0);
     border: 2px solid var(--colorBlack);
     border-radius: 5px;
+    margin: auto;
     box-sizing: border-box;
     word-break: break-word;
     max-width: 100%;
     /*width: 25em;*//*Desktop Full screen vertical Caption*/
     /*width: 23.35em;*//*Phone Full screen vertical Caption*/
     width: 100%;
-    height: 13em;
+    height: 0em;
     line-height: 1.2em;
     padding: 6px;
     font-size: 1vw;
@@ -1797,11 +1919,11 @@ td {
     transition: var(--configTrasition03s);
 }
 .textAreaCaption:hover {
-    border: 2px solid rgb(54, 54, 54);
+    border: 2px solid rgba(0, 0, 0, 0);
 }
 .textAreaCaption:focus-within {
-    border: 2px solid rgb(54, 54, 54);
-    outline: 2px solid rgb(54, 54, 54);
+    border: 2px solid rgba(0, 0, 0, 0);
+    outline: 2px solid var(--colorBlack);
 }
 .fileTypeSelectMSG {
     display: flex;
@@ -1813,7 +1935,7 @@ td {
     outline: 2px solid rgba(0, 0, 0, 0);
     border: 2px dashed var(--colorWhite);
     border-radius: 8px;
-    margin-top: 20px;
+    margin-top: 50px;
     box-shadow: 2px 2px 4px var(--colorShadow);
     height: 200px;
     cursor: pointer;
@@ -1873,7 +1995,7 @@ td {
     border: 2px solid var(--colorBlack);
     border-radius: 50px;
     padding: 10px;
-    margin-top: 40px;
+    margin-top: 70px;
     box-shadow: 2px 2px 4px var(--colorShadow);
     box-sizing: border-box;
     word-break: break-word;

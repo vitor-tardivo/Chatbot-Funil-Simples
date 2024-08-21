@@ -1726,6 +1726,7 @@ if (global.Log_Callback) global.Log_Callback(`> ✅ FINISHED(Starting functions)
         //o funil ser de uma fila e oq tiver programado ali ele bate no codigo e executa na hora com oq tiver mandado e tals, sendo midias msg sleep contrapropostas e vai indo, um json programavel, ai ja as midias msg... como faco pra ta no json e rodas no zap assim?
         //lembrar dos erros do multi client, lembrar de resolver quando voltar nisso, no caso faze um sistema de cadastro ne e tals.... modifica tudo o codigo o beleza kaka////////////////////////////
         //um ifzao com os codigos ja e so recebe as info tipo se for file audio staterecording o tempo do delay e o asvoice true e manda carregando do funil dos arquivo salvos nas pastas os caminhos dados infos no json na ordem e tals
+    //adicionar um botao de destroy client do lado do client erase e quando for destroy ele muda pra iniciar dnv unicamente aquele client selecionado, e de inicio todos ficar pra dar destroy ne pq eles iniciar e tals mas tenta pra deixar auto isso de inicia e destroy caso de erro e zas foda daora
         
 //a desenvolver...
     //sucess false do start n ta funfando aparece o botao start dinovo

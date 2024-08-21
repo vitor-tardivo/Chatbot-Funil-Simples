@@ -976,6 +976,294 @@ async function sendCommand() {
     }
 }
 
+let StateTyping = null
+async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTextElement, divFunctionsElement) {
+    const buttonStateTyping = document.querySelector(`#${buttonElement}`)
+    const abbrStateTyping = document.querySelector(`#${abbrStateTypingElement}`)
+    
+    const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
+    const divFunctions = document.querySelector(`#${divFunctionsElement}`)
+
+
+    if (StateTyping === null || undefined) {
+        StateTyping = true
+    } 
+
+    if (StateTyping) {
+        buttonStateTyping.style.cssText =
+            'background-color: var(--colorWhite); color: var(--colorBlack);'
+        buttonStateTyping.textContent = `-`
+        
+        abbrStateTyping.title = `StateTyping STATUS: on`
+
+        divFunctions.style.cssText =
+            'background-color: var(--colorContrast);'
+        divDelayTextStateTyping.style.cssText =
+            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: flex; height: 0vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+        }, -1)
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: flex; height: 3.13vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+        }, 100)
+        setTimeout(function() {
+            divFunctions.style.cssText =
+                'background-color: var(--colorContrastOpacity);'
+        }, 300)
+
+        StateTyping = false
+    } else {
+        buttonStateTyping.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonStateTyping.textContent = `O`
+
+        abbrStateTyping.title = `StateTyping STATUS: off`
+
+        divFunctions.style.cssText =
+            'background-color: var(--colorContrast);'
+        divDelayTextStateTyping.style.cssText =
+            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            divFunctions.style.cssText =
+                'background-color: var(--colorContrastOpacity);'
+        }, 300)
+        
+        StateTyping = true
+    }
+}
+let StateRecording = null
+async function StateRecordingMSG(buttonElement, abbrStateTypingElement, divDelayTextElement, divFunctionsElement) {
+    const buttonStateTyping = document.querySelector(`#${buttonElement}`)
+    const abbrStateTyping = document.querySelector(`#${abbrStateTypingElement}`)
+    
+    const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
+    const divFunctions = document.querySelector(`#${divFunctionsElement}`)
+
+
+    if (StateRecording === null || undefined) {
+        StateRecording = true
+    } 
+
+    if (StateRecording) {
+        buttonStateTyping.style.cssText =
+            'background-color: var(--colorWhite); color: var(--colorBlack);'
+        buttonStateTyping.textContent = `-`
+        
+        abbrStateTyping.title = `StateTyping STATUS: on`
+
+        divFunctions.style.cssText =
+            'background-color: var(--colorContrast);'
+        divDelayTextStateTyping.style.cssText =
+            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: flex; height: 0vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+        }, -1)
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: flex; height: 3.13vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+        }, 100)
+        setTimeout(function() {
+            divFunctions.style.cssText =
+                'background-color: var(--colorContrastOpacity);'
+        }, 300)
+
+        StateRecording = false
+    } else {
+        buttonStateTyping.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonStateTyping.textContent = `O`
+
+        abbrStateTyping.title = `StateTyping STATUS: off`
+
+        divFunctions.style.cssText =
+            'background-color: var(--colorContrast);'
+        divDelayTextStateTyping.style.cssText =
+            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        setTimeout(function() {
+            divDelayTextStateTyping.style.cssText =
+                'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            divFunctions.style.cssText =
+                'background-color: var(--colorContrastOpacity);'
+        }, 300)
+        
+        StateRecording = true
+    }
+}
+let caption = null
+async function CaptionFileMSG(buttonElement, abbrStateTypingElement, divTextAreaElement) {
+    const buttonCaption = document.querySelector(`#${buttonElement}`)
+    const abbrCaption = document.querySelector(`#${abbrStateTypingElement}`)
+    
+    const divTextAreaCaption = document.querySelector(`#${divTextAreaElement}`)
+
+    if (caption === null || undefined) {
+        caption = true
+    } 
+
+    if (caption) {
+        buttonCaption.style.cssText =
+            'background-color: var(--colorWhite); color: var(--colorBlack);'
+        buttonCaption.textContent = `-`
+        
+        abbrCaption.title = `Legenda STATUS: on`
+        
+        divTextAreaCaption.style.cssText =
+            'display: block; height: 0em; padding: 0px;'
+        setTimeout(function() {
+            divTextAreaCaption.style.cssText =
+                'display: block; height: 0em; padding: 6px;' 
+        }, -1)
+        setTimeout(function() {
+            divTextAreaCaption.style.cssText =
+                'display: block; height: 13em; padding: 6px;'
+        }, 100)
+            
+        caption = false
+    } else {
+        buttonCaption.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonCaption.textContent = `O`
+        
+        abbrCaption.title = `Legenda STATUS: off`
+        
+        divTextAreaCaption.style.cssText =
+            'display: block; height: 0em; padding: 0px;'
+        setTimeout(function() {
+            divTextAreaCaption.style.cssText =
+                'display: none; height: 0em; padding: 0px;'
+        }, 300)
+        
+        caption = true
+    }
+}
+let modeLightDark = null
+async function LightDarkMSG(buttonLightDarkElement, abbrLightDarkElement, buttonColorElement, testAreaElement) {
+    const buttonLightDark = document.querySelector(`#${buttonLightDarkElement}`)
+    const abbrLightDark = document.querySelector(`#${abbrLightDarkElement}`)
+    const buttonColor = document.querySelector(`#${buttonColorElement}`)
+    
+    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
+    const currentTextAreaWidth = textAreaMSG.style.width
+    const currentTextAreaHeight = textAreaMSG.style.height
+    const currentTextAreaDisplay = textAreaMSG.style.display
+    const currentTextAreaPadding = textAreaMSG.style.padding
+
+    if (modeLightDark === null || undefined) {
+        modeLightDark = true
+    }
+    if (modeLightDarkColor === true && modeLightDark === true) {
+        buttonLightDark.style.cssText =
+            'background-color: rgb(240, 240, 240); color: rgb(27, 27, 27)'
+        buttonLightDark.textContent = `-`
+        abbrLightDark.title = `Modo Claro/Escuro STATUS: claro`
+
+        buttonColor.style.cssText =
+            'background-color: rgb(215, 241, 178); color: rgb(27, 27, 27);'
+
+        textAreaMSG.style.cssText =
+            `background-color: rgb(215, 241, 178); color: rgb(27, 27, 27); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+
+        modeLightDark = false
+    } else if (modeLightDarkColor === true && modeLightDark === false) {
+        buttonLightDark.style.cssText =
+            'background-color: rgb(33, 33, 33); color: rgb(240, 240, 240)'
+        buttonLightDark.textContent = `O`
+
+        abbrLightDark.title = `Modo Claro/Escuro STATUS: escuro`
+
+        buttonColor.style.cssText =
+            'background-color: rgb(0, 64, 52); color: rgb(240, 240, 240);'
+
+        textAreaMSG.style.cssText =
+            `background-color: rgb(0, 64, 52); color: rgb(240, 240, 240); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};` 
+        
+        modeLightDark = true
+    } else {
+        if (modeLightDark) {
+            buttonLightDark.style.cssText =
+                'background-color: rgb(240, 240, 240); color: rgb(27, 27, 27)'
+            buttonLightDark.textContent = `-`
+            abbrLightDark.title = `Modo Claro/Escuro STATUS: claro`
+        
+            textAreaMSG.style.cssText =
+                `background-color: rgb(240, 240, 240); color: rgb(27, 27, 27); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+
+            modeLightDark = false
+        } else {
+            buttonLightDark.style.cssText =
+                'background-color: rgb(33, 33, 33); color: rgb(240, 240, 240)'
+            buttonLightDark.textContent = `O`
+        
+            abbrLightDark.title = `Modo Claro/Escuro STATUS: escuro`
+            
+            textAreaMSG.style.cssText =
+                `background-color: rgb(33, 33, 33); color: rgb(240, 240, 240); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+            
+            modeLightDark = true
+        }
+    }
+}
+let modeLightDarkColor = null
+async function LightDarkColorMSG(buttonColorElement, abbrColorElement, testAreaElement) {
+    const buttonColor = document.querySelector(`#${buttonColorElement}`)
+    const abbrColor = document.querySelector(`#${abbrColorElement}`)
+    
+    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
+    const currentTextAreaWidth = textAreaMSG.style.width
+    const currentTextAreaHeight = textAreaMSG.style.height
+    const currentTextAreaDisplay = textAreaMSG.style.display
+    const currentTextAreaPadding = textAreaMSG.style.padding
+
+    if (modeLightDarkColor === null || undefined) {
+        modeLightDarkColor = false
+    }
+    if (modeLightDark === null || undefined) {
+        modeLightDark = true
+    }
+
+    if (!modeLightDarkColor) {
+        if (modeLightDark) {
+            buttonColor.style.cssText =
+                'background-color: rgb(0, 64, 52); color: rgb(240, 240, 240);'
+        } else {
+            buttonColor.style.cssText =
+                'background-color: rgb(215, 241, 178); color: rgb(27, 27, 27);'
+        }
+        buttonColor.textContent = `-`
+        abbrColor.title = `Modo Cliente/Usuario STATUS: usuario`
+    
+        if (modeLightDark) {
+            textAreaMSG.style.cssText =
+                `background-color: rgb(0, 64, 52); color: rgb(240, 240, 240); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+        } else {
+            textAreaMSG.style.cssText =
+                `background-color: rgb(215, 241, 178); color: rgb(27, 27, 27); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+        }
+
+        modeLightDarkColor = true
+    } else {
+        buttonColor.style.cssText =
+            'background-color: var(--colorBlack); color: var(--colorWhite);'
+        buttonColor.textContent = `O`
+    
+        abbrColor.title = `Modo Cliente/Usuario STATUS: cliente`
+        
+        if (modeLightDark) {
+            textAreaMSG.style.cssText =
+                `background-color: rgb(33, 33, 33); color: rgb(240, 240, 240); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+        } else {
+            textAreaMSG.style.cssText =
+                `background-color: rgb(240, 240, 240); color: rgb(27, 27, 27); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+        }
+        
+        modeLightDarkColor = false
+    }
+}
 let ScreenSetup = -1
 async function resetScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
     const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
@@ -986,6 +1274,8 @@ async function resetScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
     const abbrDesktopScreen4 = document.querySelector(`#${abbrDesktopScreenElement4}`)
     
     const textAreaMSG = document.querySelector(`#${testAreaElement}`)
+    const currentTextAreaBackground_Color = textAreaMSG.style.backgroundColor
+    const currentTextAreaColor = textAreaMSG.style.color
 
     if (ScreenSetup === 2 || ScreenSetup === 3 || ScreenSetup === 4) {
         ScreenSetup = -1
@@ -1005,7 +1295,7 @@ async function resetScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
     }
 
     textAreaMSG.style.cssText =
-        `width: 100%; height: 13em; resize: both;`
+        `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: 13em; resize: both;`
 }
 async function VLockScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
     const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
@@ -1018,6 +1308,8 @@ async function VLockScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
     const textAreaMSG = document.querySelector(`#${testAreaElement}`)
     const currentTextAreaWidth = textAreaMSG.style.width
     const currentTextAreaHeight = textAreaMSG.style.height
+    const currentTextAreaBackground_Color = textAreaMSG.style.backgroundColor
+    const currentTextAreaColor = textAreaMSG.style.color
 
     if (ScreenSetup === -1) {
         ScreenSetup = 0
@@ -1041,7 +1333,7 @@ async function VLockScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
         abbrDesktopScreen2.title = `VLock Tela STATUS: on`
     
         textAreaMSG.style.cssText =
-            `width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: vertical;`
+            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: vertical;`
 
         ScreenSetup = 2
     } else if (ScreenSetup === 2) {
@@ -1052,7 +1344,7 @@ async function VLockScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
         abbrDesktopScreen2.title = `VLock Tela STATUS: off`
         
         textAreaMSG.style.cssText =
-            `width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: both;`
+            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: both;`
         
         ScreenSetup = 0
     }
@@ -1067,6 +1359,8 @@ async function desktopScreenSetup(buttonElement2, abbrDesktopScreenElement2, but
     
     const textAreaMSG = document.querySelector(`#${testAreaElement}`)
     const currentTextAreaHeight = textAreaMSG.style.height
+    const currentTextAreaBackground_Color = textAreaMSG.style.backgroundColor
+    const currentTextAreaColor = textAreaMSG.style.color
 
     if (ScreenSetup === -1) {
         ScreenSetup = 0
@@ -1090,7 +1384,7 @@ async function desktopScreenSetup(buttonElement2, abbrDesktopScreenElement2, but
         abbrDesktopScreen3.title = `PC Tela STATUS: on`
     
         textAreaMSG.style.cssText =
-            `width: 44.35em; height: ${currentTextAreaHeight}; resize: vertical;`
+            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 44.35em; height: ${currentTextAreaHeight}; resize: vertical;`
 
         ScreenSetup = 3
     } else if (ScreenSetup === 3) {
@@ -1101,7 +1395,7 @@ async function desktopScreenSetup(buttonElement2, abbrDesktopScreenElement2, but
         abbrDesktopScreen3.title = `PC Tela STATUS: off`
         
         textAreaMSG.style.cssText =
-            `width: 100%; height: ${currentTextAreaHeight}; resize: both;`
+            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: ${currentTextAreaHeight}; resize: both;`
         
         ScreenSetup = 0
     }
@@ -1116,6 +1410,8 @@ async function phoneScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
     
     const textAreaMSG = document.querySelector(`#${testAreaElement}`)
     const currentTextAreaHeight = textAreaMSG.style.height
+    const currentTextAreaBackground_Color = textAreaMSG.style.backgroundColor
+    const currentTextAreaColor = textAreaMSG.style.color
 
     if (ScreenSetup === -1) {
         ScreenSetup = 0
@@ -1139,7 +1435,7 @@ async function phoneScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
         abbrDesktopScreen4.title = `Celular Tela STATUS: on`
     
         textAreaMSG.style.cssText =
-            `width: 23.35em; height: ${currentTextAreaHeight}; resize: vertical;`
+            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 23.35em; height: ${currentTextAreaHeight}; resize: vertical;`
 
         ScreenSetup = 4
     } else if (ScreenSetup === 4) {
@@ -1150,131 +1446,9 @@ async function phoneScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
         abbrDesktopScreen4.title = `Celular Tela STATUS: off`
         
         textAreaMSG.style.cssText =
-            `width: 100%; height: ${currentTextAreaHeight}; resize: both;`
+            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: ${currentTextAreaHeight}; resize: both;`
         
         ScreenSetup = 0
-    }
-}
-let StateTyping = null
-async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTextElement, textareaFunctionsElement) {//tem um pequeno flick nas transicoes
-    const buttonStateTyping = document.querySelector(`#${buttonElement}`)
-    const abbrStateTyping = document.querySelector(`#${abbrStateTypingElement}`)
-    
-    const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
-    const divTextareaFunctions = document.querySelector(`#${textareaFunctionsElement}`)
-
-
-    if (StateTyping === null || undefined) {
-        StateTyping = true
-    } 
-
-    if (StateTyping) {
-        buttonStateTyping.style.cssText =
-            'background-color: var(--colorWhite); color: var(--colorBlack);'
-        buttonStateTyping.textContent = `-`
-        
-        abbrStateTyping.title = `StateTyping STATUS: on`
-
-        divTextareaFunctions.style.cssText =
-            'background-color: var(--colorContrast);'
-        setTimeout(function() {
-        }, 300)
-        divDelayTextStateTyping.style.cssText =
-            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-        setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: flex; height: 0vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
-        }, 1)
-        setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: flex; height: 3.13vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
-        }, 100)
-        setTimeout(function() {
-            divTextareaFunctions.style.cssText =
-                'background-color: var(--colorContrastOpacity);'
-        }, 300)
-
-        StateTyping = false
-    } else {
-        buttonStateTyping.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
-        buttonStateTyping.textContent = `O`
-
-        abbrStateTyping.title = `StateTyping STATUS: off`
-
-        divTextareaFunctions.style.cssText =
-            'background-color: var(--colorContrast);'
-        divDelayTextStateTyping.style.cssText =
-            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-        setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-            divTextareaFunctions.style.cssText =
-                'background-color: var(--colorContrastOpacity);'
-        }, 300)
-        
-        StateTyping = true
-    }
-}
-let StateRecording = null
-async function StateRecordingMSG(buttonElement, abbrStateTypingElement, divDelayTextElement, textareaFunctionsElement) {//tem um pequeno flick nas transicoes
-    const buttonStateTyping = document.querySelector(`#${buttonElement}`)
-    const abbrStateTyping = document.querySelector(`#${abbrStateTypingElement}`)
-    
-    const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
-    const divTextareaFunctions = document.querySelector(`#${textareaFunctionsElement}`)
-
-
-    if (StateRecording === null || undefined) {
-        StateRecording = true
-    } 
-
-    if (StateRecording) {
-        buttonStateTyping.style.cssText =
-            'background-color: var(--colorWhite); color: var(--colorBlack);'
-        buttonStateTyping.textContent = `-`
-        
-        abbrStateTyping.title = `StateTyping STATUS: on`
-
-        divTextareaFunctions.style.cssText =
-            'background-color: var(--colorContrast);'
-        setTimeout(function() {
-        }, 300)
-        divDelayTextStateTyping.style.cssText =
-            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-        setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: flex; height: 0vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
-        }, 1)
-        setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: flex; height: 3.13vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
-        }, 100)
-        setTimeout(function() {
-            divTextareaFunctions.style.cssText =
-                'background-color: var(--colorContrastOpacity);'
-        }, 300)
-
-        StateRecording = false
-    } else {
-        buttonStateTyping.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
-        buttonStateTyping.textContent = `O`
-
-        abbrStateTyping.title = `StateTyping STATUS: off`
-
-        divTextareaFunctions.style.cssText =
-            'background-color: var(--colorContrast);'
-        divDelayTextStateTyping.style.cssText =
-            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-        setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-            divTextareaFunctions.style.cssText =
-                'background-color: var(--colorContrastOpacity);'
-        }, 300)
-        
-        StateRecording = true
     }
 }
 
@@ -2283,3 +2457,4 @@ async function startBot() {
     //?//melhorar o problema de de vez em quando o a barra de loading do start n funciona direito?
     //coisa de design... o border bottom do #divNewClient n ta aparecendo seila
     //quando ta fechado o server ao reconectar o estilo do botao WS some, arruma pra n sumir e so fazer oq tem que fazer que e deixa vermelhor ou laranja sla pisca e tals ne po
+    //se tiver algum pau com estilos ver getComputedStyle computedStyle.(propriedade) trocar pra esse modo modelo sla inves de (nome).style.(propriedade)
