@@ -1,0 +1,11 @@
+client
+branco branco
+preto preto
+light rgb(240, 240, 240) rgb(27, 27, 27)preto
+dark rgb(33, 33, 33)cinza rgb(240, 240, 240)branco
+
+user
+branco branco
+preto preto
+light rgb(215, 241, 178)verde claro rgb(27, 27, 27)preto
+dark rgb(0, 64, 52)verde escuro rgb(240, 240, 240)branco

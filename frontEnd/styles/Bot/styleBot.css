@@ -529,6 +529,96 @@ main {
     border-bottom: 1px solid var(--colorRed);
     /*outline: 1px solid var(--colorWhite);*/
 }
+.Clients_Destroy {
+    display: inline;
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border-top: 1px solid var(--colorBlack);
+    border-right: 0.5px solid var(--colorBlack);
+    border-left: 0.5px solid var(--colorBlack);
+    border-bottom: 1px solid var(--colorBlack);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    padding: 3px 17px 3px 17px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    font-size: 1vw;
+    cursor: pointer;
+    font-weight: bolder;
+    font-family: var(--fontDisplay);
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.Clients_Destroy:hover {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    /*border-top: 1px solid var(--colorRed);
+    border-right: 0.5px solid var(--colorRed);
+    border-left: 0.5px solid var(--colorRed);
+    border-bottom: 1px solid var(--colorRed);*/
+}
+.Clients_Destroy:active {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border-top: 1px solid var(--colorWhite);
+    border-right: 0.5px solid var(--colorWhite);
+    border-left: 0.5px solid var(--colorWhite);
+    border-bottom: 1px solid var(--colorWhite);
+    /*outline: 1px solid var(--colorWhite);*/
+    /*transform: translate(0px, 0px);*/
+    transition: var(--configTrasition01s);
+}
+.Clients_Destroy:focus {
+    border-top: 1px solid var(--colorWhite);
+    border-right: 0.5px solid var(--colorWhite);
+    border-left: 0.5px solid var(--colorWhite);
+    border-bottom: 1px solid var(--colorWhite);
+    /*outline: 1px solid var(--colorWhite);*/
+}
+.Clients_Reinitialize {
+    display: inline;
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border-top: 1px solid var(--colorBlack);
+    border-right: 0.5px solid var(--colorBlack);
+    border-left: 0.5px solid var(--colorBlack);
+    border-bottom: 1px solid var(--colorBlack);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    padding: 3px 17px 3px 17px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    font-size: 1vw;
+    cursor: pointer;
+    font-weight: bolder;
+    font-family: var(--fontDisplay);
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.Clients_Reinitialize:hover {
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    /*border-top: 1px solid var(--colorRed);
+    border-right: 0.5px solid var(--colorRed);
+    border-left: 0.5px solid var(--colorRed);
+    border-bottom: 1px solid var(--colorRed);*/
+}
+.Clients_Reinitialize:active {
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border-top: 1px solid var(--colorWhite);
+    border-right: 0.5px solid var(--colorWhite);
+    border-left: 0.5px solid var(--colorWhite);
+    border-bottom: 1px solid var(--colorWhite);
+    /*outline: 1px solid var(--colorWhite);*/
+    /*transform: translate(0px, 0px);*/
+    transition: var(--configTrasition01s);
+}
+.Clients_Reinitialize:focus {
+    border-top: 1px solid var(--colorWhite);
+    border-right: 0.5px solid var(--colorWhite);
+    border-left: 0.5px solid var(--colorWhite);
+    border-bottom: 1px solid var(--colorWhite);
+    /*outline: 1px solid var(--colorWhite);*/
+}
 
 #newClient {
     display: inline;
@@ -1000,6 +1090,7 @@ td {
     text-shadow: 2px 2px 4px var(--colorShadow);
     font-size: 2.5vw;
     font-family: var(--fontDisplay);
+    cursor: default;
     transition: var(--configTrasition03s);
 }
 .divDelayTypeMSG {

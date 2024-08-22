@@ -25,6 +25,7 @@ const {
     Set_Query_Erase_Callback,
     Set_Auth_Autenticated_Callback, 
     List_Directories,
+    List_Active_Clients_,
     Set_Ready_Callback,
     Set_Start_Callback,
     Erase_Chat_Data_By_Query,
@@ -33,6 +34,10 @@ const {
     Input_Command, 
     Erase_Client_,
     Set_Erase_Client_Callback,
+    Destroy_Client_,
+    Set_Destroy_Client_Callback,
+    Reinitialize_Client_,
+    Set_Reinitialize_Client_Callback,
     Select_Client_,
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
@@ -46,10 +51,10 @@ process.on('uncaughtException', (error) => {
     if (global.Log_Callback) global.Log_Callback(`> ❌ Uncaught Exception: ${error}`)
 })
 
-const port = process.env.PORT || 3000
-
 const app = express()
 const server = http.createServer(app)
+
+const port = process.env.PORT || 3000
 
 const wss_Server = new WebSocket.Server({ server })
 const wss_Connections = new Map()
@@ -86,11 +91,11 @@ wss_Server.on('connection', async  function connection(wss) {
             wss,
             reason: null
         })
-        console.log(`> ✅ Conectado Usuario (${wss_Connection_Id}) ao WebSocket.`)
+        console.log(`> ✅ Connected User (${wss_Connection_Id}) to WebSocket.`)
         if (global.Statuses_WS_Callback) global.Statuses_WS_Callback(true)
         //if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>Conectado Client ao WebSocket.`)
         wss.on('close', function() {
-            console.error(`> ⚠️  Desconectado Usuario (${wss_Connection_Id}) do WebSocket.`)
+            console.error(`> ⚠️  Desconected User (${wss_Connection_Id}) of WebSocket.`)
             //if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Desconectado Client do WebSocket.`)    
             if (global.Statuses_WS_Callback) global.Statuses_WS_Callback(false)
         
@@ -217,7 +222,7 @@ wss_Server.on('connection', async  function connection(wss) {
                 const wss_Connection = wss_Connections.get(wss_Connection_Id) 
                 if (wss_Connection) {
                     try {
-                        wss_Connection.wss.send(JSON.stringify({ type: 'all-print-auxiliar', isallerase: Is_From_All_Erase }))
+                        wss_Connection.wss.send(JSON.stringify({ type: 'all-print-auxiliar', isallerase: Is_From_All_Erase } ))
                     } catch (error) {
                         console.error(`> ❌ ERROR sending all-print-auxiliar to WebSocket (${wss_Connection_Id}): ${error}`)
                     }
@@ -335,6 +340,30 @@ wss_Server.on('connection', async  function connection(wss) {
                 console.error(`> ⚠️  WebSocket connection Set_Erase_Client_Callback (${wss_Connection_Id}) not found.`)
             }
         })
+        Set_Destroy_Client_Callback(function(Clientt_) {
+            const wss_Connection = wss_Connections.get(wss_Connection_Id) 
+            if (wss_Connection) {
+                try {
+                    wss_Connection.wss.send(JSON.stringify({ type: 'WS=/client/destroy', client: Clientt_ }))
+                } catch (error) {
+                    console.error(`> ❌ ERROR destroing Client_ ${Clientt_} (${wss_Connection_Id}): ${error}`)
+                }
+            } else {
+                console.error(`> ⚠️  WebSocket connection Set_Erase_Client_Callback (${wss_Connection_Id}) not found.`)
+            }
+        })
+        Set_Reinitialize_Client_Callback(function(Clientt_) {
+            const wss_Connection = wss_Connections.get(wss_Connection_Id) 
+            if (wss_Connection) {
+                try {
+                    wss_Connection.wss.send(JSON.stringify({ type: 'WS=/client/reinitialize', client: Clientt_ }))
+                } catch (error) {
+                    console.error(`> ❌ ERROR reinitializing Client_ ${Clientt_} (${wss_Connection_Id}): ${error}`)
+                }
+            } else {
+                console.error(`> ⚠️  WebSocket connection Set_Erase_Client_Callback (${wss_Connection_Id}) not found.`)
+            }
+        })
         Set_Select_Client_Callback(function(Clientt_) {
             const wss_Connection = wss_Connections.get(wss_Connection_Id) 
             if (wss_Connection) {
@@ -391,37 +420,37 @@ wss_Server.on('connection', async  function connection(wss) {
     }
 })
 
-app.get('/app-data', async (req, res) => {
+app.get('/api/data', async (req, res) => {
     try {
         res.status(200).send({ sucess: true, message: `sucessfully sent the app data.`, name: global.Bot_Name || 'BOT', version: global.Bot_Version_ || '?.?.?' })
     } catch (error) {
-        console.error(`> ❌ ERROR /what-stage: ${error}`)
+        console.error(`> ❌ ERROR /api/data: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, data: null, data2: null, data3: null })
     }
 })
 
-app.get('/what-stage', async (req, res) => {
+app.get('/back/what-stage', async (req, res) => {
     try {
         res.status(200).send({ sucess: true, message: `sucessfully get stage.`, data: global.Stage_, data2: global.QR_Counter, data3: global.Client_ })
     } catch (error) {
-        console.error(`> ❌ ERROR /what-stage: ${error}`)
+        console.error(`> ❌ ERROR /back/what-stage: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, data: null, data2: null, data3: null })
     }
 })
 
-app.put('/reset-page', async (req, res) => {
+app.put('/back/reset', async (req, res) => {
     try {
         global.Is_Reset = false
         await Reset_()
 
         res.status(200).send({ sucess: true, message: `sucessfully code reset.`})
     } catch (error) {
-        console.error(`> ❌ ERROR /reset-page: ${error}`)
+        console.error(`> ❌ ERROR /back/reset: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, data: null, data2: null, data3: null })
     }
 })
 
-app.delete('/erase-query', async (req, res) => {
+app.delete('/chatdata/query-erase', async (req, res) => {
     try {
         const query = req.query.queryList
         const Is_From_End = false
@@ -432,11 +461,11 @@ app.delete('/erase-query', async (req, res) => {
             res.status(200).send({ sucess: Sucess, message: `ERROR to erase ${query}.`, empty: Is_Empty, empty_input: Is_Empty_Input, chatdatajson: global.File_Data_Chat_Data })
         }
     } catch (error) {
-        console.error(`> ❌ ERROR /erase-query: ${error}`)
+        console.error(`> ❌ ERROR chatdata/query-erase: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null, chatdatajson: global.File_Data_Chat_Data })
     }
 })
-app.delete('/all-erase', async (req, res) => {
+app.delete('/chatdata/all-erase', async (req, res) => {
     try {
         const Is_From_End = false
         const { Sucess, Is_Empty } = await Erase_All_Chat_Data(Is_From_End)
@@ -446,11 +475,11 @@ app.delete('/all-erase', async (req, res) => {
             res.status(200).send({ sucess: Sucess, message: `ERROR to erase all ChatData.`, empty: Is_Empty, chatdatajson: global.File_Data_Chat_Data })
         }
     } catch (error) {
-        console.error(`> ❌ ERROR /all-erase: ${error}`)
+        console.error(`> ❌ ERROR /chatdata/all-erase: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdatajson: global.File_Data_Chat_Data })
     }
 })
-app.get('/search-search', async (req, res) => {
+app.get('/chatdata/search-print', async (req, res) => {
     try {
         const search = req.query.Search
         const { Sucess, Is_Empty, ChatData, Is_Empty_Input } = await Search_Chat_Data_By_Search(search)
@@ -460,11 +489,11 @@ app.get('/search-search', async (req, res) => {
             res.status(200).send({ sucess: Sucess, message: `ERROR to sent the ChatData ${search}.`, empty: Is_Empty, chatdata: ChatData, empty_input: Is_Empty_Input, chatdatajson: global.File_Data_Chat_Data })
         }         
     } catch (error) {
-        console.error(`> ❌ ERROR /search-list: ${error}`)
+        console.error(`> ❌ ERROR /chatdata/search-print: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], empty_input: null, chatdatajson: global.File_Data_Chat_Data })
     }    
 })
-app.get('/all-print', async (req, res) => {
+app.get('/chatdata/all-print', async (req, res) => {
     try {
         const isallerase = req.query.isallerase
         const { Sucess, Is_Empty, ChatData, Is_From_All_Erase } = await Print_All_Chat_Data(isallerase)
@@ -474,62 +503,91 @@ app.get('/all-print', async (req, res) => {
             res.status(200).send({ sucess: Sucess, message: `ERROR to send all ChatData.`, empty: Is_Empty, chatdata: ChatData, isallerase: Is_From_All_Erase, chatdatajson: global.File_Data_Chat_Data })
         }
     } catch (error) {
-        console.error(`> ❌ ERROR /all-print: ${error}`)
+        console.error(`> ❌ ERROR /chatdata/all-print: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, chatdata: [], isallerase: null, chatdatajson: global.File_Data_Chat_Data })
     }
 })
 
-app.get('/reload', (req, res) => {
+app.get('/front/reload', (req, res) => {
     try {
         Reload_Front()
-        res.status(200).send({ sucess: true, message: `sucessfully get reload FrontEnd and send to BackEnd.`})
+        res.status(200).send({ sucess: true, message: `Sucessfully get reload FrontEnd and send to BackEnd.`})
     } catch (error) {
-        console.error(`> ❌ ERROR /command: ${error}`)
+        console.error(`> ❌ ERROR /front/reload: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
 
-app.post('/command', express.json(), (req, res) => {
+app.post('/features/command', express.json(), (req, res) => {
     try {
         const { command } = req.body
         let Is_Front_Back = false
         Input_Command(command, Is_Front_Back) 
-        res.status(200).send({ sucess: true, message: `sucessfully send command.`})
+        res.status(200).send({ sucess: true, message: `Sucessfully send command.`})
     } catch (error) {
-        console.error(`> ❌ ERROR /command: ${error}`)
+        console.error(`> ❌ ERROR /features/command: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
 
-app.get('/qr', (req, res) => {
+app.get('/client/qr', (req, res) => {
     try {
         if (Qr_String === null) {
-            res.status(200).send({ sucess: true, message: `sucessfully send command.`, qrString: 'Client já Conectado ao WhatsApp Web!', Is_Conected })
+            res.status(200).send({ sucess: true, message: `Sucessfully send command.`, qrString: 'Client já Conectado ao WhatsApp Web!', Is_Conected })
         } else {
-            res.status(200).send({ sucess: true, message: `sucessfully send command.`, qrString: Qr_String, Is_Conected })
+            res.status(200).send({ sucess: true, message: `Sucessfully send command.`, qrString: Qr_String, Is_Conected })
         }
     } catch (error) {
-        console.error(`> ❌ ERROR /qr: ${error}`)
+        console.error(`> ❌ ERROR /client/qr: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
 
-app.delete('/client-erase', async (req, res) => {
+app.delete('/client/erase', async (req, res) => {
     try {
         const Client_ = req.query.Clientt_
         let Is_From_End = false
         const { Sucess, Is_Empty, Is_Empty_Input, Not_Selected } = await Erase_Client_(Is_From_End, Client_)
         if (Sucess) {
-            res.status(200).send({ sucess: Sucess, message: `sucessfully erased ${Client_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully erased ${Client_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
         } else {
             res.status(200).send({ sucess: Sucess, message: `ERROR to erase ${Client_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
         }
     } catch (error) {
-        console.error(`> ❌ ERROR /erase-query: ${error}`)
+        console.error(`> ❌ ERROR /client/erase: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null, selected: null })
     }
 })
-app.post('/select', async (req, res) => {
+app.put('/client/destroy', async (req, res) => {
+    try {
+        const { Clientt_ } = req.body
+        let Is_From_End = false
+        const { Sucess, Is_Empty, Is_Empty_Input, Not_Selected } = await Destroy_Client_(Is_From_End, Clientt_)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully detroyed ${Clientt_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to destroy ${Clientt_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /client/destroy: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null, selected: null })
+    }
+})
+app.put('/client/reinitialize', async (req, res) => {
+    try {
+        const { Clientt_ } = req.body
+        const { Sucess, Is_Empty, Is_Empty_Input, Not_Selected } = await Reinitialize_Client_(Clientt_)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully reinitialized ${Clientt_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to reinitialize ${Clientt_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /client/destroy: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null, selected: null })
+    }
+})
+app.post('/client/select', async (req, res) => {
     try {
         const { Client_ } = req.body
 
@@ -537,41 +595,50 @@ app.post('/select', async (req, res) => {
         
         res.status(200).send({ sucess: true, message: `Client_ ${Client_} selected.`})
     } catch (error) {
-        console.error(`> ❌ ERROR /select: ${error}`)
+        console.error(`> ❌ ERROR /client/select: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`})
     }
 })
-app.post('/new-client', async (req, res) => {
+app.post('/client/new', async (req, res) => {
     try {
         global.Is_From_New = true
         await New_Client_()
 
         res.status(200).send({ sucess: true, message: `New Client ${Clientt_} initialized.` })
     } catch (error) {
-        console.error(`> ❌ ERROR /new-client: ${error}`)
+        console.error(`> ❌ ERROR /client/new: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
 
-app.get('/dir-front', async (req, res) => {
+app.get('/clients/dir', async (req, res) => {//REST representacao de recurso
     try {
-        let Is_Client_Ready = false
-        const Directories_ = await List_Directories('Local_Auth', Is_Client_Ready)
+        const Directories_ = await List_Directories('Local_Auth')
         
         res.status(200).send({ sucess: true, message: `All Clients_ dir sent.`, dirs: Directories_ })
     } catch (error) {
-        console.error(`> ❌ ERROR /dir-front: ${error}`)
+        console.error(`> ❌ ERROR /clients/dir: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, dirs: [] })
     }
 })
+app.get('/clients/active', async (req, res) => {//REST representacao de recurso
+    try {
+        const Actives_ = await List_Active_Clients_()
+        
+        res.status(200).send({ sucess: true, message: `All Actives Clients_ sent.`, actives: Actives_ })
+    } catch (error) {
+        console.error(`> ❌ ERROR /clients/active: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, actives: [] })
+    }
+})
 
-app.get('/start-bot', async (req, res) => {
+app.get('/clients/start', async (req, res) => {
     try {
         const { Sucess } = await initialize()
         
         res.status(200).send({ sucess: Sucess, message: `Sucessfully started ${global.Bot_Name || 'BOT'}.` })
     } catch (error) {
-        console.error(`> ❌ ERROR /start-bot: ${error}`)
+        console.error(`> ❌ ERROR /clients/start: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })

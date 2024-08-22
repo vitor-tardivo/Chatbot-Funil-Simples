@@ -19,10 +19,10 @@ const readline = require('readline')
 const Root_Dir = path.resolve(__dirname, '..')
 
 const { name: Name_Software } = JSON.parse(fss.readFileSync(path.resolve(Root_Dir, 'package.json'), 'utf8'))
-global.Bot_Name = Name_Software
+global.Bot_Name = Name_Software.toUpperCase()
 const { version: Version_ } = JSON.parse(fss.readFileSync(path.resolve(Root_Dir, 'package.json'), 'utf8'))
 global.Bot_Version_ = Version_
-console.log(`>  ℹ️ ${Name_Software} = v${Version_}`)
+console.log(`>  ℹ️ ${global.Bot_Name} = v${global.Bot_Version_}`)
 if (global.Log_Callback) global.Log_Callback(`>  ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Bot_Name || 'BOT'}</strong> = <strong>v${global.Bot_Version_ || '?.?.?'}</strong>`)
 
 function Reload_Front() {
@@ -160,6 +160,14 @@ let Erase_Client_Callback = null
 function Set_Erase_Client_Callback(callback) {
     Erase_Client_Callback = callback
 }
+let Destroy_Client_Callback = null
+function Set_Destroy_Client_Callback(callback) {
+    Destroy_Client_Callback = callback
+}
+let Reinitialize_Client_Callback = null
+function Set_Reinitialize_Client_Callback(callback) {
+    Reinitialize_Client_Callback = callback
+}
 let New_Client_Callback = null
 function Set_New_Client_Callback(callback) {
     New_Client_Callback = callback
@@ -230,7 +238,7 @@ global.Directory_Dir_Chat_Data = path.join(Root_Dir, `Chat_Datas`)
 global.File_Data_Chat_Data = `Chat_Data= .json`
 global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data= .json`)
 
-const Clientts_ = {}
+let Clientts_ = {}
 
 //actual null
 global.Is_Schedule = false//true=On/false=Off - Schedule_Erase_Chat_Data
@@ -243,7 +251,7 @@ const timer_Duration_Schedule_Type = 1000
 const timer_Duration_Schedule = 10 * timer_Duration_Schedule_Type
 
 let Counter_Id_Clients_ = []
-const Chat_States = {}
+let Chat_States = {}
 
 //let timer_Duration_Type_MSG_ = ''
 //let timer_Duration_MSG_Type = 0
@@ -335,6 +343,23 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
                     let Is_From_End = true
                     await Erase_Client_(Is_From_End, Clientt_)
                 }
+            } else if (command.startsWith('destroy ')) {
+                const Clientt_ = command.substring(8).trim()
+                if (Clientt_.length === 0) {
+                    console.log(`> ⚠️  Specify a Client_ name to destroy from ${global.Data_File_Clients_}, EXEMPLE:\ndestroy "client"`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>destroy</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\ndestroy "client"</strong>`)
+                } else {
+                    let Is_From_End = true
+                    await Destroy_Client_(Is_From_End, Clientt_)
+                }
+            } else if (command.startsWith('reinitialize ')) {
+                const Clientt_ = command.substring(13).trim()
+                if (Clientt_.length === 0) {
+                    console.log(`> ⚠️  Specify a Client_ name to reinitialize from ${global.Data_File_Clients_}, EXEMPLE:\nreinitialize "client"`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>reinitialize</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nreinitialize "client"</strong>`)
+                } else {
+                    await Reinitialize_Client_(Clientt_)
+                }
             } else if (command.startsWith('select ')) {
                 const Clientt_ = command.substring(7).trim()
                 if (Clientt_.length === 0) {
@@ -388,6 +413,22 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>erase</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nclient erase "client"</strong>`)
                 } else {
                     if (Erase_Client_Callback) Erase_Client_Callback(Clientt_)
+                }
+            } else if (command.startsWith('destroy ')) {
+                const Clientt_ = command.substring(8).trim()
+                if (Clientt_.length === 0) {
+                    console.log(`> ⚠️  Specify a Client_ name to destroy from ${global.Data_File_Clients_}, EXEMPLE:\ndestroy "client"`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>destroy</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\ndestroy "client"</strong>`)
+                } else {
+                    if (Destroy_Client_Callback) Destroy_Client_Callback(Clientt_)
+                }
+            } else if (command.startsWith('reinitialize ')) {
+                const Clientt_ = command.substring(13).trim()
+                if (Clientt_.length === 0) {
+                    console.log(`> ⚠️  Specify a Client_ name to reinitialize from ${global.Data_File_Clients_}, EXEMPLE:\nreinitialize "client"`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>reinitialize</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nreinitialize "client"</strong>`)
+                } else {
+                    if (Reinitialize_Client_Callback) Reinitialize_Client_Callback(Clientt_)
                 }
             } else if (command.startsWith('select ')) {
                 const Clientt_ = command.substring(7).trim()
@@ -533,7 +574,7 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
                 
                 fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                 Clientts_[Clientt_].instance.destroy()
-                delete Clientts_[Clientt_].instance
+                delete Clientts_[Clientt_]
                 await sleep(1 * 1000)
                 fse.remove(`Local_Auth\\${Clientt_}`)
                 const clientIdNumber = Clientt_.match(/\d+/g)
@@ -562,7 +603,7 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
             
             fse.remove(`Clients_\\${global.File_Data_Clients_}`)
             Clientts_[Clientt_].instance.destroy()
-            delete Clientts_[Clientt_].instance
+            delete Clientts_[Clientt_]
             await sleep(1 * 1000)
             fse.remove(`Local_Auth\\${Clientt_}`)
             const clientIdNumber = Clientt_.match(/\d+/g)
@@ -582,6 +623,162 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
         }
     } catch (error) {
         console.error(`> ❌ ERROR Erase_Client_ ${Clientt_}: ${error}`)
+        
+        Client_Not_Ready = false
+        
+        return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
+    }
+}
+async function Destroy_Client_(Is_From_End, Clientt_) { // quando for adicionar pra apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar o client criar no caso ou se n mas estiver la que iniciou ent iniciar pra apagar ou n vai dar, sistema de apagar do json memo ja existe so pegar
+    if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ ${Clientt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
+        return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
+    } 
+    try {
+        Client_Not_Ready = true
+
+        const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))   
+        const Local_Auth = (await fs.access(`Local_Auth\\${Clientt_}`, fs.constants.F_OK).then(() => true).catch(() => false))
+        if (Clients_.length === 0 || null & Local_Auth === false & Clientts_[Clientt_] === 0 || null ) {
+            console.log(`> ⚠️  ${global.Data_File_Clients_}, Local_Auth(${Clientt_}), array(Clientts_[${Clientt_}]) is ALL empty, does not contain any data.`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Data_File_Clients_}, Local_Auth(dir), array(Clientts_)</strong> is <strong>ALL</strong> empty, does <strong>not</strong> <strong>contain</strong> any <strong>data</strong>.`)
+            
+            Client_Not_Ready = false
+            
+            return { Sucess: false, Is_Empty: true, Is_Empty_Input: false, Not_Selected: false }
+        }
+        if (global.Client_ !== Clientt_) {
+            console.log(`> ⚠️  The Client_ ${Clientt_} is to be destroyed it is not selected, the Client_ selected is ${global.Client_} so select ${Clientt_} to destroy it.}`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>The Client_ <strong>${Clientt_}</strong> is to be <strong>destroyed</strong> it is <strong>not</strong> <strong>selected</strong>, the Client_ <strong>selected</strong> is <strong>${global.Client_}</strong> so <strong>select</strong> <strong>${Clientt_}</strong> to <strong>destroy</strong> it.`)
+
+            Client_Not_Ready = false
+
+            return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: true }
+        }
+        if (Clientt_.length === 0 || null) {
+            console.log(`> ⚠️  No Client_ found by the valor received: ${Clientt_}.`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>No</strong> Client_ <strong>found</strong> by the valor <strong>received: ${Clientt_}</strong>.`)
+            
+            Client_Not_Ready = false
+            
+            return { Sucess: false, Is_Empty: false, Is_Empty_Input: true, Not_Selected: false }
+        }
+
+        let Destroyed_ = false
+        if (Is_From_End) {
+            console.log(`> ⚠️  Are you sure that you want to destroy Client ${Clientt_} from ${global.File_Data_Clients_}?`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Are you <strong>sure</strong> that you <strong>want</strong> to <strong>destroy</strong> Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>?`)
+            const answer = await askForConfirmation(Clientt_)
+            if (answer.toLowerCase() === 'y') {
+                console.log(`>  ◌ Destroing Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Destroing Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
+                
+                Clientts_[Clientt_].instance.destroy()
+                delete Clientts_[Clientt_]
+                
+                Destroyed_ = true
+            } else if (answer.toLowerCase() === 'n') {
+                console.log(`> ⚠️  Client_ ${Clientt_} from ${global.File_Data_Clients_}: DECLINED`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}: DECLINED</strong>`)
+                
+                Client_Not_Ready = false
+                
+                return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: false }
+            } else {
+                console.log(`> ⚠️  Client_ ${Clientt_} from ${global.File_Data_Clients_}: NOT Answered to erase`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}: NOT Answered to erase</strong>`)
+                
+                Client_Not_Ready = false
+                
+                return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: false }
+            }
+            
+        } else {
+            console.log(`>  ◌ Destroing Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Destroing Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
+            
+            Clientts_[Clientt_].instance.destroy()
+            delete Clientts_[Clientt_]
+            
+            Destroyed_ = true
+        }
+        
+
+        if (Destroyed_) {
+            console.log(`> ✅ Client_ ${Clientt_} from ${global.File_Data_Clients_}: DESTROYED`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}: DESTROYED</strong>`)
+            
+            Client_Not_Ready = false
+
+            return { Sucess: true, Is_Empty: false, Is_Empty_Input: false, Not_Selected: false }
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR Destroy_Client_ ${Clientt_}: ${error}`)
+        
+        Client_Not_Ready = false
+        
+        return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
+    }
+}
+async function Reinitialize_Client_(Clientt_) { // quando for adicionar pra apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar o client criar no caso ou se n mas estiver la que iniciou ent iniciar pra apagar ou n vai dar, sistema de apagar do json memo ja existe so pegar
+    if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ ${Clientt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
+        return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
+    } 
+    try {
+        Client_Not_Ready = true
+
+        const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))   
+        const Local_Auth = (await fs.access(`Local_Auth\\${Clientt_}`, fs.constants.F_OK).then(() => true).catch(() => false))
+        if (Clients_.length === 0 || null & Local_Auth === false & Clientts_[Clientt_] === 0 || null ) {
+            console.log(`> ⚠️  ${global.Data_File_Clients_}, Local_Auth(${Clientt_}), array(Clientts_[${Clientt_}]) is ALL empty, does not contain any data.`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Data_File_Clients_}, Local_Auth(dir), array(Clientts_)</strong> is <strong>ALL</strong> empty, does <strong>not</strong> <strong>contain</strong> any <strong>data</strong>.`)
+            
+            Client_Not_Ready = false
+            
+            return { Sucess: false, Is_Empty: true, Is_Empty_Input: false, Not_Selected: false }
+        }
+        if (global.Client_ !== Clientt_) {
+            console.log(`> ⚠️  The Client_ ${Clientt_} is to be destroyed it is not selected, the Client_ selected is ${global.Client_} so select ${Clientt_} to destroy it.}`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>The Client_ <strong>${Clientt_}</strong> is to be <strong>destroyed</strong> it is <strong>not</strong> <strong>selected</strong>, the Client_ <strong>selected</strong> is <strong>${global.Client_}</strong> so <strong>select</strong> <strong>${Clientt_}</strong> to <strong>destroy</strong> it.`)
+
+            Client_Not_Ready = false
+
+            return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: true }
+        }
+        if (Clientt_.length === 0 || null) {
+            console.log(`> ⚠️  No Client_ found by the valor received: ${Clientt_}.`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>No</strong> Client_ <strong>found</strong> by the valor <strong>received: ${Clientt_}</strong>.`)
+            
+            Client_Not_Ready = false
+            
+            return { Sucess: false, Is_Empty: false, Is_Empty_Input: true, Not_Selected: false }
+        }
+
+        let Destroyed_ = false
+
+        console.log(`>  ◌ Destroing Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
+        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Destroing Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
+        
+        initialize_Client_Not_Ready = false
+        let Is_New_Client_ = false
+        let Is_Initialize_Clients_ = false
+        await Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Clients_)
+        
+        Destroyed_ = true
+
+        if (Destroyed_) {
+            console.log(`> ✅ Client_ ${Clientt_} from ${global.File_Data_Clients_}: REINITIALIZED`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}: REINITIALIZED</strong>`)
+            
+            Client_Not_Ready = false
+
+            return { Sucess: true, Is_Empty: false, Is_Empty_Input: false, Not_Selected: false }
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR Reinitialized_Client_ ${Clientt_}: ${error}`)
         
         Client_Not_Ready = false
         
@@ -628,7 +825,9 @@ async function New_Client_() {
         const Id_Client_ = await Generate_Client_Id()
         console.log(Id_Client_)
         initialize_Client_Not_Ready = false
-        await Initialize_Client_(`_${Id_Client_}_${NameClient_}_`)
+        let Is_New_Client_ = true
+        let Is_Initialize_Clients_ = false
+        await Initialize_Client_(`_${Id_Client_}_${NameClient_}_`, Is_New_Client_, Is_Initialize_Clients_)
     } catch (error) {
         console.error(`> ❌ New_Client_: ${error}`)
         Client_Not_Ready = false
@@ -937,7 +1136,7 @@ async function Search_Chat_Data_By_Search(search) {
 
         if (ChatData.length === 0) {
             console.log(`> ↓↓ 📄${global.File_Data_Chat_Data} is empty, does not contain any ChatCata📄 ↓↓`)
-            if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>${global.File_Data_Chat_Data}</strong> is <strong>empty</strong>, does <strong>not</strong> contain any ChatCata📄 ↓↓`)
+            if (global.Log_Callback) global.Log_Callback(`> ↓↓  <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>${global.File_Data_Chat_Data}</strong> is <strong>empty</strong>, does <strong>not</strong> contain any ChatCata📄 ↓↓`)
             console.log(`- Length: (0)`)
             if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Length: (0)</strong>`)
             console.log(`- chatId: N/A = name: N/A`)
@@ -960,7 +1159,7 @@ async function Search_Chat_Data_By_Search(search) {
         if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Printing</strong> ChatData for <strong>${search}</strong> from <strong>${global.File_Data_Chat_Data}</strong>...`)
         
         console.log(`> ↓↓ 📄${search} ChatData Printed📄 ↓↓`)
-        if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📄${search} ChatData <strong>Printed</strong>📄 ↓↓`)
+        if (global.Log_Callback) global.Log_Callback(`> ↓↓  <i><strong><span class="sobTextColor">(back)</span></strong></i>📄${search} ChatData <strong>Printed</strong>📄 ↓↓`)
         console.log(`- Length: (${Search_Entries.length})`)
         if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Length: (${Search_Entries.length})</strong>`)
         Search_Entries.forEach(({chatId, name}) => {
@@ -990,7 +1189,7 @@ async function Print_All_Chat_Data(isallerase) {
 
         if (isallerase) {
             console.log(`> ↓↓ 📄ALL ChatData Erased📄 ↓↓`)
-            if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>ALL</strong> ChatData <strong>Erased</strong>📄 ↓↓`)
+            if (global.Log_Callback) global.Log_Callback(`> ↓↓  <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>ALL</strong> ChatData <strong>Erased</strong>📄 ↓↓`)
             console.log(`- Length: (0)`)
             if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Length: (0)</strong>`)
             console.log(`- chatId: N/A = name: N/A`)
@@ -1002,7 +1201,7 @@ async function Print_All_Chat_Data(isallerase) {
         }
         if (ChatData.length === 0) {
             console.log(`> ↓↓ 📄${global.File_Data_Chat_Data} is empty, does not contain any ChatData📄 ↓↓`)
-            if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>${global.File_Data_Chat_Data}</strong> is <strong>empty</strong>, does <strong>not</strong> contain any ChatData📄 ↓↓`)
+            if (global.Log_Callback) global.Log_Callback(`> ↓↓  <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>${global.File_Data_Chat_Data}</strong> is <strong>empty</strong>, does <strong>not</strong> contain any ChatData📄 ↓↓`)
             console.log(`- Length: (0)`)
             if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Length: (0)</strong>`)
             console.log(`- chatId: N/A = name: N/A`)
@@ -1017,7 +1216,7 @@ async function Print_All_Chat_Data(isallerase) {
         if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Printing</strong> ChatData from <strong>${global.File_Data_Chat_Data}</strong>...`)
         
         console.log(`> ↓↓ 📄ALL ChatData Printed📄 ↓↓`)
-        if (global.Log_Callback) global.Log_Callback(`> ↓↓ <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>ALL</strong> ChatData <strong>Printed</strong>📄 ↓↓`)
+        if (global.Log_Callback) global.Log_Callback(`> ↓↓  <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>ALL</strong> ChatData <strong>Printed</strong>📄 ↓↓`)
         console.log(`- Length: (${ChatData.length})`)
         if (global.Log_Callback) global.Log_Callback(`- <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Length: (${ChatData.length})</strong>`)
         ChatData.forEach(entry => {
@@ -1089,6 +1288,25 @@ async function List_Directories(dir_Path) {
         return []
     }
 }
+async function List_Active_Clients_() {
+    try {
+        Actives_ = Clientts_
+        
+        let Counter_Clients_ = 1
+        for (let i = 1; i <= Object.keys(Actives_).length; i++) {
+            Actives_[`_${Counter_Clients_}_${global.Client_Name}_`] = {
+                instance: {},
+            }
+
+            Counter_Clients_++
+        }
+        
+        return Actives_
+    } catch (error) {
+        console.error(`> ❌ ERROR List_Active_Clients_: ${error}`)
+        return []
+    }
+}
 async function Generate_Client_Id() {
     if (Generate_Id_Not_Ready) {
         console.log('>  ℹ️ Generate_Client_Id not Ready.')
@@ -1125,7 +1343,7 @@ async function Generate_Client_Id() {
         return null
     }
 }
-async function Initialize_Client_(Clientt_) {
+async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Clients_) {
     if (initialize_Client_Not_Ready) {
         console.log('>  ℹ️ Initialize_Client_ not Ready.')
         if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Initialize_Client_</strong> not Ready.`)
@@ -1204,13 +1422,23 @@ async function Initialize_Client_(Clientt_) {
                     
                     console.log(`> ❌ ${Clientt_} Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
                     if (global.Log_Callback) global.Log_Callback(`> ❌ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> <strong>Maximum</strong> <strong>QR_Code</strong> retries <strong>Exceeds</strong>(<strong>${QR_Counter_Exceeds}</strong>).`)
-                        
-                    fse.remove(`Clients_\\${global.File_Data_Clients_}`)
-                    if (Client_) Client_.destroy()
-                    await sleep(1 * 1000)
-                    fse.remove(`Local_Auth\\${Clientt_}`)
-                    const clientIdNumber = Clientt_.match(/\d+/g)
-                    Counter_Id_Clients_.splice(clientIdNumber-1, 1)
+                    
+                    if (Is_New_Client_) {   
+                        fse.remove(`Clients_\\${global.File_Data_Clients_}`)
+                        if (Client_) Client_.destroy()
+                        await sleep(1 * 1000)
+                        fse.remove(`Local_Auth\\${Clientt_}`)
+                        const clientIdNumber = Clientt_.match(/\d+/g)
+                        Counter_Id_Clients_.splice(clientIdNumber-1, 1)
+                    } else if (!Is_New_Client_) {   
+                        if (Client_) Client_.destroy()
+                    }
+                    
+                    if (Is_Initialize_Clients_) {
+                        if (Client_) Client_.destroy()
+                        const clientIdNumber = Clientt_.match(/\d+/g)
+                        Counter_Id_Clients_.splice(clientIdNumber-1, 1)
+                    }
 
                     console.log(`>  ℹ️ Retry again.`)
                     if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Retry</strong> again.`)
@@ -1254,7 +1482,9 @@ async function Initialize_Client_(Clientt_) {
                 global.Is_QrCode_On = false
                 global.QR_Counter = 1
 
-                if (global.Clients_Callback) global.Clients_Callback(Clientt_)
+                if (Is_New_Client_ || Is_Initialize_Clients_) {
+                    if (global.Clients_Callback) global.Clients_Callback(Clientt_)
+                }
                 if (Ready_Callback) Ready_Callback(Clientt_)
                 
                 console.log(`> ✅ ${Clientt_} is READY.`)
@@ -1277,12 +1507,22 @@ async function Initialize_Client_(Clientt_) {
                 }
                 global.Is_From_New = false 
 
-                fse.remove(`Clients_\\${global.File_Data_Clients_}`)
-                if (Client_) Client_.destroy()
-                await sleep(1 * 1000)
-                fse.remove(`Local_Auth\\${Clientt_}`)
-                const clientIdNumber = Clientt_.match(/\d+/g)
-                Counter_Id_Clients_.splice(clientIdNumber-1, 1)
+                if (Is_New_Client_) {   
+                    fse.remove(`Clients_\\${global.File_Data_Clients_}`)
+                    if (Client_) Client_.destroy()
+                    await sleep(1 * 1000)
+                    fse.remove(`Local_Auth\\${Clientt_}`)
+                    const clientIdNumber = Clientt_.match(/\d+/g)
+                    Counter_Id_Clients_.splice(clientIdNumber-1, 1)
+                } else if (!Is_New_Client_) {   
+                    if (Client_) Client_.destroy()
+                }
+                
+                if (Is_Initialize_Clients_) {
+                    if (Client_) Client_.destroy()
+                    const clientIdNumber = Clientt_.match(/\d+/g)
+                    Counter_Id_Clients_.splice(clientIdNumber-1, 1)
+                }
                 
                 if (Auth_Failure_Callback) Auth_Failure_Callback()
                 console.error(`> ⚠️  ERROR Authentication ${Clientt_} to WhatsApp Web by the Local_Auth: ${error}`)
@@ -1454,7 +1694,7 @@ async function Initialize_Client_(Clientt_) {
 
 
                     console.log(`> ✅ ALL Messages Sent.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ✅ ALL <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Messages</strong> <strong>Sent</strong>.`)
+                    if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>ALL</strong> Messages <strong>Sent</strong>.`)
 
 
 
@@ -1663,7 +1903,9 @@ async function initialize() {
             } else {
                 for (let i = -1; i < Directories_.length-1; i++) {
                     initialize_Client_Not_Ready = false
-                    await Initialize_Client_(Directories_[Counter_Clients_])
+                    let Is_New_Client_ = false
+                    let Is_Initialize_Clients_ = true
+                    await Initialize_Client_(Directories_[Counter_Clients_], Is_New_Client_, Is_Initialize_Clients_)
                     Counter_Clients_++
                 }
             }
@@ -1698,7 +1940,8 @@ module.exports = {
     Set_All_Erase_Callback,
     Set_Query_Erase_Callback,
     Set_Auth_Autenticated_Callback,
-    List_Directories, 
+    List_Directories,
+    List_Active_Clients_,
     Set_Ready_Callback,
     Set_Start_Callback,
     Erase_Chat_Data_By_Query,
@@ -1707,6 +1950,10 @@ module.exports = {
     Input_Command, 
     Erase_Client_,
     Set_Erase_Client_Callback,
+    Destroy_Client_,
+    Set_Destroy_Client_Callback,
+    Reinitialize_Client_,
+    Set_Reinitialize_Client_Callback,
     Select_Client_,
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
@@ -1727,6 +1974,7 @@ if (global.Log_Callback) global.Log_Callback(`> ✅ FINISHED(Starting functions)
         //lembrar dos erros do multi client, lembrar de resolver quando voltar nisso, no caso faze um sistema de cadastro ne e tals.... modifica tudo o codigo o beleza kaka////////////////////////////
         //um ifzao com os codigos ja e so recebe as info tipo se for file audio staterecording o tempo do delay e o asvoice true e manda carregando do funil dos arquivo salvos nas pastas os caminhos dados infos no json na ordem e tals
     //adicionar um botao de destroy client do lado do client erase e quando for destroy ele muda pra iniciar dnv unicamente aquele client selecionado, e de inicio todos ficar pra dar destroy ne pq eles iniciar e tals mas tenta pra deixar auto isso de inicia e destroy caso de erro e zas foda daora
+    //faze o REST se der o ful mas n da ne, ver as funcoes do front e ver se precisa de uma rota so pra aquilo, padroniza os nomes dos callback websocket igual as rota, separa as rota e websocket do server, e os models client chatdada wweb.jss do app sla ainda como vai ser o app, ver os sistemas de camadas de tudo como fazer o certo ou se o gabiarra que e o jeito que ta ja serve sla 
         
 //a desenvolver...
     //sucess false do start n ta funfando aparece o botao start dinovo
@@ -1734,3 +1982,4 @@ if (global.Log_Callback) global.Log_Callback(`> ✅ FINISHED(Starting functions)
     //adicionar pra nao executar comandos funcoes pra front end caso o front end n esteja conectado no caso quando estiver so rodando o backend as os funils funcionando sem ta no site com requesicao http e de Is e tal
     //?//arrumar meios de n precisar dessas variaveis permanentes, ou pelo menos diminuir muito?
     //da pra fazer de a cada usuario do websocket e todas as funcoes unicas dele igual e os callback, bota tudo dentro de uma funcao e roda a cada usuario pra pensa melhor se vai ser tudo dentro de uma funcao sla pq se desconectar fudeo sai da funcao e para tudo talves salva na memoria(talves ja esteja salvo ne) e n apagar a conexao o id e tals, criar formas de apagar o usuario prorio a conexao e criar uma talves atraves de um cadastro ne pai kkkk daora tudo isso ai separa por pasta de usuario e coloca tudo os json dentro de um so
+    //tirar todos os logs do back so deixar pro front, so deixar os de erro

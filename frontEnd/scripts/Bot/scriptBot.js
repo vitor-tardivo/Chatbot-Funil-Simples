@@ -3,13 +3,13 @@
 let userAgent = null
 
 let wss = null
-
 let setLogError = true
 
 let isDisconected = false
 
 let isFromTerminal = false
 
+let tableReady = false
 let isTableHidden = null
 
 let isConsoleHidden = null
@@ -25,6 +25,8 @@ let Clientt_Temp = null
 let isFromNew = false
 
 let Client_ = null
+
+let Client_NotReady = true 
 
 let ChatDataNotReady = true
 
@@ -53,7 +55,7 @@ window.onerror = function(event) {
 }
 window.onload = function(event) {
     try {
-        axios.get('/reload')
+        axios.get('/front/reload')
     } catch(error) {
         console.error(`> ⚠️ ERROR onload: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> onload: ${error.message}`, setLogError)
@@ -80,18 +82,18 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
             console.log(`User is from a Desktop(${userAgent}).`)
         }
 
-        const response = await axios.get('/app-data')
+        const response = await axios.get('/api/data')
         const Bot_Name = response.data.name
         const dataName = document.querySelector('#appName')
-        nameApp = `${Bot_Name.toUpperCase()}`
-        document.title = `Inicie o ${nameApp || 'BOT'}`
-        dataName.textContent = nameApp || 'BOT'
+        nameApp = `${Bot_Name}`
+        document.title = `Inicie o ${nameApp.toUpperCase() || 'BOT'}`
+        dataName.textContent = nameApp.toUpperCase() || 'BOT'
         const Version_ = response.data.version
         const dataVersion = document.querySelector('#appVersion')
         versionApp = 'v' +`${Version_ || '?.?.?'}`
         dataVersion.textContent = versionApp
 
-        const response2 = await axios.get('/what-stage')
+        const response2 = await axios.get('/back/what-stage')
         const stage = response2.data.data
         const QR_Counter = response2.data.data2
         Client_ = response2.data.data3
@@ -276,7 +278,7 @@ async function handleWebSocketData(dataWebSocket) {
             break
         case 'statues-ws':
             const statuses = dataWebSocket.data
-            statusesWs(statuses)
+            await statusesWs(statuses)
             break
         case 'all-print':
             /*const Sucess = dataWebSocket.sucess
@@ -284,7 +286,7 @@ async function handleWebSocketData(dataWebSocket) {
             const ChatData = dataWebSocket.chatdata*/
             const isFromButton = false
             //allPrint(Sucess, Is_Empty, ChatData, isFromButton, Is_From_All_Erase)
-            allPrint(isFromButton, false)
+            await allPrint(isFromButton, false)
             break
         case 'all-print-auxiliar':
             /*const Sucess = dataWebSocket.sucess
@@ -293,48 +295,51 @@ async function handleWebSocketData(dataWebSocket) {
             const isFromButton2 = false
             const Is_From_All_Erase = dataWebSocket.isallerase
             //allPrint(Sucess, Is_Empty, ChatData, isFromButton, Is_From_All_Erase)
-            allPrint(isFromButton2, Is_From_All_Erase)
+            ChatDataNotReady = false
+            await allPrint(isFromButton2, Is_From_All_Erase)
             break
         case 'clients_':
-            const Client_ = dataWebSocket.client
+            const Client__ = dataWebSocket.client
             isAlreadyDir = true
             Client_NotReady = true
-            await insertClient_Front(Client_)
+            let isActive = true
+            await insertClient_Front(Client__, isActive)
             break
         case 'start':
-            startBot()
+            await startBot()
             break
         case 'generate_qr_code':
             const QR_Counter = dataWebSocket.data
-            const Client__ = dataWebSocket.data2
+            const Client___ = dataWebSocket.data2
 
             isQrOff = false
-            setTimeout(function() {
-                generateQrCode(QR_Counter, Client__)
+            setTimeout(async function() {
+                await generateQrCode(QR_Counter, Client___)
             }, 100)
             break
         case 'qr_exceeds':
             isExceeds = false
             const QR_Counter_Exceeds = dataWebSocket.data
-            counterExceeds(QR_Counter_Exceeds)
+            await counterExceeds(QR_Counter_Exceeds)
             break
         case 'auth_autenticated':
-            const Client___ = dataWebSocket.client
-            await authsucess(Client___);
+            const Client____ = dataWebSocket.client
+            await authsucess(Client____);
             break
         case 'auth_failure':
             isReconectionOff = true
-            authFailure()
+            await authFailure()
             break
         case 'ready':
-            const Client____ = dataWebSocket.client
-            ready(Client____);
+            const Client_____ = dataWebSocket.client
+            await ready(Client_____);
             break
         case 'search-search':
             //const Parse_Data = dataWebSocket.data
             const Search = dataWebSocket.search.trim()
             const isFromTerminal = true
-            searchChatDataBySearch(isFromTerminal, Search)
+            //ChatDataNotReady = false
+            await searchChatDataBySearch(isFromTerminal, Search)
             //searchChatDataBySearch(isFromTerminal, Parse_Data, Search)
             break
         case 'all-erase':
@@ -342,24 +347,33 @@ async function handleWebSocketData(dataWebSocket) {
             const Is_Empty2 = dataWebSocket.empty
             const isFromTerminal2 = true*/
             //allErase(Sucess2, Is_Empty2, isFromTerminal2)
-            allErase()
+            //ChatDataNotReady = false
+            await allErase()
             break
         case 'erase-query':
             const search2 = dataWebSocket.Search.trim()
             const isFromTerminal3 = true
-            eraseChatDataByQuery(isFromTerminal3, search2)
+            //ChatDataNotReady = false
+            await eraseChatDataByQuery(isFromTerminal3, search2)
             break
         case 'erase-client':
-            const Client_____ = dataWebSocket.client
-            let isFromTerminal_ = true
-            eraseClient_(isFromTerminal_, Client_____)
+            const Client______ = dataWebSocket.client
+            await eraseClient_(Client______)
+            break
+        case 'WS=/client/destroy':
+            const Client_______ = dataWebSocket.client
+            await DestroyClient_(Client_______)
+            break
+        case 'WS=/client/reinitialize':
+            const Client________ = dataWebSocket.client
+            await ReinitializeClient_(Client________)
             break
         case 'select':
-            const Client______ = dataWebSocket.client
-            await selectClient_(Client______)
+            const Client_________ = dataWebSocket.client
+            await selectClient_(Client_________)
             break
         case 'new':
-            newClients()
+            await newClients()
             break
         case 'error':
             console.error(`> ⚠️ ERROR Return WebSocket Conection: ${dataWebSocket.message}`)
@@ -425,6 +439,8 @@ async function exit(exitInten) {
         Client_ = null
 
         ChatDataNotReady = true
+
+        TableReady = false
 
         isStartedNew = true
 
@@ -596,7 +612,7 @@ async function ready(Client_) {
         newClientDiv.style.cssText = 'display: flex; opacity: 0;' 
         setTimeout(() => newClientDiv.style.cssText = 'display: flex; opacity: 1;', 100)
         if (!isAlreadyDir) {
-            const response = await axios.get('/dir-front')
+            const response = await axios.get('/clients/dir')
             const Directories_ = response.data.dirs
             
             if (Directories_.length-1 === -1) {
@@ -606,11 +622,23 @@ async function ready(Client_) {
                 await exit(exitInten)
             } else {
                 displayOnConsole(`>  ℹ️  <strong>Dir</strong> Clients_ has (<strong>${Directories_.length}</strong>) loading <strong>ALL</strong>...`)
-                let Counter_Clients_ = 0
-                for (let i = -1; i < Directories_.length-1; i++) {
+                
+                const response = await axios.get('/clients/active')
+                const Actives_ = response.data.actives
+
+                let Counter_Clients_ = 1
+                const key = `_${Counter_Clients_}_Client_`
+                for (let i = 1; i <= Directories_.length; i++) {
+                    let isActive = null
+                    if (Actives_[key] === null || Actives_[key] === undefined) {
+                        isActive = false                   
+                    } else {
+                        isActive = true
+                    }
+
                     Client_NotReady = true
-                    await insertClient_Front(Directories_[Counter_Clients_])
-                    await selectClient_(Directories_[Counter_Clients_])
+                    await insertClient_Front(Directories_[Counter_Clients_-1], isActive)
+                    await selectClient_(Directories_[Counter_Clients_-1])
                     
                     Counter_Clients_++
                 }
@@ -620,6 +648,7 @@ async function ready(Client_) {
             isAlreadyDir = false
         }
 
+        tableReady = false
         await loadTableStyles()
 
         isFromNew = false 
@@ -764,7 +793,7 @@ async function loadTableStyles() {
     }
 }
 async function showTableList() {
-    if (ChatDataNotReady) {
+    if (tableReady) {
         displayOnConsole('>  ℹ️ <strong>showTableList</strong> not Ready.', setLogError)
         return
     }
@@ -953,12 +982,12 @@ async function sendCommand() {
         //console.log(commandInput)
         //displayOnConsole(commandInput)
         
-        await axios.post('/command', { command: commandInput}, {
+        await axios.post('/features/command', { command: commandInput}, {
             headers: {
                 'Content-Type': 'application/json',
             }
         })
-        /*await axios.post('/command', { command: commandInput }, {
+        /*await axios.post('/features/command', { command: commandInput }, {
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -1513,7 +1542,7 @@ async function delayLimitLength(input) {
     }
 }
 
-async function eraseClient_(isFromTerminal, Clientt_) {
+async function eraseClient_(Clientt_) {
     if (Client_NotReady) {
         displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
         return
@@ -1529,7 +1558,7 @@ async function eraseClient_(isFromTerminal, Clientt_) {
         if (userConfirmation) {
             const status = document.querySelector('#status')
 
-            const response = await axios.delete('/client-erase', { params: { Clientt_ } })
+            const response = await axios.delete('/client/erase', { params: { Clientt_ } })
             const Sucess = response.data.sucess
             const Is_Empty = response.data.empty
             const Is_Empty_Input = response.data.empty_input
@@ -1539,7 +1568,6 @@ async function eraseClient_(isFromTerminal, Clientt_) {
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`)
                 
                 resetLoadingBar()
-                if (isFromTerminal) isFromTerminal = false
                 
                 Client_NotReady = false
 
@@ -1550,7 +1578,6 @@ async function eraseClient_(isFromTerminal, Clientt_) {
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
 
                 resetLoadingBar()
-                if (isFromTerminal) isFromTerminal = false
                 
                 Client_NotReady = false
                 
@@ -1561,14 +1588,13 @@ async function eraseClient_(isFromTerminal, Clientt_) {
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
 
                 resetLoadingBar()
-                if (isFromTerminal) isFromTerminal = false
                 
                 Client_NotReady = false
                 
                 return  
             } 
             if (Sucess) {
-                const response1 = await axios.get('/dir-front')
+                const response1 = await axios.get('/clients/dir')
                 const Directories_1 = response1.data.dirs
 
                 const divClientt_ = document.querySelector(`#${Clientt_}`)
@@ -1578,7 +1604,7 @@ async function eraseClient_(isFromTerminal, Clientt_) {
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`)
 
                 await sleep(1.5 * 1000)
-                const response2 = await axios.get('/dir-front')
+                const response2 = await axios.get('/clients/dir')
                 const Directories_2 = response2.data.dirs
 
                 if (Directories_2.length-1 === -1) {
@@ -1587,7 +1613,7 @@ async function eraseClient_(isFromTerminal, Clientt_) {
 
                     let exitInten = true
                     await exit(exitInten)
-                    await axios.put('/reset-page')
+                    await axios.put('/back/reset')
                 } else {
                     const clientIdNumber = Clientt_.match(/\d+/g)
 
@@ -1614,15 +1640,14 @@ async function eraseClient_(isFromTerminal, Clientt_) {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`)
             }
-
-            //document.querySelector('#inputList').value = ''
         } else {
+            resetLoadingBar()
+            Client_NotReady = false
             return
         }
 
         resetLoadingBar()
         Client_NotReady = false
-        if (isFromTerminal) isFromTerminal = false
     } catch (error) {
         console.error(`> ⚠️ ERROR eraseClient_ ${Clientt_}: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> eraseClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
@@ -1630,13 +1655,174 @@ async function eraseClient_(isFromTerminal, Clientt_) {
         resetLoadingBar()
     }
 }
+async function DestroyClient_(Clientt_) {
+    if (Client_NotReady) {
+        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        return
+    }
+    try {
+        Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        let userConfirmation = confirm(`Tem certeza de que deseja desligar o Client_ ${Clientt_}?`)
+        if (userConfirmation) {
+            const status = document.querySelector('#status')
+
+            const response = await axios.put('/client/destroy', { Clientt_ })
+            const Sucess = response.data.sucess
+            const Is_Empty = response.data.empty
+            const Is_Empty_Input = response.data.empty_input
+            const Not_Selected = response.nselected
+            if (Not_Selected) {
+                status.innerHTML = `O Client_ <strong>${Clientt_}</strong> esta para ser <strong>desligado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>desliga-lo</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>desligado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>desliga-lo</strong>!`)
+                
+                resetLoadingBar()
+                
+                Client_NotReady = false
+
+                return
+            }
+            if (Is_Empty) {
+                status.innerHTML = `Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
+
+                resetLoadingBar()
+                
+                Client_NotReady = false
+                
+                return
+            }
+            if (Is_Empty_Input) {
+                status.innerHTML = `Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
+
+                resetLoadingBar()
+                
+                Client_NotReady = false
+                
+                return  
+            } 
+            if (Sucess) {
+                const clientHTMLReinitialize = `<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>`
+                document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLReinitialize
+
+                status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`)
+    
+                const response = await axios.get('/clients/dir')
+                const Directories_ = response.data.dirs
+
+                if (Directories_.length-1 > 0) {
+                    const clientIdNumber = Clientt_.match(/\d+/g) 
+
+                    if (Directories_[clientIdNumber++] !== null) {
+                        clientIdNumber++
+                        
+                        await selectClient_(`Client_${posArrayClient}`)
+                    } else if (Directories_[clientIdNumber--] !== null) {
+                        clientIdNumber--
+
+                        await selectClient_(`Client_${posArrayClient}`)
+                    }
+                }
+            } else {
+                status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`)
+            }
+        } else {
+            resetLoadingBar()
+            Client_NotReady = false
+            return
+        }
+
+        resetLoadingBar()
+        Client_NotReady = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR DestroyClient_ ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> DestroyClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
+        Client_NotReady = false
+        resetLoadingBar()
+    }
+} 
+async function ReinitializeClient_(Clientt_) {
+    if (Client_NotReady) {
+        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        return
+    }
+    try {
+        Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const response = await axios.put('/client/reinitialize', { Clientt_ })
+        const Sucess = response.data.sucess
+        const Is_Empty = response.data.empty
+        const Is_Empty_Input = response.data.empty_input
+        const Not_Selected = response.nselected
+        if (Not_Selected) {
+            status.innerHTML = `O Client_ <strong>${Clientt_}</strong> esta para ser <strong>ligado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>liga-lo</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>ligado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>liga-lo</strong>!`)
+            
+            resetLoadingBar()
+            
+            Client_NotReady = false
+
+            return
+        }
+        if (Is_Empty) {
+            status.innerHTML = `Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
+
+            resetLoadingBar()
+            
+            Client_NotReady = false
+            
+            return
+        }
+        if (Is_Empty_Input) {
+            status.innerHTML = `Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
+
+            resetLoadingBar()
+            
+            Client_NotReady = false
+            
+            return  
+        } 
+        if (Sucess) {
+            const clientHTMLDestroy = `<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>`
+            document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLDestroy
+
+            status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`)
+        } else {
+            status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`)
+        }
+
+        resetLoadingBar()
+        Client_NotReady = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR ReinitializeClient_ ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> ReinitializeClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
+        Client_NotReady = false
+        resetLoadingBar()
+    }
+} 
 async function selectClient_(Clientt_) {
     if (Client_NotReady = false) {
         displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
         return
     }
     try {
-        displayOnConsole(`${Clientt_}`)
         Client_NotReady = true
 
         let barL = document.querySelector('#barLoading')
@@ -1663,7 +1849,7 @@ async function selectClient_(Clientt_) {
             return
         }
 
-        const response = await axios.post('/select', { Client_: Clientt_ })
+        const response = await axios.post('/client/select', { Client_: Clientt_ })
         let Sucess = response.data.sucess
         if (Sucess) {
             divClientt_.style.cssText =
@@ -1696,6 +1882,9 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
         displayOnConsole(`>  ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
         return
     }
+    if (isHideAP) {
+        return
+    }
     try {
         ChatDataNotReady = true
 
@@ -1714,7 +1903,7 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
                 const query = document.querySelector('#inputList').value
                 queryList = query
             }
-            const response = await axios.delete('/erase-query', { params: { queryList } })
+            const response = await axios.delete('/chatdata/query-erase', { params: { queryList } })
             const Sucess = response.data.sucess
             const Is_Empty = response.data.empty
             const Is_Empty_Input = response.data.empty_input
@@ -1773,6 +1962,9 @@ async function allErase() {
         displayOnConsole(`>  ℹ️  <strong>${Client_}</strong> not Ready.`, setLogError)
         return
     }
+    if (isHideAP) {
+        return
+    }
     try {
         ChatDataNotReady = true
 
@@ -1782,9 +1974,9 @@ async function allErase() {
     
         const status = document.querySelector('#status')
 
-        let userConfirmation = confirm(`Tem certeza de que deseja apagar todo o ChatData de <strong>${Client_}</strong>?\nsera apagado para sempre.`)
+        let userConfirmation = confirm(`Tem certeza de que deseja apagar todo o ChatData de ${Client_}?\nsera apagado para sempre.`)
         if (userConfirmation) {
-            /*const response = await axios.delete('/all-erase')
+            /*const response = await axios.delete('/chatdata/all-erase')
             let Sucess = null
             let Is_Empty = null
             if (isFromTerminal) {
@@ -1796,7 +1988,7 @@ async function allErase() {
                 Sucess = sucess
                 Is_Empty = empty
             }*/
-            const response = await axios.delete('/all-erase')
+            const response = await axios.delete('/chatdata/all-erase')
             const Sucess = response.data.sucess
             const Is_Empty = response.data.empty
             const Chat_Data_json = response.data.chatdatajson
@@ -1840,6 +2032,9 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
         displayOnConsole(`>  ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
         return
     }
+    if (isHideAP) {
+        return
+    }
     try {
         ChatDataNotReady = true
 
@@ -1856,7 +2051,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
         //let ChatData = null
         if (isFromTerminal) {
             Search = searchFromTerminal
-            response = await axios.get('/search-search', { params: { Search } })
+            response = await axios.get('/chatdata/search-print', { params: { Search } })
             //ChatData = dataFromTerminal
         } else {
             let sendSearch = document.querySelector('#sendSearchList')
@@ -1869,7 +2064,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
             
             const search = document.querySelector('#inputList').value
             Search = search
-            response = await axios.get('/search-search', { params: { Search } })
+            response = await axios.get('/chatdata/search-print', { params: { Search } })
             //const chatdata = response.data.chatdata
             //ChatData = chatdata
             //displayOnConsole(ChatData)
@@ -1989,7 +2184,7 @@ async function allPrint(isFromButton, isallerase) {
         let counter = document.querySelector('thead > tr > td ')
 
         if (isallerase) {
-            await axios.get('/all-print', { params: { isallerase } })
+            await axios.get('/chatdata/all-print', { params: { isallerase } })
             counter.textContent = `0`
             
             list.innerHTML = ''
@@ -2012,7 +2207,7 @@ async function allPrint(isFromButton, isallerase) {
         /*let Sucess = null
         let Is_Empty = null
         let ChatData = null*/
-        const response = await axios.get('/all-print')
+        const response = await axios.get('/chatdata/all-print')
         /*if (isFromButton) {
             /*let listShow = document.querySelector('#showList')
             let listShowAbbr = document.querySelector('#abbrShowList')
@@ -2214,7 +2409,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
         status.innerHTML = `<strong>${Clientt_}</strong> Gerando <strong>Qr-Code</strong>...`
         displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${Clientt_}</strong> Gerando <strong>Qr-Code</strong>...`)
         
-        axios.get('/qr')
+        axios.get('/client/qr')
         const { qrString, Is_Conected } = response.data
         if (Is_Conected) {
             setTimeout(function() {
@@ -2277,7 +2472,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
     }
 }
 
-async function insertClient_Front(Clientt_) {
+async function insertClient_Front(Clientt_, isActive) {
     if (!Client_NotReady) {
         displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
         return
@@ -2289,9 +2484,16 @@ async function insertClient_Front(Clientt_) {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
+        const clientHTMLReinitialize = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
+        const clientHTMlDestroy = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
+        
         const ClientsDiv = document.querySelector('#Clients_')
-        let clientHTML = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}"><button class="Clients_" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Erase ${Clientt_}"><button class="Clients_Erase" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
-        ClientsDiv.innerHTML += clientHTML
+        
+        if (isActive) {
+            ClientsDiv.innerHTML += clientHTMlDestroy
+        } else {
+            ClientsDiv.innerHTML += clientHTMLReinitialize
+        }
 
         const divClientt_ = document.querySelector(`#${Clientt_}`)
         divClientt_.style.cssText =
@@ -2329,7 +2531,7 @@ async function newClients() {
 
         document.title = 'Criando novo Client'
 
-        await axios.post('/new-client')
+        await axios.post('/client/new')
 
         resetLoadingBar()
     } catch (error) {
@@ -2382,10 +2584,10 @@ async function startBot() {
             codeQr.style.cssText =
                 'display: none; opacity: 0;'
         }, 300)
-        const response = await axios.get('/start-bot')
+        const response = await axios.get('/clients/start')
         const Sucess = response.data.sucess
         if (Sucess) {
-            document.title = 'Iniciou o ${nameApp} Corretamente'
+            document.title = `Iniciou o ${nameApp || 'BOT'} Corretamente`
             status.innerHTML = `<strong>Iniciou</strong> o ${nameApp || 'BOT'} <strong>Corretamente</strong>!`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciou</strong> o ${nameApp || 'BOT'} <strong>Corretamente</strong>!`)
 
@@ -2448,6 +2650,7 @@ async function startBot() {
         //adicionar modo escuro e claro e cor do balao verde o whatsapp nos textarea funcoes opcoes
         //arrumar meio de onoff pq com uma varavel true false n vai dar pra todos tem comflito usando
         //alguma forma de junta o type file selected com o select dinamicamente num so inves de separado por display none iiii foda com as permisao tbm
+    //faze o REST se der o ful mas n da ne, ver as funcoes do front e ver se precisa de uma rota so pra aquilo, padroniza os nomes dos callback websocket igual as rota, separa as rota e websocket do server, e os models client chatdada wweb.jss do app sla ainda como vai ser o app, ver os sistemas de camadas de tudo como fazer o certo ou se o gabiarra que e o jeito que ta ja serve sla 
 
 //a desenvolver...
     //?//melhoras o tempo e utilizacao dos status multi client e mais?
