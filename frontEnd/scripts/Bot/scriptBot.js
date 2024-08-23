@@ -263,12 +263,7 @@ async function webSocket() {
 }
 async function handleWebSocketData(dataWebSocket) {
     switch (dataWebSocket.type) {
-        case 'exit':
-            isReconectionOff = true
-            let exitInten = false
-            await exit(exitInten)
-            break
-        case 'log':
+        case 'WS=/back/logs':
             //console.log(logData.message)
             displayOnConsole(dataWebSocket.message)
             /*const logElement = document.createElement('div')
@@ -276,73 +271,17 @@ async function handleWebSocketData(dataWebSocket) {
             document.querySelector('#log').appendChild(logElement)
             autoScroll()*/
             break
-        case 'statues-ws':
+        case 'WS=/websocket/statues-connection':
             const statuses = dataWebSocket.data
             await statusesWs(statuses)
             break
-        case 'all-print':
-            /*const Sucess = dataWebSocket.sucess
-            const Is_Empty = dataWebSocket.empty
-            const ChatData = dataWebSocket.chatdata*/
-            const isFromButton = false
-            //allPrint(Sucess, Is_Empty, ChatData, isFromButton, Is_From_All_Erase)
-            await allPrint(isFromButton, false)
-            break
-        case 'all-print-auxiliar':
-            /*const Sucess = dataWebSocket.sucess
-            const Is_Empty = dataWebSocket.empty
-            const ChatData = dataWebSocket.chatdata*/
-            const isFromButton2 = false
-            const Is_From_All_Erase = dataWebSocket.isallerase
-            //allPrint(Sucess, Is_Empty, ChatData, isFromButton, Is_From_All_Erase)
-            ChatDataNotReady = false
-            await allPrint(isFromButton2, Is_From_All_Erase)
-            break
-        case 'clients_':
-            const Client__ = dataWebSocket.client
-            isAlreadyDir = true
-            Client_NotReady = true
-            let isActive = true
-            await insertClient_Front(Client__, isActive)
-            break
-        case 'start':
-            await startBot()
-            break
-        case 'generate_qr_code':
-            const QR_Counter = dataWebSocket.data
-            const Client___ = dataWebSocket.data2
-
-            isQrOff = false
-            setTimeout(async function() {
-                await generateQrCode(QR_Counter, Client___)
-            }, 100)
-            break
-        case 'qr_exceeds':
-            isExceeds = false
-            const QR_Counter_Exceeds = dataWebSocket.data
-            await counterExceeds(QR_Counter_Exceeds)
-            break
-        case 'auth_autenticated':
-            const Client____ = dataWebSocket.client
-            await authsucess(Client____);
-            break
-        case 'auth_failure':
-            isReconectionOff = true
-            await authFailure()
-            break
-        case 'ready':
-            const Client_____ = dataWebSocket.client
-            await ready(Client_____);
-            break
-        case 'search-search':
-            //const Parse_Data = dataWebSocket.data
-            const Search = dataWebSocket.search.trim()
-            const isFromTerminal = true
+        case 'WS=/chatdata/query-erase':
+            const search2 = dataWebSocket.Search.trim()
+            const isFromTerminal3 = true
             //ChatDataNotReady = false
-            await searchChatDataBySearch(isFromTerminal, Search)
-            //searchChatDataBySearch(isFromTerminal, Parse_Data, Search)
+            await eraseChatDataByQuery(isFromTerminal3, search2)
             break
-        case 'all-erase':
+        case 'WS=/chatdata/all-erase':
             /*const Sucess2 = dataWebSocket.sucess
             const Is_Empty2 = dataWebSocket.empty
             const isFromTerminal2 = true*/
@@ -350,13 +289,60 @@ async function handleWebSocketData(dataWebSocket) {
             //ChatDataNotReady = false
             await allErase()
             break
-        case 'erase-query':
-            const search2 = dataWebSocket.Search.trim()
-            const isFromTerminal3 = true
+        case 'WS=/chatdata/search-print':
+            //const Parse_Data = dataWebSocket.data
+            const Search = dataWebSocket.search.trim()
+            const isFromTerminal = true
             //ChatDataNotReady = false
-            await eraseChatDataByQuery(isFromTerminal3, search2)
+            await searchChatDataBySearch(isFromTerminal, Search)
+            //searchChatDataBySearch(isFromTerminal, Parse_Data, Search)
             break
-        case 'erase-client':
+        case 'WS=/chatdata/all-print':
+            /*const Sucess = dataWebSocket.sucess
+            const Is_Empty = dataWebSocket.empty
+            const ChatData = dataWebSocket.chatdata*/
+            const isFromButton = false
+            //allPrint(Sucess, Is_Empty, ChatData, isFromButton, Is_From_All_Erase)
+            await allPrint(isFromButton, false, null)
+            break
+        case 'WS=/chatdata/all-print-auxiliar':
+            /*const Sucess = dataWebSocket.sucess
+            const Is_Empty = dataWebSocket.empty
+            const ChatData = dataWebSocket.chatdata*/
+            const isFromButton2 = false
+            const Is_From_All_Erase = dataWebSocket.isallerase
+            const Client_ = dataWebSocket.Client_
+            //allPrint(Sucess, Is_Empty, ChatData, isFromButton, Is_From_All_Erase)
+            ChatDataNotReady = false
+            await allPrint(isFromButton2, Is_From_All_Erase, Client_)
+            break
+        case 'WS=/back/exit':
+            isReconectionOff = true
+            let exitInten = false
+            await exit(exitInten)
+            break
+        case 'WS=/client/qr-code-exceeds':
+            isExceeds = false
+            const QR_Counter_Exceeds = dataWebSocket.data
+            await counterExceeds(QR_Counter_Exceeds)
+            break
+        case 'WS=/client/auth-autenticated':
+            const Client____ = dataWebSocket.client
+            await authsucess(Client____);
+            break
+        case 'WS=/client/ready':
+            const Client_____ = dataWebSocket.client
+            const Is_Reinitialize = dataWebSocket.isreinitialize
+            if (Is_Reinitialize === true) {
+                isAlreadyDir = true
+            }
+            await ready(Client_____)
+            break
+        case 'WS=/client/auth-failure':
+            isReconectionOff = true
+            await authFailure()
+            break
+        case 'WS=/client/erase':
             const Client______ = dataWebSocket.client
             await eraseClient_(Client______)
             break
@@ -368,14 +354,33 @@ async function handleWebSocketData(dataWebSocket) {
             const Client________ = dataWebSocket.client
             await ReinitializeClient_(Client________)
             break
-        case 'select':
+        case 'WS=/client/select':
             const Client_________ = dataWebSocket.client
             await selectClient_(Client_________)
             break
-        case 'new':
+        case 'WS=/client/new':
             await newClients()
             break
-        case 'error':
+        case 'WS=/clients/insert':
+            const Client__ = dataWebSocket.client
+            isAlreadyDir = true
+            Client_NotReady = true
+            let isActive = true
+            await insertClient_Front(Client__, isActive)
+            break
+        case '/client/qr-code':
+            const QR_Counter = dataWebSocket.data
+            const Client___ = dataWebSocket.data2
+
+            isQrOff = false
+            setTimeout(async function() {
+                await generateQrCode(QR_Counter, Client___)
+            }, 100)
+            break
+        case 'WS=/clients/start':
+            await startBot()
+            break
+        case 'WS=/error':
             console.error(`> ⚠️ ERROR Return WebSocket Conection: ${dataWebSocket.message}`)
             displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> Retorno da Conexão WebSocket: ${dataWebSocket.message}`, setLogError)
             break
@@ -612,6 +617,8 @@ async function ready(Client_) {
         newClientDiv.style.cssText = 'display: flex; opacity: 0;' 
         setTimeout(() => newClientDiv.style.cssText = 'display: flex; opacity: 1;', 100)
         if (!isAlreadyDir) {
+            //o codigo abaixo e possivel botar tudo numa rota e devolver e fazer oq fas aqui que nsei como explica certinho, modelo REST e tals (se for preciso)
+
             const response = await axios.get('/clients/dir')
             const Directories_ = response.data.dirs
             
@@ -1603,6 +1610,8 @@ async function eraseClient_(Clientt_) {
                 status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`)
 
+                //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
+
                 await sleep(1.5 * 1000)
                 const response2 = await axios.get('/clients/dir')
                 const Directories_2 = response2.data.dirs
@@ -1713,6 +1722,8 @@ async function DestroyClient_(Clientt_) {
                 status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`)
     
+                //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient, modelo REST e tals (se for preciso)
+
                 const response = await axios.get('/clients/dir')
                 const Directories_ = response.data.dirs
 
@@ -2164,7 +2175,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
     }
 }
 //async function allPrint(Sucess, Is_Empty, ChatData, isFromButton, isallerase) {
-async function allPrint(isFromButton, isallerase) {
+async function allPrint(isFromButton, isallerase, Clientt_) {
     if (ChatDataNotReady) {
         displayOnConsole(`>  ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
         return
@@ -2173,7 +2184,16 @@ async function allPrint(isFromButton, isallerase) {
         return
     }
     try {
+        if (!isallerase) {   
+            if (Clientt_ !== null || Clientt_ !== undefined) {   
+                if (Client_ !== Clientt_) {
+                    return
+                }
+            }
+        }
+
         ChatDataNotReady = true
+
 
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
@@ -2322,7 +2342,7 @@ async function allPrint(isFromButton, isallerase) {
     }
 }
 
-function counterExceeds(QR_Counter_Exceeds) {
+async function counterExceeds(QR_Counter_Exceeds) {
     if (isExceeds) {
         displayOnConsole('>  ℹ️  <strong>Client_</strong> not Ready.', setLogError)
         return
@@ -2387,7 +2407,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
 
         isQrOff = true
 
-        document.title = `QR-Code(${QR_Counter}) ${Clientt_} WhatsApp Web`
+        document.title = `QR-Code(${QR_Counter}) ${Clientt_}`
 
         const mainContent = document.querySelector('#innerContent')
         mainContent.style.cssText =
@@ -2409,7 +2429,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
         status.innerHTML = `<strong>${Clientt_}</strong> Gerando <strong>Qr-Code</strong>...`
         displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${Clientt_}</strong> Gerando <strong>Qr-Code</strong>...`)
         
-        axios.get('/client/qr')
+        axios.get('/client/qr-code')
         const { qrString, Is_Conected } = response.data
         if (Is_Conected) {
             setTimeout(function() {
@@ -2484,8 +2504,8 @@ async function insertClient_Front(Clientt_, isActive) {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
-        const clientHTMLReinitialize = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
         const clientHTMlDestroy = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
+        const clientHTMLReinitialize = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
         
         const ClientsDiv = document.querySelector('#Clients_')
         

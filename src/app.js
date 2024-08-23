@@ -148,9 +148,9 @@ let Auth_Failure_Callback = null
 function Set_Auth_Failure_Callback(callback) {
     Auth_Failure_Callback = callback
 }
-global.Clients_Callback = null
+let Clients_Callback = null
 function Set_Clients_Callback(callback) {
-    global.Clients_Callback = callback
+    Clients_Callback = callback
 }
 let Select_Client_Callback = null
 function Set_Select_Client_Callback(callback) {
@@ -912,7 +912,7 @@ async function Save_Chat_Data(chatId, name, Clientt_, isallerase) {
         if (isallerase) {    
             Is_From_All_Erase = true
         }
-        if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase)
+        if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase, Clientt_)
     } catch (error) {
         console.error(`> ❌ ERROR Save_Chat_Data ${Clientt_}: ${error}`)
     }
@@ -1187,6 +1187,10 @@ async function Print_All_Chat_Data(isallerase) {
 
         const ChatData = JSON.parse(await fs.readFile(global.Data_File_Chat_Data, 'utf8'))
 
+        if (condition) {
+            
+        }
+
         if (isallerase) {
             console.log(`> ↓↓ 📄ALL ChatData Erased📄 ↓↓`)
             if (global.Log_Callback) global.Log_Callback(`> ↓↓  <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>ALL</strong> ChatData <strong>Erased</strong>📄 ↓↓`)
@@ -1423,18 +1427,18 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                     console.log(`> ❌ ${Clientt_} Maximum QR_Code retries Exceeds(${QR_Counter_Exceeds}).`)
                     if (global.Log_Callback) global.Log_Callback(`> ❌ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> <strong>Maximum</strong> <strong>QR_Code</strong> retries <strong>Exceeds</strong>(<strong>${QR_Counter_Exceeds}</strong>).`)
                     
-                    if (Is_New_Client_) {   
+                    if (Is_New_Client_ === true) {   
                         fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                         if (Client_) Client_.destroy()
                         await sleep(1 * 1000)
                         fse.remove(`Local_Auth\\${Clientt_}`)
                         const clientIdNumber = Clientt_.match(/\d+/g)
                         Counter_Id_Clients_.splice(clientIdNumber-1, 1)
-                    } else if (!Is_New_Client_) {   
+                    } else if (Is_New_Client_ === false) {   
                         if (Client_) Client_.destroy()
                     }
                     
-                    if (Is_Initialize_Clients_) {
+                    if (Is_Initialize_Clients_ === true) {
                         if (Client_) Client_.destroy()
                         const clientIdNumber = Clientt_.match(/\d+/g)
                         Counter_Id_Clients_.splice(clientIdNumber-1, 1)
@@ -1482,10 +1486,13 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                 global.Is_QrCode_On = false
                 global.QR_Counter = 1
 
+                let Is_Reinitialize = null
                 if (Is_New_Client_ || Is_Initialize_Clients_) {
-                    if (global.Clients_Callback) global.Clients_Callback(Clientt_)
+                    if (Clients_Callback) Clients_Callback(Clientt_)
+                } else {
+                    Is_Reinitialize = true
                 }
-                if (Ready_Callback) Ready_Callback(Clientt_)
+                if (Ready_Callback) Ready_Callback(Clientt_, Is_Reinitialize)
                 
                 console.log(`> ✅ ${Clientt_} is READY.`)
                 if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> is READY.`)
@@ -1507,18 +1514,18 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                 }
                 global.Is_From_New = false 
 
-                if (Is_New_Client_) {   
+                if (Is_New_Client_ === true) {   
                     fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                     if (Client_) Client_.destroy()
                     await sleep(1 * 1000)
                     fse.remove(`Local_Auth\\${Clientt_}`)
                     const clientIdNumber = Clientt_.match(/\d+/g)
                     Counter_Id_Clients_.splice(clientIdNumber-1, 1)
-                } else if (!Is_New_Client_) {   
+                } else if (Is_New_Client_ === false) {   
                     if (Client_) Client_.destroy()
                 }
                 
-                if (Is_Initialize_Clients_) {
+                if (Is_Initialize_Clients_ === true) {
                     if (Client_) Client_.destroy()
                     const clientIdNumber = Clientt_.match(/\d+/g)
                     Counter_Id_Clients_.splice(clientIdNumber-1, 1)
