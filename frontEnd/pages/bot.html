@@ -232,7 +232,13 @@
                             </div>
                             
                             <div id="plusTypeMSG">
-                                <abbr title="+ Adicione um tipo de MSG"><button id="addTypeMSG" onclick="">+</button></abbr>
+                                <div id="typeSelectMSG">
+                                    <abbr title="+ Adicione o tipo Atraso de MSG"><button id="typeDelayMSG" onclick="newTypeMSG(1)">TYPE-MSG: Atraso</button></abbr>
+                                    <abbr title="+ Adicione o tipo Texto de MSG"><button id="typeTextMSG" onclick="newTypeMSG(2)">TYPE-MSG: Texto</button></abbr>
+                                    <abbr title="+ Adicione o tipo Arquivo de MSG"><button id="typeFileMSG" onclick="newTypeMSG(3)">TYPE-MSG: File</button></abbr>
+                                </div>
+                                
+                                <abbr title="+ Adicione um tipo de MSG"><button id="addTypeMSG" onclick="newTypeMSGShown()">+</button></abbr>
                             </div>
                         </div>
                     </div>

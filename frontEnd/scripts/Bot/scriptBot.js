@@ -1542,10 +1542,172 @@ async function fileAuxAction() {
 }
 async function delayLimitLength(input) {
     let inputNumberDelay = input
-
+    
     if (inputNumberDelay.value.length > 5) {
         const newValue = inputNumberDelay.value.slice(0, 5)
         inputNumberDelay.value = newValue
+    }
+}
+
+async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado na hora pra modificar unicamente por MSG para aparecer bunitin opacity e tals
+    await newTypeMSGShown()
+
+    const divFunil = document.querySelector('#funilArea')
+
+    switch (type) {
+        case 1:
+            const MSGHTMlDelay = `<div class="divDelayTypeMSG" id="divDelayTypeMSG">
+                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle">ATRASO-MSG:</span><label for="delayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="delayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                    
+                                    <abbr title="Selecione duração em Segundos"><label for="delayMSGRadioSeconds" class="delayMSGLabelSeconds">Segundos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioSeconds" class="delayMSGRadioSeconds" placeholder="s">)</label></abbr> 
+                                    <abbr title="Selecione duração em Minutos"><label for="delayMSGRadioMinutes" class="delayMSGLabelMinutes">Minutos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioMinutes" class="delayMSGRadioMinutes" placeholder="m">)</label></abbr>
+                                    <abbr title="Selecione duração em Horas"><label for="delayMSGRadioHours" class="delayMSGLabelHours">Horas-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioHours" class="delayMSGRadioHours" placeholder="h">)</label></abbr>
+                                    <abbr title="Selecione duração em Dias"><label for="delayMSGRadioDays" class="delayMSGLabelDays">Dias-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioDays" class="delayMSGRadioDays" placeholder="d">)</label></abbr>
+                                    
+                                    <abbr title="Nenhum"><label for="delayMSGRadioNone" class="delayMSGLabelNone">Nenhum-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioNone" class="delayMSGRadioNone" checked placeholder="d">)</label></abbr>
+                                </div>`
+            divFunil.innerHTML += MSGHTMlDelay
+            break
+        case 2:
+            const MSGHTMlText = `<div class="divTextarea" id="textType">
+                                    <div class="divTextareaFunctions" id="idivTextareaFunctions">
+                                        <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iOnOffStateTyping" onclick="StateTypingMSG('iOnOffStateTyping', 'iabbrOnOffStateTyping', 'idivDelayText', 'idivTextareaFunctions')">O</button></abbr>
+                                        
+                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG('iOnOffLightDarkMSG', 'iabbrOnOffLightDarkMSG','iOnOffLightDarkColorMSG', 'itextAreaTypeMSG')">O</button></abbr>
+                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG('iOnOffLightDarkColorMSG', 'iabbrOnOffLightDarkColorMSG', 'itextAreaTypeMSG')">O</button></abbr>
+                                        
+                                        <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">R</button></abbr>
+                                        <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">O</button></abbr>
+                                        <abbr title="Desktop Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">O</button></abbr>
+                                        <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">O</button></abbr>
+                                    </div>
+                                    <div class="divDelayText" id="idivDelayText">
+                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle">ATRASO-StateTyping:</span><label for="delayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="delayTTextime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                        
+                                        <abbr title="Selecione duração em Segundos"><label for="delayTextRadioSeconds" class="delayTextLabelSeconds">Segundos-(<input type="radio" name="delayTextRadio" id="delayTextRadioSeconds" class="delayTextRadioSeconds" placeholder="s">)</label></abbr> 
+                                        <abbr title="Selecione duração em Minutos"><label for="delayTextRadioMinutes" class="delayTextLabelMinutes">Minutos-(<input type="radio" name="delayTextRadio" id="delayTextRadioMinutes" class="delayTextRadioMinutes" placeholder="m">)</label></abbr>
+                                        <abbr title="Selecione duração em Horas"><label for="delayTextRadioHours" class="delayTextLabelHours">Horas-(<input type="radio" name="delayTextRadio" id="delayTextRadioHours" class="delayTextRadioHours" placeholder="h">)</label></abbr>
+                                        <abbr title="Selecione duração em Dias"><label for="delayTextRadioDays" class="delayTextLabelDays">Dias-(<input type="radio" name="delayTextRadio" id="delayTextRadioDays" class="delayTextRadioDays" placeholder="d">)</label></abbr>
+                                        
+                                        <abbr title="Nenhum"><label for="delayTextRadioNone" class="delayTextLabelNone">Nenhum-(<input type="radio" name="delayTextRadio" id="delayTextRadioNone" class="delayTextRadioNone" checked placeholder="d">)</label></abbr>
+                                    </div>
+
+                                    <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput=""></textarea></abbr>
+                                </div>`
+            divFunil.innerHTML += MSGHTMlText
+            break
+        case 3:
+            const MSGHTMlFile = `<div id="fileTypeMSG">
+                                    <div class="fileTypeSelectedMSG" id="ifileTypeSelectedMSG">
+                                        <div class="divFileFunctions" id="idivFileFunctions">
+                                            <abbr title="StateTyping STATUS: off" id="iiabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iiOnOffStateTyping" onclick="StateTypingMSG('iiOnOffStateTyping', 'iiabbrOnOffStateTyping', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
+                                            <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecording"><button class="functionsDivStart OnOffStateRecording" id="iOnOffStateRecording" onclick="StateRecordingMSG('iOnOffStateRecording', 'iabbrOnOffStateRecording', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
+                                            <abbr title="Legenda STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG('iOnOffCaption', 'iabbrOnOffCaption', 'itextAreaCaption')">O</button></abbr>
+                                            
+                                            <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG('iOnOffLightDarkCaption', 'iabbrOnOffLightDarkCaption','iOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
+                                            <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG('iOnOffLightDarkColorCaption', 'iabbrOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
+                                            
+                                            <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">R</button></abbr>
+                                            <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
+                                            <abbr title="Pc Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
+                                            <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
+                                        </div>
+                                        <div class="divDelayTextAudio" id="idivDelayTextAudio">
+                                            <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextAudioTitle">ATRASO-State=Typing&Recording:</span><label for="delayTextAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="delayTexAudiotime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                            
+                                            <abbr title="Selecione duração em Segundos"><label for="delayTextAudioRadioSeconds" class="delayTextAudioLabelSeconds">Segundos-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioSeconds" class="delayTextAudioRadioSeconds" placeholder="s">)</label></abbr> 
+                                            <abbr title="Selecione duração em Minutos"><label for="delayTextAudioRadioMinutes" class="delayTextAudioLabelMinutes">Minutos-(<input type="radio" name="delayTexAudiotRadio" id="delayTexAudiotRadioMinutes" class="delayTextAudioRadioMinutes" placeholder="m">)</label></abbr>
+                                            <abbr title="Selecione duração em Horas"><label for="delayTextAudioRadioHours" class="delayTextAudioLabelHours">Horas-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioHours" class="delayTextAudioRadioHours" placeholder="h">)</label></abbr>
+                                            <abbr title="Selecione duração em Dias"><label for="delayTextAudioRadioDays" class="delayTextAudioLabelDays">Dias-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioDays" class="delayTextAudioRadioDays" placeholder="d">)</label></abbr>
+                                            
+                                            <abbr title="Nenhum"><label for="delayTextAudioRadioNone" class="delayTextAudioLabelNone">Nenhum-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioNone" class="delayTextAudioRadioNone" checked placeholder="d">)</label></abbr>
+                                        </div>
+                                        
+                                        <abbr title="Arquivo selecionado: (...)..."><div class="fileSelectedInfo">
+                                            <p class="fileTitleSelected"><span id="ifileTitleSelected">ARQUIVO-MSG</span></p>
+                                            <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                            <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                        </div></abbr>
+
+                                        <abbr title="Digite a legendo do (arquivo)"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (arquivo): >..." oninput=""></textarea></abbr>
+                                    </div>
+
+                                    <abbr title="Clique ou arraste e solte aqui para poder enviar um arquivo" id="abbrfileSelect"><div class="fileTypeSelectMSG" ondragover="fileHandleDragEnter(event)" ondragleave="fileHandleDragLeave(event)" onmouseleave="fileHandleDragLeave(event)" ondrop="fileTypeAction(event, false)" onclick="fileAuxAction()">
+                                        <p class="fileTitleSelect">ARQUIVO-MSG</p>
+                                        <p class="fileTitleSelect">Clique ou arraste um arquivo</p>
+                                        <p class="fileNameSelect"><span id="ifileNameSelect">...</span></p>
+                                        
+                                        <input type="file" class="fileTypeMSGAux" placeholder="..." onchange="fileTypeAction(event, true)">
+                                    </div></abbr>
+                                </div>`
+            divFunil.innerHTML += MSGHTMlFile
+            break
+    }
+}
+
+async function newTypeMSGShown() {
+    const divAddNewTypeMSG = document.querySelector('#addTypeMSG')
+    const typeSelect = document.querySelector('#typeSelectMSG')
+    const typeDelay = document.querySelector('#typeDelayMSG')
+    const typeText = document.querySelector('#typeTextMSG')
+    const typeFile = document.querySelector('#typeFileMSG')
+    const isShown_typeSelect = window.getComputedStyle(typeSelect).display
+
+    if (isShown_typeSelect === 'block') {
+        typeDelay.style.cssText =
+            'display: block; opacity: 0;'
+        typeText.style.cssText =
+            'display: block; opacity: 0;'
+        typeFile.style.cssText =
+            'display: block; opacity: 0;'
+
+        setTimeout(function() {
+            typeDelay.style.cssText =
+                'display: none; opacity: 0;'
+            typeText.style.cssText =
+                'display: none; opacity: 0;'
+            typeFile.style.cssText =
+                'display: none; opacity: 0;'
+
+            typeSelect.style.cssText =
+                'display: block; height: 0vh; padding: 0px 10px 0px 10px;'
+            setTimeout(function() {
+                typeSelect.style.cssText =
+                    'display: none; height: 0vh; padding: 0px 10px 0px 10px;'
+                
+                divAddNewTypeMSG.style.cssText = 
+                    'border-radius: 50px 50px 50px 50px;' 
+            }, 300)
+        }, 300)
+    } else {
+        divAddNewTypeMSG.style.cssText = 
+            'border-radius: 0px 0px 50px 50px;'
+
+        setTimeout(function() {
+            typeSelect.style.cssText =
+                'display: block; height: 0vh; padding: 0px 10px 0px 10px;'
+            setTimeout(function() {
+                typeSelect.style.cssText =
+                    'display: block; height: 30vh; padding: 7px 10px 0px 10px;'
+            }, 100)
+
+            setTimeout(function() {
+                typeDelay.style.cssText =
+                    'display: block; opacity: 0;'
+                typeText.style.cssText =
+                    'display: block; opacity: 0;'
+                typeFile.style.cssText =
+                    'display: block; opacity: 0;'
+                setTimeout(function() {
+                    typeDelay.style.cssText =
+                        'display: block; opacity: 1;'
+                    typeText.style.cssText =
+                        'display: block; opacity: 1;'
+                    typeFile.style.cssText =
+                        'display: block; opacity: 1;'
+                }, 100)
+            }, 300)
+        }, 300)
     }
 }
 
@@ -1809,7 +1971,7 @@ async function ReinitializeClient_(Clientt_) {
             return  
         } 
         if (Sucess) {
-            const clientHTMLDestroy = `<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>`
+            const clientHTMLDestroy = `<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abb<abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abb<abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>`
             document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLDestroy
 
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`
@@ -2504,8 +2666,12 @@ async function insertClient_Front(Clientt_, isActive) {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
-        const clientHTMlDestroy = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
-        const clientHTMLReinitialize = `<div id="${Clientt_}"><abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr></div>`
+        const clientHTMlDestroy = `<div id="${Clientt_}">
+                                        <abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>
+                                    </div>`
+        const clientHTMLReinitialize = `<div id="${Clientt_}">
+                                            <abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>
+                                        </div>`
         
         const ClientsDiv = document.querySelector('#Clients_')
         
@@ -2670,6 +2836,7 @@ async function startBot() {
         //adicionar modo escuro e claro e cor do balao verde o whatsapp nos textarea funcoes opcoes
         //arrumar meio de onoff pq com uma varavel true false n vai dar pra todos tem comflito usando
         //alguma forma de junta o type file selected com o select dinamicamente num so inves de separado por display none iiii foda com as permisao tbm
+        //atribuir o sistema do newTypeMSGShown() pra todos os toggle de tudo mui mior nue alem de que vai fazer ser possivel tudo as funcoes dos types e zas, alem de que agora pode ser possivel a questao que deixar tudo automatico questao de cenarios e tals sem precisar se preocupar com todos ai com isso seria automatico as reacoes a os cenarios e zas
     //faze o REST se der o ful mas n da ne, ver as funcoes do front e ver se precisa de uma rota so pra aquilo, padroniza os nomes dos callback websocket igual as rota, separa as rota e websocket do server, e os models client chatdada wweb.jss do app sla ainda como vai ser o app, ver os sistemas de camadas de tudo como fazer o certo ou se o gabiarra que e o jeito que ta ja serve sla 
 
 //a desenvolver...
