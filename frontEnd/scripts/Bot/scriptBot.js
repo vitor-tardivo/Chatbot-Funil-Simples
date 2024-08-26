@@ -2347,7 +2347,7 @@ async function allPrint(isFromButton, isallerase, Clientt_) {
     }
     try {
         if (!isallerase) {   
-            if (Clientt_ !== null || Clientt_ !== undefined) {   
+            if (Clientt_ !== null) {   
                 if (Client_ !== Clientt_) {
                     return
                 }

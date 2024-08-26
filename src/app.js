@@ -1187,10 +1187,6 @@ async function Print_All_Chat_Data(isallerase) {
 
         const ChatData = JSON.parse(await fs.readFile(global.Data_File_Chat_Data, 'utf8'))
 
-        if (condition) {
-            
-        }
-
         if (isallerase) {
             console.log(`> ↓↓ 📄ALL ChatData Erased📄 ↓↓`)
             if (global.Log_Callback) global.Log_Callback(`> ↓↓  <i><strong><span class="sobTextColor">(back)</span></strong></i>📄<strong>ALL</strong> ChatData <strong>Erased</strong>📄 ↓↓`)
@@ -1645,13 +1641,28 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                     await sleep(1.5 * 1000)
                     chat.sendStateTyping()
                     await sleep(1 * 1000)
-                    Client_.sendMessage(msg.from, 'debug1', 'utf8')
+                    Client_.sendMessage(msg.from, 'teste', 'utf8')
+
+                    await sleep(1.5 * 1000)
+                    chat.sendStateTyping()
+                    await sleep(1 * 1000)
+                    Client_.sendMessage(msg.from, 'teste', 'utf8')
+
+                    await sleep(1.5 * 1000)
+                    chat.sendStateTyping()
+                    await sleep(1 * 1000)
+                    Client_.sendMessage(msg.from, 'teste', 'utf8')
+
+                    /*await sleep(1.5 * 1000)
+                    chat.sendStateTyping()
+                    await sleep(1 * 1000)
+                    Client_.sendMessage(msg.from, 'debug1', 'utf8')*/
 
                     console.log(`> ✅ .Message_debug. Sent.`)
                     if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
 
                     
-                    console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
+                    /*console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
                     if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message...`)
                     
                     timer = setTimeout (async () => {
@@ -1696,7 +1707,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                         console.log(`> ✅ .Message_debug. Sent.`)
                         if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
                     }
-                    MSG = true 
+                    MSG = true*/ 
 
 
 
@@ -1736,7 +1747,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
 
                 //msg.body === '.' //debug
                 //msg.body !== null //actual
-                if (msg.body === '.') {
+                if (msg.body === '..') {
                     if (!Chat_States[chatId]) {
                         Chat_States[chatId] = {
                             Is_MSG_Initiate: true,
