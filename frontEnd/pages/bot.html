@@ -147,11 +147,12 @@
                             <abbr title="Schedule Erase STATUS: null" id="abbrScheduleErase"><button class="functionsDivStart" id="OnOffScheduleErase" onclick="">-O</button></abbr>
                         </div>
                         <div id="divCreateFunctionFunil">
-                            <h2 id="titleFunil">Criação e customização do Funil</h2>
+                            <h2 id="titleFunil"><stronger>Criação e customização do Funil</stronger></h2>
 
                             <div id="funilArea">
+
                                 <div class="divDelayTypeMSG" id="divDelayTypeMSG">
-                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle">ATRASO-MSG:</span><label for="delayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="delayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="delayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="delayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
                                     
                                     <abbr title="Selecione duração em Segundos"><label for="delayMSGRadioSeconds" class="delayMSGLabelSeconds">Segundos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioSeconds" class="delayMSGRadioSeconds" placeholder="s">)</label></abbr> 
                                     <abbr title="Selecione duração em Minutos"><label for="delayMSGRadioMinutes" class="delayMSGLabelMinutes">Minutos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioMinutes" class="delayMSGRadioMinutes" placeholder="m">)</label></abbr>
@@ -160,6 +161,7 @@
                                     
                                     <abbr title="Nenhum"><label for="delayMSGRadioNone" class="delayMSGLabelNone">Nenhum-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioNone" class="delayMSGRadioNone" checked placeholder="d">)</label></abbr>
                                 </div>
+
                                 <div class="divTextarea" id="textType">
                                     <div class="divTextareaFunctions" id="idivTextareaFunctions">
                                         <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iOnOffStateTyping" onclick="StateTypingMSG('iOnOffStateTyping', 'iabbrOnOffStateTyping', 'idivDelayText', 'idivTextareaFunctions')">O</button></abbr>
@@ -173,7 +175,7 @@
                                         <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">O</button></abbr>
                                     </div>
                                     <div class="divDelayText" id="idivDelayText">
-                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle">ATRASO-StateTyping:</span><label for="delayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="delayTTextime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="delayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="delayTTextime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
                                         
                                         <abbr title="Selecione duração em Segundos"><label for="delayTextRadioSeconds" class="delayTextLabelSeconds">Segundos-(<input type="radio" name="delayTextRadio" id="delayTextRadioSeconds" class="delayTextRadioSeconds" placeholder="s">)</label></abbr> 
                                         <abbr title="Selecione duração em Minutos"><label for="delayTextRadioMinutes" class="delayTextLabelMinutes">Minutos-(<input type="radio" name="delayTextRadio" id="delayTextRadioMinutes" class="delayTextRadioMinutes" placeholder="m">)</label></abbr>
@@ -182,53 +184,47 @@
                                         
                                         <abbr title="Nenhum"><label for="delayTextRadioNone" class="delayTextLabelNone">Nenhum-(<input type="radio" name="delayTextRadio" id="delayTextRadioNone" class="delayTextRadioNone" checked placeholder="d">)</label></abbr>
                                     </div>
-
                                     <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput=""></textarea></abbr>
                                 </div>
 
-                                <div id="fileTypeMSG">
-                                    <div class="fileTypeSelectedMSG" id="ifileTypeSelectedMSG">
-                                        <div class="divFileFunctions" id="idivFileFunctions">
-                                            <abbr title="StateTyping STATUS: off" id="iiabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iiOnOffStateTyping" onclick="StateTypingMSG('iiOnOffStateTyping', 'iiabbrOnOffStateTyping', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
-                                            <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecording"><button class="functionsDivStart OnOffStateRecording" id="iOnOffStateRecording" onclick="StateRecordingMSG('iOnOffStateRecording', 'iabbrOnOffStateRecording', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
-                                            <abbr title="Legenda STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG('iOnOffCaption', 'iabbrOnOffCaption', 'itextAreaCaption')">O</button></abbr>
-                                            
-                                            <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG('iOnOffLightDarkCaption', 'iabbrOnOffLightDarkCaption','iOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
-                                            <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG('iOnOffLightDarkColorCaption', 'iabbrOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
-                                            
-                                            <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">R</button></abbr>
-                                            <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
-                                            <abbr title="Pc Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
-                                            <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
-                                        </div>
-                                        <div class="divDelayTextAudio" id="idivDelayTextAudio">
-                                            <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextAudioTitle">ATRASO-State=Typing&Recording:</span><label for="delayTextAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="delayTexAudiotime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
-                                            
-                                            <abbr title="Selecione duração em Segundos"><label for="delayTextAudioRadioSeconds" class="delayTextAudioLabelSeconds">Segundos-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioSeconds" class="delayTextAudioRadioSeconds" placeholder="s">)</label></abbr> 
-                                            <abbr title="Selecione duração em Minutos"><label for="delayTextAudioRadioMinutes" class="delayTextAudioLabelMinutes">Minutos-(<input type="radio" name="delayTexAudiotRadio" id="delayTexAudiotRadioMinutes" class="delayTextAudioRadioMinutes" placeholder="m">)</label></abbr>
-                                            <abbr title="Selecione duração em Horas"><label for="delayTextAudioRadioHours" class="delayTextAudioLabelHours">Horas-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioHours" class="delayTextAudioRadioHours" placeholder="h">)</label></abbr>
-                                            <abbr title="Selecione duração em Dias"><label for="delayTextAudioRadioDays" class="delayTextAudioLabelDays">Dias-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioDays" class="delayTextAudioRadioDays" placeholder="d">)</label></abbr>
-                                            
-                                            <abbr title="Nenhum"><label for="delayTextAudioRadioNone" class="delayTextAudioLabelNone">Nenhum-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioNone" class="delayTextAudioRadioNone" checked placeholder="d">)</label></abbr>
-                                        </div>
+                                <div class="fileTypeMSG">
+                                    <div class="divFileFunctions" id="idivFileFunctions">
+                                        <abbr title="StateTyping STATUS: off" id="iiabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iiOnOffStateTyping" onclick="StateTypingMSG('iiOnOffStateTyping', 'iiabbrOnOffStateTyping', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
+                                        <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecording"><button class="functionsDivStart OnOffStateRecording" id="iOnOffStateRecording" onclick="StateRecordingMSG('iOnOffStateRecording', 'iabbrOnOffStateRecording', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
+                                        <abbr title="Legenda STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG('iOnOffCaption', 'iabbrOnOffCaption', 'itextAreaCaption')">O</button></abbr>
                                         
-                                        <abbr title="Arquivo selecionado: (...)..."><div class="fileSelectedInfo">
-                                            <p class="fileTitleSelected"><span id="ifileTitleSelected">ARQUIVO-MSG</span></p>
-                                            <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
-                                            <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
-                                        </div></abbr>
-
-                                        <abbr title="Digite a legendo do (arquivo)"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (arquivo): >..." oninput=""></textarea></abbr>
+                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG('iOnOffLightDarkCaption', 'iabbrOnOffLightDarkCaption','iOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG('iOnOffLightDarkColorCaption', 'iabbrOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
+                                        
+                                        <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">R</button></abbr>
+                                        <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="Pc Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
                                     </div>
-
-                                    <abbr title="Clique ou arraste e solte aqui para poder enviar um arquivo" id="abbrfileSelect"><div class="fileTypeSelectMSG" ondragover="fileHandleDragEnter(event)" ondragleave="fileHandleDragLeave(event)" onmouseleave="fileHandleDragLeave(event)" ondrop="fileTypeAction(event, false)" onclick="fileAuxAction()">
-                                        <p class="fileTitleSelect">ARQUIVO-MSG</p>
-                                        <p class="fileTitleSelect">Clique ou arraste um arquivo</p>
-                                        <p class="fileNameSelect"><span id="ifileNameSelect">...</span></p>
+                                    
+                                    <div class="divDelayTextAudio" id="idivDelayTextAudio">
+                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextAudioTitle"><strong>ATRASO-State=Typing&Recording:</strong></span><label for="delayTextAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="delayTexAudiotime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
                                         
-                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(event, true)">
+                                        <abbr title="Selecione duração em Segundos"><label for="delayTextAudioRadioSeconds" class="delayTextAudioLabelSeconds">Segundos-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioSeconds" class="delayTextAudioRadioSeconds" placeholder="s">)</label></abbr> 
+                                        <abbr title="Selecione duração em Minutos"><label for="delayTextAudioRadioMinutes" class="delayTextAudioLabelMinutes">Minutos-(<input type="radio" name="delayTexAudiotRadio" id="delayTexAudiotRadioMinutes" class="delayTextAudioRadioMinutes" placeholder="m">)</label></abbr>
+                                        <abbr title="Selecione duração em Horas"><label for="delayTextAudioRadioHours" class="delayTextAudioLabelHours">Horas-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioHours" class="delayTextAudioRadioHours" placeholder="h">)</label></abbr>
+                                        <abbr title="Selecione duração em Dias"><label for="delayTextAudioRadioDays" class="delayTextAudioLabelDays">Dias-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioDays" class="delayTextAudioRadioDays" placeholder="d">)</label></abbr>
+                                        
+                                        <abbr title="Nenhum"><label for="delayTextAudioRadioNone" class="delayTextAudioLabelNone">Nenhum-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioNone" class="delayTextAudioRadioNone" checked placeholder="d">)</label></abbr>
+                                    </div>
+                                    
+                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                        <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
+                                        <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
+                                        <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                        <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                        
+                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(event, true, this.parentElement)">
                                     </div></abbr>
+
+                                    <abbr title="Digite a legendo do (arquivo)"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (arquivo): >..." oninput=""></textarea></abbr>
                                 </div>
+
                             </div>
                             
                             <div id="plusTypeMSG">
@@ -238,8 +234,9 @@
                                     <abbr title="+ Adicione o tipo Arquivo de MSG"><button id="typeFileMSG" onclick="newTypeMSG(3)">TYPE-MSG: File</button></abbr>
                                 </div>
                                 
-                                <abbr title="+ Adicione um tipo de MSG"><button id="addTypeMSG" onclick="newTypeMSGShown()">+</button></abbr>
+                                <abbr title="+ Adicione um tipo de MSG"><button id="addTypeMSG" onclick="newTypeMSGShown()"><strong>+</strong></button></abbr>
                             </div>
+
                         </div>
                     </div>
                 </div>

@@ -1074,6 +1074,7 @@ td {
 #OnOffScheduleErase:focus {
     border: 2px solid var(--colorWhite);
 }
+
 #divCreateFunctionFunil {
     display: flex;
     flex-direction: column;
@@ -1084,6 +1085,7 @@ td {
     word-break: break-word;
     transition: var(--configTrasition03s);
 }
+
 #titleFunil {
     color: var(--colorWhite);
     margin-bottom: 10px;
@@ -1093,6 +1095,7 @@ td {
     cursor: default;
     transition: var(--configTrasition03s);
 }
+
 .divDelayTypeMSG {
     display: flex;
     flex-direction: row;
@@ -1110,6 +1113,7 @@ td {
     white-space: nowrap;
     overflow-y: hidden;
     overflow-x: auto;
+    opacity: 1;
     transition: var(--configTrasition03s);
 }
 .delayMSGTitle {
@@ -1238,8 +1242,11 @@ td {
     cursor: pointer;
     transition: var(--configTrasition03s);
 }
-.divTextarea {    
+
+.divTextarea {
+    display: block;
     margin-top: 50px;
+    opacity: 1;
     transition: var(--configTrasition03s);
 }
 .divTextareaFunctions {
@@ -1259,6 +1266,7 @@ td {
     transition: 0s;
 }
 .OnOffStateTyping {
+    display: none;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1268,7 +1276,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 1;
+    opacity: 0;
     transition: var(--configTrasition03s);
 }
 .OnOffStateTyping:hover {
@@ -1599,14 +1607,18 @@ td {
     border: 2px solid rgba(0, 0, 0, 0);
     outline: 2px solid var(--colorBlack);
 }
-.fileTypeSelectedMSG {
+
+.fileTypeMSG {
+    display: block;
     margin-top: 50px;
+    opacity: 1;
+    /*overflow-x: auto;*/
     transition: var(--configTrasition03s);
 }
 .divFileFunctions {
     position: sticky;
     top: -0.1px;
-    display: flex;
+    display: none;
     flex-direction: row;
     justify-content: flex-start;
     background-color: var(--colorContrastOpacity);
@@ -1614,12 +1626,14 @@ td {
     border-bottom: 3.5px solid var(--colorBlack);
     outline: 2px solid rgba(0, 0, 0, 0);
     box-shadow: 2px 2px 4px var(--colorShadow);
+    height: 0vh;
     white-space: nowrap;
     overflow-y: hidden;
     overflow-x: auto;
-    transition: 0s;
+    transition: var(--configTrasition03s);
 }
 .OnOffStateRecording {
+    display: none;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1629,7 +1643,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 1;
+    opacity: 0;
     transition: var(--configTrasition03s);
 }
 .OnOffStateRecording:hover {
@@ -1716,6 +1730,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffResetScreenSetupCaption {
+    display: none;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1725,7 +1740,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 1;
+    opacity: 0;
     transition: var(--configTrasition03s);
 }
 .OnOffResetScreenSetupCaption:hover {
@@ -1742,6 +1757,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffVLockScreenSetupCaption {
+    display: none;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1751,7 +1767,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 1;
+    opacity: 0;
     transition: var(--configTrasition03s);
 }
 .OnOffVLockScreenSetupCaption:hover {
@@ -1766,6 +1782,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffDesktopScreenSetupCaption {
+    display: none;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1775,7 +1792,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 1;
+    opacity: 0;
     transition: var(--configTrasition03s);
 }
 .OnOffDesktopScreenSetupCaption:hover {
@@ -1790,6 +1807,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffPhoneScreenSetupCaption {
+    display: none;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1799,7 +1817,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 1;
+    opacity: 0;
     transition: var(--configTrasition03s);
 }
 .OnOffPhoneScreenSetupCaption:hover {
@@ -1954,37 +1972,55 @@ td {
     cursor: pointer;
     transition: var(--configTrasition03s);
 }
-.fileSelectedInfo {
-    background-color: var(--colorBlack);
+.fileTypeSelectMSG {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgba(230, 230, 230, 0.10);
     color: var(--colorWhite);
-    border-radius: 5px;
-    /*border-radius: 0px 0px 0px 0px;se tiver textarea ent...*/
-    padding: 10px;
-    box-shadow: 2px 2px 4px var(--colorShadow);
     outline: 2px solid rgba(0, 0, 0, 0);
     border: 2px dashed var(--colorWhite);
-    cursor: help;
+    border-radius: 8px;
+    height: 200px;
+    cursor: pointer;
+    overflow-y: auto;
     transition: var(--configTrasition03s);
 }
-.fileTitleSelected {
+.fileTypeSelectMSG:hover {
+    background-color: rgba(230, 230, 230, 0.400);
+    cursor: cell;
+}
+.fileTypeSelectMSG.enter {
+    background-color: rgba(230, 230, 230, 0.400);
+    cursor: cell;
+}
+.fileTitleTypeMSG {
     color: var(--colorWhite);
-    padding-bottom: 5px;
-    font-size: 1.5vw;
+    font-size: 1.3vw;
+    font-family: var(--fontDisplay);
+    transition: var(--configTrasition03s);
+}
+.fileStatus {
+    color: var(--colorWhite);
+    font-size: 1.2vw;
     font-family: var(--fontDisplay);
     transition: var(--configTrasition03s);
 }
 .fileTypeSelected {
     color: var(--colorWhite);
-    padding-bottom: 5px;
     font-size: 1vw;
     font-family: var(--fontMonoSerif);
     transition: var(--configTrasition03s);
 }
 .fileNameSelected {
     color: var(--colorWhite);
-    padding-bottom: 5px;
     font-size: 1vw;
     font-family: var(--fontMonoSerif);
+    text-decoration: underline;
+    transition: var(--configTrasition03s);
+}
+.fileTypeMSGAux {
+    display: none;
     transition: var(--configTrasition03s);
 }
 .textAreaCaption {
@@ -2015,45 +2051,6 @@ td {
 .textAreaCaption:focus-within {
     border: 2px solid rgba(0, 0, 0, 0);
     outline: 2px solid var(--colorBlack);
-}
-.fileTypeSelectMSG {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(230, 230, 230, 0.10);
-    color: var(--colorWhite);
-    outline: 2px solid rgba(0, 0, 0, 0);
-    border: 2px dashed var(--colorWhite);
-    border-radius: 8px;
-    margin-top: 50px;
-    box-shadow: 2px 2px 4px var(--colorShadow);
-    height: 200px;
-    cursor: pointer;
-    transition: var(--configTrasition03s);
-}
-.fileTypeSelectMSG:hover {
-    background-color: rgba(230, 230, 230, 0.400);
-}
-.fileTypeSelectMSG.dragenter {
-    background-color: rgba(230, 230, 230, 0.400);
-    cursor: cell;
-}
-.fileTitleSelect {
-    color: var(--colorWhite);
-    font-size: 1.3vw;
-    font-family: var(--fontDisplay);
-    transition: var(--configTrasition03s);
-}
-.fileNameSelect {
-    color: var(--colorWhite);
-    font-size: 1vw;
-    font-family: var(--fontMonoSerif);
-    transition: var(--configTrasition03s);
-}
-.fileTypeMSGAux {
-    display: none;
-    transition: var(--configTrasition03s);
 }
 /*#fileTypeMSGAux {//pra o input file no caso
     background-color: var(--colorBlack);

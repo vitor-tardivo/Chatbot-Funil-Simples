@@ -63,7 +63,7 @@ window.onload = function(event) {
 }
 window.onbeforeunload = function(event) {
     try {    
-        event.preventDefault()
+        //event.preventDefault()
     } catch(error) {
         console.error(`> ⚠️ ERROR onbeforeunload: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> onbeforeunload: ${error.message}`, setLogError)
@@ -1019,7 +1019,11 @@ async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTex
     
     const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
     const divFunctions = document.querySelector(`#${divFunctionsElement}`)
-
+    const computedStyle = window.getComputedStyle(divFunctions)
+    const currentDivFunctionsDisplay = computedStyle.display
+    const currentDivFunctionsBorder = computedStyle.border
+    const currentDivFunctionsBorderBottom = computedStyle.borderBottom
+    const currentDivFunctionsHeight = computedStyle.height
 
     if (StateTyping === null || undefined) {
         StateTyping = true
@@ -1033,7 +1037,7 @@ async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTex
         abbrStateTyping.title = `StateTyping STATUS: on`
 
         divFunctions.style.cssText =
-            'background-color: var(--colorContrast);'
+            `background-color: var(--colorContrast); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         divDelayTextStateTyping.style.cssText =
             'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
@@ -1046,7 +1050,7 @@ async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTex
         }, 100)
         setTimeout(function() {
             divFunctions.style.cssText =
-                'background-color: var(--colorContrastOpacity);'
+                `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         }, 300)
 
         StateTyping = false
@@ -1058,14 +1062,14 @@ async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTex
         abbrStateTyping.title = `StateTyping STATUS: off`
 
         divFunctions.style.cssText =
-            'background-color: var(--colorContrast);'
+            `background-color: var(--colorContrast);display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         divDelayTextStateTyping.style.cssText =
             'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
             divDelayTextStateTyping.style.cssText =
                 'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
             divFunctions.style.cssText =
-                'background-color: var(--colorContrastOpacity);'
+                `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         }, 300)
         
         StateTyping = true
@@ -1078,7 +1082,11 @@ async function StateRecordingMSG(buttonElement, abbrStateTypingElement, divDelay
     
     const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
     const divFunctions = document.querySelector(`#${divFunctionsElement}`)
-
+    const computedStyle = window.getComputedStyle(divFunctions)
+    const currentDivFunctionsDisplay = computedStyle.display
+    const currentDivFunctionsBorder = computedStyle.border
+    const currentDivFunctionsBorderBottom = computedStyle.borderBottom
+    const currentDivFunctionsHeight = computedStyle.height
 
     if (StateRecording === null || undefined) {
         StateRecording = true
@@ -1092,7 +1100,7 @@ async function StateRecordingMSG(buttonElement, abbrStateTypingElement, divDelay
         abbrStateTyping.title = `StateTyping STATUS: on`
 
         divFunctions.style.cssText =
-            'background-color: var(--colorContrast);'
+            `background-color: var(--colorContrast); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         divDelayTextStateTyping.style.cssText =
             'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
@@ -1105,7 +1113,7 @@ async function StateRecordingMSG(buttonElement, abbrStateTypingElement, divDelay
         }, 100)
         setTimeout(function() {
             divFunctions.style.cssText =
-                'background-color: var(--colorContrastOpacity);'
+                `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         }, 300)
 
         StateRecording = false
@@ -1117,14 +1125,14 @@ async function StateRecordingMSG(buttonElement, abbrStateTypingElement, divDelay
         abbrStateTyping.title = `StateTyping STATUS: off`
 
         divFunctions.style.cssText =
-            'background-color: var(--colorContrast);'
+            `background-color: var(--colorContrast); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         divDelayTextStateTyping.style.cssText =
             'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
             divDelayTextStateTyping.style.cssText =
                 'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
             divFunctions.style.cssText =
-                'background-color: var(--colorContrastOpacity);'
+                `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};` 
         }, 300)
         
         StateRecording = true
@@ -1489,11 +1497,60 @@ async function phoneScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
 }
 
 //pro sistemas de mandar arquivo, as funcoes a adicionar... um botao que deseleciona o arquivo e um pra apagar do funil o card(isso de apagar o card vai ter em todos os tipos de cards do funil) e pra poder apagar o card tera que deseleciona primeiro entao faze um esquema de desgin que no lugar do botao pra deseleciona dps de clical muda pro apagar, e tbm algum esqueme de dps de selecionar mandar enviar ele retrai o tamanho pra n ficar mt grande na tela ne e talves tirar a funcao de arrasta pra mandar ou sla, e claro em todos os card tem do lado um lugar que vc pega seleciona segurando e deixa onde na posica odo funil ele vai ficar e tals personalizavel
-async function fileTypeAction(event, isClick) {
-    document.querySelector('.fileTypeDropZoneMSG').classList.remove('dragenter')
-    document.querySelector('.fileTypeDropZoneMSG').classList.remove('dragleave')
-    const fileInput = document.querySelector('#fileTypeMSGAux')
-    const nameFile = document.querySelector('#fileName')
+async function getFileData(file, divElementBridge) {
+    if (file === null || file === undefined) {
+        
+        return
+    }
+
+    const fileFunctionsDiv = divElementBridge.closest('.fileTypeMSG').querySelector('#idivFileFunctions')
+    const isShown_divFunctions = window.getComputedStyle(fileFunctionsDiv).display
+    
+    if (isShown_divFunctions === 'flex') {
+        fileFunctionsDiv.style.cssText =
+            'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;'
+        setTimeout(function() {
+            fileFunctionsDiv.style.cssText =
+                'display: none; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;' 
+        }, 100)
+    } else {
+        fileFunctionsDiv.style.cssText =
+            'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;'
+        setTimeout(function() {
+            fileFunctionsDiv.style.cssText =
+                'display: flex; border: 2px solid var(--colorBlack); border-bottom: 3.5px solid var(--colorBlack); height: 5vh;' 
+        }, 300)
+    }
+
+    if (file === '...') {
+        
+        return
+    }
+
+    displayOnConsole(file.type)
+    const fileType = file.type
+    switch (fileType) {//conforme vai indo adicionar o maximo possivel de tipos de arquivos para cada e assim ser mais completo e preciso
+        case 'video/mp4' || 'video/avi' || 'video/mov' || 'video/mkv':
+            
+            break;
+        case 'audio/m4a' || 'audio/wav' || 'audio/mp3' || 'audio/gif':
+            
+            break;
+        case 'image/jpg' || 'image/png':
+            
+            break;
+        case 'text/plain' || 'application/pdf' || 'application/msword':
+            
+            break;
+        default:
+            
+            break;
+    }
+}
+async function fileTypeAction(event, isClick, divElement) {
+    divElement.classList.remove('enter')
+
+    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
     
     let file = null
     if (isClick) {
@@ -1504,42 +1561,104 @@ async function fileTypeAction(event, isClick) {
         
         file = event.dataTransfer.files[0]
     }
-
-    console.log(file)
+    const fileName = file.name
+    
+    const nameFile = divElement.querySelector('#ifileNameSelected')
+    const statusFile = divElement.querySelector('#ifileStatus')
+    const abbrFileZone = divElement.closest('abbr')
     if (file) {
         const dataTransfer = new DataTransfer()
         dataTransfer.items.add(file)
         fileInput.files = dataTransfer.files
+        
+        nameFile.textContent = `${fileName}`
+        statusFile.textContent = `Arquivo selecionado`
+        abbrFileZone.title = `Arquivo: ${fileName}`
+        displayOnConsole(`Arquivo: ${fileName}`)
+        console.log(file)
 
-        nameFile.textContent = `${file.name}`
-        displayOnConsole(`Arquivo: ${file.name}`)
+        await getFileData(file, divElement)
     } else {
         nameFile.textContent = `...`
+        statusFile.textContent = `Clique ou arraste um arquivo`
+        abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
         displayOnConsole(`Arquivo: ...`)
+        console.log(`...`)
+        
+        file = '...'
+        await getFileData(file, divElement)
     }
 }
-async function fileHandleDragLeave(event) {//fica ativando quando mexe rapido dentro inves de quando sai mesmo da area
+
+async function fileHandleDragLeave(event, divElement) {//fica ativando quando mexe rapido dentro inves de quando sai mesmo da area
     event.preventDefault()
     event.stopPropagation()
 
-    document.querySelector('.fileTypeDropZoneMSG').classList.remove('dragenter')
+    divElement.classList.remove('enter')
+
+    const statusFile = divElement.querySelector('#ifileStatus')
     
-    const abbrFileZone = document.querySelector('#abbrfileDropZone')
-    abbrFileZone.title = `Clique ou arraste e solte aqui para poder enviar um arquivo`
+    const fileType = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+    if (fileType.files.length >= 1) {
+        statusFile.textContent = `Arquivo selecionado`
+    } else {
+        statusFile.textContent = `Clique ou arraste um arquivo`
+
+        const abbrFileZone = divElement.closest('abbr')
+        abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
+    }
 }
-async function fileHandleDragEnter(event) {
+async function fileHandleDragEnter(event, divElement) {
     event.preventDefault()
     event.stopPropagation()
 
-    document.querySelector('.fileTypeDropZoneMSG').classList.add('dragenter')
+    divElement.classList.add('enter')
     
-    const abbrFileZone = document.querySelector('#abbrfileDropZone')
-    abbrFileZone.title = `Solte para enviar`
+    const fileType = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+    if (fileType.files.length === 0) {
+        const abbrFileZone = divElement.closest('abbr')
+        abbrFileZone.title = `Solte para enviar o arquivo`
+    }
+    const statusFile = divElement.querySelector('#ifileStatus')
+    statusFile.textContent = `Solte`
 }
-async function fileAuxAction() {
-    const fileType = document.querySelector('#fileTypeMSGAux')
+async function fileHoverLeave(divElement) {
+    const statusFile = divElement.querySelector('#ifileStatus')
+    
+    const fileType = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+    if (fileType.files.length >= 1) {
+        statusFile.textContent = `Arquivo selecionado`
+    } else {
+        statusFile.textContent = `Clique ou arraste um arquivo`
+
+        const abbrFileZone = divElement.closest('abbr')
+        abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
+    }
+}
+async function fileHoverEnter(divElement) {
+    const statusFile = divElement.querySelector('#ifileStatus')
+    statusFile.textContent = `Clique`
+
+    const fileType = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+    if (fileType.files.length === 0) {
+        const abbrFileZone = divElement.closest('abbr')
+        abbrFileZone.title = `Clique e selecione um arquivo para enviar o arquivo`
+    }
+}
+async function fileAuxAction(divElement) {
+    const fileType = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+
+    const statusFile = divElement.querySelector('#ifileStatus')
+    const abbrFileZone = divElement.closest('abbr')
+    
+    if (fileType.files.length === 0) {
+        abbrFileZone.title = `Selecione um arquivo para enviar o arquivo`
+    }
+    statusFile.textContent = `Selecione`
+    
     await fileType.click()
 }
+
 async function delayLimitLength(input) {
     let inputNumberDelay = input
     
@@ -1597,48 +1716,42 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
             divFunil.innerHTML += MSGHTMlText
             break
         case 3:
-            const MSGHTMlFile = `<div id="fileTypeMSG">
-                                    <div class="fileTypeSelectedMSG" id="ifileTypeSelectedMSG">
-                                        <div class="divFileFunctions" id="idivFileFunctions">
-                                            <abbr title="StateTyping STATUS: off" id="iiabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iiOnOffStateTyping" onclick="StateTypingMSG('iiOnOffStateTyping', 'iiabbrOnOffStateTyping', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
-                                            <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecording"><button class="functionsDivStart OnOffStateRecording" id="iOnOffStateRecording" onclick="StateRecordingMSG('iOnOffStateRecording', 'iabbrOnOffStateRecording', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
-                                            <abbr title="Legenda STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG('iOnOffCaption', 'iabbrOnOffCaption', 'itextAreaCaption')">O</button></abbr>
-                                            
-                                            <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG('iOnOffLightDarkCaption', 'iabbrOnOffLightDarkCaption','iOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
-                                            <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG('iOnOffLightDarkColorCaption', 'iabbrOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
-                                            
-                                            <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">R</button></abbr>
-                                            <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
-                                            <abbr title="Pc Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
-                                            <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
-                                        </div>
-                                        <div class="divDelayTextAudio" id="idivDelayTextAudio">
-                                            <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextAudioTitle">ATRASO-State=Typing&Recording:</span><label for="delayTextAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="delayTexAudiotime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
-                                            
-                                            <abbr title="Selecione duração em Segundos"><label for="delayTextAudioRadioSeconds" class="delayTextAudioLabelSeconds">Segundos-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioSeconds" class="delayTextAudioRadioSeconds" placeholder="s">)</label></abbr> 
-                                            <abbr title="Selecione duração em Minutos"><label for="delayTextAudioRadioMinutes" class="delayTextAudioLabelMinutes">Minutos-(<input type="radio" name="delayTexAudiotRadio" id="delayTexAudiotRadioMinutes" class="delayTextAudioRadioMinutes" placeholder="m">)</label></abbr>
-                                            <abbr title="Selecione duração em Horas"><label for="delayTextAudioRadioHours" class="delayTextAudioLabelHours">Horas-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioHours" class="delayTextAudioRadioHours" placeholder="h">)</label></abbr>
-                                            <abbr title="Selecione duração em Dias"><label for="delayTextAudioRadioDays" class="delayTextAudioLabelDays">Dias-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioDays" class="delayTextAudioRadioDays" placeholder="d">)</label></abbr>
-                                            
-                                            <abbr title="Nenhum"><label for="delayTextAudioRadioNone" class="delayTextAudioLabelNone">Nenhum-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioNone" class="delayTextAudioRadioNone" checked placeholder="d">)</label></abbr>
-                                        </div>
+            const MSGHTMlFile = `<div class="fileTypeMSG">
+                                    <div class="divFileFunctions" id="idivFileFunctions">
+                                        <abbr title="StateTyping STATUS: off" id="iiabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iiOnOffStateTyping" onclick="StateTypingMSG('iiOnOffStateTyping', 'iiabbrOnOffStateTyping', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
+                                        <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecording"><button class="functionsDivStart OnOffStateRecording" id="iOnOffStateRecording" onclick="StateRecordingMSG('iOnOffStateRecording', 'iabbrOnOffStateRecording', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
+                                        <abbr title="Legenda STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG('iOnOffCaption', 'iabbrOnOffCaption', 'itextAreaCaption')">O</button></abbr>
                                         
-                                        <abbr title="Arquivo selecionado: (...)..."><div class="fileSelectedInfo">
-                                            <p class="fileTitleSelected"><span id="ifileTitleSelected">ARQUIVO-MSG</span></p>
-                                            <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
-                                            <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
-                                        </div></abbr>
-
-                                        <abbr title="Digite a legendo do (arquivo)"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (arquivo): >..." oninput=""></textarea></abbr>
+                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG('iOnOffLightDarkCaption', 'iabbrOnOffLightDarkCaption','iOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG('iOnOffLightDarkColorCaption', 'iabbrOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
+                                        
+                                        <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">R</button></abbr>
+                                        <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="Pc Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
                                     </div>
-
-                                    <abbr title="Clique ou arraste e solte aqui para poder enviar um arquivo" id="abbrfileSelect"><div class="fileTypeSelectMSG" ondragover="fileHandleDragEnter(event)" ondragleave="fileHandleDragLeave(event)" onmouseleave="fileHandleDragLeave(event)" ondrop="fileTypeAction(event, false)" onclick="fileAuxAction()">
-                                        <p class="fileTitleSelect">ARQUIVO-MSG</p>
-                                        <p class="fileTitleSelect">Clique ou arraste um arquivo</p>
-                                        <p class="fileNameSelect"><span id="ifileNameSelect">...</span></p>
+                                    
+                                    <div class="divDelayTextAudio" id="idivDelayTextAudio">
+                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextAudioTitle"><strong>ATRASO-State=Typing&Recording:</strong></span><label for="delayTextAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="delayTexAudiotime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
                                         
-                                        <input type="file" class="fileTypeMSGAux" placeholder="..." onchange="fileTypeAction(event, true)">
+                                        <abbr title="Selecione duração em Segundos"><label for="delayTextAudioRadioSeconds" class="delayTextAudioLabelSeconds">Segundos-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioSeconds" class="delayTextAudioRadioSeconds" placeholder="s">)</label></abbr> 
+                                        <abbr title="Selecione duração em Minutos"><label for="delayTextAudioRadioMinutes" class="delayTextAudioLabelMinutes">Minutos-(<input type="radio" name="delayTexAudiotRadio" id="delayTexAudiotRadioMinutes" class="delayTextAudioRadioMinutes" placeholder="m">)</label></abbr>
+                                        <abbr title="Selecione duração em Horas"><label for="delayTextAudioRadioHours" class="delayTextAudioLabelHours">Horas-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioHours" class="delayTextAudioRadioHours" placeholder="h">)</label></abbr>
+                                        <abbr title="Selecione duração em Dias"><label for="delayTextAudioRadioDays" class="delayTextAudioLabelDays">Dias-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioDays" class="delayTextAudioRadioDays" placeholder="d">)</label></abbr>
+                                        
+                                        <abbr title="Nenhum"><label for="delayTextAudioRadioNone" class="delayTextAudioLabelNone">Nenhum-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioNone" class="delayTextAudioRadioNone" checked placeholder="d">)</label></abbr>
+                                    </div>
+                                    
+                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                        <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
+                                        <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
+                                        <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                        <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                        
+                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(event, true, this.parentElement)">
                                     </div></abbr>
+
+                                    <abbr title="Digite a legendo do (arquivo)"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (arquivo): >..." oninput=""></textarea></abbr>
                                 </div>`
             divFunil.innerHTML += MSGHTMlFile
             break
