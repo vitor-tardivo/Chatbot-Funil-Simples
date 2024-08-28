@@ -1265,8 +1265,8 @@ td {
     overflow-x: auto;
     transition: 0s;
 }
-.OnOffStateTyping {
-    display: none;
+.OnOffStateTypingMSG {
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1276,21 +1276,22 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 0;
+    opacity: 1;
     transition: var(--configTrasition03s);
 }
-.OnOffStateTyping:hover {
+.OnOffStateTypingMSG:hover {
     border: 2px solid var(--colorWhite);
 }
-.OnOffStateTyping:active {
+.OnOffStateTypingMSG:active {
     border-radius: 0px 0px 0px 0px;
     outline: 2px solid var(--colorWhite);
     transition: 0s;
 }
-.OnOffStateTyping:focus {
+.OnOffStateTypingMSG:focus {
     border: 2px solid var(--colorWhite);
 }
 .OnOffLightDarkMSG {
+    display: inline;
     background-color: rgb(33, 33, 33); 
     color: rgb(240, 240, 240);
     border: 2px solid var(--colorBlack);
@@ -1315,6 +1316,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffLightDarkColorMSG {
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1339,6 +1341,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffResetScreenSetupText {
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1365,6 +1368,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffVLockScreenSetupText {
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1389,6 +1393,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffDesktopScreenSetupText {
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1413,6 +1418,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffPhoneScreenSetupText {
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1447,7 +1453,7 @@ td {
     border: 0px solid var(--colorBlack);
     padding: 0px 0px 0px 0px;
     box-shadow: 2px 2px 4px var(--colorShadow);
-    height: 0vw;
+    height: 0vh;
     white-space: nowrap;
     overflow-y: hidden;
     overflow-x: auto;
@@ -1632,7 +1638,7 @@ td {
     overflow-x: auto;
     transition: var(--configTrasition03s);
 }
-.OnOffStateRecording {
+.OnOffStateTypingFile {
     display: none;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
@@ -1646,15 +1652,40 @@ td {
     opacity: 0;
     transition: var(--configTrasition03s);
 }
-.OnOffStateRecording:hover {
+.OnOffStateTypingFile:hover {
     border: 2px solid var(--colorWhite);
 }
-.OnOffStateRecording:active {
+.OnOffStateTypingFile:active {
     border-radius: 0px 0px 0px 0px;
     outline: 2px solid var(--colorWhite);
     transition: 0s;
 }
-.OnOffStateRecording:focus {
+.OnOffStateTypingFile:focus {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffStateRecordingFile {
+    display: inline;
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: pointer;
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.OnOffStateRecordingFile:hover {
+    border: 2px solid var(--colorWhite);
+}
+.OnOffStateRecordingFile:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+.OnOffStateRecordingFile:focus {
     border: 2px solid var(--colorWhite);
 }
 .OnOffCaption {
@@ -1682,6 +1713,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffLightDarkCaption {
+    display: inline;
     background-color: rgb(33, 33, 33); 
     color: rgb(240, 240, 240);
     border: 2px solid var(--colorBlack);
@@ -1706,6 +1738,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffLightDarkColorCaption {
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1730,7 +1763,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffResetScreenSetupCaption {
-    display: none;
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1740,7 +1773,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 0;
+    opacity: 1;
     transition: var(--configTrasition03s);
 }
 .OnOffResetScreenSetupCaption:hover {
@@ -1757,7 +1790,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffVLockScreenSetupCaption {
-    display: none;
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1767,7 +1800,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 0;
+    opacity: 1;
     transition: var(--configTrasition03s);
 }
 .OnOffVLockScreenSetupCaption:hover {
@@ -1782,7 +1815,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffDesktopScreenSetupCaption {
-    display: none;
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1792,7 +1825,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 0;
+    opacity: 1;
     transition: var(--configTrasition03s);
 }
 .OnOffDesktopScreenSetupCaption:hover {
@@ -1807,7 +1840,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffPhoneScreenSetupCaption {
-    display: none;
+    display: inline;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -1817,7 +1850,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 0;
+    opacity: 1;
     transition: var(--configTrasition03s);
 }
 .OnOffPhoneScreenSetupCaption:hover {
@@ -1842,7 +1875,7 @@ td {
     border: 0px solid var(--colorBlack);
     padding: 0px 0px 0px 0px;
     box-shadow: 2px 2px 4px var(--colorShadow);
-    height: 0vw;
+    height: 0vh;
     white-space: nowrap;
     overflow-y: hidden;
     overflow-x: auto;

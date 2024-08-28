@@ -1012,24 +1012,41 @@ async function sendCommand() {
     }
 }
 
-let StateTyping = null
-async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTextElement, divFunctionsElement) {
-    const buttonStateTyping = document.querySelector(`#${buttonElement}`)
-    const abbrStateTyping = document.querySelector(`#${abbrStateTypingElement}`)
+async function StateTypingMSG(buttonElement, IsWType) {
+    let type = null
+    let button = null
+    let abbr = null
+    let delay = null
+    let functions = null
+    if (IsWType) {
+        type = 'idivTextarea'
+        button = 'iOnOffStateTypingMSG'
+        abbr = 'iabbrOnOffStateTypingMSG'
+        delay = 'idivDelayText'
+        functions = 'idivTextareaFunctions'
+    } else {
+        type = 'ifileTypeMSG'
+        button = 'iOnOffStateTypingFile'
+        abbr = 'iabbrOnOffStateTypingFile'
+        delay = 'idivDelayTextAudio'
+        functions = 'idivFileFunctions'
+    }
     
-    const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
-    const divFunctions = document.querySelector(`#${divFunctionsElement}`)
+    const divElement = buttonElement.closest(`#${type}`)
+    const buttonStateTyping = divElement.querySelector(`#${button}`)
+    const abbrStateTyping = divElement.querySelector(`#${abbr}`)
+    
+    const divDelayStateTyping = divElement.querySelector(`#${delay}`)
+    const divFunctions = divElement.querySelector(`#${functions}`)
     const computedStyle = window.getComputedStyle(divFunctions)
     const currentDivFunctionsDisplay = computedStyle.display
     const currentDivFunctionsBorder = computedStyle.border
     const currentDivFunctionsBorderBottom = computedStyle.borderBottom
     const currentDivFunctionsHeight = computedStyle.height
 
-    if (StateTyping === null || undefined) {
-        StateTyping = true
-    } 
+    const isShown_divDelayTextStateRecording = window.getComputedStyle(divDelayStateTyping).height
 
-    if (StateTyping) {
+    if (isShown_divDelayTextStateRecording === '0px') {
         buttonStateTyping.style.cssText =
             'background-color: var(--colorWhite); color: var(--colorBlack);'
         buttonStateTyping.textContent = `-`
@@ -1038,22 +1055,20 @@ async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTex
 
         divFunctions.style.cssText =
             `background-color: var(--colorContrast); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
-        divDelayTextStateTyping.style.cssText =
-            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        divDelayStateTyping.style.cssText =
+            'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: flex; height: 0vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+            divDelayStateTyping.style.cssText =
+                'display: flex; height: 0vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
         }, -1)
         setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: flex; height: 3.13vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+            divDelayStateTyping.style.cssText =
+                'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
         }, 100)
         setTimeout(function() {
             divFunctions.style.cssText =
                 `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         }, 300)
-
-        StateTyping = false
     } else {
         buttonStateTyping.style.cssText =
             'background-color: var(--colorBlack); color: var(--colorWhite);'
@@ -1063,93 +1078,87 @@ async function StateTypingMSG(buttonElement, abbrStateTypingElement, divDelayTex
 
         divFunctions.style.cssText =
             `background-color: var(--colorContrast);display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
-        divDelayTextStateTyping.style.cssText =
-            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        divDelayStateTyping.style.cssText =
+            'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            divDelayStateTyping.style.cssText =
+                'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
             divFunctions.style.cssText =
                 `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         }, 300)
-        
-        StateTyping = true
     }
 }
-let StateRecording = null
-async function StateRecordingMSG(buttonElement, abbrStateTypingElement, divDelayTextElement, divFunctionsElement) {
-    const buttonStateTyping = document.querySelector(`#${buttonElement}`)
-    const abbrStateTyping = document.querySelector(`#${abbrStateTypingElement}`)
+async function StateRecordingMSG(buttonElement) {
+    const divElement = buttonElement.closest('#ifileTypeMSG')
+
+    const buttonStateRecording = divElement.querySelector(`#iOnOffStateRecordingFile`)
+    const abbrStateRecording = divElement.querySelector(`#iabbrOnOffStateRecordingFile`)
     
-    const divDelayTextStateTyping = document.querySelector(`#${divDelayTextElement}`)
-    const divFunctions = document.querySelector(`#${divFunctionsElement}`)
+    const divDelayStateRecording = divElement.querySelector(`#idivDelayTextAudio`)
+    const divFunctions = divElement.querySelector(`#idivFileFunctions`)
     const computedStyle = window.getComputedStyle(divFunctions)
     const currentDivFunctionsDisplay = computedStyle.display
     const currentDivFunctionsBorder = computedStyle.border
     const currentDivFunctionsBorderBottom = computedStyle.borderBottom
     const currentDivFunctionsHeight = computedStyle.height
+    
+    const isShown_divDelayTextStateRecording = window.getComputedStyle(divDelayStateRecording).height
 
-    if (StateRecording === null || undefined) {
-        StateRecording = true
-    } 
-
-    if (StateRecording) {
-        buttonStateTyping.style.cssText =
+    if (isShown_divDelayTextStateRecording === '0px') {
+        buttonStateRecording.style.cssText =
             'background-color: var(--colorWhite); color: var(--colorBlack);'
-        buttonStateTyping.textContent = `-`
+        buttonStateRecording.textContent = `-`
         
-        abbrStateTyping.title = `StateTyping STATUS: on`
+        abbrStateRecording.title = `StateTyping STATUS: on`
 
         divFunctions.style.cssText =
             `background-color: var(--colorContrast); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
-        divDelayTextStateTyping.style.cssText =
-            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        divDelayStateRecording.style.cssText =
+            'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: flex; height: 0vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+            divDelayStateRecording.style.cssText =
+                'display: flex; height: 0vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
         }, -1)
         setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: flex; height: 3.13vw; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+            divDelayStateRecording.style.cssText =
+                'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
         }, 100)
         setTimeout(function() {
             divFunctions.style.cssText =
                 `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         }, 300)
-
-        StateRecording = false
     } else {
-        buttonStateTyping.style.cssText =
+        buttonStateRecording.style.cssText =
             'background-color: var(--colorBlack); color: var(--colorWhite);'
-        buttonStateTyping.textContent = `O`
+        buttonStateRecording.textContent = `O`
 
-        abbrStateTyping.title = `StateTyping STATUS: off`
+        abbrStateRecording.title = `StateTyping STATUS: off`
 
         divFunctions.style.cssText =
             `background-color: var(--colorContrast); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
-        divDelayTextStateTyping.style.cssText =
-            'display: flex; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+        divDelayStateRecording.style.cssText =
+            'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
-            divDelayTextStateTyping.style.cssText =
-                'display: none; height: 0vw; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            divDelayStateRecording.style.cssText =
+                'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
             divFunctions.style.cssText =
                 `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};` 
         }, 300)
-        
-        StateRecording = true
     }
 }
-let caption = null
-async function CaptionFileMSG(buttonElement, abbrStateTypingElement, divTextAreaElement) {
-    const buttonCaption = document.querySelector(`#${buttonElement}`)
-    const abbrCaption = document.querySelector(`#${abbrStateTypingElement}`)
+async function CaptionFileMSG(buttonElement) {
+    const divElement = buttonElement.closest('#ifileTypeMSG')
     
-    const divTextAreaCaption = document.querySelector(`#${divTextAreaElement}`)
+    const buttonCaption = divElement.querySelector(`#iOnOffCaption`)
+    const abbrCaption = divElement.querySelector(`#iabbrOnOffCaption`)
+    
+    const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
 
-    if (caption === null || undefined) {
-        caption = true
-    } 
+    const isShown_divTextAreaCaption = window.getComputedStyle(divTextAreaCaption).display
+    const currentTextAreaBackground_Color = divTextAreaCaption.style.backgroundColor
+    const currentTextAreaColor = divTextAreaCaption.style.color
 
-    if (caption) {
+    if (isShown_divTextAreaCaption === 'none') {
         buttonCaption.style.cssText =
             'background-color: var(--colorWhite); color: var(--colorBlack);'
         buttonCaption.textContent = `-`
@@ -1157,17 +1166,15 @@ async function CaptionFileMSG(buttonElement, abbrStateTypingElement, divTextArea
         abbrCaption.title = `Legenda STATUS: on`
         
         divTextAreaCaption.style.cssText =
-            'display: block; height: 0em; padding: 0px;'
+            `display: block; height: 0em; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor};`
         setTimeout(function() {
             divTextAreaCaption.style.cssText =
-                'display: block; height: 0em; padding: 6px;' 
+                `display: block; height: 0em; padding: 6px; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor};`
         }, -1)
         setTimeout(function() {
             divTextAreaCaption.style.cssText =
-                'display: block; height: 13em; padding: 6px;'
+                `display: block; height: 13em; padding: 6px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor};`
         }, 100)
-            
-        caption = false
     } else {
         buttonCaption.style.cssText =
             'background-color: var(--colorBlack); color: var(--colorWhite);'
@@ -1176,138 +1183,160 @@ async function CaptionFileMSG(buttonElement, abbrStateTypingElement, divTextArea
         abbrCaption.title = `Legenda STATUS: off`
         
         divTextAreaCaption.style.cssText =
-            'display: block; height: 0em; padding: 0px;'
+            `display: block; height: 0em; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor};`
         setTimeout(function() {
             divTextAreaCaption.style.cssText =
-                'display: none; height: 0em; padding: 0px;'
+                `display: none; height: 0em; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor};`
         }, 300)
-        
-        caption = true
     }
 }
-let modeLightDark = null
-async function LightDarkMSG(buttonLightDarkElement, abbrLightDarkElement, buttonColorElement, testAreaElement) {
-    const buttonLightDark = document.querySelector(`#${buttonLightDarkElement}`)
-    const abbrLightDark = document.querySelector(`#${abbrLightDarkElement}`)
-    const buttonColor = document.querySelector(`#${buttonColorElement}`)
-    
-    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
-    const currentTextAreaWidth = textAreaMSG.style.width
-    const currentTextAreaHeight = textAreaMSG.style.height
-    const currentTextAreaDisplay = textAreaMSG.style.display
-    const currentTextAreaPadding = textAreaMSG.style.padding
 
-    if (modeLightDark === null || undefined) {
-        modeLightDark = true
+async function LightDarkMSG(buttonElement, IsWType) {
+    let type = null
+    let button = null
+    let abbrButton = null
+    let colorButton = null
+    let textarea = null
+    if (IsWType) {
+        type = 'idivTextarea'
+        button = 'iOnOffLightDarkMSG'
+        abbrButton = 'iabbrOnOffLightDarkMSG'
+        colorButton = 'iOnOffLightDarkColorMSG'
+        textarea = 'itextAreaTypeMSG'
+    } else {
+        type = 'ifileTypeMSG'
+        button = 'iOnOffLightDarkCaption'
+        abbrButton = 'iabbrOnOffLightDarkCaption'
+        colorButton = 'iOnOffLightDarkColorCaption'
+        textarea = 'itextAreaCaption'
     }
-    if (modeLightDarkColor === true && modeLightDark === true) {
+    const divElement = buttonElement.closest(`#${type}`)
+    
+    const buttonLightDark = divElement.querySelector(`#${button}`)
+    const abbrLightDark = divElement.querySelector(`#${abbrButton}`)
+    const buttonColor = divElement.querySelector(`#${colorButton}`)
+    
+    const textAreaDiv = divElement.querySelector(`#${textarea}`)
+    const computedSyle = window.getComputedStyle(textAreaDiv)
+
+    const currentTextAreaWidth = computedSyle.width
+    const currentTextAreaHeight = computedSyle.height
+    const currentTextAreaDisplay = computedSyle.display
+    const currentTextAreaPadding = computedSyle.padding
+
+    const isWMode_textAreaMSG = computedSyle.backgroundColor
+
+    const black = 'rgb(27, 27, 27)'
+    const white = 'rgb(240, 240, 240)'
+    const modeDark = 'rgb(33, 33, 33)'
+    const modeLight = 'rgb(240, 240, 240)'
+    const greenDark = 'rgb(0, 64, 52)'
+    const greenLight = 'rgb(215, 241, 178)'
+    if (isWMode_textAreaMSG === modeDark || isWMode_textAreaMSG === greenDark) {
+        if (isWMode_textAreaMSG === modeDark) {
+            buttonColor.style.cssText =
+                'background-color: var(--colorBlack); color: var(--colorWhite);'
+            textAreaDiv.style.cssText =
+                `background-color: ${modeLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+        } else if (isWMode_textAreaMSG === greenDark) {
+            buttonColor.style.cssText =
+                `background-color: ${greenLight}; color: ${black};`
+            textAreaDiv.style.cssText =
+                `background-color: ${greenLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+        }
+        
         buttonLightDark.style.cssText =
-            'background-color: rgb(240, 240, 240); color: rgb(27, 27, 27)'
+            `background-color: ${modeLight}; color: ${black}`
         buttonLightDark.textContent = `-`
         abbrLightDark.title = `Modo Claro/Escuro STATUS: claro`
-
-        buttonColor.style.cssText =
-            'background-color: rgb(215, 241, 178); color: rgb(27, 27, 27);'
-
-        textAreaMSG.style.cssText =
-            `background-color: rgb(215, 241, 178); color: rgb(27, 27, 27); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-
-        modeLightDark = false
-    } else if (modeLightDarkColor === true && modeLightDark === false) {
-        buttonLightDark.style.cssText =
-            'background-color: rgb(33, 33, 33); color: rgb(240, 240, 240)'
-        buttonLightDark.textContent = `O`
-
-        abbrLightDark.title = `Modo Claro/Escuro STATUS: escuro`
-
-        buttonColor.style.cssText =
-            'background-color: rgb(0, 64, 52); color: rgb(240, 240, 240);'
-
-        textAreaMSG.style.cssText =
-            `background-color: rgb(0, 64, 52); color: rgb(240, 240, 240); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};` 
-        
-        modeLightDark = true
-    } else {
-        if (modeLightDark) {
-            buttonLightDark.style.cssText =
-                'background-color: rgb(240, 240, 240); color: rgb(27, 27, 27)'
-            buttonLightDark.textContent = `-`
-            abbrLightDark.title = `Modo Claro/Escuro STATUS: claro`
-        
-            textAreaMSG.style.cssText =
-                `background-color: rgb(240, 240, 240); color: rgb(27, 27, 27); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-
-            modeLightDark = false
-        } else {
-            buttonLightDark.style.cssText =
-                'background-color: rgb(33, 33, 33); color: rgb(240, 240, 240)'
-            buttonLightDark.textContent = `O`
-        
-            abbrLightDark.title = `Modo Claro/Escuro STATUS: escuro`
-            
-            textAreaMSG.style.cssText =
-                `background-color: rgb(33, 33, 33); color: rgb(240, 240, 240); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-            
-            modeLightDark = true
+    } else if (isWMode_textAreaMSG === modeLight || isWMode_textAreaMSG === greenLight) {
+        if (isWMode_textAreaMSG === modeLight) {
+            buttonColor.style.cssText =
+                'background-color: var(--colorBlack); color: var(--colorWhite);'
+            textAreaDiv.style.cssText =
+                `background-color: ${modeDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+        } else if (isWMode_textAreaMSG === greenLight) {
+            buttonColor.style.cssText =
+                `background-color: ${greenDark}; color: ${white};`
+            textAreaDiv.style.cssText =
+                `background-color: ${greenDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
         }
+        
+        buttonLightDark.style.cssText =
+            `background-color: ${modeDark}; color: ${white}`
+        buttonLightDark.textContent = `O`
+        abbrLightDark.title = `Modo Claro/Escuro STATUS: escuro`
     }
 }
-let modeLightDarkColor = null
-async function LightDarkColorMSG(buttonColorElement, abbrColorElement, testAreaElement) {
-    const buttonColor = document.querySelector(`#${buttonColorElement}`)
-    const abbrColor = document.querySelector(`#${abbrColorElement}`)
+async function LightDarkColorMSG(buttonElement, IsWType) {
+    let type = null
+    let abbrButton = null
+    let colorButton = null
+    let textarea = null
+    if (IsWType) {
+        type = 'idivTextarea'
+        abbrButton = 'iabbrOnOffLightDarkColorMSG'
+        colorButton = 'iOnOffLightDarkColorMSG'
+        textarea = 'itextAreaTypeMSG'
+    } else {
+        type = 'ifileTypeMSG'
+        abbrButton = 'iabbrOnOffLightDarkColorCaption'
+        colorButton = 'iOnOffLightDarkColorCaption'
+        textarea = 'itextAreaCaption'
+    }
+    const divElement = buttonElement.closest(`#${type}`)
     
-    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
-    const currentTextAreaWidth = textAreaMSG.style.width
-    const currentTextAreaHeight = textAreaMSG.style.height
-    const currentTextAreaDisplay = textAreaMSG.style.display
-    const currentTextAreaPadding = textAreaMSG.style.padding
+    const abbrColor = divElement.querySelector(`#${abbrButton}`)
+    const buttonColor = divElement.querySelector(`#${colorButton}`)
+    
+    const textAreaDiv = divElement.querySelector(`#${textarea}`)
+    const computedSyle = window.getComputedStyle(textAreaDiv)
 
-    if (modeLightDarkColor === null || undefined) {
-        modeLightDarkColor = false
-    }
-    if (modeLightDark === null || undefined) {
-        modeLightDark = true
-    }
+    const currentTextAreaWidth = computedSyle.width
+    const currentTextAreaHeight = computedSyle.height
+    const currentTextAreaDisplay = computedSyle.display
+    const currentTextAreaPadding = computedSyle.padding
 
-    if (!modeLightDarkColor) {
-        if (modeLightDark) {
+    const isWMode_textAreaMSG = computedSyle.backgroundColor
+    
+    const black = 'rgb(27, 27, 27)'
+    const white = 'rgb(240, 240, 240)'
+    const modeDark = 'rgb(33, 33, 33)'
+    const modeLight = 'rgb(240, 240, 240)'
+    const greenDark = 'rgb(0, 64, 52)'
+    const greenLight = 'rgb(215, 241, 178)'
+    if (isWMode_textAreaMSG === modeDark || isWMode_textAreaMSG === modeLight) {
+        if (isWMode_textAreaMSG === modeDark) {
             buttonColor.style.cssText =
-                'background-color: rgb(0, 64, 52); color: rgb(240, 240, 240);'
-        } else {
+                `background-color: ${greenDark}; color: ${white};`
+            textAreaDiv.style.cssText =
+                `background-color: ${greenDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+        } else if (isWMode_textAreaMSG === modeLight){
             buttonColor.style.cssText =
-                'background-color: rgb(215, 241, 178); color: rgb(27, 27, 27);'
+                `background-color: ${greenLight}; color: ${black};`
+            textAreaDiv.style.cssText =
+                `background-color: ${greenLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
         }
+            
         buttonColor.textContent = `-`
         abbrColor.title = `Modo Cliente/Usuario STATUS: usuario`
-    
-        if (modeLightDark) {
-            textAreaMSG.style.cssText =
-                `background-color: rgb(0, 64, 52); color: rgb(240, 240, 240); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-        } else {
-            textAreaMSG.style.cssText =
-                `background-color: rgb(215, 241, 178); color: rgb(27, 27, 27); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+    } else if (isWMode_textAreaMSG === greenDark || isWMode_textAreaMSG === greenLight) {
+        if (isWMode_textAreaMSG === greenDark) {
+            textAreaDiv.style.cssText =
+                `background-color: ${modeDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+        } else if (isWMode_textAreaMSG === greenLight){
+            textAreaDiv.style.cssText =
+                `background-color: ${modeLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
         }
-
-        modeLightDarkColor = true
-    } else {
+                
         buttonColor.style.cssText =
             'background-color: var(--colorBlack); color: var(--colorWhite);'
         buttonColor.textContent = `O`
-    
         abbrColor.title = `Modo Cliente/Usuario STATUS: cliente`
-        
-        if (modeLightDark) {
-            textAreaMSG.style.cssText =
-                `background-color: rgb(33, 33, 33); color: rgb(240, 240, 240); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-        } else {
-            textAreaMSG.style.cssText =
-                `background-color: rgb(240, 240, 240); color: rgb(27, 27, 27); width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-        }
-        
-        modeLightDarkColor = false
     }
 }
+
+//reforma multi instancia de todos os screeen setup////////////////////////////////////////////////////////////////////////////////////////
 let ScreenSetup = -1
 async function resetScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
     const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
@@ -1498,21 +1527,16 @@ async function phoneScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
 
 //pro sistemas de mandar arquivo, as funcoes a adicionar... um botao que deseleciona o arquivo e um pra apagar do funil o card(isso de apagar o card vai ter em todos os tipos de cards do funil) e pra poder apagar o card tera que deseleciona primeiro entao faze um esquema de desgin que no lugar do botao pra deseleciona dps de clical muda pro apagar, e tbm algum esqueme de dps de selecionar mandar enviar ele retrai o tamanho pra n ficar mt grande na tela ne e talves tirar a funcao de arrasta pra mandar ou sla, e claro em todos os card tem do lado um lugar que vc pega seleciona segurando e deixa onde na posica odo funil ele vai ficar e tals personalizavel
 async function getFileData(file, divElementBridge) {
-    if (file === null || file === undefined) {
-        
-        return
-    }
-
     const fileFunctionsDiv = divElementBridge.closest('.fileTypeMSG').querySelector('#idivFileFunctions')
-    const isShown_divFunctions = window.getComputedStyle(fileFunctionsDiv).display
-    
-    if (isShown_divFunctions === 'flex') {
+    if (file === null || file === undefined || file === '...') {
         fileFunctionsDiv.style.cssText =
-            'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;'
+        'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;'
         setTimeout(function() {
             fileFunctionsDiv.style.cssText =
-                'display: none; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;' 
+            'display: none; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;' 
         }, 100)
+
+        return
     } else {
         fileFunctionsDiv.style.cssText =
             'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;'
@@ -1520,31 +1544,26 @@ async function getFileData(file, divElementBridge) {
             fileFunctionsDiv.style.cssText =
                 'display: flex; border: 2px solid var(--colorBlack); border-bottom: 3.5px solid var(--colorBlack); height: 5vh;' 
         }, 300)
-    }
 
-    if (file === '...') {
-        
-        return
-    }
-
-    displayOnConsole(file.type)
-    const fileType = file.type
-    switch (fileType) {//conforme vai indo adicionar o maximo possivel de tipos de arquivos para cada e assim ser mais completo e preciso
-        case 'video/mp4' || 'video/avi' || 'video/mov' || 'video/mkv':
-            
-            break;
-        case 'audio/m4a' || 'audio/wav' || 'audio/mp3' || 'audio/gif':
-            
-            break;
-        case 'image/jpg' || 'image/png':
-            
-            break;
-        case 'text/plain' || 'application/pdf' || 'application/msword':
-            
-            break;
-        default:
-            
-            break;
+        displayOnConsole(file.type)
+        const fileType = file.type
+        switch (fileType) {//conforme vai indo adicionar o maximo possivel de tipos de arquivos para cada e assim ser mais completo e preciso
+            case 'video/mp4' || 'video/avi' || 'video/mov' || 'video/mkv':
+                
+                break;
+            case 'audio/m4a' || 'audio/wav' || 'audio/mp3' || 'audio/gif':
+                
+                break;
+            case 'image/jpg' || 'image/png':
+                
+                break;
+            case 'text/plain' || 'application/pdf' || 'application/msword':
+                
+                break;
+            default:
+                
+                break;
+        }
     }
 }
 async function fileTypeAction(event, isClick, divElement) {
@@ -1559,33 +1578,35 @@ async function fileTypeAction(event, isClick, divElement) {
         event.preventDefault()
         event.stopPropagation()
         
+        
         file = event.dataTransfer.files[0]
     }
-    const fileName = file.name
     
     const nameFile = divElement.querySelector('#ifileNameSelected')
     const statusFile = divElement.querySelector('#ifileStatus')
     const abbrFileZone = divElement.closest('abbr')
-    if (file) {
-        const dataTransfer = new DataTransfer()
-        dataTransfer.items.add(file)
-        fileInput.files = dataTransfer.files
-        
-        nameFile.textContent = `${fileName}`
-        statusFile.textContent = `Arquivo selecionado`
-        abbrFileZone.title = `Arquivo: ${fileName}`
-        displayOnConsole(`Arquivo: ${fileName}`)
-        console.log(file)
-
-        await getFileData(file, divElement)
-    } else {
+    
+    //if (fileInput.files.length >= 1 || file.files.length >= 1) {
+    if (file === null || file === undefined) {
         nameFile.textContent = `...`
         statusFile.textContent = `Clique ou arraste um arquivo`
         abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
-        displayOnConsole(`Arquivo: ...`)
-        console.log(`...`)
+        console.log(file)
         
         file = '...'
+        await getFileData(file, divElement)
+    } else {
+        if (!isClick) {
+            const dataTransfer = new DataTransfer()
+            dataTransfer.items.add(file)
+            fileInput.files = dataTransfer.files
+        }
+        
+        nameFile.textContent = file.name
+        statusFile.textContent = `Arquivo selecionado`
+        abbrFileZone.title = `Arquivo: ${file.name}`
+        console.log(file)
+
         await getFileData(file, divElement)
     }
 }

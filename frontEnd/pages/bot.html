@@ -27,7 +27,7 @@
 
         <nav> 
             <ul>
-                <abbr title="Pagina Bot"><li><strong><span id="appVersion"></span></strong><a class="navs" href="#" target="_self"><stronger><span id="appName"></span></stronger></a></li></abbr><!-- BOT PAGE -->
+                <abbr title="Pagina Bot"><li><strong><span id="appVersion">v?.?.?</span></strong><a class="navs" href="#" target="_self"><stronger><span id="appName">BOT</span></stronger></a></li></abbr><!-- BOT PAGE -->
                 <abbr title="Pagina Ver IP"><li><a class="navs" href="verIp.html" target="_blank"><stronger>VER IP</stronger></a></li></abbr><!-- VER IP PAGE -->
                 <abbr title="Pagina Multi Link"><li><a class="navs" href="multiLink.html" target="_blank"><stronger>MULTI LINK</stronger></a></li></abbr><!-- MULTI LINKS PAGE -->
             </ul>
@@ -162,12 +162,12 @@
                                     <abbr title="Nenhum"><label for="delayMSGRadioNone" class="delayMSGLabelNone">Nenhum-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioNone" class="delayMSGRadioNone" checked placeholder="d">)</label></abbr>
                                 </div>
 
-                                <div class="divTextarea" id="textType">
+                                <div class="divTextarea" id="idivTextarea">
                                     <div class="divTextareaFunctions" id="idivTextareaFunctions">
-                                        <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iOnOffStateTyping" onclick="StateTypingMSG('iOnOffStateTyping', 'iabbrOnOffStateTyping', 'idivDelayText', 'idivTextareaFunctions')">O</button></abbr>
+                                        <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
                                         
-                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG('iOnOffLightDarkMSG', 'iabbrOnOffLightDarkMSG','iOnOffLightDarkColorMSG', 'itextAreaTypeMSG')">O</button></abbr>
-                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG('iOnOffLightDarkColorMSG', 'iabbrOnOffLightDarkColorMSG', 'itextAreaTypeMSG')">O</button></abbr>
+                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
+                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
                                         
                                         <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">R</button></abbr>
                                         <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">O</button></abbr>
@@ -187,14 +187,14 @@
                                     <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput=""></textarea></abbr>
                                 </div>
 
-                                <div class="fileTypeMSG">
+                                <div class="fileTypeMSG" id="ifileTypeMSG">
                                     <div class="divFileFunctions" id="idivFileFunctions">
-                                        <abbr title="StateTyping STATUS: off" id="iiabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iiOnOffStateTyping" onclick="StateTypingMSG('iiOnOffStateTyping', 'iiabbrOnOffStateTyping', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
-                                        <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecording"><button class="functionsDivStart OnOffStateRecording" id="iOnOffStateRecording" onclick="StateRecordingMSG('iOnOffStateRecording', 'iabbrOnOffStateRecording', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
-                                        <abbr title="Legenda STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG('iOnOffCaption', 'iabbrOnOffCaption', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, true)">O</button></abbr>
+                                        <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
+                                        <abbr title="Legenda STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
                                         
-                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG('iOnOffLightDarkCaption', 'iabbrOnOffLightDarkCaption','iOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
-                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG('iOnOffLightDarkColorCaption', 'iabbrOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
+                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
                                         
                                         <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">R</button></abbr>
                                         <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
@@ -213,13 +213,13 @@
                                         <abbr title="Nenhum"><label for="delayTextAudioRadioNone" class="delayTextAudioLabelNone">Nenhum-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioNone" class="delayTextAudioRadioNone" checked placeholder="d">)</label></abbr>
                                     </div>
                                     
-                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
                                         <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
                                         <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
                                         <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
                                         <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
                                         
-                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(event, true, this.parentElement)">
+                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
                                     </div></abbr>
 
                                     <abbr title="Digite a legendo do (arquivo)"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (arquivo): >..." oninput=""></textarea></abbr>
