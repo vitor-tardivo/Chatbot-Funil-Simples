@@ -1017,19 +1017,16 @@ async function StateTypingMSG(buttonElement, IsWType) {
     let button = null
     let abbr = null
     let delay = null
-    let functions = null
     if (IsWType) {
         type = 'idivTextarea'
         button = 'iOnOffStateTypingMSG'
         abbr = 'iabbrOnOffStateTypingMSG'
         delay = 'idivDelayText'
-        functions = 'idivTextareaFunctions'
     } else {
         type = 'ifileTypeMSG'
         button = 'iOnOffStateTypingFile'
         abbr = 'iabbrOnOffStateTypingFile'
         delay = 'idivDelayTextAudio'
-        functions = 'idivFileFunctions'
     }
     
     const divElement = buttonElement.closest(`#${type}`)
@@ -1037,24 +1034,20 @@ async function StateTypingMSG(buttonElement, IsWType) {
     const abbrStateTyping = divElement.querySelector(`#${abbr}`)
     
     const divDelayStateTyping = divElement.querySelector(`#${delay}`)
-    const divFunctions = divElement.querySelector(`#${functions}`)
-    const computedStyle = window.getComputedStyle(divFunctions)
-    const currentDivFunctionsDisplay = computedStyle.display
-    const currentDivFunctionsBorder = computedStyle.border
-    const currentDivFunctionsBorderBottom = computedStyle.borderBottom
-    const currentDivFunctionsHeight = computedStyle.height
+
+    const computedSyle2 = window.getComputedStyle(buttonStateTyping)
+    const currentButtonStateTypingDisplay = computedSyle2.display
+    const currentButtonStateTypingOpacity = computedSyle2.opacity
 
     const isShown_divDelayTextStateRecording = window.getComputedStyle(divDelayStateTyping).height
-
+    
     if (isShown_divDelayTextStateRecording === '0px') {
         buttonStateTyping.style.cssText =
-            'background-color: var(--colorWhite); color: var(--colorBlack);'
+            `display: ${currentButtonStateTypingDisplay}; opacity: ${currentButtonStateTypingOpacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
         buttonStateTyping.textContent = `-`
         
         abbrStateTyping.title = `StateTyping STATUS: on`
 
-        divFunctions.style.cssText =
-            `background-color: var(--colorContrast); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         divDelayStateTyping.style.cssText =
             'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
@@ -1065,26 +1058,18 @@ async function StateTypingMSG(buttonElement, IsWType) {
             divDelayStateTyping.style.cssText =
                 'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
         }, 100)
-        setTimeout(function() {
-            divFunctions.style.cssText =
-                `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
-        }, 300)
     } else {
         buttonStateTyping.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `display: ${currentButtonStateTypingDisplay}; opacity: ${currentButtonStateTypingOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonStateTyping.textContent = `O`
 
         abbrStateTyping.title = `StateTyping STATUS: off`
 
-        divFunctions.style.cssText =
-            `background-color: var(--colorContrast);display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         divDelayStateTyping.style.cssText =
             'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
             divDelayStateTyping.style.cssText =
                 'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-            divFunctions.style.cssText =
-                `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         }, 300)
     }
 }
@@ -1095,24 +1080,20 @@ async function StateRecordingMSG(buttonElement) {
     const abbrStateRecording = divElement.querySelector(`#iabbrOnOffStateRecordingFile`)
     
     const divDelayStateRecording = divElement.querySelector(`#idivDelayTextAudio`)
-    const divFunctions = divElement.querySelector(`#idivFileFunctions`)
-    const computedStyle = window.getComputedStyle(divFunctions)
-    const currentDivFunctionsDisplay = computedStyle.display
-    const currentDivFunctionsBorder = computedStyle.border
-    const currentDivFunctionsBorderBottom = computedStyle.borderBottom
-    const currentDivFunctionsHeight = computedStyle.height
+
+    const computedSyle2 = window.getComputedStyle(buttonStateRecording)
+    const currentButtonStateRecordingDisplay = computedSyle2.display
+    const currentButtonStateRecordingOpacity = computedSyle2.opacity
     
     const isShown_divDelayTextStateRecording = window.getComputedStyle(divDelayStateRecording).height
-
+    
     if (isShown_divDelayTextStateRecording === '0px') {
         buttonStateRecording.style.cssText =
-            'background-color: var(--colorWhite); color: var(--colorBlack);'
+            `display: ${currentButtonStateRecordingDisplay}; opacity: ${currentButtonStateRecordingOpacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
         buttonStateRecording.textContent = `-`
         
         abbrStateRecording.title = `StateTyping STATUS: on`
 
-        divFunctions.style.cssText =
-            `background-color: var(--colorContrast); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         divDelayStateRecording.style.cssText =
             'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
@@ -1123,26 +1104,18 @@ async function StateRecordingMSG(buttonElement) {
             divDelayStateRecording.style.cssText =
                 'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
         }, 100)
-        setTimeout(function() {
-            divFunctions.style.cssText =
-                `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
-        }, 300)
     } else {
         buttonStateRecording.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `display: ${currentButtonStateRecordingDisplay}; opacity: ${currentButtonStateRecordingOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonStateRecording.textContent = `O`
 
         abbrStateRecording.title = `StateTyping STATUS: off`
 
-        divFunctions.style.cssText =
-            `background-color: var(--colorContrast); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};`
         divDelayStateRecording.style.cssText =
             'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
         setTimeout(function() {
             divDelayStateRecording.style.cssText =
                 'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-            divFunctions.style.cssText =
-                `background-color: var(--colorContrastOpacity); display: ${currentDivFunctionsDisplay}; border: ${currentDivFunctionsBorder}; border-bottom: ${currentDivFunctionsBorderBottom}; height: ${currentDivFunctionsHeight};` 
         }, 300)
     }
 }
@@ -1151,12 +1124,31 @@ async function CaptionFileMSG(buttonElement) {
     
     const buttonCaption = divElement.querySelector(`#iOnOffCaption`)
     const abbrCaption = divElement.querySelector(`#iabbrOnOffCaption`)
-    
     const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+
+    const buttonLigtDark = divElement.querySelector(`#iOnOffLightDarkCaption`)
+    const currentLightDarkBackground_Color = buttonLigtDark.style.backgroundColor
+    const currentLightDarkColor = buttonLigtDark.style.color
+    const buttonLightDarkColor = divElement.querySelector(`#iOnOffLightDarkColorCaption`)
+    const currentLightDarkColorBackground_Color = buttonLightDarkColor.style.backgroundColor
+    const currentLightDarkColorColor = buttonLightDarkColor.style.color
+    
+    const buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
+    const buttonDesktopScreen2 = divElement.querySelector(`#iOnOffVLockScreenSetupCaption2`)
+    const currentButtonDesktopScreen2Background_Color = buttonDesktopScreen2.style.backgroundColor
+    const currentButtonDesktopScreen2Color = buttonDesktopScreen2.style.color
+    const buttonDesktopScreen3 = divElement.querySelector(`#iOnOffDesktopScreenSetupCaption3`)
+    const currentButtonDesktopScreen3Background_Color = buttonDesktopScreen3.style.backgroundColor
+    const currentButtonDesktopScreen3Color = buttonDesktopScreen3.style.color
+    const buttonDesktopScreen4 = divElement.querySelector(`#iOnOffPhoneScreenSetupCaption4`)
+    const currentButtonDesktopScreen4Background_Color = buttonDesktopScreen4.style.backgroundColor
+    const currentButtonDesktopScreen4Color = buttonDesktopScreen4.style.color
 
     const isShown_divTextAreaCaption = window.getComputedStyle(divTextAreaCaption).display
     const currentTextAreaBackground_Color = divTextAreaCaption.style.backgroundColor
     const currentTextAreaColor = divTextAreaCaption.style.color
+    const currentTextAreaWidth = divTextAreaCaption.style.width
+    const currentTextAreaResize = divTextAreaCaption.style.resize
 
     if (isShown_divTextAreaCaption === 'none') {
         buttonCaption.style.cssText =
@@ -1166,16 +1158,74 @@ async function CaptionFileMSG(buttonElement) {
         abbrCaption.title = `Legenda STATUS: on`
         
         divTextAreaCaption.style.cssText =
-            `display: block; height: 0em; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor};`
+            `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
         setTimeout(function() {
             divTextAreaCaption.style.cssText =
-                `display: block; height: 0em; padding: 6px; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor};`
+                `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 6px; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
         }, -1)
         setTimeout(function() {
             divTextAreaCaption.style.cssText =
-                `display: block; height: 13em; padding: 6px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor};`
+                `display: block; height: 13em; width: ${currentTextAreaWidth}; padding: 6px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
+        }, 100)
+
+        buttonLigtDark.style.cssText =
+            `display: inline; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
+        buttonLightDarkColor.style.cssText =
+            `display: inline; opacity: 0; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
+
+        buttonDesktopScreen1.style.cssText =
+            `display: inline; opacity: 0;`
+        buttonDesktopScreen2.style.cssText =
+            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
+        buttonDesktopScreen3.style.cssText =
+            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
+        buttonDesktopScreen4.style.cssText =
+            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
+        setTimeout(function() {
+            buttonLigtDark.style.cssText =
+                `display: inline; opacity: 1; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
+            buttonLightDarkColor.style.cssText =
+                `display: inline; opacity: 1; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
+
+            buttonDesktopScreen1.style.cssText =
+                `display: inline; opacity: 1;`
+            buttonDesktopScreen2.style.cssText =
+                `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
+            buttonDesktopScreen3.style.cssText =
+                `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
+            buttonDesktopScreen4.style.cssText =
+                `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
         }, 100)
     } else {
+        buttonLigtDark.style.cssText =
+            `display: inline; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
+        buttonLightDarkColor.style.cssText =
+            `display: inline; opacity: 0; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
+
+        buttonDesktopScreen1.style.cssText =
+            `display: inline; opacity: 0;`
+        buttonDesktopScreen2.style.cssText =
+            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
+        buttonDesktopScreen3.style.cssText =
+            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
+        buttonDesktopScreen4.style.cssText =
+            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
+        setTimeout(function() {
+            buttonLigtDark.style.cssText =
+                `display: none; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
+            buttonLightDarkColor.style.cssText =
+                `display: none; opacity: 0; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
+
+            buttonDesktopScreen1.style.cssText =
+                `display: none; opacity: 0;`
+            buttonDesktopScreen2.style.cssText =
+                `display: none; opacity: 0; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
+            buttonDesktopScreen3.style.cssText =
+                `display: none; opacity: 0; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
+            buttonDesktopScreen4.style.cssText =
+                `display: none; opacity: 0; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
+        }, 300)
+
         buttonCaption.style.cssText =
             'background-color: var(--colorBlack); color: var(--colorWhite);'
         buttonCaption.textContent = `O`
@@ -1183,10 +1233,10 @@ async function CaptionFileMSG(buttonElement) {
         abbrCaption.title = `Legenda STATUS: off`
         
         divTextAreaCaption.style.cssText =
-            `display: block; height: 0em; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor};`
+            `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
         setTimeout(function() {
             divTextAreaCaption.style.cssText =
-                `display: none; height: 0em; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor};`
+                `display: none; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
         }, 300)
     }
 }
@@ -1214,15 +1264,21 @@ async function LightDarkMSG(buttonElement, IsWType) {
     
     const buttonLightDark = divElement.querySelector(`#${button}`)
     const abbrLightDark = divElement.querySelector(`#${abbrButton}`)
-    const buttonColor = divElement.querySelector(`#${colorButton}`)
-    
+    const buttonLightDarkColor = divElement.querySelector(`#${colorButton}`)
     const textAreaDiv = divElement.querySelector(`#${textarea}`)
-    const computedSyle = window.getComputedStyle(textAreaDiv)
 
+    const computedSyle = window.getComputedStyle(textAreaDiv)
     const currentTextAreaWidth = computedSyle.width
     const currentTextAreaHeight = computedSyle.height
     const currentTextAreaDisplay = computedSyle.display
     const currentTextAreaPadding = computedSyle.padding
+    
+    const computedSyle2 = window.getComputedStyle(buttonLightDark)
+    const currentButtonLightDarkDisplay = computedSyle2.display
+    const currentButtonLightDarkOpacity = computedSyle2.opacity
+    const computedSyle3 = window.getComputedStyle(buttonLightDarkColor)
+    const currentButtonLightDarkColorDisplay = computedSyle3.display
+    const currentButtonLightDarkColorOpacity = computedSyle3.opacity
 
     const isWMode_textAreaMSG = computedSyle.backgroundColor
 
@@ -1234,36 +1290,36 @@ async function LightDarkMSG(buttonElement, IsWType) {
     const greenLight = 'rgb(215, 241, 178)'
     if (isWMode_textAreaMSG === modeDark || isWMode_textAreaMSG === greenDark) {
         if (isWMode_textAreaMSG === modeDark) {
-            buttonColor.style.cssText =
-                'background-color: var(--colorBlack); color: var(--colorWhite);'
+            buttonLightDarkColor.style.cssText =
+                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
             textAreaDiv.style.cssText =
                 `background-color: ${modeLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
         } else if (isWMode_textAreaMSG === greenDark) {
-            buttonColor.style.cssText =
-                `background-color: ${greenLight}; color: ${black};`
+            buttonLightDarkColor.style.cssText =
+                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenLight}; color: ${black};`
             textAreaDiv.style.cssText =
                 `background-color: ${greenLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
         }
         
         buttonLightDark.style.cssText =
-            `background-color: ${modeLight}; color: ${black}`
+            `display: ${currentButtonLightDarkDisplay}; opacity: ${currentButtonLightDarkOpacity}; background-color: ${modeLight}; color: ${black}`
         buttonLightDark.textContent = `-`
         abbrLightDark.title = `Modo Claro/Escuro STATUS: claro`
     } else if (isWMode_textAreaMSG === modeLight || isWMode_textAreaMSG === greenLight) {
         if (isWMode_textAreaMSG === modeLight) {
-            buttonColor.style.cssText =
-                'background-color: var(--colorBlack); color: var(--colorWhite);'
+            buttonLightDarkColor.style.cssText =
+                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
             textAreaDiv.style.cssText =
                 `background-color: ${modeDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
         } else if (isWMode_textAreaMSG === greenLight) {
-            buttonColor.style.cssText =
-                `background-color: ${greenDark}; color: ${white};`
+            buttonLightDarkColor.style.cssText =
+                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenDark}; color: ${white};`
             textAreaDiv.style.cssText =
                 `background-color: ${greenDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
         }
         
         buttonLightDark.style.cssText =
-            `background-color: ${modeDark}; color: ${white}`
+            `display: ${currentButtonLightDarkDisplay}; opacity: ${currentButtonLightDarkOpacity}; background-color: ${modeDark}; color: ${white}`
         buttonLightDark.textContent = `O`
         abbrLightDark.title = `Modo Claro/Escuro STATUS: escuro`
     }
@@ -1287,17 +1343,21 @@ async function LightDarkColorMSG(buttonElement, IsWType) {
     const divElement = buttonElement.closest(`#${type}`)
     
     const abbrColor = divElement.querySelector(`#${abbrButton}`)
-    const buttonColor = divElement.querySelector(`#${colorButton}`)
-    
+    const buttonLightDarkColor = divElement.querySelector(`#${colorButton}`)
     const textAreaDiv = divElement.querySelector(`#${textarea}`)
-    const computedSyle = window.getComputedStyle(textAreaDiv)
 
+    const computedSyle = window.getComputedStyle(textAreaDiv)
     const currentTextAreaWidth = computedSyle.width
     const currentTextAreaHeight = computedSyle.height
     const currentTextAreaDisplay = computedSyle.display
     const currentTextAreaPadding = computedSyle.padding
+    
+    const computedSyle2 = window.getComputedStyle(buttonLightDarkColor)
+    const currentButtonLightDarkColorDisplay = computedSyle2.display
+    const currentButtonLightDarkColorOpacity = computedSyle2.opacity
 
     const isWMode_textAreaMSG = computedSyle.backgroundColor
+    
     
     const black = 'rgb(27, 27, 27)'
     const white = 'rgb(240, 240, 240)'
@@ -1307,18 +1367,18 @@ async function LightDarkColorMSG(buttonElement, IsWType) {
     const greenLight = 'rgb(215, 241, 178)'
     if (isWMode_textAreaMSG === modeDark || isWMode_textAreaMSG === modeLight) {
         if (isWMode_textAreaMSG === modeDark) {
-            buttonColor.style.cssText =
-                `background-color: ${greenDark}; color: ${white};`
+            buttonLightDarkColor.style.cssText =
+                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenDark}; color: ${white};`
             textAreaDiv.style.cssText =
                 `background-color: ${greenDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
         } else if (isWMode_textAreaMSG === modeLight){
-            buttonColor.style.cssText =
-                `background-color: ${greenLight}; color: ${black};`
+            buttonLightDarkColor.style.cssText =
+                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenLight}; color: ${black};`
             textAreaDiv.style.cssText =
                 `background-color: ${greenLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
         }
             
-        buttonColor.textContent = `-`
+        buttonLightDarkColor.textContent = `-`
         abbrColor.title = `Modo Cliente/Usuario STATUS: usuario`
     } else if (isWMode_textAreaMSG === greenDark || isWMode_textAreaMSG === greenLight) {
         if (isWMode_textAreaMSG === greenDark) {
@@ -1329,168 +1389,407 @@ async function LightDarkColorMSG(buttonElement, IsWType) {
                 `background-color: ${modeLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
         }
                 
-        buttonColor.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
-        buttonColor.textContent = `O`
+        buttonLightDarkColor.style.cssText =
+            `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+        buttonLightDarkColor.textContent = `O`
         abbrColor.title = `Modo Cliente/Usuario STATUS: cliente`
     }
 }
 
-//reforma multi instancia de todos os screeen setup////////////////////////////////////////////////////////////////////////////////////////
-let ScreenSetup = -1
-async function resetScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
-    const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
-    const abbrDesktopScreen2 = document.querySelector(`#${abbrDesktopScreenElement2}`)
-    const buttonDesktopScreen3 = document.querySelector(`#${buttonElement3}`)
-    const abbrDesktopScreen3 = document.querySelector(`#${abbrDesktopScreenElement3}`)
-    const buttonDesktopScreen4 = document.querySelector(`#${buttonElement4}`)
-    const abbrDesktopScreen4 = document.querySelector(`#${abbrDesktopScreenElement4}`)
+async function resetScreenSetup(buttonElement, IsWType) {
+    let type = null
+    let button2 = null
+    let abbr2 = null
+    let button3 = null
+    let abbr3 = null
+    let button4 = null
+    let abbr4 = null
+    let textarea = null
+    if (IsWType) {
+        type = 'idivTextarea'
+        button2 = 'iOnOffVLockScreenSetupText2'
+        abbr2 = 'iabbrOnOffVLockScreenSetupText2'
+        button3 = 'iOnOffDesktopScreenSetupText3'
+        abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
+        button4 = 'iOnOffPhoneScreenSetupText4'
+        abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
+        textarea = 'itextAreaTypeMSG'
+    } else {
+        type = 'ifileTypeMSG'
+        button2 = 'iOnOffVLockScreenSetupCaption2'
+        abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
+        button3 = 'iOnOffDesktopScreenSetupCaption3'
+        abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
+        button4 = 'iOnOffPhoneScreenSetupCaption4'
+        abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
+        textarea = 'itextAreaCaption'
+    }
+    const divElement = buttonElement.closest(`#${type}`)
     
-    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
-    const currentTextAreaBackground_Color = textAreaMSG.style.backgroundColor
-    const currentTextAreaColor = textAreaMSG.style.color
+    const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
+    const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
+    const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
+    const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
+    const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
+    const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
+    const textAreaMSG = divElement.querySelector(`#${textarea}`)
+    
+    const computedSyle = window.getComputedStyle(textAreaMSG)
+    const currentTextAreaBackground_Color = computedSyle.backgroundColor
+    const currentTextAreaColor = computedSyle.color
+    const currentTextAreaDisplay = computedSyle.display
+    
+    let buttonDesktopScreen1 = null
+    let computedSyle2 = null
+    let currentButtonDesktopScreen1Display = null
+    let currentButtonDesktopScreen1Opacity = null
+    let computedSyle3 = null
+    let currentButtonDesktopScreen2Display = null
+    let currentButtonDesktopScreen2Opacity = null
+    let computedSyle4 = null
+    let currentButtonDesktopScreen3Display = null
+    let currentButtonDesktopScreen3Opacity = null
+    let computedSyle5 = null
+    let currentButtonDesktopScreen4Display = null
+    let currentButtonDesktopScreen4Opacity = null
 
-    if (ScreenSetup === 2 || ScreenSetup === 3 || ScreenSetup === 4) {
-        ScreenSetup = -1
-
+    if (IsWType) {
         buttonDesktopScreen2.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonDesktopScreen2.textContent = `O`
         abbrDesktopScreen2.title = `VLock Tela STATUS: off`
         buttonDesktopScreen3.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonDesktopScreen3.textContent = `O`
         abbrDesktopScreen3.title = `PC Tela STATUS: off`
         buttonDesktopScreen4.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `background-color: var(--colorBlack); color: var(--colorWhite);`
+        buttonDesktopScreen4.textContent = `O`
+        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+    } else {
+        buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
+        computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
+        currentButtonDesktopScreen1Display = computedSyle2.display
+        currentButtonDesktopScreen1Opacity = computedSyle2.opacity
+        computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
+        currentButtonDesktopScreen2Display = computedSyle3.display
+        currentButtonDesktopScreen2Opacity = computedSyle3.opacity
+        computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
+        currentButtonDesktopScreen3Display = computedSyle4.display
+        currentButtonDesktopScreen3Opacity = computedSyle4.opacity
+        computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
+        currentButtonDesktopScreen4Display = computedSyle5.display
+        currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+        
+        buttonDesktopScreen1.style.cssText =
+            `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
+
+        buttonDesktopScreen2.style.cssText =
+            `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+        buttonDesktopScreen2.textContent = `O`
+        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+        buttonDesktopScreen3.style.cssText =
+            `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+        buttonDesktopScreen3.textContent = `O`
+        abbrDesktopScreen3.title = `PC Tela STATUS: off`
+        buttonDesktopScreen4.style.cssText =
+            `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonDesktopScreen4.textContent = `O`
         abbrDesktopScreen4.title = `Celular Tela STATUS: off`
     }
 
     textAreaMSG.style.cssText =
-        `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: 13em; resize: both;`
+        `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: 13em; resize: both;`
 }
-async function VLockScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
-    const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
-    const abbrDesktopScreen2 = document.querySelector(`#${abbrDesktopScreenElement2}`)
-    const buttonDesktopScreen3 = document.querySelector(`#${buttonElement3}`)
-    const abbrDesktopScreen3 = document.querySelector(`#${abbrDesktopScreenElement3}`)
-    const buttonDesktopScreen4 = document.querySelector(`#${buttonElement4}`)
-    const abbrDesktopScreen4 = document.querySelector(`#${abbrDesktopScreenElement4}`)
+async function VLockScreenSetup(buttonElement, IsWType) {
+    let type = null
+    let button2 = null
+    let abbr2 = null
+    let button3 = null
+    let abbr3 = null
+    let button4 = null
+    let abbr4 = null
+    let textarea = null
+    if (IsWType) {
+        type = 'idivTextarea'
+        button2 = 'iOnOffVLockScreenSetupText2'
+        abbr2 = 'iabbrOnOffVLockScreenSetupText2'
+        button3 = 'iOnOffDesktopScreenSetupText3'
+        abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
+        button4 = 'iOnOffPhoneScreenSetupText4'
+        abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
+        textarea = 'itextAreaTypeMSG'
+    } else {
+        type = 'ifileTypeMSG'
+        button2 = 'iOnOffVLockScreenSetupCaption2'
+        abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
+        button3 = 'iOnOffDesktopScreenSetupCaption3'
+        abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
+        button4 = 'iOnOffPhoneScreenSetupCaption4'
+        abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
+        textarea = 'itextAreaCaption'
+    }
+    const divElement = buttonElement.closest(`#${type}`)
     
-    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
-    const currentTextAreaWidth = textAreaMSG.style.width
-    const currentTextAreaHeight = textAreaMSG.style.height
-    const currentTextAreaBackground_Color = textAreaMSG.style.backgroundColor
-    const currentTextAreaColor = textAreaMSG.style.color
+    const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
+    const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
+    const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
+    const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
+    const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
+    const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
+    const textAreaMSG = divElement.querySelector(`#${textarea}`)
+    const computedSyle = window.getComputedStyle(textAreaMSG)
+    const currentTextAreaWidth = computedSyle.width
+    const currentTextAreaHeight = computedSyle.height
+    const currentTextAreaBackground_Color = computedSyle.backgroundColor
+    const currentTextAreaColor = computedSyle.color
+    const currentTextAreaDisplay = computedSyle.display
+    
+    let buttonDesktopScreen1 = null
+    let computedSyle2 = null
+    let currentButtonDesktopScreen1Display = null
+    let currentButtonDesktopScreen1Opacity = null
+    let computedSyle3 = null
+    let currentButtonDesktopScreen2Display = null
+    let currentButtonDesktopScreen2Opacity = null
+    let computedSyle4 = null
+    let currentButtonDesktopScreen3Display = null
+    let currentButtonDesktopScreen3Opacity = null
+    let computedSyle5 = null
+    let currentButtonDesktopScreen4Display = null
+    let currentButtonDesktopScreen4Opacity = null
 
-    if (ScreenSetup === -1) {
-        ScreenSetup = 0
-    } else if (ScreenSetup === 3 || ScreenSetup === 4) {
-        ScreenSetup = 0
-
+    if (IsWType) {
         buttonDesktopScreen3.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonDesktopScreen3.textContent = `O`
         abbrDesktopScreen3.title = `PC Tela STATUS: off`
         buttonDesktopScreen4.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `background-color: var(--colorBlack); color: var(--colorWhite);`
+        buttonDesktopScreen4.textContent = `O`
+        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+    } else {
+        buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
+        computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
+        currentButtonDesktopScreen1Display = computedSyle2.display
+        currentButtonDesktopScreen1Opacity = computedSyle2.opacity
+        computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
+        currentButtonDesktopScreen2Display = computedSyle3.display
+        currentButtonDesktopScreen2Opacity = computedSyle3.opacity
+        computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
+        currentButtonDesktopScreen3Display = computedSyle4.display
+        currentButtonDesktopScreen3Opacity = computedSyle4.opacity
+        computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
+        currentButtonDesktopScreen4Display = computedSyle5.display
+        currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+        
+        buttonDesktopScreen1.style.cssText =
+            `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
+
+        buttonDesktopScreen3.style.cssText =
+            `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+        buttonDesktopScreen3.textContent = `O`
+        abbrDesktopScreen3.title = `PC Tela STATUS: off`
+        buttonDesktopScreen4.style.cssText =
+            `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonDesktopScreen4.textContent = `O`
         abbrDesktopScreen4.title = `Celular Tela STATUS: off`
     }
+        
+    const isWMode_abbrDesktopScreen2 = abbrDesktopScreen2.title
 
-    if (ScreenSetup === 0) {
+    if (isWMode_abbrDesktopScreen2 === 'VLock Tela STATUS: off') {
         buttonDesktopScreen2.style.cssText =
-            'background-color: var(--colorWhite); color: var(--colorBlack);'
+            `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
         buttonDesktopScreen2.textContent = `-`
         abbrDesktopScreen2.title = `VLock Tela STATUS: on`
     
         textAreaMSG.style.cssText =
-            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: vertical;`
-
-        ScreenSetup = 2
-    } else if (ScreenSetup === 2) {
+            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: vertical;`
+    } else {
         buttonDesktopScreen2.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonDesktopScreen2.textContent = `O`
     
         abbrDesktopScreen2.title = `VLock Tela STATUS: off`
         
         textAreaMSG.style.cssText =
-            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: both;`
-        
-        ScreenSetup = 0
+            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: both;`
     }
 }
-async function desktopScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
-    const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
-    const abbrDesktopScreen2 = document.querySelector(`#${abbrDesktopScreenElement2}`)
-    const buttonDesktopScreen3 = document.querySelector(`#${buttonElement3}`)
-    const abbrDesktopScreen3 = document.querySelector(`#${abbrDesktopScreenElement3}`)
-    const buttonDesktopScreen4 = document.querySelector(`#${buttonElement4}`)
-    const abbrDesktopScreen4 = document.querySelector(`#${abbrDesktopScreenElement4}`)
+async function desktopScreenSetup(buttonElement, IsWType) {
+    let type = null
+    let button2 = null
+    let abbr2 = null
+    let button3 = null
+    let abbr3 = null
+    let button4 = null
+    let abbr4 = null
+    let textarea = null
+    if (IsWType) {
+        type = 'idivTextarea'
+        button2 = 'iOnOffVLockScreenSetupText2'
+        abbr2 = 'iabbrOnOffVLockScreenSetupText2'
+        button3 = 'iOnOffDesktopScreenSetupText3'
+        abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
+        button4 = 'iOnOffPhoneScreenSetupText4'
+        abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
+        textarea = 'itextAreaTypeMSG'
+    } else {
+        type = 'ifileTypeMSG'
+        button2 = 'iOnOffVLockScreenSetupCaption2'
+        abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
+        button3 = 'iOnOffDesktopScreenSetupCaption3'
+        abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
+        button4 = 'iOnOffPhoneScreenSetupCaption4'
+        abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
+        textarea = 'itextAreaCaption'
+    }
+    const divElement = buttonElement.closest(`#${type}`)
     
-    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
-    const currentTextAreaHeight = textAreaMSG.style.height
-    const currentTextAreaBackground_Color = textAreaMSG.style.backgroundColor
-    const currentTextAreaColor = textAreaMSG.style.color
+    const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
+    const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
+    const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
+    const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
+    const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
+    const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
+    const textAreaMSG = divElement.querySelector(`#${textarea}`)
+    const computedSyle = window.getComputedStyle(textAreaMSG)
+    const currentTextAreaHeight = computedSyle.height
+    const currentTextAreaBackground_Color = computedSyle.backgroundColor
+    const currentTextAreaColor = computedSyle.color
+    const currentTextAreaDisplay = computedSyle.display
 
-    if (ScreenSetup === -1) {
-        ScreenSetup = 0
-    } else if (ScreenSetup === 2 || ScreenSetup === 4) {
-        ScreenSetup = 0
+    let buttonDesktopScreen1 = null
+    let computedSyle2 = null
+    let currentButtonDesktopScreen1Display = null
+    let currentButtonDesktopScreen1Opacity = null
+    let computedSyle3 = null
+    let currentButtonDesktopScreen2Display = null
+    let currentButtonDesktopScreen2Opacity = null
+    let computedSyle4 = null
+    let currentButtonDesktopScreen3Display = null
+    let currentButtonDesktopScreen3Opacity = null
+    let computedSyle5 = null
+    let currentButtonDesktopScreen4Display = null
+    let currentButtonDesktopScreen4Opacity = null
 
+    if (IsWType) {
         buttonDesktopScreen2.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonDesktopScreen2.textContent = `O`
         abbrDesktopScreen2.title = `VLock Tela STATUS: off`
         buttonDesktopScreen4.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `background-color: var(--colorBlack); color: var(--colorWhite);`
+        buttonDesktopScreen4.textContent = `O`
+        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+    } else {
+        buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
+        computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
+        currentButtonDesktopScreen1Display = computedSyle2.display
+        currentButtonDesktopScreen1Opacity = computedSyle2.opacity
+        computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
+        currentButtonDesktopScreen2Display = computedSyle3.display
+        currentButtonDesktopScreen2Opacity = computedSyle3.opacity
+        computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
+        currentButtonDesktopScreen3Display = computedSyle4.display
+        currentButtonDesktopScreen3Opacity = computedSyle4.opacity
+        computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
+        currentButtonDesktopScreen4Display = computedSyle5.display
+        currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+        
+        buttonDesktopScreen1.style.cssText =
+            `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
+
+        buttonDesktopScreen2.style.cssText =
+            `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+        buttonDesktopScreen2.textContent = `O`
+        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+        buttonDesktopScreen4.style.cssText =
+            `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonDesktopScreen4.textContent = `O`
         abbrDesktopScreen4.title = `Celular Tela STATUS: off`
     }
 
-    if (ScreenSetup === 0) {
+    const isWMode_abbrDesktopScreen3 = abbrDesktopScreen3.title
+
+    if (isWMode_abbrDesktopScreen3 === 'PC Tela STATUS: off') {
         buttonDesktopScreen3.style.cssText =
-            'background-color: var(--colorWhite); color: var(--colorBlack);'
+            `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
         buttonDesktopScreen3.textContent = `-`
         abbrDesktopScreen3.title = `PC Tela STATUS: on`
     
         textAreaMSG.style.cssText =
-            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 44.35em; height: ${currentTextAreaHeight}; resize: vertical;`
-
-        ScreenSetup = 3
-    } else if (ScreenSetup === 3) {
+            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 44.35em; height: ${currentTextAreaHeight}; resize: vertical;`
+    } else {
         buttonDesktopScreen3.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonDesktopScreen3.textContent = `O`
     
         abbrDesktopScreen3.title = `PC Tela STATUS: off`
         
         textAreaMSG.style.cssText =
-            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: ${currentTextAreaHeight}; resize: both;`
-        
-        ScreenSetup = 0
+            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: ${currentTextAreaHeight}; resize: both;`
     }
 }
-async function phoneScreenSetup(buttonElement2, abbrDesktopScreenElement2, buttonElement3, abbrDesktopScreenElement3, buttonElement4, abbrDesktopScreenElement4, testAreaElement) {
-    const buttonDesktopScreen2 = document.querySelector(`#${buttonElement2}`)
-    const abbrDesktopScreen2 = document.querySelector(`#${abbrDesktopScreenElement2}`)
-    const buttonDesktopScreen3 = document.querySelector(`#${buttonElement3}`)
-    const abbrDesktopScreen3 = document.querySelector(`#${abbrDesktopScreenElement3}`)
-    const buttonDesktopScreen4 = document.querySelector(`#${buttonElement4}`)
-    const abbrDesktopScreen4 = document.querySelector(`#${abbrDesktopScreenElement4}`)
+async function phoneScreenSetup(buttonElement, IsWType) {
+    let type = null
+    let button2 = null
+    let abbr2 = null
+    let button3 = null
+    let abbr3 = null
+    let button4 = null
+    let abbr4 = null
+    let textarea = null
+    if (IsWType) {
+        type = 'idivTextarea'
+        button2 = 'iOnOffVLockScreenSetupText2'
+        abbr2 = 'iabbrOnOffVLockScreenSetupText2'
+        button3 = 'iOnOffDesktopScreenSetupText3'
+        abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
+        button4 = 'iOnOffPhoneScreenSetupText4'
+        abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
+        textarea = 'itextAreaTypeMSG'
+    } else {
+        type = 'ifileTypeMSG'
+        button2 = 'iOnOffVLockScreenSetupCaption2'
+        abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
+        button3 = 'iOnOffDesktopScreenSetupCaption3'
+        abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
+        button4 = 'iOnOffPhoneScreenSetupCaption4'
+        abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
+        textarea = 'itextAreaCaption'
+    }
+    const divElement = buttonElement.closest(`#${type}`)
     
-    const textAreaMSG = document.querySelector(`#${testAreaElement}`)
-    const currentTextAreaHeight = textAreaMSG.style.height
-    const currentTextAreaBackground_Color = textAreaMSG.style.backgroundColor
-    const currentTextAreaColor = textAreaMSG.style.color
+    const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
+    const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
+    const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
+    const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
+    const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
+    const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
+    const textAreaMSG = divElement.querySelector(`#${textarea}`)
+    const computedSyle = window.getComputedStyle(textAreaMSG)
+    const currentTextAreaHeight = computedSyle.height
+    const currentTextAreaBackground_Color = computedSyle.backgroundColor
+    const currentTextAreaColor = computedSyle.color
+    const currentTextAreaDisplay = computedSyle.display
 
-    if (ScreenSetup === -1) {
-        ScreenSetup = 0
-    } else if (ScreenSetup === 2 || ScreenSetup === 3) {
-        ScreenSetup = 0
+    let buttonDesktopScreen1 = null
+    let computedSyle2 = null
+    let currentButtonDesktopScreen1Display = null
+    let currentButtonDesktopScreen1Opacity = null
+    let computedSyle3 = null
+    let currentButtonDesktopScreen2Display = null
+    let currentButtonDesktopScreen2Opacity = null
+    let computedSyle4 = null
+    let currentButtonDesktopScreen3Display = null
+    let currentButtonDesktopScreen3Opacity = null
+    let computedSyle5 = null
+    let currentButtonDesktopScreen4Display = null
+    let currentButtonDesktopScreen4Opacity = null
 
+    if (IsWType) {
         buttonDesktopScreen2.style.cssText =
             'background-color: var(--colorBlack); color: var(--colorWhite);'
         buttonDesktopScreen2.textContent = `O`
@@ -1499,69 +1798,180 @@ async function phoneScreenSetup(buttonElement2, abbrDesktopScreenElement2, butto
             'background-color: var(--colorBlack); color: var(--colorWhite);'
         buttonDesktopScreen3.textContent = `O`
         abbrDesktopScreen3.title = `PC Tela STATUS: off`
+    } else {
+        buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
+        computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
+        currentButtonDesktopScreen1Display = computedSyle2.display
+        currentButtonDesktopScreen1Opacity = computedSyle2.opacity
+        computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
+        currentButtonDesktopScreen2Display = computedSyle3.display
+        currentButtonDesktopScreen2Opacity = computedSyle3.opacity
+        computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
+        currentButtonDesktopScreen3Display = computedSyle4.display
+        currentButtonDesktopScreen3Opacity = computedSyle4.opacity
+        computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
+        currentButtonDesktopScreen4Display = computedSyle5.display
+        currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+        
+        buttonDesktopScreen1.style.cssText =
+            `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
+
+        buttonDesktopScreen2.style.cssText =
+            `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+        buttonDesktopScreen2.textContent = `O`
+        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+        buttonDesktopScreen3.style.cssText =
+            `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+        buttonDesktopScreen3.textContent = `O`
+        abbrDesktopScreen3.title = `PC Tela STATUS: off`
     }
 
-    if (ScreenSetup === 0) {
+    const isWMode_abbrDesktopScreen4 = abbrDesktopScreen4.title
+
+    if (isWMode_abbrDesktopScreen4 === 'Celular Tela STATUS: off') {
         buttonDesktopScreen4.style.cssText =
-            'background-color: var(--colorWhite); color: var(--colorBlack);'
+            `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
         buttonDesktopScreen4.textContent = `-`
         abbrDesktopScreen4.title = `Celular Tela STATUS: on`
     
         textAreaMSG.style.cssText =
-            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 23.35em; height: ${currentTextAreaHeight}; resize: vertical;`
-
-        ScreenSetup = 4
-    } else if (ScreenSetup === 4) {
+            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 23.35em; height: ${currentTextAreaHeight}; resize: vertical;`
+    } else {
         buttonDesktopScreen4.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
+            `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonDesktopScreen4.textContent = `O`
     
         abbrDesktopScreen4.title = `Celular Tela STATUS: off`
         
         textAreaMSG.style.cssText =
-            `background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: ${currentTextAreaHeight}; resize: both;`
-        
-        ScreenSetup = 0
+            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: ${currentTextAreaHeight}; resize: both;`
     }
 }
 
 //pro sistemas de mandar arquivo, as funcoes a adicionar... um botao que deseleciona o arquivo e um pra apagar do funil o card(isso de apagar o card vai ter em todos os tipos de cards do funil) e pra poder apagar o card tera que deseleciona primeiro entao faze um esquema de desgin que no lugar do botao pra deseleciona dps de clical muda pro apagar, e tbm algum esqueme de dps de selecionar mandar enviar ele retrai o tamanho pra n ficar mt grande na tela ne e talves tirar a funcao de arrasta pra mandar ou sla, e claro em todos os card tem do lado um lugar que vc pega seleciona segurando e deixa onde na posica odo funil ele vai ficar e tals personalizavel
 async function getFileData(file, divElementBridge) {
-    const fileFunctionsDiv = divElementBridge.closest('.fileTypeMSG').querySelector('#idivFileFunctions')
+    const divElement = divElementBridge.closest('.fileTypeMSG')
+    const divFunctions = divElement.querySelector('#idivFileFunctions')
+    const typeFile = divElement.querySelector('#ifileTypeSelected')
+    
+    const buttonStateTyping = divElement.querySelector('#iOnOffStateTypingFile')
+    const buttonStateRecording = divElement.querySelector('#iOnOffStateRecordingFile')
+    
     if (file === null || file === undefined || file === '...') {
-        fileFunctionsDiv.style.cssText =
-        'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;'
+        typeFile.textContent = `...`
+        
+        divFunctions.style.cssText =
+            'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;'
         setTimeout(function() {
-            fileFunctionsDiv.style.cssText =
-            'display: none; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;' 
+            divFunctions.style.cssText =
+                'display: none; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;' 
         }, 100)
+
+        await resetScreenSetup(divElementBridge, false)
+        
+        const divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+        const computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+        const currentDivDelayStateTypingDisplay = computedSyle.display
+        
+        const computedSyle2 = window.getComputedStyle(buttonStateTyping)
+        const currentButtonStateTypingDisplay = computedSyle2.display
+        const computedSyle3 = window.getComputedStyle(buttonStateRecording)
+        const currentButtonStateRecordingDisplay = computedSyle3.display
+        if (currentButtonStateTypingDisplay === 'inline-block') {
+            if (currentDivDelayStateTypingDisplay === 'flex') {
+                await StateTypingMSG(divElementBridge, false)
+            }
+        } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+            if (currentDivDelayStateTypingDisplay === 'flex') {
+                await StateRecordingMSG(divElementBridge)
+            }
+        }
+        buttonStateTyping.style.cssText =
+            `display: none; opacity: 0;`
+        buttonStateRecording.style.cssText =
+            `display: none; opacity: 0;`
+        
+        const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+        const computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+        const currentDivTextAreaCaptionDisplay = computedSyle4.display
+        if (currentDivTextAreaCaptionDisplay === 'block') {
+            await CaptionFileMSG(divElementBridge)
+        }
 
         return
     } else {
-        fileFunctionsDiv.style.cssText =
+        divFunctions.style.cssText =
             'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;'
         setTimeout(function() {
-            fileFunctionsDiv.style.cssText =
+            divFunctions.style.cssText =
                 'display: flex; border: 2px solid var(--colorBlack); border-bottom: 3.5px solid var(--colorBlack); height: 5vh;' 
         }, 300)
 
         displayOnConsole(file.type)
+        console.log(file)
         const fileType = file.type
         switch (fileType) {//conforme vai indo adicionar o maximo possivel de tipos de arquivos para cada e assim ser mais completo e preciso
-            case 'video/mp4' || 'video/avi' || 'video/mov' || 'video/mkv':
+            case 'video/mp4':
+            case 'video/avi':
+            case 'video/mov':
+            case 'video/mkv':
+                typeFile.textContent = `video`
                 
+                buttonStateTyping.style.cssText =
+                    `display: none; opacity: 0;`
+                buttonStateRecording.style.cssText =
+                    `display: none; opacity: 0;`
+
                 break;
-            case 'audio/m4a' || 'audio/wav' || 'audio/mp3' || 'audio/gif':
-                
+            case 'audio/x-m4a':
+            case 'audio/wav':
+            case 'audio/mp3':
+            case 'audio/gif':
+                typeFile.textContent = `audio`
+
+                buttonStateTyping.style.cssText =
+                    `display: none; opacity: 0;`
+
+                buttonStateRecording.style.cssText =
+                    `display: inline; opacity: 0;`
+                setTimeout(function() {
+                    buttonStateRecording.style.cssText =
+                        `display: inline; opacity: 1;`
+                })
                 break;
-            case 'image/jpg' || 'image/png':
+            case 'image/jpg':
+            case 'image/png':
+                typeFile.textContent = `imagem`
                 
+                buttonStateTyping.style.cssText =
+                    `display: none; opacity: 0;`
+                buttonStateRecording.style.cssText =
+                    `display: none; opacity: 0;`
+
                 break;
-            case 'text/plain' || 'application/pdf' || 'application/msword':
+            case 'text/plain':
+            case 'application/pdf':
+            case 'application/msword':
+                typeFile.textContent = `texto`
                 
+                buttonStateRecording.style.cssText =
+                    `display: none; opacity: 0;`
+
+                buttonStateTyping.style.cssText =
+                    `display: inline; opacity: 0;`
+                setTimeout(function() {
+                    buttonStateTyping.style.cssText =
+                        `display: inline; opacity: 1;`
+                })
                 break;
             default:
+                typeFile.textContent = `documento`
                 
+                buttonStateTyping.style.cssText =
+                    `display: none; opacity: 0;`
+                buttonStateRecording.style.cssText =
+                    `display: none; opacity: 0;`
+
                 break;
         }
     }
@@ -1586,12 +1996,10 @@ async function fileTypeAction(event, isClick, divElement) {
     const statusFile = divElement.querySelector('#ifileStatus')
     const abbrFileZone = divElement.closest('abbr')
     
-    //if (fileInput.files.length >= 1 || file.files.length >= 1) {
     if (file === null || file === undefined) {
         nameFile.textContent = `...`
         statusFile.textContent = `Clique ou arraste um arquivo`
         abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
-        console.log(file)
         
         file = '...'
         await getFileData(file, divElement)
@@ -1605,7 +2013,6 @@ async function fileTypeAction(event, isClick, divElement) {
         nameFile.textContent = file.name
         statusFile.textContent = `Arquivo selecionado`
         abbrFileZone.title = `Arquivo: ${file.name}`
-        console.log(file)
 
         await getFileData(file, divElement)
     }
@@ -1697,7 +2104,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
     switch (type) {
         case 1:
             const MSGHTMlDelay = `<div class="divDelayTypeMSG" id="divDelayTypeMSG">
-                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle">ATRASO-MSG:</span><label for="delayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="delayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="delayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="delayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
                                     
                                     <abbr title="Selecione duração em Segundos"><label for="delayMSGRadioSeconds" class="delayMSGLabelSeconds">Segundos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioSeconds" class="delayMSGRadioSeconds" placeholder="s">)</label></abbr> 
                                     <abbr title="Selecione duração em Minutos"><label for="delayMSGRadioMinutes" class="delayMSGLabelMinutes">Minutos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioMinutes" class="delayMSGRadioMinutes" placeholder="m">)</label></abbr>
@@ -1709,20 +2116,20 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
             divFunil.innerHTML += MSGHTMlDelay
             break
         case 2:
-            const MSGHTMlText = `<div class="divTextarea" id="textType">
+            const MSGHTMlText = `<div class="divTextarea" id="idivTextarea">
                                     <div class="divTextareaFunctions" id="idivTextareaFunctions">
-                                        <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iOnOffStateTyping" onclick="StateTypingMSG('iOnOffStateTyping', 'iabbrOnOffStateTyping', 'idivDelayText', 'idivTextareaFunctions')">O</button></abbr>
+                                        <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
                                         
-                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG('iOnOffLightDarkMSG', 'iabbrOnOffLightDarkMSG','iOnOffLightDarkColorMSG', 'itextAreaTypeMSG')">O</button></abbr>
-                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG('iOnOffLightDarkColorMSG', 'iabbrOnOffLightDarkColorMSG', 'itextAreaTypeMSG')">O</button></abbr>
+                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
+                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
                                         
-                                        <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">R</button></abbr>
-                                        <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">O</button></abbr>
-                                        <abbr title="Desktop Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">O</button></abbr>
-                                        <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup('iOnOffVLockScreenSetupText2', 'iabbrOnOffVLockScreenSetupText2', 'iOnOffDesktopScreenSetupText3', 'iabbrOnOffDesktopScreenSetupText3', 'iOnOffPhoneScreenSetupText4', 'iabbrOnOffPhoneScreenSetupText4', 'itextAreaTypeMSG')">O</button></abbr>
+                                        <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
+                                        <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
+                                        <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
+                                        <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
                                     </div>
                                     <div class="divDelayText" id="idivDelayText">
-                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle">ATRASO-StateTyping:</span><label for="delayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="delayTTextime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="delayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="delayTTextime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
                                         
                                         <abbr title="Selecione duração em Segundos"><label for="delayTextRadioSeconds" class="delayTextLabelSeconds">Segundos-(<input type="radio" name="delayTextRadio" id="delayTextRadioSeconds" class="delayTextRadioSeconds" placeholder="s">)</label></abbr> 
                                         <abbr title="Selecione duração em Minutos"><label for="delayTextRadioMinutes" class="delayTextLabelMinutes">Minutos-(<input type="radio" name="delayTextRadio" id="delayTextRadioMinutes" class="delayTextRadioMinutes" placeholder="m">)</label></abbr>
@@ -1731,25 +2138,24 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                         
                                         <abbr title="Nenhum"><label for="delayTextRadioNone" class="delayTextLabelNone">Nenhum-(<input type="radio" name="delayTextRadio" id="delayTextRadioNone" class="delayTextRadioNone" checked placeholder="d">)</label></abbr>
                                     </div>
-
                                     <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput=""></textarea></abbr>
                                 </div>`
             divFunil.innerHTML += MSGHTMlText
             break
         case 3:
-            const MSGHTMlFile = `<div class="fileTypeMSG">
+            const MSGHTMlFile = `<div class="fileTypeMSG" id="ifileTypeMSG">
                                     <div class="divFileFunctions" id="idivFileFunctions">
-                                        <abbr title="StateTyping STATUS: off" id="iiabbrOnOffStateTyping"><button class="functionsDivStart OnOffStateTyping" id="iiOnOffStateTyping" onclick="StateTypingMSG('iiOnOffStateTyping', 'iiabbrOnOffStateTyping', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
-                                        <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecording"><button class="functionsDivStart OnOffStateRecording" id="iOnOffStateRecording" onclick="StateRecordingMSG('iOnOffStateRecording', 'iabbrOnOffStateRecording', 'idivDelayTextAudio', 'idivFileFunctions')">O</button></abbr>
-                                        <abbr title="Legenda STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG('iOnOffCaption', 'iabbrOnOffCaption', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
+                                        <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
+                                        <abbr title="Legenda STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
                                         
-                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG('iOnOffLightDarkCaption', 'iabbrOnOffLightDarkCaption','iOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
-                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG('iOnOffLightDarkColorCaption', 'iabbrOnOffLightDarkColorCaption', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
+                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
                                         
-                                        <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">R</button></abbr>
-                                        <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
-                                        <abbr title="Pc Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
-                                        <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup('iOnOffVLockScreenSetupCaption2', 'iabbrOnOffVLockScreenSetupCaption2', 'iOnOffDesktopScreenSetupCaption3', 'iabbrOnOffDesktopScreenSetupCaption3', 'iOnOffPhoneScreenSetupCaption4', 'iabbrOnOffPhoneScreenSetupCaption4', 'itextAreaCaption')">O</button></abbr>
+                                        <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
+                                        <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
+                                        <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
+                                        <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
                                     </div>
                                     
                                     <div class="divDelayTextAudio" id="idivDelayTextAudio">
@@ -1763,13 +2169,13 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                         <abbr title="Nenhum"><label for="delayTextAudioRadioNone" class="delayTextAudioLabelNone">Nenhum-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioNone" class="delayTextAudioRadioNone" checked placeholder="d">)</label></abbr>
                                     </div>
                                     
-                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
                                         <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
                                         <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
                                         <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
                                         <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
                                         
-                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(event, true, this.parentElement)">
+                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
                                     </div></abbr>
 
                                     <abbr title="Digite a legendo do (arquivo)"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (arquivo): >..." oninput=""></textarea></abbr>
