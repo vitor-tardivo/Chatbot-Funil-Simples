@@ -1143,18 +1143,9 @@ td {
     border: 1px solid var(--colorBlack);
     padding-top: 1px;
     padding-right: 0.8px;
-    margin-right: 10px;
     width: 3.5em;
     font-size: 1.3vw;
     font-family: var(--fontConsole);
-    transition: var(--configTrasition03s);
-}
-.delayMSGLabelSeconds {
-    color: var(--colorInteractionElements);
-    margin-right: 10px;
-    font-size: 1.5vw;
-    font-family: var(--fontDisplay);
-    cursor: pointer;
     transition: var(--configTrasition03s);
 }
 .delayMSGTime:hover {
@@ -1165,7 +1156,26 @@ td {
     border: 1px solid var(--colorWhite);
     outline: 1px solid var(--colorWhite);
 }
-.delayMSGLabelSeconds {
+.delayMSGSelect {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    border-radius: 7px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayMSGSelect:hover {
+    border: 1px solid var(--colorWhite);
+}
+.delayMSGSelect:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
+/*.delayMSGLabelSeconds {
     color: var(--colorInteractionElements);
     margin-right: 10px;
     font-size: 1.5vw;
@@ -1241,7 +1251,7 @@ td {
 .delayMSGRadioNone {
     cursor: pointer;
     transition: var(--configTrasition03s);
-}
+}*/
 
 .divTextarea {
     display: block;
@@ -1486,19 +1496,9 @@ td {
     border: 1px solid var(--colorBlack);
     padding-top: 1px;
     padding-right: 0.8px;
-    margin-right: 10px;
     width: 3.5em;
     font-size: 1.3vw;
     font-family: var(--fontConsole);
-    transition: var(--configTrasition03s);
-}
-.delayTextLabelSeconds {
-    color: var(--colorInteractionElements);
-    margin-right: 10px;
-    margin-bottom: 5px;
-    font-size: 1.5vw;
-    font-family: var(--fontDisplay);
-    cursor: pointer;
     transition: var(--configTrasition03s);
 }
 .delayTextTime:hover {
@@ -1509,7 +1509,25 @@ td {
     border: 1px solid var(--colorWhite);
     outline: 1px solid var(--colorWhite);
 }
-.delayTextLabelSeconds {
+.delayTextSelect {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextSelect:hover {
+    border: 1px solid var(--colorWhite);
+}
+.delayTextSelect:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
+/*.delayTextLabelSeconds {
     color: var(--colorInteractionElements);
     margin-right: 10px;
     font-size: 1.5vw;
@@ -1585,7 +1603,7 @@ td {
 .delayTextRadioNone {
     cursor: pointer;
     transition: var(--configTrasition03s);
-}
+}*/
 .textAreaTypeMSG {
     background-color: rgb(33, 33, 33);  
     color: rgb(240, 240, 240);
@@ -1909,19 +1927,9 @@ td {
     border: 1px solid var(--colorBlack);
     padding-top: 1px;
     padding-right: 0.8px;
-    margin-right: 10px;
     width: 3.5em;
     font-size: 1.3vw;
     font-family: var(--fontConsole);
-    transition: var(--configTrasition03s);
-}
-.delayTextAudioLabelSeconds {
-    color: var(--colorInteractionElements);
-    margin-right: 10px;
-    margin-bottom: 5px;
-    font-size: 1.5vw;
-    font-family: var(--fontDisplay);
-    cursor: pointer;
     transition: var(--configTrasition03s);
 }
 .delayTextAudioTime:hover {
@@ -1932,7 +1940,25 @@ td {
     border: 1px solid var(--colorWhite);
     outline: 1px solid var(--colorWhite);
 }
-.delayTextAudioLabelSeconds {
+.delayTextAudioSelect {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayTextAudioSelect:hover {
+    border: 1px solid var(--colorWhite);
+}
+.delayTextAudioSelect:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
+/*.delayTextAudioLabelSeconds {
     color: var(--colorInteractionElements);
     margin-right: 10px;
     font-size: 1.5vw;
@@ -2005,7 +2031,7 @@ td {
 .delayTextAudioRadioNone {
     cursor: pointer;
     transition: var(--configTrasition03s);
-}
+}*/
 .fileTypeSelectMSG {
     display: flex;
     flex-direction: column;

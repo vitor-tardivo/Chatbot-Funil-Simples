@@ -1012,6 +1012,123 @@ async function sendCommand() {
     }
 }
 
+async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {
+    let divElement = null
+
+    switch (typeMSG) {
+        case 1:
+            divElement = bridgeElement.closest(`#idivDelayTypeMSG`)
+
+            switch (typeTypeMSG.value || typeTypeMSG) {
+                case 'input':
+                    const inputDelayMSG = divElement.querySelector(`#idelayMSGTime`)
+                    displayOnConsole('1=input:')
+                    displayOnConsole(inputDelayMSG.value)
+                    break;
+                case 'seconds':
+                    displayOnConsole('1=seconds')
+                    
+                    break;
+                case 'minutes':
+                    displayOnConsole('1=minutes')
+                    
+                    break;
+                case 'hours':
+                    displayOnConsole('1=hours')
+                    
+                    break;
+                case 'days':
+                    displayOnConsole('1=days')
+                    
+                    break;
+                case 'none':
+                    displayOnConsole('1=none')
+                    
+                    break;
+            }
+            break;
+        case 2:
+            divElement = bridgeElement.closest(`#idivTextarea`)
+
+            if (typeTypeMSG) {
+                switch (typeTypeMSG.value || typeTypeMSG) {
+                    case 'input':
+                        const inputDelayText = divElement.querySelector(`#idelayTextTime`)
+                        displayOnConsole('1=input:')
+                        displayOnConsole(inputDelayText.value)
+                        break;
+                    case 'seconds':
+                        displayOnConsole('1=seconds')
+                        
+                        break;
+                    case 'minutes':
+                        displayOnConsole('1=minutes')
+                        
+                        break;
+                    case 'hours':
+                        displayOnConsole('1=hours')
+                        
+                        break;
+                    case 'days':
+                        displayOnConsole('1=days')
+                        
+                        break;
+                    case 'none':
+                        displayOnConsole('1=none')
+                        
+                        break;
+                }
+            }
+            
+            //const divTextAreaMSG = divElement.querySelector(`#itextAreaTypeMSG`)
+            if (data) {
+                displayOnConsole(data.value)
+            }
+
+            break;
+        case 3:
+            divElement = bridgeElement.closest(`#ifileTypeMSG`)
+            
+            if (typeTypeMSG) {
+                switch (typeTypeMSG.value || typeTypeMSG) {
+                    case 'input':
+                        const inputDelayTextAudio = divElement.querySelector(`#idelayTexAudioTime`)
+                        displayOnConsole('1=input:')
+                        displayOnConsole(inputDelayTextAudio.value)
+                        break;
+                    case 'seconds':
+                        displayOnConsole('1=seconds')
+                        
+                        break;
+                    case 'minutes':
+                        displayOnConsole('1=minutes')
+                        
+                        break;
+                    case 'hours':
+                        displayOnConsole('1=hours')
+                        
+                        break;
+                    case 'days':
+                        displayOnConsole('1=days')
+                        
+                        break;
+                    case 'none':
+                        displayOnConsole('1=none')
+                        
+                        break;
+                }
+            }
+
+            //const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+            if (data) {   
+                console.log(data)
+                displayOnConsole(data.value)
+            }
+
+            break;
+    }
+}
+
 async function StateTypingMSG(buttonElement, IsWType) {
     let type = null
     let button = null
@@ -1155,7 +1272,7 @@ async function CaptionFileMSG(buttonElement) {
             'background-color: var(--colorWhite); color: var(--colorBlack);'
         buttonCaption.textContent = `-`
         
-        abbrCaption.title = `Legenda STATUS: on`
+        abbrCaption.title = `Area de texto STATUS: on`
         
         divTextAreaCaption.style.cssText =
             `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
@@ -1230,7 +1347,7 @@ async function CaptionFileMSG(buttonElement) {
             'background-color: var(--colorBlack); color: var(--colorWhite);'
         buttonCaption.textContent = `O`
         
-        abbrCaption.title = `Legenda STATUS: off`
+        abbrCaption.title = `Area de texto STATUS: off`
         
         divTextAreaCaption.style.cssText =
             `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
@@ -1849,15 +1966,32 @@ async function phoneScreenSetup(buttonElement, IsWType) {
 }
 
 //pro sistemas de mandar arquivo, as funcoes a adicionar... um botao que deseleciona o arquivo e um pra apagar do funil o card(isso de apagar o card vai ter em todos os tipos de cards do funil) e pra poder apagar o card tera que deseleciona primeiro entao faze um esquema de desgin que no lugar do botao pra deseleciona dps de clical muda pro apagar, e tbm algum esqueme de dps de selecionar mandar enviar ele retrai o tamanho pra n ficar mt grande na tela ne e talves tirar a funcao de arrasta pra mandar ou sla, e claro em todos os card tem do lado um lugar que vc pega seleciona segurando e deixa onde na posica odo funil ele vai ficar e tals personalizavel
-async function getFileData(file, divElementBridge) {
+async function getFileData(divElementBridge, file) {
     const divElement = divElementBridge.closest('.fileTypeMSG')
     const divFunctions = divElement.querySelector('#idivFileFunctions')
     const typeFile = divElement.querySelector('#ifileTypeSelected')
     
     const buttonStateTyping = divElement.querySelector('#iOnOffStateTypingFile')
     const buttonStateRecording = divElement.querySelector('#iOnOffStateRecordingFile')
+
+    let divDelayStateTypingRecording = null
+    let computedSyle = null
+    let currentDivDelayStateTypingDisplay = null
+    let computedSyle2 = null
+    let currentButtonStateTypingDisplay = null
+    let computedSyle3 = null
+    let currentButtonStateRecordingDisplay = null
+
+    let divTextAreaCaption = null
+    let abbrDivTextAreaCaption = null
+    let computedSyle4 = null
+    let currentDivTextAreaCaptionDisplay = null
+
+    let divDelayTextAudioTitle = null
     
     if (file === null || file === undefined || file === '...') {
+        await sendToFunil(divElementBridge, 3, null, file)
+        
         typeFile.textContent = `...`
         
         divFunctions.style.cssText =
@@ -1868,15 +2002,13 @@ async function getFileData(file, divElementBridge) {
         }, 100)
 
         await resetScreenSetup(divElementBridge, false)
-        
-        const divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
-        const computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
-        const currentDivDelayStateTypingDisplay = computedSyle.display
-        
-        const computedSyle2 = window.getComputedStyle(buttonStateTyping)
-        const currentButtonStateTypingDisplay = computedSyle2.display
-        const computedSyle3 = window.getComputedStyle(buttonStateRecording)
-        const currentButtonStateRecordingDisplay = computedSyle3.display
+        divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+        computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+        currentDivDelayStateTypingDisplay = computedSyle.display
+        computedSyle2 = window.getComputedStyle(buttonStateTyping)
+        currentButtonStateTypingDisplay = computedSyle2.display
+        computedSyle3 = window.getComputedStyle(buttonStateRecording)
+        currentButtonStateRecordingDisplay = computedSyle3.display
         if (currentButtonStateTypingDisplay === 'inline-block') {
             if (currentDivDelayStateTypingDisplay === 'flex') {
                 await StateTypingMSG(divElementBridge, false)
@@ -1890,13 +2022,18 @@ async function getFileData(file, divElementBridge) {
             `display: none; opacity: 0;`
         buttonStateRecording.style.cssText =
             `display: none; opacity: 0;`
-        
-        const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-        const computedSyle4 = window.getComputedStyle(divTextAreaCaption)
-        const currentDivTextAreaCaptionDisplay = computedSyle4.display
+        divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+        computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+        currentDivTextAreaCaptionDisplay = computedSyle4.display
         if (currentDivTextAreaCaptionDisplay === 'block') {
             await CaptionFileMSG(divElementBridge)
         }
+        divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+        abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+        divTextAreaCaption.placeholder = `Legenda do (...): >...`
+        abbrDivTextAreaCaption.title = `Digite a legenda do (...)`
+        divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+        divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
         return
     } else {
@@ -1908,7 +2045,6 @@ async function getFileData(file, divElementBridge) {
         }, 300)
 
         displayOnConsole(file.type)
-        console.log(file)
         const fileType = file.type
         switch (fileType) {//conforme vai indo adicionar o maximo possivel de tipos de arquivos para cada e assim ser mais completo e preciso
             case 'video/mp4':
@@ -1917,11 +2053,41 @@ async function getFileData(file, divElementBridge) {
             case 'video/mkv':
                 typeFile.textContent = `video`
                 
+                await resetScreenSetup(divElementBridge, false)
+                divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+                computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+                currentDivDelayStateTypingDisplay = computedSyle.display
+                computedSyle2 = window.getComputedStyle(buttonStateTyping)
+                currentButtonStateTypingDisplay = computedSyle2.display
+                computedSyle3 = window.getComputedStyle(buttonStateRecording)
+                currentButtonStateRecordingDisplay = computedSyle3.display
+                if (currentButtonStateTypingDisplay === 'inline-block') {
+                    if (currentDivDelayStateTypingDisplay === 'flex') {
+                        await StateTypingMSG(divElementBridge, false)
+                    }
+                } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                    if (currentDivDelayStateTypingDisplay === 'flex') {
+                        await StateRecordingMSG(divElementBridge)
+                    }
+                }
                 buttonStateTyping.style.cssText =
                     `display: none; opacity: 0;`
                 buttonStateRecording.style.cssText =
                     `display: none; opacity: 0;`
+                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+                currentDivTextAreaCaptionDisplay = computedSyle4.display
+                if (currentDivTextAreaCaptionDisplay === 'block') {
+                    await CaptionFileMSG(divElementBridge)
+                }
+                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+                divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
+                abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
+                divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+                divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
+                await sendToFunil(divElementBridge, 3, null, file)
                 break;
             case 'audio/x-m4a':
             case 'audio/wav':
@@ -1929,49 +2095,174 @@ async function getFileData(file, divElementBridge) {
             case 'audio/gif':
                 typeFile.textContent = `audio`
 
+                await resetScreenSetup(divElementBridge, false)
+                divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+                computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+                currentDivDelayStateTypingDisplay = computedSyle.display
+                computedSyle2 = window.getComputedStyle(buttonStateTyping)
+                currentButtonStateTypingDisplay = computedSyle2.display
+                computedSyle3 = window.getComputedStyle(buttonStateRecording)
+                currentButtonStateRecordingDisplay = computedSyle3.display
+                if (currentButtonStateTypingDisplay === 'inline-block') {
+                    if (currentDivDelayStateTypingDisplay === 'flex') {
+                        await StateTypingMSG(divElementBridge, false)
+                    }
+                } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                    if (currentDivDelayStateTypingDisplay === 'flex') {
+                        await StateRecordingMSG(divElementBridge)
+                    }
+                }
                 buttonStateTyping.style.cssText =
                     `display: none; opacity: 0;`
-
+                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+                currentDivTextAreaCaptionDisplay = computedSyle4.display
+                if (currentDivTextAreaCaptionDisplay === 'block') {
+                    await CaptionFileMSG(divElementBridge)
+                }
+                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+                divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
+                abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
+                
                 buttonStateRecording.style.cssText =
                     `display: inline; opacity: 0;`
                 setTimeout(function() {
                     buttonStateRecording.style.cssText =
                         `display: inline; opacity: 1;`
                 })
+
+                divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+                divDelayTextAudioTitle.textContent = 'ATRASO-State=Recording:'
+                
+                await sendToFunil(divElementBridge, 3, null, file)
                 break;
             case 'image/jpg':
             case 'image/png':
                 typeFile.textContent = `imagem`
                 
+                await resetScreenSetup(divElementBridge, false)
+                divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+                computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+                currentDivDelayStateTypingDisplay = computedSyle.display
+                computedSyle2 = window.getComputedStyle(buttonStateTyping)
+                currentButtonStateTypingDisplay = computedSyle2.display
+                computedSyle3 = window.getComputedStyle(buttonStateRecording)
+                currentButtonStateRecordingDisplay = computedSyle3.display
+                if (currentButtonStateTypingDisplay === 'inline-block') {
+                    if (currentDivDelayStateTypingDisplay === 'flex') {
+                        await StateTypingMSG(divElementBridge, false)
+                    }
+                } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                    if (currentDivDelayStateTypingDisplay === 'flex') {
+                        await StateRecordingMSG(divElementBridge)
+                    }
+                }
                 buttonStateTyping.style.cssText =
                     `display: none; opacity: 0;`
                 buttonStateRecording.style.cssText =
                     `display: none; opacity: 0;`
+                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+                currentDivTextAreaCaptionDisplay = computedSyle4.display
+                if (currentDivTextAreaCaptionDisplay === 'block') {
+                    await CaptionFileMSG(divElementBridge)
+                }
+                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+                divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
+                abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
+                divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+                divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
+                await sendToFunil(divElementBridge, 3, null, file)
                 break;
             case 'text/plain':
             case 'application/pdf':
             case 'application/msword':
                 typeFile.textContent = `texto`
                 
+                await resetScreenSetup(divElementBridge, false)
+                divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+                computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+                currentDivDelayStateTypingDisplay = computedSyle.display
+                computedSyle2 = window.getComputedStyle(buttonStateTyping)
+                currentButtonStateTypingDisplay = computedSyle2.display
+                computedSyle3 = window.getComputedStyle(buttonStateRecording)
+                currentButtonStateRecordingDisplay = computedSyle3.display
+                if (currentButtonStateTypingDisplay === 'inline-block') {
+                    if (currentDivDelayStateTypingDisplay === 'flex') {
+                        await StateTypingMSG(divElementBridge, false)
+                    }
+                } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                    if (currentDivDelayStateTypingDisplay === 'flex') {
+                        await StateRecordingMSG(divElementBridge)
+                    }
+                }
                 buttonStateRecording.style.cssText =
                     `display: none; opacity: 0;`
+                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+                currentDivTextAreaCaptionDisplay = computedSyle4.display
+                if (currentDivTextAreaCaptionDisplay === 'block') {
+                    await CaptionFileMSG(divElementBridge)
+                }
 
                 buttonStateTyping.style.cssText =
                     `display: inline; opacity: 0;`
                 setTimeout(function() {
                     buttonStateTyping.style.cssText =
-                        `display: inline; opacity: 1;`
+                    `display: inline; opacity: 1;`
                 })
+
+                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+                divTextAreaCaption.placeholder = 'TEXTO-MSG: >...'
+                abbrDivTextAreaCaption.title = 'Digite a MSG'
+                
+                divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+                divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing:'
+
+                await sendToFunil(divElementBridge, 3, null, file)
                 break;
             default:
                 typeFile.textContent = `documento`
                 
+                await resetScreenSetup(divElementBridge, false)
+                divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+                computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+                currentDivDelayStateTypingDisplay = computedSyle.display
+                computedSyle2 = window.getComputedStyle(buttonStateTyping)
+                currentButtonStateTypingDisplay = computedSyle2.display
+                computedSyle3 = window.getComputedStyle(buttonStateRecording)
+                currentButtonStateRecordingDisplay = computedSyle3.display
+                if (currentButtonStateTypingDisplay === 'inline-block') {
+                    if (currentDivDelayStateTypingDisplay === 'flex') {
+                        await StateTypingMSG(divElementBridge, false)
+                    }
+                } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                    if (currentDivDelayStateTypingDisplay === 'flex') {
+                        await StateRecordingMSG(divElementBridge)
+                    }
+                }
                 buttonStateTyping.style.cssText =
                     `display: none; opacity: 0;`
                 buttonStateRecording.style.cssText =
                     `display: none; opacity: 0;`
+                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+                currentDivTextAreaCaptionDisplay = computedSyle4.display
+                if (currentDivTextAreaCaptionDisplay === 'block') {
+                    await CaptionFileMSG(divElementBridge)
+                }
+                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+                divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
+                abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
+                divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+                divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
+                await sendToFunil(divElementBridge, 3, null, file)
                 break;
         }
     }
@@ -2002,7 +2293,7 @@ async function fileTypeAction(event, isClick, divElement) {
         abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
         
         file = '...'
-        await getFileData(file, divElement)
+        await getFileData(divElement, file)
     } else {
         if (!isClick) {
             const dataTransfer = new DataTransfer()
@@ -2014,7 +2305,7 @@ async function fileTypeAction(event, isClick, divElement) {
         statusFile.textContent = `Arquivo selecionado`
         abbrFileZone.title = `Arquivo: ${file.name}`
 
-        await getFileData(file, divElement)
+        await getFileData(divElement, file)
     }
 }
 
