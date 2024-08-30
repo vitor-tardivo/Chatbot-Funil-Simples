@@ -7,6 +7,8 @@ function Set_Log_Callback(callback) {
 console.log(`>  ◌ Starting functions...`)
 if (global.Log_Callback) global.Log_Callback(`>  ◌ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Starting functions</strong>...`)
 
+const dotenv = require('dotenv')
+dotenv.config()
 const { Client, LocalAuth, MessageMedia, Buttons } = require('whatsapp-web.js')
 const qrcode = require('qrcode-terminal')
 const path = require('path')
@@ -1377,7 +1379,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
             //webVersionCache: { type: 'remote', remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html', } //"normal" version
 
             puppeteer: {
-                executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+                executablePath: process.env.browser_path/*'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'*/,
                 args: ['--no-sandbox', '--disable-gpu'],
                 headless: true, //debug
             },

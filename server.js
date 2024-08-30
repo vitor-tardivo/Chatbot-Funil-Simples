@@ -2,49 +2,36 @@
 const express = require('express')
 const cors = require('cors')
 const http = require('http')
-const WebSocket = require('ws')
+//const WebSocket = require('ws')
 const axios = require('axios')
 const path = require('path')
 const os = require('os')
+const routes = require('./src/routes')
 const {
     sleep,
-    generateUniqueId,
+    /*generateUniqueId,
     Set_Statuses_WS_Callback,
     Set_Log_Callback,
     Set_Exit_Callback, 
-    Reset_,
     Set_Auth_Failure_Callback, 
     Set_QrCode_On_Callback, 
     Set_QrCode_Exceeds_Callback, 
     Set_List_Callback,
     Set_List_Auxiliar_Callback,
-    Print_All_Chat_Data,
     Set_Search_List_Callback,
-    Search_Chat_Data_By_Search,
     Set_All_Erase_Callback,
     Set_Query_Erase_Callback,
     Set_Auth_Autenticated_Callback, 
-    List_Directories,
-    List_Active_Clients_,
     Set_Ready_Callback,
     Set_Start_Callback,
-    Erase_Chat_Data_By_Query,
-    Erase_All_Chat_Data,
-    Reload_Front, 
-    Input_Command, 
-    Erase_Client_,
     Set_Erase_Client_Callback,
-    Destroy_Client_,
     Set_Destroy_Client_Callback,
-    Reinitialize_Client_,
     Set_Reinitialize_Client_Callback,
-    Select_Client_,
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
-    New_Client_,
-    initialize,
-    Set_Clients_Callback,
+    Set_Clients_Callback,*/
 } = require('./src/app')
+const { setupWebSocket } = require('./src/WebSocket')
 
 process.on('uncaughtException', (error) => {
     console.error(`> ❌ Uncaught Exception: ${error}`)
@@ -52,12 +39,12 @@ process.on('uncaughtException', (error) => {
 })
 
 const app = express()
-const server = http.createServer(app)
 
 const port = process.env.PORT || 3000
 
-const wss_Server = new WebSocket.Server({ server })
-const wss_Connections = new Map()
+const server = http.createServer(app)
+//const wss_Server = new WebSocket.Server({ server })
+//const wss_Connections = new Map()
 
 app.use( 
     cors({
@@ -73,6 +60,11 @@ app.use(express.static(path.join(__dirname, 'frontEnd')))
 
 app.use(express.json())
 
+app.use('/', routes)
+
+setupWebSocket(server)
+
+/*
 app.get('/', (req, res) => {
     try {
         res.sendFile(path.join(__dirname, 'frontEnd', 'index.html'))
@@ -82,8 +74,9 @@ app.get('/', (req, res) => {
         res.status(500).send({ sucess: false, message: 'ERROR Internal server' })
     }
 })
+*/
 
-
+/*
 wss_Server.on('connection', async  function connection(wss) {
     try {
         const wss_Connection_Id = generateUniqueId()
@@ -101,7 +94,7 @@ wss_Server.on('connection', async  function connection(wss) {
         
             setTimeout(function() {
                 wss_Connections.delete(wss_Connection_Id)
-            },1 * 1000)
+            }, 1 * 1000)
         })
 
         Set_Log_Callback(function(log) {
@@ -150,13 +143,13 @@ wss_Server.on('connection', async  function connection(wss) {
         })
         Set_All_Erase_Callback(async function() {
             try { 
-                /*const Is_From_End = false
-                const { Sucess, Is_Empty } = await Erase_All_Chat_Data(Is_From_End)
-                if (Sucess) {
-                    wss.send(JSON.stringify({ type: 'all-erase', sucess: Sucess, message: `sucessfully erase all ChatData.`, empty: Is_Empty }))
-                } else {
-                    wss.send(JSON.stringify({ type: 'all-erase', sucess: Sucess, message: `ERROR to erase all ChatData.`, empty: Is_Empty }))
-                }*/
+                //const Is_From_End = false
+                //const { Sucess, Is_Empty } = await Erase_All_Chat_Data(Is_From_End)
+                //if (Sucess) {
+                    //wss.send(JSON.stringify({ type: 'all-erase', sucess: Sucess, message: `sucessfully erase all ChatData.`, empty: Is_Empty }))
+                //} else {
+                    //wss.send(JSON.stringify({ type: 'all-erase', sucess: Sucess, message: `ERROR to erase all ChatData.`, empty: Is_Empty }))
+                //}
                 const wss_Connection = wss_Connections.get(wss_Connection_Id)
                 if (wss_Connection) {
                     try {
@@ -176,11 +169,11 @@ wss_Server.on('connection', async  function connection(wss) {
             try {
                 //const Parse_Data = await Search_Chat_Data_By_Search(search)
                 
-                /*if (Parse_Data.length === 0) {
-                    wss.send(JSON.stringify({ type: 'search-chatdata', data: [], data2: search }))
-                } else {
-                    wss.send(JSON.stringify({ type: 'search-chatdata', data: Parse_Data, data2: search }))
-                }*/
+                //if (Parse_Data.length === 0) {
+                    //wss.send(JSON.stringify({ type: 'search-chatdata', data: [], data2: search }))
+                //} else {
+                    //wss.send(JSON.stringify({ type: 'search-chatdata', data: Parse_Data, data2: search }))
+                //}
                 const wss_Connection = wss_Connections.get(wss_Connection_Id)
                 if (wss_Connection) {
                     try {
@@ -200,12 +193,12 @@ wss_Server.on('connection', async  function connection(wss) {
         Set_List_Callback(async function() {
             try {
                 
-                /*const { Sucess, Is_Empty, ChatData, Is_From_All_Erase } = await Print_All_Chat_Data(isallerase)
-                if (Sucess) {
-                    wss.send(JSON.stringify({ type: 'all-print', sucess: Sucess, message: `Sucessfully send all ChatData.`, chatdata: ChatData, empty: Is_Empty, isallerase: Is_From_All_Erase }))
-                } else {
-                    wss.send(JSON.stringify({ type: 'all-print', sucess: Sucess, message: `ERROR to send all ChatData.`, chatdata: ChatData, empty: Is_Empty, isallerase: Is_From_All_Erase }))
-                }*/
+                //const { Sucess, Is_Empty, ChatData, Is_From_All_Erase } = await Print_All_Chat_Data(isallerase)
+                //if (Sucess) {
+                    //wss.send(JSON.stringify({ type: 'all-print', sucess: Sucess, message: `Sucessfully send all ChatData.`, chatdata: ChatData, empty: Is_Empty, isallerase: Is_From_All_Erase }))
+                //} else {
+                    //wss.send(JSON.stringify({ type: 'all-print', sucess: Sucess, message: `ERROR to send all ChatData.`, chatdata: ChatData, empty: Is_Empty, isallerase: Is_From_All_Erase }))
+                //}
                 //let Is_From_All_Erase = null
                 //Is_From_All_Erase = isallerase
                 const wss_Connection = wss_Connections.get(wss_Connection_Id)
@@ -225,9 +218,9 @@ wss_Server.on('connection', async  function connection(wss) {
         })
         Set_List_Auxiliar_Callback(async function(Is_From_All_Erase, Clientt_) {
             try {
-                /*if (Is_From_All_Erase) {
-                    Print_All_Chat_Data(Is_From_All_Erase)
-                }*/
+                //if (Is_From_All_Erase) {
+                    //Print_All_Chat_Data(Is_From_All_Erase)
+                //}
                 const wss_Connection = wss_Connections.get(wss_Connection_Id) 
                 if (wss_Connection) {
                     try {
@@ -415,7 +408,8 @@ wss_Server.on('connection', async  function connection(wss) {
         console.error(`> ❌ ERROR WebSocket connection: ${error}`)
     }
 })
-
+*/
+/*
 app.get('/api/data', async (req, res) => {
     try {
         res.status(200).send({ sucess: true, message: `sucessfully sent the app data.`, name: global.Bot_Name || 'BOT', version: global.Bot_Version_ || '?.?.?' })
@@ -639,7 +633,7 @@ app.get('/clients/start', async (req, res) => {
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
-
+*/
 
 server.listen(port, () => {
     try  {
@@ -649,6 +643,10 @@ server.listen(port, () => {
         console.error(`> ❌ ERROR Listen server: ${error}`)
     }
 })
+
+module.exports = {
+    app,
+}
 
 //tarefas bot backend 
 //em desenvolvimento...
