@@ -146,6 +146,7 @@
                         <div id="divFunilFunctions">
                             <abbr title="Schedule Erase STATUS: null" id="abbrScheduleErase"><button class="functionsDivStart" id="OnOffScheduleErase" onclick="">-O</button></abbr>
                         </div>
+                        
                         <div id="divCreateFunctionFunil">
                             <h2 id="titleFunil"><stronger>Criação e customização do Funil</stronger></h2>
 
@@ -161,13 +162,6 @@
                                         <option value="hours">Horas</option>
                                         <option value="days">Dias</option>
                                     </select>
-
-                                    <!--<abbr title="Selecione duração em Segundos"><label for="delayMSGRadioSeconds" class="delayMSGLabelSeconds">Segundos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioSeconds" class="delayMSGRadioSeconds" onchange="sendToFunil(this, 1, 'seconds', null)" placeholder="s">)</label></abbr> 
-                                    <abbr title="Selecione duração em Minutos"><label for="delayMSGRadioMinutes" class="delayMSGLabelMinutes">Minutos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioMinutes" class="delayMSGRadioMinutes" onchange="sendToFunil(1, 'minutes', null)" placeholder="m">)</label></abbr>
-                                    <abbr title="Selecione duração em Horas"><label for="delayMSGRadioHours" class="delayMSGLabelHours">Horas-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioHours" class="delayMSGRadioHours" onchange="sendToFunil(this, 1, 'hours', null)" placeholder="h">)</label></abbr>
-                                    <abbr title="Selecione duração em Dias"><label for="delayMSGRadioDays" class="delayMSGLabelDays">Dias-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioDays" class="delayMSGRadioDays" onchange="sendToFunil(this, 1, 'days', null)" placeholder="d">)</label></abbr>
-                                    
-                                    <abbr title="Nenhum"><label for="delayMSGRadioNone" class="delayMSGLabelNone">Nenhum-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioNone" class="delayMSGRadioNone" onchange="sendToFunil(this, 1, 'none', null)" checked placeholder="d">)</label></abbr>-->
                                 </div>
 
                                 <div class="divTextarea" id="idivTextarea">
@@ -192,13 +186,6 @@
                                             <option value="hours">Horas</option>
                                             <option value="days">Dias</option>
                                         </select>
-
-                                        <!--<abbr title="Selecione duração em Segundos"><label for="delayTextRadioSeconds" class="delayTextLabelSeconds">Segundos-(<input type="radio" name="delayTextRadio" id="delayTextRadioSeconds" class="delayTextRadioSeconds" onchange="sendToFunil(this, 2, 'seconds', null)" placeholder="s">)</label></abbr> 
-                                        <abbr title="Selecione duração em Minutos"><label for="delayTextRadioMinutes" class="delayTextLabelMinutes">Minutos-(<input type="radio" name="delayTextRadio" id="delayTextRadioMinutes" class="delayTextRadioMinutes" onchange="sendToFunil(this, 2, 'minutes', null)" placeholder="m">)</label></abbr>
-                                        <abbr title="Selecione duração em Horas"><label for="delayTextRadioHours" class="delayTextLabelHours">Horas-(<input type="radio" name="delayTextRadio" id="delayTextRadioHours" class="delayTextRadioHours" onchange="sendToFunil(this, 2, 'hours', null)" placeholder="h">)</label></abbr>
-                                        <abbr title="Selecione duração em Dias"><label for="delayTextRadioDays" class="delayTextLabelDays">Dias-(<input type="radio" name="delayTextRadio" id="delayTextRadioDays" class="delayTextRadioDays" onchange="sendToFunil(this, 2, 'days', null)" placeholder="d">)</label></abbr>
-                                        
-                                        <abbr title="Nenhum"><label for="delayTextRadioNone" class="delayTextLabelNone">Nenhum-(<input type="radio" name="delayTextRadio" id="delayTextRadioNone" class="delayTextRadioNone" onchange="sendToFunil(this, 2, 'none', null)" checked placeholder="d">)</label></abbr>-->
                                     </div>
                                     
                                     <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
@@ -229,13 +216,6 @@
                                             <option value="hours">Horas</option>
                                             <option value="days">Dias</option>
                                         </select>
-
-                                        <!--<abbr title="Selecione duração em Segundos"><label for="delayTextAudioRadioSeconds" class="delayTextAudioLabelSeconds">Segundos-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioSeconds" class="delayTextAudioRadioSeconds" onchange="sendToFunil(this, 3, 'seconds', null)" placeholder="s">)</label></abbr> 
-                                        <abbr title="Selecione duração em Minutos"><label for="delayTextAudioRadioMinutes" class="delayTextAudioLabelMinutes">Minutos-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioMinutes" class="delayTextAudioRadioMinutes" onchange="sendToFunil(this, 3, 'minutes', null)" placeholder="m">)</label></abbr>
-                                        <abbr title="Selecione duração em Horas"><label for="delayTextAudioRadioHours" class="delayTextAudioLabelHours">Horas-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioHours" class="delayTextAudioRadioHours" onchange="sendToFunil(this, 3, 'hours', null)" placeholder="h">)</label></abbr>
-                                        <abbr title="Selecione duração em Dias"><label for="delayTextAudioRadioDays" class="delayTextAudioLabelDays">Dias-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioDays" class="delayTextAudioRadioDays" onchange="sendToFunil(this, 3, 'days', null)" placeholder="d">)</label></abbr>
-                                        
-                                        <abbr title="Nenhum"><label for="delayTextAudioRadioNone" class="delayTextAudioLabelNone">Nenhum-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioNone" class="delayTextAudioRadioNone" onchange="sendToFunil(this, 3, 'none', null)" checked placeholder="d">)</label></abbr>-->
                                     </div>
                                     
                                     <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">

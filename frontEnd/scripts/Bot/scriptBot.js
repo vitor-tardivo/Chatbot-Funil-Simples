@@ -2394,15 +2394,16 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
 
     switch (type) {
         case 1:
-            const MSGHTMlDelay = `<div class="divDelayTypeMSG" id="divDelayTypeMSG">
-                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="delayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="delayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+            const MSGHTMlDelay = `<div class="divDelayTypeMSG" id="idivDelayTypeMSG">
+                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
                                     
-                                    <abbr title="Selecione duração em Segundos"><label for="delayMSGRadioSeconds" class="delayMSGLabelSeconds">Segundos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioSeconds" class="delayMSGRadioSeconds" placeholder="s">)</label></abbr> 
-                                    <abbr title="Selecione duração em Minutos"><label for="delayMSGRadioMinutes" class="delayMSGLabelMinutes">Minutos-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioMinutes" class="delayMSGRadioMinutes" placeholder="m">)</label></abbr>
-                                    <abbr title="Selecione duração em Horas"><label for="delayMSGRadioHours" class="delayMSGLabelHours">Horas-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioHours" class="delayMSGRadioHours" placeholder="h">)</label></abbr>
-                                    <abbr title="Selecione duração em Dias"><label for="delayMSGRadioDays" class="delayMSGLabelDays">Dias-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioDays" class="delayMSGRadioDays" placeholder="d">)</label></abbr>
-                                    
-                                    <abbr title="Nenhum"><label for="delayMSGRadioNone" class="delayMSGLabelNone">Nenhum-(<input type="radio" name="delayMSGRadio" id="delayMSGRadioNone" class="delayMSGRadioNone" checked placeholder="d">)</label></abbr>
+                                    <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
+                                        <option value="none" selected>Nenhum</option>
+                                        <option value="seconds">Segundos</option>
+                                        <option value="minutes">Minutos</option>
+                                        <option value="hours">Horas</option>
+                                        <option value="days">Dias</option>
+                                    </select>
                                 </div>`
             divFunil.innerHTML += MSGHTMlDelay
             break
@@ -2420,16 +2421,18 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                         <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
                                     </div>
                                     <div class="divDelayText" id="idivDelayText">
-                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="delayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="delayTTextime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
                                         
-                                        <abbr title="Selecione duração em Segundos"><label for="delayTextRadioSeconds" class="delayTextLabelSeconds">Segundos-(<input type="radio" name="delayTextRadio" id="delayTextRadioSeconds" class="delayTextRadioSeconds" placeholder="s">)</label></abbr> 
-                                        <abbr title="Selecione duração em Minutos"><label for="delayTextRadioMinutes" class="delayTextLabelMinutes">Minutos-(<input type="radio" name="delayTextRadio" id="delayTextRadioMinutes" class="delayTextRadioMinutes" placeholder="m">)</label></abbr>
-                                        <abbr title="Selecione duração em Horas"><label for="delayTextRadioHours" class="delayTextLabelHours">Horas-(<input type="radio" name="delayTextRadio" id="delayTextRadioHours" class="delayTextRadioHours" placeholder="h">)</label></abbr>
-                                        <abbr title="Selecione duração em Dias"><label for="delayTextRadioDays" class="delayTextLabelDays">Dias-(<input type="radio" name="delayTextRadio" id="delayTextRadioDays" class="delayTextRadioDays" placeholder="d">)</label></abbr>
-                                        
-                                        <abbr title="Nenhum"><label for="delayTextRadioNone" class="delayTextLabelNone">Nenhum-(<input type="radio" name="delayTextRadio" id="delayTextRadioNone" class="delayTextRadioNone" checked placeholder="d">)</label></abbr>
+                                        <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 1, this, null)">
+                                            <option value="none" selected>Nenhum</option>
+                                            <option value="seconds">Segundos</option>
+                                            <option value="minutes">Minutos</option>
+                                            <option value="hours">Horas</option>
+                                            <option value="days">Dias</option>
+                                        </select>
                                     </div>
-                                    <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput=""></textarea></abbr>
+                                    
+                                    <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
                                 </div>`
             divFunil.innerHTML += MSGHTMlText
             break
@@ -2438,7 +2441,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                     <div class="divFileFunctions" id="idivFileFunctions">
                                         <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
                                         <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
-                                        <abbr title="Legenda STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
+                                        <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
                                         
                                         <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
                                         <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
@@ -2450,14 +2453,15 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                     </div>
                                     
                                     <div class="divDelayTextAudio" id="idivDelayTextAudio">
-                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextAudioTitle"><strong>ATRASO-State=Typing&Recording:</strong></span><label for="delayTextAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="delayTexAudiotime" min="1" max="9999" step="1" oninput="delayLimitLength(this)" placeholder="00000"></label></abbr> 
+                                        <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
                                         
-                                        <abbr title="Selecione duração em Segundos"><label for="delayTextAudioRadioSeconds" class="delayTextAudioLabelSeconds">Segundos-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioSeconds" class="delayTextAudioRadioSeconds" placeholder="s">)</label></abbr> 
-                                        <abbr title="Selecione duração em Minutos"><label for="delayTextAudioRadioMinutes" class="delayTextAudioLabelMinutes">Minutos-(<input type="radio" name="delayTexAudiotRadio" id="delayTexAudiotRadioMinutes" class="delayTextAudioRadioMinutes" placeholder="m">)</label></abbr>
-                                        <abbr title="Selecione duração em Horas"><label for="delayTextAudioRadioHours" class="delayTextAudioLabelHours">Horas-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioHours" class="delayTextAudioRadioHours" placeholder="h">)</label></abbr>
-                                        <abbr title="Selecione duração em Dias"><label for="delayTextAudioRadioDays" class="delayTextAudioLabelDays">Dias-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioDays" class="delayTextAudioRadioDays" placeholder="d">)</label></abbr>
-                                        
-                                        <abbr title="Nenhum"><label for="delayTextAudioRadioNone" class="delayTextAudioLabelNone">Nenhum-(<input type="radio" name="delayTextAudioRadio" id="delayTextAudioRadioNone" class="delayTextAudioRadioNone" checked placeholder="d">)</label></abbr>
+                                        <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 1, this, null)">
+                                            <option value="none" selected>Nenhum</option>
+                                            <option value="seconds">Segundos</option>
+                                            <option value="minutes">Minutos</option>
+                                            <option value="hours">Horas</option>
+                                            <option value="days">Dias</option>
+                                        </select>
                                     </div>
                                     
                                     <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
@@ -2469,7 +2473,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                         <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
                                     </div></abbr>
 
-                                    <abbr title="Digite a legendo do (arquivo)"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (arquivo): >..." oninput=""></textarea></abbr>
+                                    <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
                                 </div>`
             divFunil.innerHTML += MSGHTMlFile
             break
