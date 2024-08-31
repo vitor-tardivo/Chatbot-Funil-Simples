@@ -1018,63 +1018,154 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {
     switch (typeMSG) {
         case 1:
             divElement = bridgeElement.closest(`#idivDelayTypeMSG`)
+            
+            const inputDelayMSG = divElement.querySelector(`#idelayMSGTime`)
 
             switch (typeTypeMSG.value || typeTypeMSG) {
                 case 'input':
-                    const inputDelayMSG = divElement.querySelector(`#idelayMSGTime`)
-                    displayOnConsole('1=input:')
+                    displayOnConsole(`1=${typeTypeMSG}:`)
                     displayOnConsole(inputDelayMSG.value)
+
+                    const selectDelayMSG = divElement.querySelector(`#idelayMSGSelect`)
+                    if (inputDelayMSG.value >= 1) {
+                        if (selectDelayMSG.selectedIndex === 0) {
+                            selectDelayMSG.selectedIndex = 1
+                            selectDelayMSG.dispatchEvent(new Event('input'))
+                        }
+                    } else {
+                        if (selectDelayMSG.selectedIndex !== 0) {
+                            selectDelayMSG.selectedIndex = 0
+                            selectDelayMSG.dispatchEvent(new Event('input'))
+                        }
+                    }
+
+
                     break;
                 case 'seconds':
-                    displayOnConsole('1=seconds')
+                    displayOnConsole(`1=${typeTypeMSG.value}`)
                     
+                    if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
+                        inputDelayMSG.value = 1
+                        inputDelayMSG.dispatchEvent(new Event('input'))
+                    }
+
+
                     break;
                 case 'minutes':
-                    displayOnConsole('1=minutes')
+                    displayOnConsole(`1=${typeTypeMSG.value}`)
                     
+                    if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
+                        inputDelayMSG.value = 1
+                        inputDelayMSG.dispatchEvent(new Event('input'))
+                    }
+
+
                     break;
                 case 'hours':
-                    displayOnConsole('1=hours')
+                    displayOnConsole(`1=${typeTypeMSG.value}`)
                     
+                    if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
+                        inputDelayMSG.value = 1
+                        inputDelayMSG.dispatchEvent(new Event('input'))
+                    }
+
+
                     break;
                 case 'days':
-                    displayOnConsole('1=days')
+                    displayOnConsole(`1=${typeTypeMSG.value}`)
                     
+                    if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
+                        inputDelayMSG.value = 1
+                        inputDelayMSG.dispatchEvent(new Event('input'))
+                    }
+
+
                     break;
                 case 'none':
-                    displayOnConsole('1=none')
-                    
+                    displayOnConsole(`1=${typeTypeMSG.value}`)
+
+                    if (inputDelayMSG.value !== '') {
+                        inputDelayMSG.value = ''
+                        inputDelayMSG.dispatchEvent(new Event('input'))
+                    }
+
                     break;
             }
             break;
         case 2:
             divElement = bridgeElement.closest(`#idivTextarea`)
 
+            const inputDelayText = divElement.querySelector(`#idelayTextTime`)
+
             if (typeTypeMSG) {
                 switch (typeTypeMSG.value || typeTypeMSG) {
                     case 'input':
-                        const inputDelayText = divElement.querySelector(`#idelayTextTime`)
-                        displayOnConsole('1=input:')
+                        displayOnConsole(`2=${typeTypeMSG}:`)
                         displayOnConsole(inputDelayText.value)
+
+                        const selectDelayText = divElement.querySelector(`#idelayTextSelect`)
+                        if (inputDelayText.value >= 1) {
+                            if (selectDelayText.selectedIndex === 0) {
+                                selectDelayText.selectedIndex = 1
+                                selectDelayText.dispatchEvent(new Event('input'))
+                            }
+                        } else {
+                            if (selectDelayText.selectedIndex !== 0) {
+                                selectDelayText.selectedIndex = 0
+                                selectDelayText.dispatchEvent(new Event('input'))
+                            }
+                        }
+                        
+
                         break;
                     case 'seconds':
-                        displayOnConsole('1=seconds')
+                        displayOnConsole(`2=${typeTypeMSG.value}`)
+
+                        if (!inputDelayText.value || inputDelayText.value === 0) {
+                            inputDelayText.value = 1
+                            inputDelayText.dispatchEvent(new Event('input'))
+                        }
+                        
                         
                         break;
                     case 'minutes':
-                        displayOnConsole('1=minutes')
+                        displayOnConsole(`2=${typeTypeMSG.value}`)
+
+                        if (!inputDelayText.value || inputDelayText.value === 0) {
+                            inputDelayText.value = 1
+                            inputDelayText.dispatchEvent(new Event('input'))
+                        }
+                        
                         
                         break;
                     case 'hours':
-                        displayOnConsole('1=hours')
+                        displayOnConsole(`2=${typeTypeMSG.value}`)
+
+                        if (!inputDelayText.value || inputDelayText.value === 0) {
+                            inputDelayText.value = 1
+                            inputDelayText.dispatchEvent(new Event('input'))
+                        }
+
                         
                         break;
                     case 'days':
-                        displayOnConsole('1=days')
+                        displayOnConsole(`2=${typeTypeMSG.value}`)
+
+                        if (!inputDelayText.value || inputDelayText.value === 0) {
+                            inputDelayText.value = 1
+                            inputDelayText.dispatchEvent(new Event('input'))
+                        }
+
                         
                         break;
                     case 'none':
-                        displayOnConsole('1=none')
+                        displayOnConsole(`2=${typeTypeMSG.value}`)
+
+                        if (inputDelayText.value !== '') {
+                            inputDelayText.value = ''
+                            inputDelayText.dispatchEvent(new Event('input'))
+                        }
+
                         
                         break;
                 }
@@ -1082,48 +1173,97 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {
             
             //const divTextAreaMSG = divElement.querySelector(`#itextAreaTypeMSG`)
             if (data) {
+                displayOnConsole(`3=textarea:`) 
                 displayOnConsole(data.value)
             }
+
 
             break;
         case 3:
             divElement = bridgeElement.closest(`#ifileTypeMSG`)
             
+            const inputDelayTextAudio = divElement.querySelector(`#idelayTexAudioTime`)
+
             if (typeTypeMSG) {
                 switch (typeTypeMSG.value || typeTypeMSG) {
                     case 'input':
-                        const inputDelayTextAudio = divElement.querySelector(`#idelayTexAudioTime`)
-                        displayOnConsole('1=input:')
+                        displayOnConsole(`3=${typeTypeMSG}:`)
                         displayOnConsole(inputDelayTextAudio.value)
+
+                        const selectDelayTextAudio = divElement.querySelector(`#idelayTextAudioSelect`)
+                        if (inputDelayTextAudio.value >= 1) {
+                            if (selectDelayTextAudio.selectedIndex === 0) {
+                                selectDelayTextAudio.selectedIndex = 1
+                                selectDelayTextAudio.dispatchEvent(new Event('input'))
+                            }
+                        } else {
+                            if (selectDelayTextAudio.selectedIndex !== 0) {
+                                selectDelayTextAudio.selectedIndex = 0
+                                selectDelayTextAudio.dispatchEvent(new Event('input'))
+                            }
+                        }
+
+
                         break;
                     case 'seconds':
-                        displayOnConsole('1=seconds')
+                        displayOnConsole(`3=${typeTypeMSG.value}`)
+
+                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                            inputDelayTextAudio.value = 1
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        }
                         
                         break;
                     case 'minutes':
-                        displayOnConsole('1=minutes')
+                        displayOnConsole(`3=${typeTypeMSG.value}`)
+
+                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                            inputDelayTextAudio.value = 1
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        }
                         
                         break;
                     case 'hours':
-                        displayOnConsole('1=hours')
+                        displayOnConsole(`3=${typeTypeMSG.value}`)
+
+                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                            inputDelayTextAudio.value = 1
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        }
                         
                         break;
                     case 'days':
-                        displayOnConsole('1=days')
+                        displayOnConsole(`3=${typeTypeMSG.value}`)
+
+                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                            inputDelayTextAudio.value = 1
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        }
+
                         
                         break;
                     case 'none':
-                        displayOnConsole('1=none')
+                        displayOnConsole(`3=${typeTypeMSG.value}`)
+
+                        if (inputDelayTextAudio.value !== '') {
+                            inputDelayTextAudio.value = ''
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        }
+
                         
-                        break;
+                        break; 
                 }
             }
 
             //const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-            if (data) {   
-                console.log(data)
-                displayOnConsole(data.value)
+            if (data) {
+                displayOnConsole(`3=file:`)   
+                displayOnConsole(data.name)   
+                console.log(data || '')
+                displayOnConsole(`3=textarea:`)   
+                displayOnConsole(data.value || '')   
             }
+
 
             break;
     }
@@ -1150,6 +1290,7 @@ async function StateTypingMSG(buttonElement, IsWType) {
     const buttonStateTyping = divElement.querySelector(`#${button}`)
     const abbrStateTyping = divElement.querySelector(`#${abbr}`)
     
+    const inputDelayTextAudio = divElement.querySelector(`#idelayTexAudioTime`)
     const divDelayStateTyping = divElement.querySelector(`#${delay}`)
 
     const computedSyle2 = window.getComputedStyle(buttonStateTyping)
@@ -1176,6 +1317,11 @@ async function StateTypingMSG(buttonElement, IsWType) {
                 'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
         }, 100)
     } else {
+        if (inputDelayTextAudio.value >= 1) {
+            inputDelayTextAudio.value = ''
+            inputDelayTextAudio.dispatchEvent(new Event('input'))
+        }
+
         buttonStateTyping.style.cssText =
             `display: ${currentButtonStateTypingDisplay}; opacity: ${currentButtonStateTypingOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonStateTyping.textContent = `O`
@@ -1196,6 +1342,7 @@ async function StateRecordingMSG(buttonElement) {
     const buttonStateRecording = divElement.querySelector(`#iOnOffStateRecordingFile`)
     const abbrStateRecording = divElement.querySelector(`#iabbrOnOffStateRecordingFile`)
     
+    const inputDelayTextAudio = divElement.querySelector(`#idelayTexAudioTime`)
     const divDelayStateRecording = divElement.querySelector(`#idivDelayTextAudio`)
 
     const computedSyle2 = window.getComputedStyle(buttonStateRecording)
@@ -1222,6 +1369,11 @@ async function StateRecordingMSG(buttonElement) {
                 'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
         }, 100)
     } else {
+        if (inputDelayTextAudio.value >= 1) {
+            inputDelayTextAudio.value = ''
+            inputDelayTextAudio.dispatchEvent(new Event('input'))
+        }
+
         buttonStateRecording.style.cssText =
             `display: ${currentButtonStateRecordingDisplay}; opacity: ${currentButtonStateRecordingOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
         buttonStateRecording.textContent = `O`
@@ -1314,6 +1466,11 @@ async function CaptionFileMSG(buttonElement) {
                 `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
         }, 100)
     } else {
+        if (divTextAreaCaption.value !== '') {
+            divTextAreaCaption.value = ''
+            divTextAreaCaption.dispatchEvent(new Event('input'))
+        }
+
         buttonLigtDark.style.cssText =
             `display: inline; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
         buttonLightDarkColor.style.cssText =
@@ -2130,7 +2287,7 @@ async function getFileData(divElementBridge, file) {
                 setTimeout(function() {
                     buttonStateRecording.style.cssText =
                         `display: inline; opacity: 1;`
-                })
+                }, 300)
 
                 divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
                 divDelayTextAudioTitle.textContent = 'ATRASO-State=Recording:'
@@ -2213,7 +2370,7 @@ async function getFileData(divElementBridge, file) {
                 setTimeout(function() {
                     buttonStateTyping.style.cssText =
                     `display: inline; opacity: 1;`
-                })
+                }, 300)
 
                 divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                 abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
@@ -2379,103 +2536,138 @@ async function fileAuxAction(divElement) {
 }
 
 async function delayLimitLength(input) {
-    let inputNumberDelay = input
-    
-    if (inputNumberDelay.value.length > 5) {
-        const newValue = inputNumberDelay.value.slice(0, 5)
-        inputNumberDelay.value = newValue
+    if (input.value.length > 5) {
+        const newValue = input.value.slice(0, 5)
+        input.value = newValue
     }
 }
 
 async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado na hora pra modificar unicamente por MSG para aparecer bunitin opacity e tals
     await newTypeMSGShown()
 
+    const response = await axios.post('/funil/new-MSG')
+    const Id_Position_MSG = response.data.idpositionmsg
+
     const divFunil = document.querySelector('#funilArea')
 
+    let conteinerMSG = null
     switch (type) {
         case 1:
-            const MSGHTMlDelay = `<div class="divDelayTypeMSG" id="idivDelayTypeMSG">
-                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
-                                    
-                                    <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
-                                        <option value="none" selected>Nenhum</option>
-                                        <option value="seconds">Segundos</option>
-                                        <option value="minutes">Minutos</option>
-                                        <option value="hours">Horas</option>
-                                        <option value="days">Dias</option>
-                                    </select>
+            const MSGHTMlDelay = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+                                    <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
+                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
+                                        
+                                        <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
+                                            <option value="none" selected>Nenhum</option>
+                                            <option value="seconds">Segundos</option>
+                                            <option value="minutes">Minutos</option>
+                                            <option value="hours">Horas</option>
+                                            <option value="days">Dias</option>
+                                        </select>
+                                    </div>
                                 </div>`
             divFunil.innerHTML += MSGHTMlDelay
+
+            conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
+            console.log(conteinerMSG)
+            conteinerMSG.style.cssText =
+                `display: block; opacity: 0;`
+            setTimeout(function() {
+                conteinerMSG.style.cssText =
+                `display: block; opacity: 1;`
+            }, 300)
             break
         case 2:
-            const MSGHTMlText = `<div class="divTextarea" id="idivTextarea">
-                                    <div class="divTextareaFunctions" id="idivTextareaFunctions">
-                                        <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
+            const MSGHTMlText = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+                                    <div class="divTextarea" id="idivTextarea">
+                                        <div class="divTextareaFunctions" id="idivTextareaFunctions">
+                                            <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
+                                            
+                                            <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
+                                            <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
+                                            
+                                            <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
+                                            <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
+                                            <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
+                                            <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
+                                        </div>
+                                        <div class="divDelayText" id="idivDelayText">
+                                            <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
+                                            
+                                            <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 1, this, null)">
+                                                <option value="none" selected>Nenhum</option>
+                                                <option value="seconds">Segundos</option>
+                                                <option value="minutes">Minutos</option>
+                                                <option value="hours">Horas</option>
+                                                <option value="days">Dias</option>
+                                            </select>
+                                        </div>
                                         
-                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
-                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
-                                        
-                                        <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
-                                        <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
-                                        <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
-                                        <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
+                                        <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
                                     </div>
-                                    <div class="divDelayText" id="idivDelayText">
-                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
-                                        
-                                        <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 1, this, null)">
-                                            <option value="none" selected>Nenhum</option>
-                                            <option value="seconds">Segundos</option>
-                                            <option value="minutes">Minutos</option>
-                                            <option value="hours">Horas</option>
-                                            <option value="days">Dias</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
                                 </div>`
             divFunil.innerHTML += MSGHTMlText
+            
+            conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
+            console.log(conteinerMSG)
+            conteinerMSG.style.cssText =
+                `display: block; opacity: 0;`
+            setTimeout(function() {
+                conteinerMSG.style.cssText =
+                `display: block; opacity: 1;`
+            }, 300)
             break
         case 3:
-            const MSGHTMlFile = `<div class="fileTypeMSG" id="ifileTypeMSG">
-                                    <div class="divFileFunctions" id="idivFileFunctions">
-                                        <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
-                                        <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
-                                        <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
+            const MSGHTMlFile = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+                                    <div class="fileTypeMSG" id="ifileTypeMSG">
+                                        <div class="divFileFunctions" id="idivFileFunctions">
+                                            <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
+                                            <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
+                                            <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
+                                            
+                                            <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
+                                            <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
+                                            
+                                            <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
+                                            <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
+                                            <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
+                                            <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
+                                        </div>
                                         
-                                        <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
-                                        <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
+                                        <div class="divDelayTextAudio" id="idivDelayTextAudio">
+                                            <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
+                                            
+                                            <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 1, this, null)">
+                                                <option value="none" selected>Nenhum</option>
+                                                <option value="seconds">Segundos</option>
+                                                <option value="minutes">Minutos</option>
+                                                <option value="hours">Horas</option>
+                                                <option value="days">Dias</option>
+                                            </select>
+                                        </div>
                                         
-                                        <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
-                                        <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
-                                        <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
-                                        <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
-                                    </div>
-                                    
-                                    <div class="divDelayTextAudio" id="idivDelayTextAudio">
-                                        <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
-                                        
-                                        <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 1, this, null)">
-                                            <option value="none" selected>Nenhum</option>
-                                            <option value="seconds">Segundos</option>
-                                            <option value="minutes">Minutos</option>
-                                            <option value="hours">Horas</option>
-                                            <option value="days">Dias</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
-                                        <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
-                                        <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
-                                        <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
-                                        <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
-                                        
-                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
-                                    </div></abbr>
+                                        <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                            <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
+                                            <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
+                                            <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                            <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                            
+                                            <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
+                                        </div></abbr>
 
-                                    <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
+                                        <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
+                                    </div>
                                 </div>`
             divFunil.innerHTML += MSGHTMlFile
+
+            conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
+            console.log(conteinerMSG)
+            conteinerMSG.style.cssText =
+                `display: block; opacity: 0;`
+            setTimeout(function() {
+                conteinerMSG.style.cssText =
+                `display: block; opacity: 1;`
+            }, 300)
             break
     }
 }

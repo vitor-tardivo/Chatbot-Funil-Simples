@@ -19,6 +19,7 @@ const {
     Select_Client_,
     New_Client_,
     initialize,
+    Generate_MSG_Position_Id,
 } = require('./app')
 
 router.get('/', (req, res) => {
@@ -28,6 +29,17 @@ router.get('/', (req, res) => {
     } catch (error) {
         console.error(`> ❌ ERROR /: ${error}`)
         res.status(500).send({ sucess: false, message: 'ERROR Internal server' })
+    }
+})
+
+router.post('/funil/new-MSG', async (req, res) => {
+    try {
+        const Id_Position_MSG = await Generate_MSG_Position_Id()
+        
+        res.status(200).send({ sucess: true, message: `Sucessfully sent the new position ID MSG (${Id_Position_MSG}).`, idpositionmsg: Id_Position_MSG })
+    } catch (error) {
+        console.error(`> ❌ ERROR /funil/new-MSG: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, idpositionmsg: null })
     }
 })
 

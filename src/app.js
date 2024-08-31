@@ -452,6 +452,43 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
     }
 }
 
+let Counter_Id_Position_MSG = []
+async function Generate_MSG_Position_Id() {
+    /*if (Generate_Id_Not_Ready) {
+        console.log('>  ℹ️ Generate_Client_Id not Ready.')
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Generate_Client_Id</strong> not Ready.`)
+        return null
+    }*/
+    try {
+        //Generate_Id_Not_Ready = true
+
+        let Id_Position_MSG = null
+        let Counter_Position_MSG = 1
+        let i = false
+        while (!i) {
+            if (Counter_Id_Position_MSG[Counter_Position_MSG-1] === undefined) {
+                Id_Position_MSG = Counter_Position_MSG
+                Counter_Id_Position_MSG.push(Id_Position_MSG)
+
+                i = true
+            } else {
+                if (Counter_Position_MSG !== Counter_Id_Position_MSG[Counter_Position_MSG-1]) {
+                    Id_Position_MSG = Counter_Position_MSG
+                    Counter_Id_Position_MSG.splice(Counter_Position_MSG-1, 0, Id_Position_MSG)
+                    
+                    i = true
+                } else {
+                    Counter_Position_MSG++
+                }
+            }
+        }
+        return Id_Position_MSG
+    } catch (error) {
+        console.error(`> ❌ ERROR Generate_MSG_Position_Id: ${error}`)
+        return null
+    }
+}
+
 async function Load_Client_(Client_Not_Ready_Aux, Clientt_) {
     if (Client_Not_Ready_Aux) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
@@ -1338,7 +1375,6 @@ async function Generate_Client_Id() {
                 }
             }
         }
-        console.log(Id_Client_)
         return Id_Client_
     } catch (error) {
         console.error(`> ❌ ERROR Generate_Client_Id: ${error}`)
@@ -1583,7 +1619,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                             Chat_States[chatId].Promise_ = null
                             Chat_States[chatId].Timer_Sleep = null
                             Chat_States[chatId].Is_MSG_Started = false
-                            return
+                            return true
                         }
                         Chat_States[chatId].Is_MSG_Started = true
 
@@ -1603,6 +1639,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                     Chat_States[chatId].Promise_ = null
                     Chat_States[chatId].Timer_Sleep = null
                     Chat_States[chatId].Is_MSG_Started = false
+                    return false
                 } catch (error) {
                     console.error(`> ❌ ERROR Sleep_Timer ${Clientt_}: ${error}`)
                 }
@@ -1617,6 +1654,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                 try {
                     let MSG = true
                     let timer = null
+                    let Is_Ended_By_MSG = null
 
                     //Patterns for Miliseconds times:
                     // Formated= 1 \ * 24 * 60 * 60 * 1000 = 1-Day
@@ -1637,81 +1675,199 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
 
                     
 
-                    console.log(`>  ◌ Sending .Message_debug....`)
+                    /*await sleep(1.5 * 1000)
+                    chat.sendStateTyping()
+                    await sleep(1 * 1000)
+                    Client_.sendMessage(msg.from, 'teste', 'utf8')
+
+                    await sleep(1.5 * 1000)
+                    chat.sendStateTyping()
+                    await sleep(1 * 1000)
+                    Client_.sendMessage(msg.from, 'teste', 'utf8')
+
+                    await sleep(1.5 * 1000)
+                    chat.sendStateTyping()
+                    await sleep(1 * 1000)
+                    Client_.sendMessage(msg.from, 'teste', 'utf8')*/
+
+
+
+                    console.log(`>  ◌ Sending .Message_debug1.1....`)
                     if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
 
                     await sleep(1.5 * 1000)
                     chat.sendStateTyping()
                     await sleep(1 * 1000)
-                    Client_.sendMessage(msg.from, 'teste', 'utf8')
+                    Client_.sendMessage(msg.from, 'debug1.1', 'utf8')
 
-                    await sleep(1.5 * 1000)
-                    chat.sendStateTyping()
-                    await sleep(1 * 1000)
-                    Client_.sendMessage(msg.from, 'teste', 'utf8')
-
-                    await sleep(1.5 * 1000)
-                    chat.sendStateTyping()
-                    await sleep(1 * 1000)
-                    Client_.sendMessage(msg.from, 'teste', 'utf8')
-
-                    /*await sleep(1.5 * 1000)
-                    chat.sendStateTyping()
-                    await sleep(1 * 1000)
-                    Client_.sendMessage(msg.from, 'debug1', 'utf8')*/
-
-                    console.log(`> ✅ .Message_debug. Sent.`)
+                    console.log(`> ✅ .Message_debug1.1. Sent.`)
                     if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
 
                     
-                    /*console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
+                    console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
                     if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message...`)
-                    
                     timer = setTimeout (async () => {
-                        await sleep(1 * 1000)
+                        clearTimeout(timer)
+                        timer = null
                         console.log(`> ⏰ Timer FINALIZED ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
                         if (global.Log_Callback) global.Log_Callback(`> ⏰ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>FINALIZED</strong> <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
-                
                             
-                        console.log(`>  ◌ Sending .Message_debug....`)
+                            
+                        console.log(`>  ◌ Sending .Message_debug1.2....`)
                         if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
             
                         await sleep(1.5 * 1000)
                         chat.sendStateTyping()
                         await sleep(1 * 1000)
-                        Client_.sendMessage(msg.from, 'debug2', 'utf8')
+                        Client_.sendMessage(msg.from, 'debug1.2', 'utf8')
             
-                        console.log(`> ✅ .Message_debug. Sent.`)
+                        console.log(`> ✅ .Message_debug2. Sent.`)
                         if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
-
-                        MSG = false
+    
+                        
+                        timer = setTimeout (async () => {
+                            MSG = false
+                            clearTimeout(timer)
+                            timer = null
+                            console.log(`> ⏰ Timer FINALIZED ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+                            if (global.Log_Callback) global.Log_Callback(`> ⏰ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>FINALIZED</strong> <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
+                                
+                                
+                            console.log(`>  ◌ Sending .Message_debug1.2-2....`)
+                            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
+                
+                            await sleep(1.5 * 1000)
+                            chat.sendStateTyping()
+                            await sleep(1 * 1000)
+                            Client_.sendMessage(msg.from, 'debug1.2-2', 'utf8')
+                
+                            console.log(`> ✅ .Message_debug1.2-2. Sent.`)
+                            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
+                        }, timer_Duration_debug)
+                        console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message...`)
+                        await Sleep_Timer(13 * 1000, Chat_States[chatId].Cancel_Promise, chatId)
+                        await Chat_States[chatId].Promise_
+                        
+    
+                        console.log('primeiro', MSG)
+                        if (MSG) {
+                            MSG = false
+                            clearTimeout(timer)
+                            timer = null
+                            console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+                            if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>ended</strong> <strong>BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
+                            
+    
+                            console.log(`>  ◌ Sending .Message_debug1.2-22....`)
+                            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
+                
+                            await sleep(1.5 * 1000)
+                            chat.sendStateTyping()
+                            await sleep(1 * 1000)
+                            Client_.sendMessage(msg.from, 'debug1.2-22', 'utf8')
+                
+                            console.log(`> ✅ .Message_debug1.2-22. Sent.`)
+                            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
+                        }
                     }, timer_Duration_debug)
-                    await Sleep_Timer(12.5 * 1000, Chat_States[chatId].Cancel_Promise, chatId)
+                    Is_Ended_By_MSG = await Sleep_Timer(13 * 1000, Chat_States[chatId].Cancel_Promise, chatId)
                     await Chat_States[chatId].Promise_
-                    
+    
+                    if (!Is_Ended_By_MSG) {   
+                        await Sleep_Timer(13 * 1000, Chat_States[chatId].Cancel_Promise, chatId)
+                        await Chat_States[chatId].Promise_
+                    }
 
-                    await sleep(1 * 1000)
+                    console.log('segundo', MSG)
                     if (MSG) {
                         clearTimeout(timer)
-                
+                        timer = null
                         console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
                         if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>ended</strong> <strong>BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
                         
 
-                        console.log(`>  ◌ Sending .Message_debug....`)
+                        console.log(`>  ◌ Sending .Message_debug1.22....`)
                         if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
             
                         await sleep(1.5 * 1000)
                         chat.sendStateTyping()
                         await sleep(1 * 1000)
-                        Client_.sendMessage(msg.from, 'debug22', 'utf8')
+                        Client_.sendMessage(msg.from, 'debug1.22', 'utf8')
             
-                        console.log(`> ✅ .Message_debug. Sent.`)
+                        console.log(`> ✅ .Message_debug1.22. Sent.`)
                         if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
+                    } else {
+                        MSG = true 
                     }
-                    MSG = true*/ 
 
 
+                    if (Is_Ended_By_MSG) {   
+                        await sleep(4 * 1000)
+                    }
+                    console.log(`>  ◌ Sending .Message_debug2.1....`)
+                    if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
+
+                    await sleep(1.5 * 1000)
+                    chat.sendStateTyping()
+                    await sleep(1 * 1000)
+                    Client_.sendMessage(msg.from, 'debug2.1', 'utf8')
+
+                    console.log(`> ✅ .Message_debug2.1. Sent.`)
+                    if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
+
+                    
+                    console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
+                    if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message...`)
+                    timer = setTimeout (async () => {
+                        clearTimeout(timer)
+                        timer = null
+                        console.log(`> ⏰ Timer FINALIZED ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+                        if (global.Log_Callback) global.Log_Callback(`> ⏰ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>FINALIZED</strong> <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
+                    
+                    
+                        console.log(`>  ◌ Sending .Message_debug2.2....`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
+            
+                        await sleep(1.5 * 1000)
+                        chat.sendStateTyping()
+                        await sleep(1 * 1000)
+                        Client_.sendMessage(msg.from, 'debug2.2', 'utf8')
+            
+                        console.log(`> ✅ .Message_debug2.2. Sent.`)
+                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
+
+
+                        MSG = false
+                    }, timer_Duration_debug)
+                    Is_Ended_By_MSG = await Sleep_Timer(13 * 1000, Chat_States[chatId].Cancel_Promise, chatId)
+                    await Chat_States[chatId].Promise_
+                    
+                    /*if (Is_Ended_By_MSG) {
+                        await sleep(0.5 * 1000)
+                    }*/
+                    if (MSG) {
+                        clearTimeout(timer)
+                        timer = null
+                        console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>ended</strong> <strong>BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
+                        
+
+                        console.log(`>  ◌ Sending .Message_debug2.22....`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
+            
+                        await sleep(1.5 * 1000)
+                        chat.sendStateTyping()
+                        await sleep(1 * 1000)
+                        Client_.sendMessage(msg.from, 'debug2.22', 'utf8')
+            
+                        console.log(`> ✅ .Message_debug22. Sent.`)
+                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
+                    } else {
+                        MSG = true 
+                    }
+
+                    
 
                     console.log(`> ✅ ALL Messages Sent.`)
                     if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>ALL</strong> Messages <strong>Sent</strong>.`)
@@ -1749,7 +1905,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
 
                 //msg.body === '.' //debug
                 //msg.body !== null //actual
-                if (msg.body === '..') {
+                if (msg.body === '.') {
                     if (!Chat_States[chatId]) {
                         Chat_States[chatId] = {
                             Is_MSG_Initiate: true,
@@ -1980,6 +2136,7 @@ module.exports = {
     New_Client_,
     initialize,
     Set_Clients_Callback,
+    Generate_MSG_Position_Id,
 }
 
 console.log(`> ✅ FINISHED(Starting functions)`)

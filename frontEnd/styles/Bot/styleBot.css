@@ -1096,6 +1096,12 @@ td {
     transition: var(--configTrasition03s);
 }
 
+.conteinerFunilMSG {
+    display: block;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+
 .divDelayTypeMSG {
     display: flex;
     flex-direction: row;
