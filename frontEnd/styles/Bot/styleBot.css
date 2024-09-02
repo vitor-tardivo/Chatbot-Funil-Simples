@@ -1097,11 +1097,17 @@ td {
 }
 
 .conteinerFunilMSG {
-    display: block;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     opacity: 1;
     transition: var(--configTrasition03s);
 }
 
+.divDelayNErasePosition {
+    margin-top: 50px;
+    transition: var(--configTrasition03s);
+}
 .divDelayTypeMSG {
     display: flex;
     flex-direction: row;
@@ -1112,9 +1118,9 @@ td {
     outline: 2px solid rgba(0, 0, 0, 0);
     border: 2px solid var(--colorBlack);
     padding: 5px 5px 10px 5px;
-    border-radius: 50px;
-    margin-top: 50px;
+    border-radius: 50px 0px 0px 50px;
     box-shadow: 2px 2px 4px var(--colorShadow);
+    width: 100%;
     height: 3.13vw;
     white-space: nowrap;
     overflow-y: hidden;
@@ -1181,24 +1187,62 @@ td {
     border: 1px solid var(--colorWhite);
     outline: 1px solid var(--colorWhite);
 }
+.erasePositionMSGDelay {
+    display: inline-block;
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border: 2px solid var(--colorBlack);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    border-radius: 0px 50px 50px 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    word-break: break-word;
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.erasePositionMSGDelay:hover {
+    background-color: var(--colorRed);
+    border: 2px solid var(--colorRed);
+    transform: translate(0px, 0px);
+}
+.erasePositionMSGDelay:active {
+    background-color: var(--colorRed);
+    border: 2px solid var(--colorRed);
+    outline: 2px solid var(--colorRed);
+    transform: translate(0px, 0px);
+    transition: var(--configTrasition01s);
+}
+.erasePositionMSGDelay:focus {
+    border: 2px solid rgba(207, 44, 44, 0);
+    outline: 2px solid var(--colorRed);
+}
 
 .divTextarea {
     display: block;
     margin-top: 50px;
+    width: 100%;
     opacity: 1;
     transition: var(--configTrasition03s);
 }
-.divTextareaFunctions {
+.divEraseNFunctionsText {
+    display: flex;
+    flex-direction: row;
     position: sticky;
     top: -0.1px;
+    transition: var(--configTrasition03s);
+}
+.divTextareaFunctions {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     background-color: var(--colorContrastOpacity);
     border: 2px solid var(--colorBlack);
     border-bottom: 3.5px solid var(--colorBlack);
-    outline: 2px solid rgba(0, 0, 0, 0);
     box-shadow: 2px 2px 4px var(--colorShadow);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    width: 100%;
     white-space: nowrap;
     overflow-y: hidden;
     overflow-x: auto;
@@ -1381,6 +1425,36 @@ td {
 .OnOffPhoneScreenSetupText:focus {
     border: 2px solid var(--colorWhite);
 }
+.erasePositionMSGText {
+    display: inline-block;
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border: 2px solid var(--colorBlack);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    word-break: break-word;
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.erasePositionMSGText:hover {
+    background-color: var(--colorRed);
+    border: 2px solid var(--colorRed);
+    transform: translate(0px, 0px);
+}
+.erasePositionMSGText:active {
+    background-color: var(--colorRed);
+    border: 2px solid var(--colorRed);
+    outline: 2px solid var(--colorRed);
+    transform: translate(0px, 0px);
+    transition: var(--configTrasition01s);
+}
+.erasePositionMSGText:focus {
+    border: 2px solid rgba(207, 44, 44, 0);
+    outline: 2px solid var(--colorRed);
+}
 .divDelayText {
     display: none;
     flex-direction: row;
@@ -1489,6 +1563,7 @@ td {
     display: block;
     margin-top: 50px;
     opacity: 1;
+    width: 100%;
     /*overflow-x: auto;*/
     transition: var(--configTrasition03s);
 }
@@ -1503,7 +1578,7 @@ td {
     border-bottom: 3.5px solid var(--colorBlack);
     outline: 2px solid rgba(0, 0, 0, 0);
     box-shadow: 2px 2px 4px var(--colorShadow);
-    height: 0vh;
+    height: 0;
     white-space: nowrap;
     overflow-y: hidden;
     overflow-x: auto;
@@ -1812,6 +1887,15 @@ td {
     outline: 1px solid var(--colorWhite);
 }
 
+.divEraseNFunctionsFile {
+    display: flex;
+    flex-direction: row;
+    transition: var(--configTrasition03s);
+}
+.divFileSelectMSG {
+    width: 100%;
+    transition: var(--configTrasition03s);
+}
 .fileTypeSelectMSG {
     display: flex;
     flex-direction: column;
@@ -1820,7 +1904,7 @@ td {
     color: var(--colorWhite);
     outline: 2px solid rgba(0, 0, 0, 0);
     border: 2px dashed var(--colorWhite);
-    border-radius: 8px;
+    border-radius: 8px 0px 0px 8px;
     height: 200px;
     cursor: pointer;
     overflow-y: auto;
@@ -1862,6 +1946,37 @@ td {
 .fileTypeMSGAux {
     display: none;
     transition: var(--configTrasition03s);
+}
+.erasePositionMSGFile {
+    display: inline-block;
+    background-color: var(--colorWhite);
+    color: var(--colorBlack);
+    border: 2px solid var(--colorBlack);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    border-radius: 0px 8px 8px 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    word-break: break-word;
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.erasePositionMSGFile:hover {
+    background-color: var(--colorRed);
+    border: 2px solid var(--colorRed);
+    transform: translate(0px, 0px);
+}
+.erasePositionMSGFile:active {
+    background-color: var(--colorRed);
+    border: 2px solid var(--colorRed);
+    outline: 2px solid var(--colorRed);
+    transform: translate(0px, 0px);
+    transition: var(--configTrasition01s);
+}
+.erasePositionMSGFile:focus {
+    border: 2px solid rgba(207, 44, 44, 0);
+    outline: 2px solid var(--colorRed);
 }
 .textAreaCaption {
     display: none;

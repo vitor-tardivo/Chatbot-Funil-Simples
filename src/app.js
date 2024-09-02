@@ -452,6 +452,16 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
     }
 }
 
+async function Position_MSG_Erase(IdNumberPosition) {
+    try {
+        Counter_Id_Position_MSG.splice(IdNumberPosition-1, 1)
+        console.log(Counter_Id_Position_MSG)
+        return true
+    } catch (error) {
+        console.error(`> ❌ ERROR Position_MSG_Erase: ${error}`)
+        return false
+    }
+}
 let Counter_Id_Position_MSG = []
 async function Generate_MSG_Position_Id() {
     /*if (Generate_Id_Not_Ready) {
@@ -482,6 +492,7 @@ async function Generate_MSG_Position_Id() {
                 }
             }
         }
+        console.log(Counter_Id_Position_MSG)
         return Id_Position_MSG
     } catch (error) {
         console.error(`> ❌ ERROR Generate_MSG_Position_Id: ${error}`)
@@ -2137,6 +2148,7 @@ module.exports = {
     initialize,
     Set_Clients_Callback,
     Generate_MSG_Position_Id,
+    Position_MSG_Erase,
 }
 
 console.log(`> ✅ FINISHED(Starting functions)`)

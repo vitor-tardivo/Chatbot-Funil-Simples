@@ -1012,6 +1012,117 @@ async function sendCommand() {
     }
 }
 
+async function erasePosition(divPosition, typeMSG) {
+    let barL = document.querySelector('#barLoading')
+    barL.style.cssText =
+        'width: 100vw; visibility: visible;'
+
+    const IdDivPosition = divPosition.id
+    const IdNumberPosition = IdDivPosition.match(/\d+/g)
+
+    let userConfirmation = null
+    switch (typeMSG) {
+        case 1:
+        case 2:
+            userConfirmation = confirm(`Tem certeza de que deseja deletar o template da posição (${IdNumberPosition})?\nsera apagado tudo para sempre.`)
+        case 3:
+            const fileInput = divPosition.querySelector('input#ifileTypeMSGAux[type="file"]')
+            if (fileInput.files[0] === undefined) {
+                userConfirmation = confirm(`Tem certeza de que deseja deletar o template da posição (${IdNumberPosition})?\nsera apagado tudo para sempre.`)
+            } else {
+                userConfirmation = confirm(`Tem certeza de que deseja deselecionar o arquivo (${fileInput.files[0].name})?\nsera apagado para sempre.`)
+            }
+            break;
+    }
+    if (userConfirmation) {
+        let response = null
+        let Sucess = null
+        switch (typeMSG) {
+            case 1:
+                response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
+                Sucess = response.data.sucess
+                if (Sucess) {
+                    const inputDelayMSG = divPosition.querySelector(`#idelayMSGTime`)
+                    if (inputDelayMSG.value !== '') {
+                        inputDelayMSG.value = ''
+                        inputDelayMSG.dispatchEvent(new Event('input'))
+                    }
+
+                    const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
+                    conteinerMSG.style.cssText =
+                        `display: flex; opacity: 0;`
+                    setTimeout(async function() {
+                        conteinerMSG.style.cssText =
+                            `display: none; opacity: 0;`
+                        
+                        divPosition.remove()
+                    }, 100)
+                } else {
+
+                }
+                break;
+            case 2:
+                response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
+                Sucess = response.data.sucess
+                if (Sucess) {
+                    /*const inputDelayText = divPosition.querySelector(`#idelayTextTime`)                        
+                    if (inputDelayText.value !== '') {
+                        inputDelayText.value = ''
+                        inputDelayText.dispatchEvent(new Event('input'))
+                    }*/
+                    await StateTypingMSG(divPosition, true)
+
+                    const divTextAreaMSG = divPosition.querySelector(`#itextAreaTypeMSG`)
+                    if (divTextAreaMSG.value !== '') {
+                        divTextAreaMSG.value = ''
+                        divTextAreaMSG.dispatchEvent(new Event('input'))
+                    }
+
+                    const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
+                    conteinerMSG.style.cssText =
+                        `display: flex; opacity: 0;`
+                    setTimeout(async function() {
+                        conteinerMSG.style.cssText =
+                            `display: none; opacity: 0;`
+
+                        divPosition.remove()
+                    }, 100)
+                } else {
+
+                }
+                break;
+            case 3:
+                const fileInput = divPosition.querySelector('input#ifileTypeMSGAux[type="file"]')
+                if (fileInput.files[0] === undefined) {
+                    response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
+                    Sucess = response.data.sucess
+                    if (Sucess) {
+                        const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
+                        conteinerMSG.style.cssText =
+                            `display: flex; opacity: 0;`
+                        setTimeout(async function() {
+                            conteinerMSG.style.cssText =
+                                `display: none; opacity: 0;`
+
+                            divPosition.remove()
+                        }, 100)
+                    } else {
+
+                    }
+                } else {
+                    fileInput.value = ''
+                    fileInput.dispatchEvent(new Event('change'))
+                }
+                break;
+        }
+
+        resetLoadingBar()
+    } else {
+        resetLoadingBar()
+        return
+    }
+}
+
 async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {
     let divElement = null
 
@@ -1273,24 +1384,29 @@ async function StateTypingMSG(buttonElement, IsWType) {
     let type = null
     let button = null
     let abbr = null
+    let input = null
     let delay = null
     if (IsWType) {
         type = 'idivTextarea'
         button = 'iOnOffStateTypingMSG'
         abbr = 'iabbrOnOffStateTypingMSG'
+        input = 'idelayTextTime'
         delay = 'idivDelayText'
     } else {
         type = 'ifileTypeMSG'
         button = 'iOnOffStateTypingFile'
         abbr = 'iabbrOnOffStateTypingFile'
+        input = 'idelayTexAudioTime'
         delay = 'idivDelayTextAudio'
     }
-    
-    const divElement = buttonElement.closest(`#${type}`)
+
+    const typeElement = buttonElement.closest(`#${type}`)
+    const divElement = typeElement || buttonElement
+    console.log(divElement)
     const buttonStateTyping = divElement.querySelector(`#${button}`)
     const abbrStateTyping = divElement.querySelector(`#${abbr}`)
     
-    const inputDelayTextAudio = divElement.querySelector(`#idelayTexAudioTime`)
+    const inputDelayText = divElement.querySelector(`#${input}`)
     const divDelayStateTyping = divElement.querySelector(`#${delay}`)
 
     const computedSyle2 = window.getComputedStyle(buttonStateTyping)
@@ -1317,9 +1433,9 @@ async function StateTypingMSG(buttonElement, IsWType) {
                 'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
         }, 100)
     } else {
-        if (inputDelayTextAudio.value >= 1) {
-            inputDelayTextAudio.value = ''
-            inputDelayTextAudio.dispatchEvent(new Event('input'))
+        if (inputDelayText.value !== '') {
+            inputDelayText.value = ''
+            inputDelayText.dispatchEvent(new Event('input'))
         }
 
         buttonStateTyping.style.cssText =
@@ -2124,12 +2240,18 @@ async function phoneScreenSetup(buttonElement, IsWType) {
 
 //pro sistemas de mandar arquivo, as funcoes a adicionar... um botao que deseleciona o arquivo e um pra apagar do funil o card(isso de apagar o card vai ter em todos os tipos de cards do funil) e pra poder apagar o card tera que deseleciona primeiro entao faze um esquema de desgin que no lugar do botao pra deseleciona dps de clical muda pro apagar, e tbm algum esqueme de dps de selecionar mandar enviar ele retrai o tamanho pra n ficar mt grande na tela ne e talves tirar a funcao de arrasta pra mandar ou sla, e claro em todos os card tem do lado um lugar que vc pega seleciona segurando e deixa onde na posica odo funil ele vai ficar e tals personalizavel
 async function getFileData(divElementBridge, file) {
+    let barL = document.querySelector('#barLoading')
+    barL.style.cssText =
+        'width: 100vw; visibility: visible;'
+
     const divElement = divElementBridge.closest('.fileTypeMSG')
     const divFunctions = divElement.querySelector('#idivFileFunctions')
     const typeFile = divElement.querySelector('#ifileTypeSelected')
     
     const buttonStateTyping = divElement.querySelector('#iOnOffStateTypingFile')
     const buttonStateRecording = divElement.querySelector('#iOnOffStateRecordingFile')
+
+    let buttonErasePositionMSG = null
 
     let divDelayStateTypingRecording = null
     let computedSyle = null
@@ -2152,11 +2274,18 @@ async function getFileData(divElementBridge, file) {
         typeFile.textContent = `...`
         
         divFunctions.style.cssText =
-            'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;'
+            'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0;'
         setTimeout(function() {
             divFunctions.style.cssText =
-                'display: none; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;' 
+                'display: none; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0;' 
         }, 100)
+
+
+        const divPosition = divElement.parentElement
+        buttonErasePositionMSG = divElement.querySelector(`#ierasePositionMSGFile`)
+        const IdDivPosition = divPosition.id
+        const IdNumberPosition = IdDivPosition.match(/\d+/g)
+        buttonErasePositionMSG.title = `Deletar posição MSG (${IdNumberPosition})`
 
         await resetScreenSetup(divElementBridge, false)
         divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
@@ -2192,14 +2321,18 @@ async function getFileData(divElementBridge, file) {
         divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
         divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
+        resetLoadingBar()
         return
     } else {
         divFunctions.style.cssText =
-            'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0vh;'
+            'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0;'
         setTimeout(function() {
             divFunctions.style.cssText =
-                'display: flex; border: 2px solid var(--colorBlack); border-bottom: 3.5px solid var(--colorBlack); height: 5vh;' 
+                'display: flex; border: 2px solid var(--colorBlack); border-bottom: 3.5px solid var(--colorBlack); height: 5vh;'//mudar o 5vh n fica bom pra diferentes telas
         }, 300)
+
+        buttonErasePositionMSG = divElement.querySelector(`#ierasePositionMSGFile`)
+        buttonErasePositionMSG.title = `Deselecionar arquivo (${file.name})`
 
         displayOnConsole(file.type)
         const fileType = file.type
@@ -2245,6 +2378,7 @@ async function getFileData(divElementBridge, file) {
                 divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
                 await sendToFunil(divElementBridge, 3, null, file)
+
                 break;
             case 'audio/x-m4a':
             case 'audio/wav':
@@ -2293,6 +2427,7 @@ async function getFileData(divElementBridge, file) {
                 divDelayTextAudioTitle.textContent = 'ATRASO-State=Recording:'
                 
                 await sendToFunil(divElementBridge, 3, null, file)
+
                 break;
             case 'image/jpg':
             case 'image/png':
@@ -2333,6 +2468,7 @@ async function getFileData(divElementBridge, file) {
                 divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
                 await sendToFunil(divElementBridge, 3, null, file)
+
                 break;
             case 'text/plain':
             case 'application/pdf':
@@ -2381,6 +2517,7 @@ async function getFileData(divElementBridge, file) {
                 divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing:'
 
                 await sendToFunil(divElementBridge, 3, null, file)
+
                 break;
             default:
                 typeFile.textContent = `documento`
@@ -2420,11 +2557,18 @@ async function getFileData(divElementBridge, file) {
                 divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
                 await sendToFunil(divElementBridge, 3, null, file)
+
                 break;
         }
+
+        resetLoadingBar()
     }
 }
 async function fileTypeAction(event, isClick, divElement) {
+    let barL = document.querySelector('#barLoading')
+    barL.style.cssText =
+        'width: 100vw; visibility: visible;'
+
     divElement.classList.remove('enter')
 
     const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
@@ -2451,6 +2595,8 @@ async function fileTypeAction(event, isClick, divElement) {
         
         file = '...'
         await getFileData(divElement, file)
+
+        resetLoadingBar()
     } else {
         if (!isClick) {
             const dataTransfer = new DataTransfer()
@@ -2463,6 +2609,8 @@ async function fileTypeAction(event, isClick, divElement) {
         abbrFileZone.title = `Arquivo: ${file.name}`
 
         await getFileData(divElement, file)
+
+        resetLoadingBar()
     }
 }
 
@@ -2474,8 +2622,8 @@ async function fileHandleDragLeave(event, divElement) {//fica ativando quando me
 
     const statusFile = divElement.querySelector('#ifileStatus')
     
-    const fileType = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
-    if (fileType.files.length >= 1) {
+    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+    if (fileInput.files.length >= 1) {
         statusFile.textContent = `Arquivo selecionado`
     } else {
         statusFile.textContent = `Clique ou arraste um arquivo`
@@ -2490,8 +2638,8 @@ async function fileHandleDragEnter(event, divElement) {
 
     divElement.classList.add('enter')
     
-    const fileType = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
-    if (fileType.files.length === 0) {
+    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+    if (fileInput.files.length === 0) {
         const abbrFileZone = divElement.closest('abbr')
         abbrFileZone.title = `Solte para enviar o arquivo`
     }
@@ -2501,8 +2649,8 @@ async function fileHandleDragEnter(event, divElement) {
 async function fileHoverLeave(divElement) {
     const statusFile = divElement.querySelector('#ifileStatus')
     
-    const fileType = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
-    if (fileType.files.length >= 1) {
+    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+    if (fileInput.files.length >= 1) {
         statusFile.textContent = `Arquivo selecionado`
     } else {
         statusFile.textContent = `Clique ou arraste um arquivo`
@@ -2515,24 +2663,24 @@ async function fileHoverEnter(divElement) {
     const statusFile = divElement.querySelector('#ifileStatus')
     statusFile.textContent = `Clique`
 
-    const fileType = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
-    if (fileType.files.length === 0) {
+    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+    if (fileInput.files.length === 0) {
         const abbrFileZone = divElement.closest('abbr')
         abbrFileZone.title = `Clique e selecione um arquivo para enviar o arquivo`
     }
 }
 async function fileAuxAction(divElement) {
-    const fileType = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
 
     const statusFile = divElement.querySelector('#ifileStatus')
     const abbrFileZone = divElement.closest('abbr')
     
-    if (fileType.files.length === 0) {
+    if (fileInput.files.length === 0) {
         abbrFileZone.title = `Selecione um arquivo para enviar o arquivo`
     }
     statusFile.textContent = `Selecione`
     
-    await fileType.click()
+    await fileInput.click()
 }
 
 async function delayLimitLength(input) {
@@ -2543,6 +2691,10 @@ async function delayLimitLength(input) {
 }
 
 async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado na hora pra modificar unicamente por MSG para aparecer bunitin opacity e tals
+    let barL = document.querySelector('#barLoading')
+    barL.style.cssText =
+        'width: 100vw; visibility: visible;'
+
     await newTypeMSGShown()
 
     const response = await axios.post('/funil/new-MSG')
@@ -2553,48 +2705,12 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
     let conteinerMSG = null
     switch (type) {
         case 1:
-            const MSGHTMlDelay = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
-                                    <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
-                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
-                                        
-                                        <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
-                                            <option value="none" selected>Nenhum</option>
-                                            <option value="seconds">Segundos</option>
-                                            <option value="minutes">Minutos</option>
-                                            <option value="hours">Horas</option>
-                                            <option value="days">Dias</option>
-                                        </select>
-                                    </div>
-                                </div>`
-            divFunil.innerHTML += MSGHTMlDelay
-
-            conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
-            console.log(conteinerMSG)
-            conteinerMSG.style.cssText =
-                `display: block; opacity: 0;`
-            setTimeout(function() {
-                conteinerMSG.style.cssText =
-                `display: block; opacity: 1;`
-            }, 300)
-            break
-        case 2:
-            const MSGHTMlText = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
-                                    <div class="divTextarea" id="idivTextarea">
-                                        <div class="divTextareaFunctions" id="idivTextareaFunctions">
-                                            <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
+            const MSGHTMlDelay = `
+                                    <div class="conteinerFunilMSG divDelayNErasePosition" id="conteinerFunilMSG${Id_Position_MSG}">
+                                        <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
+                                            <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
                                             
-                                            <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
-                                            <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
-                                            
-                                            <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
-                                            <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
-                                            <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
-                                            <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
-                                        </div>
-                                        <div class="divDelayText" id="idivDelayText">
-                                            <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
-                                            
-                                            <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 1, this, null)">
+                                            <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
                                                 <option value="none" selected>Nenhum</option>
                                                 <option value="seconds">Segundos</option>
                                                 <option value="minutes">Minutos</option>
@@ -2602,23 +2718,74 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                                 <option value="days">Dias</option>
                                             </select>
                                         </div>
-                                        
-                                        <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
+
+                                        <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSGDelay" id="ierasePositionMSGDelay" onclick="erasePosition(this.parentElement, 1)">D</button>
                                     </div>
-                                </div>`
+                                  `
+            divFunil.innerHTML += MSGHTMlDelay
+
+            conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
+            console.log(conteinerMSG)
+            conteinerMSG.style.cssText =
+                `display: flex; opacity: 0;`
+            setTimeout(function() {
+                conteinerMSG.style.cssText =
+                    `display: flex; opacity: 1;`
+            }, 300)
+
+            resetLoadingBar()
+            break
+        case 2:
+            const MSGHTMlText = `
+                                    <div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+                                        <div class="divTextarea" id="idivTextarea">
+                                            <div class="divEraseNFunctionsText">
+                                                <div class="divTextareaFunctions" id="idivTextareaFunctions">
+                                                    <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
+                                                    
+                                                    <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
+                                                    <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
+                                                    
+                                                    <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
+                                                    <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
+                                                    <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
+                                                    <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
+                                                </div>
+
+                                                <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSGText" id="ierasePositionMSGText" onclick="erasePosition(this.parentElement.parentElement.parentElement, 2)">D</button>
+                                            </div>
+                                            <div class="divDelayText" id="idivDelayText">
+                                                <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
+                                                
+                                                <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 2, this, null)">
+                                                    <option value="none" selected>Nenhum</option>
+                                                    <option value="seconds">Segundos</option>
+                                                    <option value="minutes">Minutos</option>
+                                                    <option value="hours">Horas</option>
+                                                    <option value="days">Dias</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
+                                        </div>
+                                    </div>
+                                `
             divFunil.innerHTML += MSGHTMlText
             
             conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
             console.log(conteinerMSG)
             conteinerMSG.style.cssText =
-                `display: block; opacity: 0;`
+                `display: flex; opacity: 0;`
             setTimeout(function() {
                 conteinerMSG.style.cssText =
-                `display: block; opacity: 1;`
+                    `display: flex; opacity: 1;`
             }, 300)
+
+            resetLoadingBar()
             break
         case 3:
-            const MSGHTMlFile = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+            const MSGHTMlFile = `
+                                <div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
                                     <div class="fileTypeMSG" id="ifileTypeMSG">
                                         <div class="divFileFunctions" id="idivFileFunctions">
                                             <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
@@ -2637,7 +2804,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                         <div class="divDelayTextAudio" id="idivDelayTextAudio">
                                             <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
                                             
-                                            <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 1, this, null)">
+                                            <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 3, this, null)">
                                                 <option value="none" selected>Nenhum</option>
                                                 <option value="seconds">Segundos</option>
                                                 <option value="minutes">Minutos</option>
@@ -2646,28 +2813,37 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                             </select>
                                         </div>
                                         
-                                        <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
-                                            <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
-                                            <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
-                                            <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
-                                            <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
-                                            
-                                            <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
-                                        </div></abbr>
+                                        <div class="divEraseNFunctionsFile">
+                                            <div class="divFileSelectMSG">
+                                                <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                                    <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
+                                                    <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
+                                                    <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                                    <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                                    
+                                                    <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
+                                                </div></abbr>
+                                            </div>
+
+                                            <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSGFile" id="ierasePositionMSGFile" onclick="erasePosition(this.parentElement.parentElement.parentElement, 3)">D</button>
+                                        </div>
 
                                         <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
                                     </div>
-                                </div>`
+                                </div>
+                                `
             divFunil.innerHTML += MSGHTMlFile
 
             conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
             console.log(conteinerMSG)
             conteinerMSG.style.cssText =
-                `display: block; opacity: 0;`
+                `display: flex; opacity: 0;`
             setTimeout(function() {
                 conteinerMSG.style.cssText =
-                `display: block; opacity: 1;`
+                    `display: flex; opacity: 1;`
             }, 300)
+
+            resetLoadingBar()
             break
     }
 }

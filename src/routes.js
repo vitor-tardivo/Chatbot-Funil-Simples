@@ -20,6 +20,7 @@ const {
     New_Client_,
     initialize,
     Generate_MSG_Position_Id,
+    Position_MSG_Erase,
 } = require('./app')
 
 router.get('/', (req, res) => {
@@ -32,6 +33,17 @@ router.get('/', (req, res) => {
     }
 })
 
+router.delete('/funil/erase-position-MSG', async (req, res) => {
+    try {
+        const idnumberposition = req.query.IdNumberPosition
+        const Sucess = await Position_MSG_Erase(idnumberposition)
+        
+        res.status(200).send({ sucess: Sucess, message: `Sucessfully erased the MSG position (${idnumberposition}).` })
+    } catch (error) {
+        console.error(`> ❌ ERROR /funil/new-MSG: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, idpositionmsg: null })
+    }
+})
 router.post('/funil/new-MSG', async (req, res) => {
     try {
         const Id_Position_MSG = await Generate_MSG_Position_Id()
