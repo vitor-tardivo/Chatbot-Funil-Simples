@@ -1098,14 +1098,38 @@ td {
 
 .conteinerFunilMSG {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     opacity: 1;
     transition: var(--configTrasition03s);
 }
+.divInfoPositionMSG {
+    margin-top: 50px;
+    margin-bottom: 10px;
+    transition: var(--configTrasition03s);
+}
+.titlePositionMSG {
+    color: var(--colorWhite);
+    text-shadow: 2px 2px 4px var(--colorShadow);
+    font-size: 2vw;
+    font-family: var(--fontDisplay);
+    transition: var(--configTrasition03s);
+}
+.positionMSG {
+    color: var(--colorWhite);
+    text-shadow: 2px 2px 4px var(--colorShadow);
+    font-size: 1.7vw;
+    font-family: var(--fontDisplay);
+    transition: var(--configTrasition03s);
+}
+.divInnerConteinerFunilMSG {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    transition: var(--configTrasition03s);
+}
 
 .divDelayNErasePosition {
-    margin-top: 50px;
     transition: var(--configTrasition03s);
 }
 .divDelayTypeMSG {
@@ -1221,7 +1245,6 @@ td {
 
 .divTextarea {
     display: block;
-    margin-top: 50px;
     width: 100%;
     opacity: 1;
     transition: var(--configTrasition03s);
@@ -1561,7 +1584,6 @@ td {
 
 .fileTypeMSG {
     display: block;
-    margin-top: 50px;
     opacity: 1;
     width: 100%;
     /*overflow-x: auto;*/

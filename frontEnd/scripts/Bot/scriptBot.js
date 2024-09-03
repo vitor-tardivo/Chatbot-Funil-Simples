@@ -1025,6 +1025,7 @@ async function erasePosition(divPosition, typeMSG) {
         case 1:
         case 2:
             userConfirmation = confirm(`Tem certeza de que deseja deletar o template da posição (${IdNumberPosition})?\nsera apagado tudo para sempre.`)
+            break;
         case 3:
             const fileInput = divPosition.querySelector('input#ifileTypeMSGAux[type="file"]')
             if (fileInput.files[0] === undefined) {
@@ -2696,20 +2697,36 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
         'width: 100vw; visibility: visible;'
 
     await newTypeMSGShown()
-
-    const response = await axios.post('/funil/new-MSG')
-    const Id_Position_MSG = response.data.idpositionmsg
-
+    
     const divFunil = document.querySelector('#funilArea')
+    const allConteinerFunilMSG = divFunil.querySelectorAll('.conteinerFunilMSG')
+    let arrayIdNumberPosition = []
+    allConteinerFunilMSG.forEach((divElement) => { 
+        arrayIdNumberPosition.push(parseInt(divElement.id.match(/\d+/g)[0]))  
+    })
+    const response = await axios.get('/funil/insert_exponecial_position_MSG', { params: { arrayIdNumberPosition } })
+    const idNumberPositionDivAdjacent = response.data.idnumberpositiondivadjacent
+    const isFirstUndefined = response.data.isfirstundefined 
 
+    const response2 = await axios.post('/funil/new-MSG')
+    const Id_Position_MSG = response2.data.idpositionmsg
+
+    const divAdjacent = document.querySelector(`#${idNumberPositionDivAdjacent}`)
     let conteinerMSG = null
     switch (type) {
         case 1:
-            const MSGHTMlDelay = `
-                                    <div class="conteinerFunilMSG divDelayNErasePosition" id="conteinerFunilMSG${Id_Position_MSG}">
+            const MSGHTMlDelay = `<div class="conteinerFunilMSG divDelayNErasePosition" id="conteinerFunilMSG${Id_Position_MSG}">
+                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG">
+                                        <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                        <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
+                                    </div>
+
+                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+                                        <input title="Selecione esta posição (${Id_Position_MSG})" type="checkbox" class="" id="">
+                                        
                                         <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
                                             <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
-                                            
+                                        
                                             <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
                                                 <option value="none" selected>Nenhum</option>
                                                 <option value="seconds">Segundos</option>
@@ -2721,11 +2738,19 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
 
                                         <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSGDelay" id="ierasePositionMSGDelay" onclick="erasePosition(this.parentElement, 1)">D</button>
                                     </div>
-                                  `
-            divFunil.innerHTML += MSGHTMlDelay
+                                    
+                                </div>`
+            if (divAdjacent) {
+                if (isFirstUndefined) {
+                    divAdjacent.insertAdjacentHTML('beforebegin', MSGHTMlDelay)
+                } else {
+                    divAdjacent.insertAdjacentHTML('afterend', MSGHTMlDelay)
+                }
+            } else {
+                divFunil.innerHTML += MSGHTMlDelay
+            }
 
             conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
-            console.log(conteinerMSG)
             conteinerMSG.style.cssText =
                 `display: flex; opacity: 0;`
             setTimeout(function() {
@@ -2736,10 +2761,18 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
             resetLoadingBar()
             break
         case 2:
-            const MSGHTMlText = `
-                                    <div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+            const MSGHTMlText = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG">
+                                        <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                        <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
+                                    </div>
+
+                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
                                         <div class="divTextarea" id="idivTextarea">
                                             <div class="divEraseNFunctionsText">
+                                                <input title="Selecione esta posição (${Id_Position_MSG})" type="checkbox" class="" id="">
+
                                                 <div class="divTextareaFunctions" id="idivTextareaFunctions">
                                                     <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
                                                     
@@ -2768,12 +2801,20 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                             
                                             <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
                                         </div>
+
                                     </div>
-                                `
-            divFunil.innerHTML += MSGHTMlText
+                                </div>`
+            if (divAdjacent) {
+                if (isFirstUndefined) {
+                    divAdjacent.insertAdjacentHTML('beforebegin', MSGHTMlText)
+                } else {
+                    divAdjacent.insertAdjacentHTML('afterend', MSGHTMlText)
+                }
+            } else {
+                divFunil.innerHTML += MSGHTMlText
+            }
             
             conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
-            console.log(conteinerMSG)
             conteinerMSG.style.cssText =
                 `display: flex; opacity: 0;`
             setTimeout(function() {
@@ -2784,58 +2825,72 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
             resetLoadingBar()
             break
         case 3:
-            const MSGHTMlFile = `
-                                <div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
-                                    <div class="fileTypeMSG" id="ifileTypeMSG">
-                                        <div class="divFileFunctions" id="idivFileFunctions">
-                                            <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
-                                            <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
-                                            <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
+            const MSGHTMlFile = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG">
+                                        <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                        <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
+                                    </div>
+
+                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+                                        <div class="fileTypeMSG" id="ifileTypeMSG">
+                                            <div class="divFileFunctions" id="idivFileFunctions">
+                                                <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
+                                                <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
+                                                <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
+                                                
+                                                <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
+                                                <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
+                                                
+                                                <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
+                                                <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
+                                                <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
+                                                <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
+                                            </div>
                                             
-                                            <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
-                                            <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
+                                            <div class="divDelayTextAudio" id="idivDelayTextAudio">
+                                                <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
+                                                
+                                                <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 3, this, null)">
+                                                    <option value="none" selected>Nenhum</option>
+                                                    <option value="seconds">Segundos</option>
+                                                    <option value="minutes">Minutos</option>
+                                                    <option value="hours">Horas</option>
+                                                    <option value="days">Dias</option>
+                                                </select>
+                                            </div>
                                             
-                                            <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
-                                            <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
-                                            <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
-                                            <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
-                                        </div>
-                                        
-                                        <div class="divDelayTextAudio" id="idivDelayTextAudio">
-                                            <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
-                                            
-                                            <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 3, this, null)">
-                                                <option value="none" selected>Nenhum</option>
-                                                <option value="seconds">Segundos</option>
-                                                <option value="minutes">Minutos</option>
-                                                <option value="hours">Horas</option>
-                                                <option value="days">Dias</option>
-                                            </select>
-                                        </div>
-                                        
-                                        <div class="divEraseNFunctionsFile">
-                                            <div class="divFileSelectMSG">
-                                                <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
-                                                    <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
-                                                    <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
-                                                    <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
-                                                    <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
-                                                    
-                                                    <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
-                                                </div></abbr>
+                                            <div class="divEraseNFunctionsFile">
+                                                <input title="Selecione esta posição (${Id_Position_MSG})" type="checkbox" class="" id="">
+                                                
+                                                <div class="divFileSelectMSG">
+                                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                                        <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
+                                                        <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
+                                                        <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                                        <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                                        
+                                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
+                                                    </div></abbr>
+                                                </div>
+
+                                                <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSGFile" id="ierasePositionMSGFile" onclick="erasePosition(this.parentElement.parentElement.parentElement, 3)">D</button>
                                             </div>
 
-                                            <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSGFile" id="ierasePositionMSGFile" onclick="erasePosition(this.parentElement.parentElement.parentElement, 3)">D</button>
+                                            <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
                                         </div>
-
-                                        <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
                                     </div>
-                                </div>
-                                `
-            divFunil.innerHTML += MSGHTMlFile
+                                </div>`
+            if (divAdjacent) {
+                if (isFirstUndefined) {
+                    divAdjacent.insertAdjacentHTML('beforebegin', MSGHTMlFile)
+                } else {
+                    divAdjacent.insertAdjacentHTML('afterend', MSGHTMlFile)
+                }
+            } else {
+                divFunil.innerHTML += MSGHTMlFile
+            }
 
             conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
-            console.log(conteinerMSG)
             conteinerMSG.style.cssText =
                 `display: flex; opacity: 0;`
             setTimeout(function() {
@@ -3869,19 +3924,47 @@ async function insertClient_Front(Clientt_, isActive) {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
-        const clientHTMlDestroy = `<div id="${Clientt_}">
-                                        <abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>
-                                    </div>`
-        const clientHTMLReinitialize = `<div id="${Clientt_}">
-                                            <abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>
-                                        </div>`
-        
+        //ainda a testar o insert de posicao dinamica exponencial
         const ClientsDiv = document.querySelector('#Clients_')
-        
+        const allConteinerClients_ = ClientsDiv.querySelectorAll('.divClients_')
+        let arrayIdNameClients_ = []
+        allConteinerClients_.forEach((divElement) => {
+            const Client_Id = parseInt(divElement.id.match(/\d+/g)[0])
+            const Client_Name = divElement.id.split('_').slice(2, -1).join('_')
+            arrayIdNameClients_.push({ Client_Id, Client_Name })
+        })
+
+        const response = await axios.get('/client/insert_exponecial_position_Client_', { params: { arrayIdNameClients_ } })
+        const idNumberClient_DivAdjacent = response.data.idnumberclient_divadjacent
+        const isFirstUndefined = response.data.isfirstundefined
+    
+        const divAdjacent = document.querySelector(`#${idNumberClient_DivAdjacent}`)
         if (isActive) {
-            ClientsDiv.innerHTML += clientHTMlDestroy
+            const clientHTMlDestroy = `<div class="divClients_" id="${Clientt_}">
+                                            <abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>
+                                        </div>`
+            if (divAdjacent) {
+                if (isFirstUndefined) {
+                    divAdjacent.insertAdjacentHTML('beforebegin', clientHTMlDestroy)
+                } else {
+                    divAdjacent.insertAdjacentHTML('afterend', clientHTMlDestroy)
+                }
+            } else {
+                ClientsDiv.innerHTML += clientHTMlDestroy
+            }
         } else {
-            ClientsDiv.innerHTML += clientHTMLReinitialize
+            const clientHTMLReinitialize = `<div class="divClients_" id="${Clientt_}">
+                                                <abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>
+                                            </div>`
+            if (divAdjacent) {
+                if (isFirstUndefined) {
+                    divAdjacent.insertAdjacentHTML('beforebegin', clientHTMLReinitialize)
+                } else {
+                    divAdjacent.insertAdjacentHTML('afterend', clientHTMLReinitialize)
+                }
+            } else {
+                ClientsDiv.innerHTML += clientHTMLReinitialize
+            }
         }
 
         const divClientt_ = document.querySelector(`#${Clientt_}`)

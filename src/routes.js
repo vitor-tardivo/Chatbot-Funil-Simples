@@ -15,12 +15,14 @@ const {
     Input_Command, 
     Erase_Client_,
     Destroy_Client_,
+    Insert_Exponecial_Position_Client_,
     Reinitialize_Client_,
     Select_Client_,
     New_Client_,
     initialize,
     Generate_MSG_Position_Id,
     Position_MSG_Erase,
+    Insert_Exponecial_Position_MSG,
 } = require('./app')
 
 router.get('/', (req, res) => {
@@ -33,6 +35,17 @@ router.get('/', (req, res) => {
     }
 })
 
+router.get('/funil/insert_exponecial_position_MSG', async (req, res) => {
+    try {
+        const arrayidnumberposition = req.query.arrayIdNumberPosition
+        const { idNumberPositionDivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_MSG(arrayidnumberposition)
+        
+        res.status(200).send({ sucess: true, message: `Sucessfully sent the insert info exponecial position MSG.`, idnumberpositiondivadjacent: idNumberPositionDivAdjacent, isfirstundefined: isFirstUndefined })
+    } catch (error) {
+        console.error(`> ❌ ERROR /funil/insert_exponecial_position_MSG: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, idnumberpositiondivadjacent: null, isfirstundefined: null })
+    }
+})
 router.delete('/funil/erase-position-MSG', async (req, res) => {
     try {
         const idnumberposition = req.query.IdNumberPosition
@@ -166,6 +179,17 @@ router.post('/features/command', express.json(), (req, res) => {
 })
 
 
+router.get('/client/insert_exponecial_position_Client_', async (req, res) => {
+    try {
+        const arrayidnameclients_ = req.query.arrayIdNameClients_
+        const { idNumberClient_DivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_Client_(arrayidnameclients_)
+        
+        res.status(200).send({ sucess: true, message: `Sucessfully sent the insert info exponecial position Client_.`, idnumberclient_divadjacent: idNumberClient_DivAdjacent, isfirstundefined: isFirstUndefined })
+    } catch (error) {
+        console.error(`> ❌ ERROR /funil/insert_exponecial_position_MSG: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, idnumberclient_divadjacent: null, isfirstundefined: null })
+    }
+})
 router.delete('/client/erase', async (req, res) => {
     try {
         const Client_ = req.query.Clientt_

@@ -452,6 +452,34 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
     }
 }
 
+async function Insert_Exponecial_Position_MSG(arrayIdNumberPosition) {
+    try {
+        arrayIdNumberPosition = arrayIdNumberPosition.map(Number)
+        let isFirstUndefined = false
+        let idNumberPositionDivAdjacent = null
+        for (let i = 0; i < arrayIdNumberPosition.length; i++) {
+        const currentNumber = arrayIdNumberPosition[i]
+        const nextNumber = arrayIdNumberPosition[i + 1]
+        if (arrayIdNumberPosition[0] !== 1) {
+            isFirstUndefined = true
+            idNumberPositionDivAdjacent = `conteinerFunilMSG${arrayIdNumberPosition[0]}`
+            break
+        } 
+        if (nextNumber !== undefined && nextNumber !== null) {
+            if (currentNumber !== nextNumber-1) {
+                idNumberPositionDivAdjacent = `conteinerFunilMSG${arrayIdNumberPosition[currentNumber-1]}`
+                break
+            }
+        } 
+        idNumberPositionDivAdjacent = `conteinerFunilMSG${currentNumber}`
+        }
+
+        return { idNumberPositionDivAdjacent, isFirstUndefined }
+    } catch (error) {
+        console.error(`> ❌ ERROR Insert_Exponecial_Position_MSG: ${error}`)
+        return null
+    }
+}
 async function Position_MSG_Erase(IdNumberPosition) {
     try {
         Counter_Id_Position_MSG.splice(IdNumberPosition-1, 1)
@@ -462,7 +490,7 @@ async function Position_MSG_Erase(IdNumberPosition) {
         return false
     }
 }
-let Counter_Id_Position_MSG = []
+let Counter_Id_Position_MSG = [1, 2, 3]
 async function Generate_MSG_Position_Id() {
     /*if (Generate_Id_Not_Ready) {
         console.log('>  ℹ️ Generate_Client_Id not Ready.')
@@ -833,6 +861,33 @@ async function Reinitialize_Client_(Clientt_) { // quando for adicionar pra apag
         Client_Not_Ready = false
         
         return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
+    }
+}
+async function Insert_Exponecial_Position_Client_(arrayIdNameClients_) {
+    try {
+        let isFirstUndefined = false
+        let idNumberClient_DivAdjacent = null
+        for (let i = 0; i < arrayIdNameClients_.length; i++) {
+            const currentNumber = Number(arrayIdNameClients_[i].Client_Id)
+            const nextNumber = Number(arrayIdNameClients_[i++].Client_Id)
+            if (Number(arrayIdNameClients_[0].Client_Id) !== 1) {
+                isFirstUndefined = true
+                idNumberClient_DivAdjacent = `_${Number(arrayIdNameClients_[0].Client_Id)}_${arrayIdNameClients_[0].Client_Name}_`
+                break
+            } 
+            if (nextNumber !== undefined && nextNumber !== null) {
+                if (currentNumber !== nextNumber-1) {
+                    idNumberClient_DivAdjacent = `_${Number(arrayIdNameClients_[currentNumber-1].Client_Id)}_${arrayIdNameClients_[currentNumber-1].Client_Name}_`
+                    break
+                }
+            } 
+            idNumberClient_DivAdjacent = `_${currentNumber}_${arrayIdNameClients_[i].Client_Name}_`
+        }
+
+        return { idNumberClient_DivAdjacent, isFirstUndefined }
+    } catch (error) {
+        console.error(`> ❌ ERROR Insert_Exponecial_Position_Client_: ${error}`)
+        return null
     }
 }
 async function Select_Client_(Clientt_) {
@@ -2139,6 +2194,7 @@ module.exports = {
     Set_Erase_Client_Callback,
     Destroy_Client_,
     Set_Destroy_Client_Callback,
+    Insert_Exponecial_Position_Client_,
     Reinitialize_Client_,
     Set_Reinitialize_Client_Callback,
     Select_Client_,
@@ -2149,6 +2205,7 @@ module.exports = {
     Set_Clients_Callback,
     Generate_MSG_Position_Id,
     Position_MSG_Erase,
+    Insert_Exponecial_Position_MSG,
 }
 
 console.log(`> ✅ FINISHED(Starting functions)`)
