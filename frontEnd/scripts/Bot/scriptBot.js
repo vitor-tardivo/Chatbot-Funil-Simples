@@ -1012,6 +1012,123 @@ async function sendCommand() {
     }
 }
 
+let positionSelected = null
+async function selectionPositionMSG(checkElement, typeMSG) {
+    try {
+        const divPosition = checkElement.parentElement.parentElement.parentElement
+        console.log('aaaaaaaa',divPosition)
+        const idNumberPosition = divPosition.id.match(/\d+/g)
+
+        if (positionSelected !== null && checkElement.checked === true) {
+            console.log(positionSelected)
+            checkElement.checked = false
+            
+            let userConfirmation = confirm(`Tem certeza de que deseja trocar a Posição MSG (${positionSelected.idNumberPositionSelected}) para a Posição MSG (${idNumberPosition})?`)
+            if (userConfirmation) {
+                const conteinerPositionMSGSelected = document.querySelector(`#conteinerFunilMSG${positionSelected.idNumberPositionSelected}`)
+                conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                    `display: flex; opacity: 0;`
+                const conteinerPositionMSGTochange = document.querySelector(`#conteinerFunilMSG${idNumberPosition}`)
+                conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                    `display: flex; opacity: 0;`
+                setTimeout(function() {
+                    conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                        `display: none; opacity: 0;`
+                    conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                            `display: none; opacity: 0;`
+                
+                    const divInnerPositionMSGSelected = conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).cloneNode(true)
+                    conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).innerHTML = ''
+
+                    const divInnerPositionMSGSTochange = conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).cloneNode(true)
+                    conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).innerHTML = ''
+
+                    conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).replaceWith(divInnerPositionMSGSTochange)
+                    conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                        `display: flex; opacity: 0;`
+                    conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).replaceWith(divInnerPositionMSGSelected)
+                    conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                        `display: flex; opacity: 0;`
+                    setTimeout(function() {
+                        conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                            `display: flex; opacity: 1;`
+                        conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                            `display: flex; opacity: 1;`
+
+                        //ja com valor no input delay ele roda o select duas vezes
+
+                        displayOnConsole(positionSelected.typeMSGSelected)
+                        switch (positionSelected.typeMSGSelected) {
+                            case 1:
+                                divPosition.querySelector(`#idelayMSGTime`).dispatchEvent(new Event('input'))
+                                divPosition.querySelector(`#idelayMSGSelect`).dispatchEvent(new Event('input'))
+                                break;
+                            case 2:
+                                divPosition.querySelector(`#idelayTextTime`).dispatchEvent(new Event('input'))
+                                divPosition.querySelector(`#idelayTextSelect`).dispatchEvent(new Event('input'))
+                                divPosition.querySelector(`#itextAreaTypeMSG`).dispatchEvent(new Event('input'))
+                                break;
+                            case 3:
+                                divPositionTochange.querySelector(`#idelayTexAudioTime`).dispatchEvent(new Event('input'))
+                                divPositionTochange.querySelector(`#idelayTextAudioSelect`).dispatchEvent(new Event('input'))
+                                divPositionTochange.querySelector(`#itextAreaCaption`).dispatchEvent(new Event('input'))
+                                //divPosition.querySelector('input#ifileTypeMSGAux[type="file"]').dispatchEvent(new Event('change'))//deprecated
+                                break;
+                        }
+
+                        const divPositionTochange = document.querySelector(`#conteinerFunilMSG${positionSelected.idNumberPositionSelected}`)//caso n esteja entendo como ja mudo a posicao ent é isso... da certo tendeu?
+                        console.log(divPositionTochange)
+                        displayOnConsole(typeMSG)
+                        switch (typeMSG) {
+                            case 1:
+                                divPositionTochange.querySelector(`#idelayMSGTime`).dispatchEvent(new Event('input'))
+                                divPositionTochange.querySelector(`#idelayMSGSelect`).dispatchEvent(new Event('input'))
+                                break;
+                            case 2:
+                                divPositionTochange.querySelector(`#idelayTextTime`).dispatchEvent(new Event('input'))
+                                divPositionTochange.querySelector(`#idelayTextSelect`).dispatchEvent(new Event('input'))
+                                divPositionTochange.querySelector(`#itextAreaTypeMSG`).dispatchEvent(new Event('input'))
+                                break;
+                            case 3:
+                                divPositionTochange.querySelector(`#idelayTexAudioTime`).dispatchEvent(new Event('input'))
+                                divPositionTochange.querySelector(`#idelayTextAudioSelect`).dispatchEvent(new Event('input'))
+                                divPositionTochange.querySelector(`#itextAreaCaption`).dispatchEvent(new Event('input'))
+                                divPositionTochange.querySelector('input#ifileTypeMSGAux[type="file"]').dispatchEvent(new Event('change'))//deprecated
+                                break;
+                        }
+
+                        document.querySelector(`#iinputCheckboxSelection${positionSelected.idNumberPositionSelected}`).checked = false
+                        document.querySelector(`#iinputCheckboxSelection${positionSelected.idNumberPositionSelected}`).dispatchEvent(new Event('change'))
+                        
+                        
+                    }, 300)
+                }, 100)
+            } else {
+
+
+                return
+            }
+            return
+        }
+        displayOnConsole(typeMSG)
+        
+        if (checkElement.checked) {
+            const idNumberPositionSelected = Number(idNumberPosition)
+            const typeMSGSelected = typeMSG
+            positionSelected = { idNumberPositionSelected, typeMSGSelected }
+            console.log(positionSelected)
+            checkElement.parentElement.title = `Selecionado esta posição (${idNumberPosition})`
+        } else {
+            positionSelected = null
+            console.log(positionSelected)
+            checkElement.parentElement.title = `Selecione esta posição (${idNumberPosition})`
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR selectedPositionMSG: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> selectedPositionMSG: ${error.message}`, setLogError)
+    }
+}
+
 async function erasePosition(divPosition, typeMSG) {
     let barL = document.querySelector('#barLoading')
     barL.style.cssText =
@@ -2282,8 +2399,8 @@ async function getFileData(divElementBridge, file) {
         }, 100)
 
 
-        const divPosition = divElement.parentElement
-        buttonErasePositionMSG = divElement.querySelector(`#ierasePositionMSGFile`)
+        const divPosition = divElement.parentElement.parentElement
+        buttonErasePositionMSG = divPosition.querySelector(`#ierasePositionMSG`)
         const IdDivPosition = divPosition.id
         const IdNumberPosition = IdDivPosition.match(/\d+/g)
         buttonErasePositionMSG.title = `Deletar posição MSG (${IdNumberPosition})`
@@ -2325,6 +2442,13 @@ async function getFileData(divElementBridge, file) {
         resetLoadingBar()
         return
     } else {
+        /*if (divElement.querySelector('input#ifileTypeMSGAux[type="file"]').files[0] ) {   
+            if (file === divElement.querySelector('input#ifileTypeMSGAux[type="file"]').files[0]) {
+                displayOnConsole('cuuuuuuuuuuu')
+                await sendToFunil(divElementBridge, 3, null, file)
+                return
+            }
+        }*/
         divFunctions.style.cssText =
             'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0;'
         setTimeout(function() {
@@ -2332,9 +2456,13 @@ async function getFileData(divElementBridge, file) {
                 'display: flex; border: 2px solid var(--colorBlack); border-bottom: 3.5px solid var(--colorBlack); height: 5vh;'//mudar o 5vh n fica bom pra diferentes telas
         }, 300)
 
-        buttonErasePositionMSG = divElement.querySelector(`#ierasePositionMSGFile`)
+        const divPosition = divElement.parentElement.parentElement
+        console.log(divPosition)
+        buttonErasePositionMSG = divPosition.querySelector(`#ierasePositionMSG`)
+        console.log(buttonErasePositionMSG)
         buttonErasePositionMSG.title = `Deselecionar arquivo (${file.name})`
 
+        //melhora esse de reseta o style de tudo tbm pra cada file novo ou igual, talves verificar ser o file é igual ou novo se n ele fas nada sla
         displayOnConsole(file.type)
         const fileType = file.type
         switch (fileType) {//conforme vai indo adicionar o maximo possivel de tipos de arquivos para cada e assim ser mais completo e preciso
@@ -2599,6 +2727,9 @@ async function fileTypeAction(event, isClick, divElement) {
 
         resetLoadingBar()
     } else {
+        /*if () {
+            return
+        }*/
         if (!isClick) {
             const dataTransfer = new DataTransfer()
             dataTransfer.items.add(file)
@@ -2715,15 +2846,21 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
     let conteinerMSG = null
     switch (type) {
         case 1:
-            const MSGHTMlDelay = `<div class="conteinerFunilMSG divDelayNErasePosition" id="conteinerFunilMSG${Id_Position_MSG}">
+            const MSGHTMlDelay = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+
                                     <div class="divInfoPositionMSG" id="idivInfoPositionMSG">
+                                        <label title="Selecione esta posição (${Id_Position_MSG})" class="divSelectionPositionMSG" id="idivSelectionPositionMSGDelay">
+                                            <input type="checkbox" class="inputCheckboxSelection" id="iinputCheckboxSelection${Id_Position_MSG}" onchange="selectionPositionMSG(this, 1)">
+                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                        </label>
                                         <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
                                         <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
+
+                                        <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 1)">D</button>
                                     </div>
 
                                     <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
-                                        <input title="Selecione esta posição (${Id_Position_MSG})" type="checkbox" class="" id="">
-                                        
+
                                         <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
                                             <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
                                         
@@ -2736,9 +2873,8 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                             </select>
                                         </div>
 
-                                        <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSGDelay" id="ierasePositionMSGDelay" onclick="erasePosition(this.parentElement, 1)">D</button>
                                     </div>
-                                    
+
                                 </div>`
             if (divAdjacent) {
                 if (isFirstUndefined) {
@@ -2762,31 +2898,33 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
             break
         case 2:
             const MSGHTMlText = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+
                                     <div class="divInfoPositionMSG" id="idivInfoPositionMSG">
+                                        <label title="Selecione esta posição (${Id_Position_MSG})" class="divSelectionPositionMSG" id="idivSelectionPositionMSGDelay">
+                                            <input type="checkbox" class="inputCheckboxSelection" id="iinputCheckboxSelection${Id_Position_MSG}" onchange="selectionPositionMSG(this, 2)">
+                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                        </label>
                                         <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
                                         <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
+
+                                        <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 2)">D</button>
                                     </div>
 
                                     <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
 
                                         <div class="divTextarea" id="idivTextarea">
-                                            <div class="divEraseNFunctionsText">
-                                                <input title="Selecione esta posição (${Id_Position_MSG})" type="checkbox" class="" id="">
-
-                                                <div class="divTextareaFunctions" id="idivTextareaFunctions">
-                                                    <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
-                                                    
-                                                    <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
-                                                    <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
-                                                    
-                                                    <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
-                                                    <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
-                                                    <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
-                                                    <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
-                                                </div>
-
-                                                <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSGText" id="ierasePositionMSGText" onclick="erasePosition(this.parentElement.parentElement.parentElement, 2)">D</button>
+                                            <div class="divTextareaFunctions" id="idivTextareaFunctions">
+                                                <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
+                                                
+                                                <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
+                                                <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
+                                                
+                                                <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
+                                                <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
+                                                <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
+                                                <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
                                             </div>
+                                        
                                             <div class="divDelayText" id="idivDelayText">
                                                 <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
                                                 
@@ -2803,6 +2941,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                         </div>
 
                                     </div>
+
                                 </div>`
             if (divAdjacent) {
                 if (isFirstUndefined) {
@@ -2825,13 +2964,21 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
             resetLoadingBar()
             break
         case 3:
-            const MSGHTMlFile = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+            const MSGHTMlFile = ` <div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+
                                     <div class="divInfoPositionMSG" id="idivInfoPositionMSG">
+                                        <label title="Selecione esta posição (${Id_Position_MSG})" class="divSelectionPositionMSG" id="idivSelectionPositionMSGDelay">
+                                            <input type="checkbox" class="inputCheckboxSelection" id="iinputCheckboxSelection${Id_Position_MSG}" onchange="selectionPositionMSG(this, 3)">
+                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                        </label>
                                         <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
                                         <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
+
+                                        <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 3)">D</button>
                                     </div>
 
                                     <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
                                         <div class="fileTypeMSG" id="ifileTypeMSG">
                                             <div class="divFileFunctions" id="idivFileFunctions">
                                                 <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
@@ -2859,26 +3006,22 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                                 </select>
                                             </div>
                                             
-                                            <div class="divEraseNFunctionsFile">
-                                                <input title="Selecione esta posição (${Id_Position_MSG})" type="checkbox" class="" id="">
-                                                
-                                                <div class="divFileSelectMSG">
-                                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
-                                                        <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
-                                                        <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
-                                                        <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
-                                                        <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
-                                                        
-                                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
-                                                    </div></abbr>
-                                                </div>
-
-                                                <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSGFile" id="ierasePositionMSGFile" onclick="erasePosition(this.parentElement.parentElement.parentElement, 3)">D</button>
+                                            <div class="divFileSelectMSG">
+                                                <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                                    <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
+                                                    <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
+                                                    <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                                    <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                                    
+                                                    <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
+                                                </div></abbr>
                                             </div>
 
                                             <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
                                         </div>
+                                        
                                     </div>
+
                                 </div>`
             if (divAdjacent) {
                 if (isFirstUndefined) {
