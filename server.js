@@ -1,4 +1,7 @@
 // server.js Back_End
+const reflect_metadata = require('reflect-metadata')
+const dotenv = require('dotenv')
+dotenv.config()
 const express = require('express')
 const cors = require('cors')
 const http = require('http')
@@ -56,9 +59,9 @@ app.use(
     }) 
 )
 
-app.use(express.static(path.join(__dirname, 'frontEnd')))
-
 app.use(express.json())
+
+app.use(express.static(path.join(__dirname, 'frontEnd')))
 
 app.use('/', routes)
 

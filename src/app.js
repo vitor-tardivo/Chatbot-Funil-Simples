@@ -454,7 +454,6 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
 
 async function Insert_Exponecial_Position_MSG(arrayIdNumberPosition) {
     try {
-        arrayIdNumberPosition = arrayIdNumberPosition.map(Number)
         let isFirstUndefined = false
         let idNumberPositionDivAdjacent = null
         for (let i = 0; i < arrayIdNumberPosition.length; i++) {
@@ -884,10 +883,10 @@ async function Insert_Exponecial_Position_Client_(arrayIdNameClients_) {
             idNumberClient_DivAdjacent = `_${currentNumber}_${arrayIdNameClients_[i].Client_Name}_`
         }
 
-        return { idNumberClient_DivAdjacent, isFirstUndefined }
+        return { idNumberClient_DivAdjacent: idNumberClient_DivAdjacent, isFirstUndefined: isFirstUndefined }
     } catch (error) {
         console.error(`> ❌ ERROR Insert_Exponecial_Position_Client_: ${error}`)
-        return null
+        return { idNumberClient_DivAdjacent: null, isFirstUndefined: null }
     }
 }
 async function Select_Client_(Clientt_) {
@@ -1481,7 +1480,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
             //webVersionCache: { type: 'remote', remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html', } //"normal" version
 
             puppeteer: {
-                executablePath: process.env.browser_path/*'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'*/,
+                executablePath: process.env.BROWSER_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
                 args: ['--no-sandbox', '--disable-gpu'],
                 headless: true, //debug
             },

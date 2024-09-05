@@ -12,6 +12,8 @@ let isFromTerminal = false
 let tableReady = false
 let isTableHidden = null
 
+let isFunilHidden = null
+
 let isConsoleHidden = null
 
 let isExceeds = true 
@@ -39,13 +41,30 @@ let isStarted = false
 let nameApp = null
 let versionApp = null
 
-function isMobile() {//IDENTIFY IF THE USER IS FROM A PHONE
+async function getDeviceType() {//IDENTIFY IF THE USER IS FROM A PHONE
     try {    
-        userAgent = navigator.userAgent
-        return /Android|iPhone|iPad|Windows\sPhone|Windows\sCE|Mobile\sSafari|webOS|Mobile|Tablet/i.test(userAgent)
+        const userAgent = navigator.userAgent.toLowerCase()
+        const devicePatterns = {
+            "android": "Android Device",
+            "iphone": "iPhone",
+            "ipad": "iPad",
+            "windows phone": "Windows Phone",
+            "windows ce": "Windows Phone",
+            "webos": "webOS Device",
+            "mobile safari": "Mobile Safari",
+            "blackberry": "BlackBerry",
+            "tablet": "Tablet Device",
+            "mobile": "Other Mobile Device"
+        }
+        for (const pattern in devicePatterns) {
+            if (userAgent.includes(pattern)) {
+                return devicePatterns[pattern];
+            }
+        }
+        return "Desktop"
     } catch(error) {
-        console.error(`> ⚠️ ERROR isMobile: ${error}`)
-        displayOnConsole(`> ⚠️ <i><i><strong>ERROR</strong></i></i> isMobile: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR getDeviceType: ${error}`)
+        displayOnConsole(`> ⚠️ <i><i><strong>ERROR</strong></i></i> getDeviceType: ${error.message}`, setLogError)
     }
 }
 
@@ -71,15 +90,16 @@ window.onbeforeunload = function(event) {
 }
 document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA QUERY PHONE AND ELSE
     try {
-        if (isMobile()) {
-            console.log(`User is from a Phone(${userAgent}).`)
+        const deviceType = await getDeviceType()
+        if (deviceType !== "Desktop") {
+            console.log(`User is from a ${deviceType} (${navigator.userAgent}).`)
             
             var link = document.createElement('link')
             link.rel = 'stylesheet'
             link.href = '../styles/Bot/mediaQueryBot.css'
             document.head.appendChild(link)
         } else {
-            console.log(`User is from a Desktop(${userAgent}).`)
+            console.log(`User is from a Desktop (${navigator.userAgent}).`)
         }
 
         const response = await axios.get('/api/data')
@@ -164,6 +184,8 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         })
 
         await loadConsoleStyles()
+        await loadFunilStyles()
+        await loadSectionsHtml()
     } catch (error) {
         console.error(`> ⚠️ ERROR DOMContentLoaded: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> DOMContentLoaded: ${error.message}`, setLogError)
@@ -655,10 +677,10 @@ async function ready(Client_) {
             isAlreadyDir = false
         }
 
+        isFromNew = false 
+
         tableReady = false
         await loadTableStyles()
-
-        isFromNew = false 
         
         document.title = `${nameApp || 'BOT'} ${Client_} pronto`
 
@@ -795,8 +817,8 @@ async function loadTableStyles() {
         }
         await showTableList()
     } catch (error) {
-        console.error(`> ⚠️ ERROR loadConsoleStyles: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> loadConsoleStyles: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR loadTableStyles: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> loadTableStyles: ${error.message}`, setLogError)
     }
 }
 async function showTableList() {
@@ -808,6 +830,8 @@ async function showTableList() {
         const listShow = document.querySelector('#showList')
         const listShowAbbr = document.querySelector('#abbrShowList')
         const list = document.querySelector('#listTable')
+
+        const sectionActual = list.parentElement.parentElement
         
         if (isTableHidden === null || undefined) {
             isTableHidden = true 
@@ -817,13 +841,17 @@ async function showTableList() {
             listShow.style.cssText = 
                 'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
             listShow.textContent = '-'
-            listShowAbbr.title = `STATUS Lista: visivel`
+            listShowAbbr.title = `Lista STATUS: visivel`
             
             list.style.cssText =
                 'display: inline-block; opacity: 0;'
+            sectionActual.style.cssText =
+                'display: unset; opacity: 0;'
             setTimeout(function() {
                 list.style.cssText =
                     'display: inline-block; opacity: 1;'
+                sectionActual.style.cssText =
+                    'display: unset; opacity: 1;'
             }, 100)
             
             await saveTableStyles()
@@ -833,12 +861,16 @@ async function showTableList() {
             listShow.style.cssText = 
                 'display: inline-block; background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
             listShow.textContent = 'O'
-            listShowAbbr.title = `STATUS Lista: escondido`
+            listShowAbbr.title = `Lista STATUS: escondido`
             
             list.style.cssText =
                 'display: inline-block; opacity: 0;'
+            sectionActual.style.cssText =
+                'display: unset; opacity: 0;'
             setTimeout(function() {
                 list.style.cssText =
+                    'display: none; opacity: 0;'
+                sectionActual.style.cssText =
                     'display: none; opacity: 0;'
             }, 300)
 
@@ -849,6 +881,85 @@ async function showTableList() {
     } catch (error) {
         console.error(`> ⚠️ ERROR showTableList: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> showTableList: ${error.message}`, setLogError)
+    }
+}
+
+async function saveFunilStyles() {
+    try {
+        localStorage.setItem('funilStyles', JSON.stringify({
+            funilStateHidden: isFunilHidden
+        }))
+    } catch (error) {
+        console.error(`> ⚠️ ERROR saveFunilStyles: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> saveFunilStyles: ${error.message}`, setLogError)
+    }
+}
+async function loadFunilStyles() {
+    try {
+        const savedStylesFunil = JSON.parse(localStorage.getItem('funilStyles'))
+        if (savedStylesFunil) {
+            isFunilHidden = savedStylesFunil.funilStateHidden
+        }
+        await showFunil()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR loadFunilStyles: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> loadFunilStyles: ${error.message}`, setLogError)
+    }
+}
+async function showFunil() {
+    /*if (funilReady) {
+        displayOnConsole('>  ℹ️ <strong>showFunil</strong> not Ready.', setLogError)
+        return
+    }*/
+    try {
+        const funilShow = document.querySelector('#showFunil')
+        const funilShowAbbr = document.querySelector('#abbrShowFunil')
+        const funil = document.querySelector('#divFunil')
+
+        const sectionActual = funil.parentElement.parentElement
+
+        if (isFunilHidden) {
+            funilShow.style.cssText = 
+                'display: inline-block; background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
+            funilShow.textContent = 'O'
+            funilShowAbbr.title = `Funil STATUS: escondido`
+            
+            funil.style.cssText =
+                'display: inline-block; opacity: 0;'
+            sectionActual.style.cssText =
+                'display: unset; opacity: 0;'
+            setTimeout(function() {
+                funil.style.cssText =
+                    'display: none; opacity: 0;'
+                sectionActual.style.cssText =
+                    'display: none; opacity: 0;'
+            }, 300)
+
+            await saveFunilStyles()
+            isFunilHidden = false
+        } else {
+            funilShow.style.cssText = 
+                'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
+            funilShow.textContent = '-'
+            funilShowAbbr.title = `Funil STATUS: visivel`
+            
+            funil.style.cssText =
+                'display: inline-block; opacity: 0;'
+            sectionActual.style.cssText =
+                'display: unset; opacity: 0;'
+            setTimeout(function() {
+                funil.style.cssText =
+                    'display: inline-block; opacity: 1;'
+                sectionActual.style.cssText =
+                    'display: unset; opacity: 1;'
+            }, 100)
+            
+            await saveFunilStyles()
+            isFunilHidden = true
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR showFunil: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> showFunil: ${error.message}`, setLogError)
     }
 }
 
@@ -888,7 +999,7 @@ async function hideConsole() {
             consoleElement.style.cssText =
                 'width: 30.62vw;'
             buttonHideConsole.textContent = `◀`
-            titleHideConsole.title = `Esconder o Terminal`
+            titleHideConsole.title = `Terminal STATUS: visivel`
         
             await saveConsoleStyles()
             isConsoleHidden = false
@@ -896,7 +1007,7 @@ async function hideConsole() {
             consoleElement.style.cssText = 
                 'width: 0vw;' 
             buttonHideConsole.textContent = `▶`
-            titleHideConsole.title = `Mostrar o Terminal`
+            titleHideConsole.title = `Terminal STATUS: escondido`
            
             await saveConsoleStyles()
             isConsoleHidden = true
@@ -915,6 +1026,153 @@ async function clsConsole() {
     } catch (error) {
         console.error(`> ⚠️ ERROR clsConsole: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> clsConsole: ${error.message}`, setLogError)
+    }
+}
+
+async function saveSectionsHtml() {
+    let sectionIndex = 1
+    let isEnded = true
+    while (isEnded === true) {
+        const sectionDiv = document.querySelector(`#section${sectionIndex}`)
+        if (!sectionDiv) {
+            isEnded = false
+            break
+        }
+
+        const conteinerPositionSection = sectionDiv.querySelector(`#idivInnerConteinerSection`)
+        const innerHTML = conteinerPositionSection.innerHTML
+
+        const titleSection = sectionDiv.querySelector(`#ititleSection`)
+        const titleText = titleSection.textContent
+
+        localStorage.setItem(`sectionInnerHTML_${sectionIndex}`, innerHTML)
+        localStorage.setItem(`sectionTitleText_${sectionIndex}`, titleText)
+
+        sectionIndex++
+    }
+}
+async function loadSectionsHtml() {
+    let sectionIndex = 1
+    let isEnded = true
+    while (isEnded === true) {
+        const sectionDiv = document.querySelector(`#section${sectionIndex}`)
+        if (!sectionDiv) {
+            isEnded = false
+            break
+        }
+
+        // Busca a div com id "idivInnerConteinerSection" dentro da seção atual
+        const conteinerPositionSection = sectionDiv.querySelector(`#idivInnerConteinerSection`)
+        const savedSectionInnerHTML = localStorage.getItem(`sectionInnerHTML_${sectionIndex}`)
+        if (savedSectionInnerHTML) {
+            conteinerPositionSection.innerHTML = savedSectionInnerHTML
+        }
+
+        const titleSection = sectionDiv.querySelector(`#ititleSection`)
+        const savedTitleText = localStorage.getItem(`sectionTitleText_${sectionIndex}`)
+        if (savedTitleText) {
+            titleSection.textContent = savedTitleText
+        }
+
+        sectionIndex++
+    }
+}
+let positionSelectedSection = null
+async function selectionPositionSection(checkElement) {
+    try {
+        const divPosition = checkElement.parentElement.parentElement.parentElement
+        const idNumberPositionSection = divPosition.id.match(/\d+/g)
+
+        if (positionSelectedSection !== null && checkElement.checked === true) {
+            checkElement.checked = false
+            
+            let userConfirmation = confirm(`Tem certeza de que deseja trocar a Seção (${positionSelectedSection}) para a Seção (${idNumberPositionSection})?`)
+            if (userConfirmation) {
+                const conteinerPositionSectionSelected = document.querySelector(`#section${positionSelectedSection}`)
+                const conteinerPositionSectionTochange = document.querySelector(`#section${idNumberPositionSection}`)
+
+                conteinerPositionSectionSelected.querySelector(`#idivInnerConteinerSection`).style.cssText =
+                    `display: flex; opacity: 0;`
+                conteinerPositionSectionTochange.querySelector(`#idivInnerConteinerSection`).style.cssText =
+                    `display: flex; opacity: 0;`
+
+                conteinerPositionSectionSelected.querySelector(`#ititleSection`).style.cssText =
+                    `display: flex; opacity: 0;`
+                conteinerPositionSectionTochange.querySelector(`#ititleSection`).style.cssText =
+                    `display: flex; opacity: 0;`
+                setTimeout(function() {
+                    conteinerPositionSectionSelected.querySelector(`#idivInnerConteinerSection`).style.cssText =
+                        `display: none; opacity: 0;`
+                    conteinerPositionSectionTochange.querySelector(`#idivInnerConteinerSection`).style.cssText =
+                        `display: none; opacity: 0;`
+
+                    conteinerPositionSectionSelected.querySelector(`#ititleSection`).style.cssText =
+                        `display: none; opacity: 0;`
+                    conteinerPositionSectionTochange.querySelector(`#ititleSection`).style.cssText =
+                        `display: none; opacity: 0;`
+                
+                    const divInnerPositionSectionSelected = conteinerPositionSectionSelected.querySelector(`#idivInnerConteinerSection`).cloneNode(true)
+                    conteinerPositionSectionSelected.querySelector(`#idivInnerConteinerSection`).innerHTML = ''
+
+                    const divInnerPositionSectionTochange = conteinerPositionSectionTochange.querySelector(`#idivInnerConteinerSection`).cloneNode(true)
+                    conteinerPositionSectionTochange.querySelector(`#idivInnerConteinerSection`).innerHTML = ''
+
+                    conteinerPositionSectionSelected.querySelector(`#idivInnerConteinerSection`).replaceWith(divInnerPositionSectionTochange)
+                    conteinerPositionSectionSelected.querySelector(`#idivInnerConteinerSection`).style.cssText =
+                        `display: flex; opacity: 0;`
+                    conteinerPositionSectionTochange.querySelector(`#idivInnerConteinerSection`).replaceWith(divInnerPositionSectionSelected)
+                    conteinerPositionSectionTochange.querySelector(`#idivInnerConteinerSection`).style.cssText =
+                        `display: flex; opacity: 0;`
+
+                    const titleSectionSelected = conteinerPositionSectionSelected.querySelector(`#ititleSection`).textContent
+                    conteinerPositionSectionSelected.querySelector(`#ititleSection`).textContent = ''
+
+                    const titleSectionTochange = conteinerPositionSectionTochange.querySelector(`#ititleSection`).textContent
+                    conteinerPositionSectionTochange.querySelector(`#ititleSection`).textContent = ''
+                    
+                    conteinerPositionSectionSelected.querySelector(`#ititleSection`).style.cssText =
+                        `display: flex; opacity: 0;`
+                    conteinerPositionSectionTochange.querySelector(`#ititleSection`).style.cssText =
+                        `display: flex; opacity: 0;`
+                    setTimeout(async function() {
+                        conteinerPositionSectionSelected.querySelector(`#ititleSection`).textContent = titleSectionTochange
+                        conteinerPositionSectionTochange.querySelector(`#ititleSection`).textContent = titleSectionSelected
+
+                        conteinerPositionSectionSelected.querySelector(`#idivInnerConteinerSection`).style.cssText =
+                            `display: flex; opacity: 1;`
+                        conteinerPositionSectionTochange.querySelector(`#idivInnerConteinerSection`).style.cssText =
+                            `display: flex; opacity: 1;`
+                        
+                        conteinerPositionSectionSelected.querySelector(`#ititleSection`).style.cssText =
+                            `display: flex; opacity: 1;`
+                        conteinerPositionSectionTochange.querySelector(`#ititleSection`).style.cssText =
+                            `display: flex; opacity: 1;`
+                        
+                        document.querySelector(`#iinputCheckboxSelectionSection${positionSelectedSection}`).checked = false
+                        document.querySelector(`#iinputCheckboxSelectionSection${positionSelectedSection}`).dispatchEvent(new Event('change'))
+
+                        await saveSectionsHtml()
+                    }, 300)
+                }, 100)
+            } else {
+
+
+                return
+            }
+            return
+        }
+
+        if (checkElement.checked) {
+            const idNumberPositionSelected = Number(idNumberPositionSection)
+            positionSelectedSection = idNumberPositionSelected
+            checkElement.parentElement.title = `Selecionado esta posição (${idNumberPositionSection})`
+        } else {
+            positionSelectedSection = null
+            checkElement.parentElement.title = `Selecione esta posição (${idNumberPositionSection})`
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR selectionPositionSection: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> selectedPositionSection: ${error.message}`, setLogError)
     }
 }
 
@@ -1012,23 +1270,21 @@ async function sendCommand() {
     }
 }
 
-let positionSelected = null
+let positionSelectedMSG = null
 async function selectionPositionMSG(checkElement, typeMSG) {
     try {
         const divPosition = checkElement.parentElement.parentElement.parentElement
-        console.log('aaaaaaaa',divPosition)
-        const idNumberPosition = divPosition.id.match(/\d+/g)
+        const idNumberPositionMSG = divPosition.id.match(/\d+/g)
 
-        if (positionSelected !== null && checkElement.checked === true) {
-            console.log(positionSelected)
+        if (positionSelectedMSG !== null && checkElement.checked === true) {
             checkElement.checked = false
             
-            let userConfirmation = confirm(`Tem certeza de que deseja trocar a Posição MSG (${positionSelected.idNumberPositionSelected}) para a Posição MSG (${idNumberPosition})?`)
+            let userConfirmation = confirm(`Tem certeza de que deseja trocar a Posição MSG (${positionSelectedMSG.idNumberPositionSelected}) para a Posição MSG (${idNumberPositionMSG})?`)
             if (userConfirmation) {
-                const conteinerPositionMSGSelected = document.querySelector(`#conteinerFunilMSG${positionSelected.idNumberPositionSelected}`)
+                const conteinerPositionMSGSelected = document.querySelector(`#conteinerFunilMSG${positionSelectedMSG.idNumberPositionSelected}`)
                 conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
                     `display: flex; opacity: 0;`
-                const conteinerPositionMSGTochange = document.querySelector(`#conteinerFunilMSG${idNumberPosition}`)
+                const conteinerPositionMSGTochange = document.querySelector(`#conteinerFunilMSG${idNumberPositionMSG}`)
                 conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
                     `display: flex; opacity: 0;`
                 setTimeout(function() {
@@ -1040,10 +1296,10 @@ async function selectionPositionMSG(checkElement, typeMSG) {
                     const divInnerPositionMSGSelected = conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).cloneNode(true)
                     conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).innerHTML = ''
 
-                    const divInnerPositionMSGSTochange = conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).cloneNode(true)
+                    const divInnerPositionMSGTochange = conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).cloneNode(true)
                     conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).innerHTML = ''
 
-                    conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).replaceWith(divInnerPositionMSGSTochange)
+                    conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).replaceWith(divInnerPositionMSGTochange)
                     conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
                         `display: flex; opacity: 0;`
                     conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).replaceWith(divInnerPositionMSGSelected)
@@ -1057,8 +1313,8 @@ async function selectionPositionMSG(checkElement, typeMSG) {
 
                         //ja com valor no input delay ele roda o select duas vezes
 
-                        displayOnConsole(positionSelected.typeMSGSelected)
-                        switch (positionSelected.typeMSGSelected) {
+                        /*displayOnConsole(positionSelectedMSG.typeMSGSelected)
+                        switch (positionSelectedMSG.typeMSGSelected) {
                             case 1:
                                 divPosition.querySelector(`#idelayMSGTime`).dispatchEvent(new Event('input'))
                                 divPosition.querySelector(`#idelayMSGSelect`).dispatchEvent(new Event('input'))
@@ -1069,14 +1325,14 @@ async function selectionPositionMSG(checkElement, typeMSG) {
                                 divPosition.querySelector(`#itextAreaTypeMSG`).dispatchEvent(new Event('input'))
                                 break;
                             case 3:
-                                divPositionTochange.querySelector(`#idelayTexAudioTime`).dispatchEvent(new Event('input'))
-                                divPositionTochange.querySelector(`#idelayTextAudioSelect`).dispatchEvent(new Event('input'))
-                                divPositionTochange.querySelector(`#itextAreaCaption`).dispatchEvent(new Event('input'))
+                                divPosition.querySelector(`#idelayTexAudioTime`).dispatchEvent(new Event('input'))
+                                divPosition.querySelector(`#idelayTextAudioSelect`).dispatchEvent(new Event('input'))
+                                divPosition.querySelector(`#itextAreaCaption`).dispatchEvent(new Event('input'))
                                 //divPosition.querySelector('input#ifileTypeMSGAux[type="file"]').dispatchEvent(new Event('change'))//deprecated
                                 break;
                         }
 
-                        const divPositionTochange = document.querySelector(`#conteinerFunilMSG${positionSelected.idNumberPositionSelected}`)//caso n esteja entendo como ja mudo a posicao ent é isso... da certo tendeu?
+                        const divPositionTochange = document.querySelector(`#conteinerFunilMSG${positionSelectedMSG.idNumberPositionSelected}`)//caso n esteja entendo como ja mudo a posicao ent é isso... da certo tendeu?
                         console.log(divPositionTochange)
                         displayOnConsole(typeMSG)
                         switch (typeMSG) {
@@ -1093,12 +1349,12 @@ async function selectionPositionMSG(checkElement, typeMSG) {
                                 divPositionTochange.querySelector(`#idelayTexAudioTime`).dispatchEvent(new Event('input'))
                                 divPositionTochange.querySelector(`#idelayTextAudioSelect`).dispatchEvent(new Event('input'))
                                 divPositionTochange.querySelector(`#itextAreaCaption`).dispatchEvent(new Event('input'))
-                                divPositionTochange.querySelector('input#ifileTypeMSGAux[type="file"]').dispatchEvent(new Event('change'))//deprecated
+                                //divPositionTochange.querySelector('input#ifileTypeMSGAux[type="file"]').dispatchEvent(new Event('change'))//deprecated
                                 break;
-                        }
+                        }*/
 
-                        document.querySelector(`#iinputCheckboxSelection${positionSelected.idNumberPositionSelected}`).checked = false
-                        document.querySelector(`#iinputCheckboxSelection${positionSelected.idNumberPositionSelected}`).dispatchEvent(new Event('change'))
+                        document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).checked = false
+                        document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).dispatchEvent(new Event('change'))
                         
                         
                     }, 300)
@@ -1110,18 +1366,15 @@ async function selectionPositionMSG(checkElement, typeMSG) {
             }
             return
         }
-        displayOnConsole(typeMSG)
         
         if (checkElement.checked) {
-            const idNumberPositionSelected = Number(idNumberPosition)
+            const idNumberPositionSelected = Number(idNumberPositionMSG)
             const typeMSGSelected = typeMSG
-            positionSelected = { idNumberPositionSelected, typeMSGSelected }
-            console.log(positionSelected)
-            checkElement.parentElement.title = `Selecionado esta posição (${idNumberPosition})`
+            positionSelectedMSG = { idNumberPositionSelected, typeMSGSelected }
+            checkElement.parentElement.title = `Selecionado esta posição (${idNumberPositionMSG})`
         } else {
-            positionSelected = null
-            console.log(positionSelected)
-            checkElement.parentElement.title = `Selecione esta posição (${idNumberPosition})`
+            positionSelectedMSG = null
+            checkElement.parentElement.title = `Selecione esta posição (${idNumberPositionMSG})`
         }
     } catch (error) {
         console.error(`> ⚠️ ERROR selectedPositionMSG: ${error}`)
@@ -1130,91 +1383,73 @@ async function selectionPositionMSG(checkElement, typeMSG) {
 }
 
 async function erasePosition(divPosition, typeMSG) {
-    let barL = document.querySelector('#barLoading')
-    barL.style.cssText =
-        'width: 100vw; visibility: visible;'
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
 
-    const IdDivPosition = divPosition.id
-    const IdNumberPosition = IdDivPosition.match(/\d+/g)
+        const IdDivPosition = divPosition.id
+        const IdNumberPosition = IdDivPosition.match(/\d+/g)
 
-    let userConfirmation = null
-    switch (typeMSG) {
-        case 1:
-        case 2:
-            userConfirmation = confirm(`Tem certeza de que deseja deletar o template da posição (${IdNumberPosition})?\nsera apagado tudo para sempre.`)
-            break;
-        case 3:
-            const fileInput = divPosition.querySelector('input#ifileTypeMSGAux[type="file"]')
-            if (fileInput.files[0] === undefined) {
-                userConfirmation = confirm(`Tem certeza de que deseja deletar o template da posição (${IdNumberPosition})?\nsera apagado tudo para sempre.`)
-            } else {
-                userConfirmation = confirm(`Tem certeza de que deseja deselecionar o arquivo (${fileInput.files[0].name})?\nsera apagado para sempre.`)
-            }
-            break;
-    }
-    if (userConfirmation) {
-        let response = null
-        let Sucess = null
+        let userConfirmation = null
         switch (typeMSG) {
             case 1:
-                response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
-                Sucess = response.data.sucess
-                if (Sucess) {
-                    const inputDelayMSG = divPosition.querySelector(`#idelayMSGTime`)
-                    if (inputDelayMSG.value !== '') {
-                        inputDelayMSG.value = ''
-                        inputDelayMSG.dispatchEvent(new Event('input'))
-                    }
-
-                    const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
-                    conteinerMSG.style.cssText =
-                        `display: flex; opacity: 0;`
-                    setTimeout(async function() {
-                        conteinerMSG.style.cssText =
-                            `display: none; opacity: 0;`
-                        
-                        divPosition.remove()
-                    }, 100)
-                } else {
-
-                }
-                break;
             case 2:
-                response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
-                Sucess = response.data.sucess
-                if (Sucess) {
-                    /*const inputDelayText = divPosition.querySelector(`#idelayTextTime`)                        
-                    if (inputDelayText.value !== '') {
-                        inputDelayText.value = ''
-                        inputDelayText.dispatchEvent(new Event('input'))
-                    }*/
-                    await StateTypingMSG(divPosition, true)
-
-                    const divTextAreaMSG = divPosition.querySelector(`#itextAreaTypeMSG`)
-                    if (divTextAreaMSG.value !== '') {
-                        divTextAreaMSG.value = ''
-                        divTextAreaMSG.dispatchEvent(new Event('input'))
-                    }
-
-                    const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
-                    conteinerMSG.style.cssText =
-                        `display: flex; opacity: 0;`
-                    setTimeout(async function() {
-                        conteinerMSG.style.cssText =
-                            `display: none; opacity: 0;`
-
-                        divPosition.remove()
-                    }, 100)
-                } else {
-
-                }
+                userConfirmation = confirm(`Tem certeza de que deseja deletar o template da posição (${IdNumberPosition})?\nsera apagado tudo para sempre.`)
                 break;
             case 3:
                 const fileInput = divPosition.querySelector('input#ifileTypeMSGAux[type="file"]')
                 if (fileInput.files[0] === undefined) {
+                    userConfirmation = confirm(`Tem certeza de que deseja deletar o template da posição (${IdNumberPosition})?\nsera apagado tudo para sempre.`)
+                } else {
+                    userConfirmation = confirm(`Tem certeza de que deseja deselecionar o arquivo (${fileInput.files[0].name})?\nsera apagado para sempre.`)
+                }
+                break;
+        }
+        if (userConfirmation) {
+            let response = null
+            let Sucess = null
+            switch (typeMSG) {
+                case 1:
                     response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
                     Sucess = response.data.sucess
                     if (Sucess) {
+                        const inputDelayMSG = divPosition.querySelector(`#idelayMSGTime`)
+                        if (inputDelayMSG.value !== '') {
+                            inputDelayMSG.value = ''
+                            inputDelayMSG.dispatchEvent(new Event('input'))
+                        }
+
+                        const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
+                        conteinerMSG.style.cssText =
+                            `display: flex; opacity: 0;`
+                        setTimeout(async function() {
+                            conteinerMSG.style.cssText =
+                                `display: none; opacity: 0;`
+                            
+                            divPosition.remove()
+                        }, 100)
+                    } else {
+
+                    }
+                    break;
+                case 2:
+                    response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
+                    Sucess = response.data.sucess
+                    if (Sucess) {
+                        /*const inputDelayText = divPosition.querySelector(`#idelayTextTime`)                        
+                        if (inputDelayText.value !== '') {
+                            inputDelayText.value = ''
+                            inputDelayText.dispatchEvent(new Event('input'))
+                        }*/
+                        await StateTypingMSG(divPosition, true)
+
+                        const divTextAreaMSG = divPosition.querySelector(`#itextAreaTypeMSG`)
+                        if (divTextAreaMSG.value !== '') {
+                            divTextAreaMSG.value = ''
+                            divTextAreaMSG.dispatchEvent(new Event('input'))
+                        }
+
                         const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
                         conteinerMSG.style.cssText =
                             `display: flex; opacity: 0;`
@@ -1227,1708 +1462,1762 @@ async function erasePosition(divPosition, typeMSG) {
                     } else {
 
                     }
-                } else {
-                    fileInput.value = ''
-                    fileInput.dispatchEvent(new Event('change'))
-                }
-                break;
-        }
+                    break;
+                case 3:
+                    const fileInput = divPosition.querySelector('input#ifileTypeMSGAux[type="file"]')
+                    if (fileInput.files[0] === undefined) {
+                        response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
+                        Sucess = response.data.sucess
+                        if (Sucess) {
+                            const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
+                            conteinerMSG.style.cssText =
+                                `display: flex; opacity: 0;`
+                            setTimeout(async function() {
+                                conteinerMSG.style.cssText =
+                                    `display: none; opacity: 0;`
 
-        resetLoadingBar()
-    } else {
-        resetLoadingBar()
-        return
+                                divPosition.remove()
+                            }, 100)
+                        } else {
+
+                        }
+                    } else {
+                        fileInput.value = ''
+                        fileInput.dispatchEvent(new Event('change'))
+                    }
+                    break;
+            }
+
+            resetLoadingBar()
+        } else {
+            resetLoadingBar()
+            return
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR erasePosition: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> erasePosition: ${error.message}`, setLogError)
     }
 }
 
 async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {
-    let divElement = null
+    try {
+        let divElement = null
 
-    switch (typeMSG) {
-        case 1:
-            divElement = bridgeElement.closest(`#idivDelayTypeMSG`)
-            
-            const inputDelayMSG = divElement.querySelector(`#idelayMSGTime`)
+        switch (typeMSG) {
+            case 1:
+                divElement = bridgeElement.closest(`#idivDelayTypeMSG`)
+                
+                const inputDelayMSG = divElement.querySelector(`#idelayMSGTime`)
 
-            switch (typeTypeMSG.value || typeTypeMSG) {
-                case 'input':
-                    displayOnConsole(`1=${typeTypeMSG}:`)
-                    displayOnConsole(inputDelayMSG.value)
-
-                    const selectDelayMSG = divElement.querySelector(`#idelayMSGSelect`)
-                    if (inputDelayMSG.value >= 1) {
-                        if (selectDelayMSG.selectedIndex === 0) {
-                            selectDelayMSG.selectedIndex = 1
-                            selectDelayMSG.dispatchEvent(new Event('input'))
-                        }
-                    } else {
-                        if (selectDelayMSG.selectedIndex !== 0) {
-                            selectDelayMSG.selectedIndex = 0
-                            selectDelayMSG.dispatchEvent(new Event('input'))
-                        }
-                    }
-
-
-                    break;
-                case 'seconds':
-                    displayOnConsole(`1=${typeTypeMSG.value}`)
-                    
-                    if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
-                        inputDelayMSG.value = 1
-                        inputDelayMSG.dispatchEvent(new Event('input'))
-                    }
-
-
-                    break;
-                case 'minutes':
-                    displayOnConsole(`1=${typeTypeMSG.value}`)
-                    
-                    if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
-                        inputDelayMSG.value = 1
-                        inputDelayMSG.dispatchEvent(new Event('input'))
-                    }
-
-
-                    break;
-                case 'hours':
-                    displayOnConsole(`1=${typeTypeMSG.value}`)
-                    
-                    if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
-                        inputDelayMSG.value = 1
-                        inputDelayMSG.dispatchEvent(new Event('input'))
-                    }
-
-
-                    break;
-                case 'days':
-                    displayOnConsole(`1=${typeTypeMSG.value}`)
-                    
-                    if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
-                        inputDelayMSG.value = 1
-                        inputDelayMSG.dispatchEvent(new Event('input'))
-                    }
-
-
-                    break;
-                case 'none':
-                    displayOnConsole(`1=${typeTypeMSG.value}`)
-
-                    if (inputDelayMSG.value !== '') {
-                        inputDelayMSG.value = ''
-                        inputDelayMSG.dispatchEvent(new Event('input'))
-                    }
-
-                    break;
-            }
-            break;
-        case 2:
-            divElement = bridgeElement.closest(`#idivTextarea`)
-
-            const inputDelayText = divElement.querySelector(`#idelayTextTime`)
-
-            if (typeTypeMSG) {
                 switch (typeTypeMSG.value || typeTypeMSG) {
                     case 'input':
-                        displayOnConsole(`2=${typeTypeMSG}:`)
-                        displayOnConsole(inputDelayText.value)
+                        displayOnConsole(`1=${typeTypeMSG}:`)
+                        displayOnConsole(inputDelayMSG.value)
 
-                        const selectDelayText = divElement.querySelector(`#idelayTextSelect`)
-                        if (inputDelayText.value >= 1) {
-                            if (selectDelayText.selectedIndex === 0) {
-                                selectDelayText.selectedIndex = 1
-                                selectDelayText.dispatchEvent(new Event('input'))
+                        const selectDelayMSG = divElement.querySelector(`#idelayMSGSelect`)
+                        if (inputDelayMSG.value >= 1) {
+                            if (selectDelayMSG.selectedIndex === 0) {
+                                selectDelayMSG.selectedIndex = 1
+                                selectDelayMSG.dispatchEvent(new Event('input'))
                             }
                         } else {
-                            if (selectDelayText.selectedIndex !== 0) {
-                                selectDelayText.selectedIndex = 0
-                                selectDelayText.dispatchEvent(new Event('input'))
-                            }
-                        }
-                        
-
-                        break;
-                    case 'seconds':
-                        displayOnConsole(`2=${typeTypeMSG.value}`)
-
-                        if (!inputDelayText.value || inputDelayText.value === 0) {
-                            inputDelayText.value = 1
-                            inputDelayText.dispatchEvent(new Event('input'))
-                        }
-                        
-                        
-                        break;
-                    case 'minutes':
-                        displayOnConsole(`2=${typeTypeMSG.value}`)
-
-                        if (!inputDelayText.value || inputDelayText.value === 0) {
-                            inputDelayText.value = 1
-                            inputDelayText.dispatchEvent(new Event('input'))
-                        }
-                        
-                        
-                        break;
-                    case 'hours':
-                        displayOnConsole(`2=${typeTypeMSG.value}`)
-
-                        if (!inputDelayText.value || inputDelayText.value === 0) {
-                            inputDelayText.value = 1
-                            inputDelayText.dispatchEvent(new Event('input'))
-                        }
-
-                        
-                        break;
-                    case 'days':
-                        displayOnConsole(`2=${typeTypeMSG.value}`)
-
-                        if (!inputDelayText.value || inputDelayText.value === 0) {
-                            inputDelayText.value = 1
-                            inputDelayText.dispatchEvent(new Event('input'))
-                        }
-
-                        
-                        break;
-                    case 'none':
-                        displayOnConsole(`2=${typeTypeMSG.value}`)
-
-                        if (inputDelayText.value !== '') {
-                            inputDelayText.value = ''
-                            inputDelayText.dispatchEvent(new Event('input'))
-                        }
-
-                        
-                        break;
-                }
-            }
-            
-            //const divTextAreaMSG = divElement.querySelector(`#itextAreaTypeMSG`)
-            if (data) {
-                displayOnConsole(`3=textarea:`) 
-                displayOnConsole(data.value)
-            }
-
-
-            break;
-        case 3:
-            divElement = bridgeElement.closest(`#ifileTypeMSG`)
-            
-            const inputDelayTextAudio = divElement.querySelector(`#idelayTexAudioTime`)
-
-            if (typeTypeMSG) {
-                switch (typeTypeMSG.value || typeTypeMSG) {
-                    case 'input':
-                        displayOnConsole(`3=${typeTypeMSG}:`)
-                        displayOnConsole(inputDelayTextAudio.value)
-
-                        const selectDelayTextAudio = divElement.querySelector(`#idelayTextAudioSelect`)
-                        if (inputDelayTextAudio.value >= 1) {
-                            if (selectDelayTextAudio.selectedIndex === 0) {
-                                selectDelayTextAudio.selectedIndex = 1
-                                selectDelayTextAudio.dispatchEvent(new Event('input'))
-                            }
-                        } else {
-                            if (selectDelayTextAudio.selectedIndex !== 0) {
-                                selectDelayTextAudio.selectedIndex = 0
-                                selectDelayTextAudio.dispatchEvent(new Event('input'))
+                            if (selectDelayMSG.selectedIndex !== 0) {
+                                selectDelayMSG.selectedIndex = 0
+                                selectDelayMSG.dispatchEvent(new Event('input'))
                             }
                         }
 
 
                         break;
                     case 'seconds':
-                        displayOnConsole(`3=${typeTypeMSG.value}`)
-
-                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
-                            inputDelayTextAudio.value = 1
-                            inputDelayTextAudio.dispatchEvent(new Event('input'))
-                        }
+                        displayOnConsole(`1=${typeTypeMSG.value}`)
                         
+                        if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
+                            inputDelayMSG.value = 1
+                            inputDelayMSG.dispatchEvent(new Event('input'))
+                        }
+
+
                         break;
                     case 'minutes':
-                        displayOnConsole(`3=${typeTypeMSG.value}`)
-
-                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
-                            inputDelayTextAudio.value = 1
-                            inputDelayTextAudio.dispatchEvent(new Event('input'))
-                        }
+                        displayOnConsole(`1=${typeTypeMSG.value}`)
                         
+                        if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
+                            inputDelayMSG.value = 1
+                            inputDelayMSG.dispatchEvent(new Event('input'))
+                        }
+
+
                         break;
                     case 'hours':
-                        displayOnConsole(`3=${typeTypeMSG.value}`)
-
-                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
-                            inputDelayTextAudio.value = 1
-                            inputDelayTextAudio.dispatchEvent(new Event('input'))
-                        }
+                        displayOnConsole(`1=${typeTypeMSG.value}`)
                         
+                        if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
+                            inputDelayMSG.value = 1
+                            inputDelayMSG.dispatchEvent(new Event('input'))
+                        }
+
+
                         break;
                     case 'days':
-                        displayOnConsole(`3=${typeTypeMSG.value}`)
-
-                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
-                            inputDelayTextAudio.value = 1
-                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        displayOnConsole(`1=${typeTypeMSG.value}`)
+                        
+                        if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
+                            inputDelayMSG.value = 1
+                            inputDelayMSG.dispatchEvent(new Event('input'))
                         }
 
-                        
+
                         break;
                     case 'none':
-                        displayOnConsole(`3=${typeTypeMSG.value}`)
+                        displayOnConsole(`1=${typeTypeMSG.value}`)
 
-                        if (inputDelayTextAudio.value !== '') {
-                            inputDelayTextAudio.value = ''
-                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        if (inputDelayMSG.value !== '') {
+                            inputDelayMSG.value = ''
+                            inputDelayMSG.dispatchEvent(new Event('input'))
                         }
 
-                        
-                        break; 
+                        break;
                 }
-            }
+                break;
+            case 2:
+                divElement = bridgeElement.closest(`#idivTextarea`)
 
-            //const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-            if (data) {
-                displayOnConsole(`3=file:`)   
-                displayOnConsole(data.name)   
-                console.log(data || '')
-                displayOnConsole(`3=textarea:`)   
-                displayOnConsole(data.value || '')   
-            }
+                const inputDelayText = divElement.querySelector(`#idelayTextTime`)
+
+                if (typeTypeMSG) {
+                    switch (typeTypeMSG.value || typeTypeMSG) {
+                        case 'input':
+                            displayOnConsole(`2=${typeTypeMSG}:`)
+                            displayOnConsole(inputDelayText.value)
+
+                            const selectDelayText = divElement.querySelector(`#idelayTextSelect`)
+                            if (inputDelayText.value >= 1) {
+                                if (selectDelayText.selectedIndex === 0) {
+                                    selectDelayText.selectedIndex = 1
+                                    selectDelayText.dispatchEvent(new Event('input'))
+                                }
+                            } else {
+                                if (selectDelayText.selectedIndex !== 0) {
+                                    selectDelayText.selectedIndex = 0
+                                    selectDelayText.dispatchEvent(new Event('input'))
+                                }
+                            }
+                            
+
+                            break;
+                        case 'seconds':
+                            displayOnConsole(`2=${typeTypeMSG.value}`)
+
+                            if (!inputDelayText.value || inputDelayText.value === 0) {
+                                inputDelayText.value = 1
+                                inputDelayText.dispatchEvent(new Event('input'))
+                            }
+                            
+                            
+                            break;
+                        case 'minutes':
+                            displayOnConsole(`2=${typeTypeMSG.value}`)
+
+                            if (!inputDelayText.value || inputDelayText.value === 0) {
+                                inputDelayText.value = 1
+                                inputDelayText.dispatchEvent(new Event('input'))
+                            }
+                            
+                            
+                            break;
+                        case 'hours':
+                            displayOnConsole(`2=${typeTypeMSG.value}`)
+
+                            if (!inputDelayText.value || inputDelayText.value === 0) {
+                                inputDelayText.value = 1
+                                inputDelayText.dispatchEvent(new Event('input'))
+                            }
+
+                            
+                            break;
+                        case 'days':
+                            displayOnConsole(`2=${typeTypeMSG.value}`)
+
+                            if (!inputDelayText.value || inputDelayText.value === 0) {
+                                inputDelayText.value = 1
+                                inputDelayText.dispatchEvent(new Event('input'))
+                            }
+
+                            
+                            break;
+                        case 'none':
+                            displayOnConsole(`2=${typeTypeMSG.value}`)
+
+                            if (inputDelayText.value !== '') {
+                                inputDelayText.value = ''
+                                inputDelayText.dispatchEvent(new Event('input'))
+                            }
+
+                            
+                            break;
+                    }
+                }
+                
+                //const divTextAreaMSG = divElement.querySelector(`#itextAreaTypeMSG`)
+                if (data) {
+                    displayOnConsole(`3=textarea:`) 
+                    displayOnConsole(data.value)
+                }
 
 
-            break;
+                break;
+            case 3:
+                divElement = bridgeElement.closest(`#ifileTypeMSG`)
+                
+                const inputDelayTextAudio = divElement.querySelector(`#idelayTexAudioTime`)
+
+                if (typeTypeMSG) {
+                    switch (typeTypeMSG.value || typeTypeMSG) {
+                        case 'input':
+                            displayOnConsole(`3=${typeTypeMSG}:`)
+                            displayOnConsole(inputDelayTextAudio.value)
+
+                            const selectDelayTextAudio = divElement.querySelector(`#idelayTextAudioSelect`)
+                            if (inputDelayTextAudio.value >= 1) {
+                                if (selectDelayTextAudio.selectedIndex === 0) {
+                                    selectDelayTextAudio.selectedIndex = 1
+                                    selectDelayTextAudio.dispatchEvent(new Event('input'))
+                                }
+                            } else {
+                                if (selectDelayTextAudio.selectedIndex !== 0) {
+                                    selectDelayTextAudio.selectedIndex = 0
+                                    selectDelayTextAudio.dispatchEvent(new Event('input'))
+                                }
+                            }
+
+
+                            break;
+                        case 'seconds':
+                            displayOnConsole(`3=${typeTypeMSG.value}`)
+
+                            if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                                inputDelayTextAudio.value = 1
+                                inputDelayTextAudio.dispatchEvent(new Event('input'))
+                            }
+                            
+                            break;
+                        case 'minutes':
+                            displayOnConsole(`3=${typeTypeMSG.value}`)
+
+                            if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                                inputDelayTextAudio.value = 1
+                                inputDelayTextAudio.dispatchEvent(new Event('input'))
+                            }
+                            
+                            break;
+                        case 'hours':
+                            displayOnConsole(`3=${typeTypeMSG.value}`)
+
+                            if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                                inputDelayTextAudio.value = 1
+                                inputDelayTextAudio.dispatchEvent(new Event('input'))
+                            }
+                            
+                            break;
+                        case 'days':
+                            displayOnConsole(`3=${typeTypeMSG.value}`)
+
+                            if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                                inputDelayTextAudio.value = 1
+                                inputDelayTextAudio.dispatchEvent(new Event('input'))
+                            }
+
+                            
+                            break;
+                        case 'none':
+                            displayOnConsole(`3=${typeTypeMSG.value}`)
+
+                            if (inputDelayTextAudio.value !== '') {
+                                inputDelayTextAudio.value = ''
+                                inputDelayTextAudio.dispatchEvent(new Event('input'))
+                            }
+
+                            
+                            break; 
+                    }
+                }
+
+                //const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                if (data) {
+                    displayOnConsole(`3=file:`)   
+                    displayOnConsole(data.name)   
+                    console.log(data || '')
+                    displayOnConsole(`3=textarea:`)   
+                    displayOnConsole(data.value || '')   
+                }
+
+
+                break;
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR sendToFunil: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> sendToFunil: ${error.message}`, setLogError)
     }
 }
 
 async function StateTypingMSG(buttonElement, IsWType) {
-    let type = null
-    let button = null
-    let abbr = null
-    let input = null
-    let delay = null
-    if (IsWType) {
-        type = 'idivTextarea'
-        button = 'iOnOffStateTypingMSG'
-        abbr = 'iabbrOnOffStateTypingMSG'
-        input = 'idelayTextTime'
-        delay = 'idivDelayText'
-    } else {
-        type = 'ifileTypeMSG'
-        button = 'iOnOffStateTypingFile'
-        abbr = 'iabbrOnOffStateTypingFile'
-        input = 'idelayTexAudioTime'
-        delay = 'idivDelayTextAudio'
-    }
-
-    const typeElement = buttonElement.closest(`#${type}`)
-    const divElement = typeElement || buttonElement
-    console.log(divElement)
-    const buttonStateTyping = divElement.querySelector(`#${button}`)
-    const abbrStateTyping = divElement.querySelector(`#${abbr}`)
-    
-    const inputDelayText = divElement.querySelector(`#${input}`)
-    const divDelayStateTyping = divElement.querySelector(`#${delay}`)
-
-    const computedSyle2 = window.getComputedStyle(buttonStateTyping)
-    const currentButtonStateTypingDisplay = computedSyle2.display
-    const currentButtonStateTypingOpacity = computedSyle2.opacity
-
-    const isShown_divDelayTextStateRecording = window.getComputedStyle(divDelayStateTyping).height
-    
-    if (isShown_divDelayTextStateRecording === '0px') {
-        buttonStateTyping.style.cssText =
-            `display: ${currentButtonStateTypingDisplay}; opacity: ${currentButtonStateTypingOpacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
-        buttonStateTyping.textContent = `-`
-        
-        abbrStateTyping.title = `StateTyping STATUS: on`
-
-        divDelayStateTyping.style.cssText =
-            'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-        setTimeout(function() {
-            divDelayStateTyping.style.cssText =
-                'display: flex; height: 0vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
-        }, -1)
-        setTimeout(function() {
-            divDelayStateTyping.style.cssText =
-                'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
-        }, 100)
-    } else {
-        if (inputDelayText.value !== '') {
-            inputDelayText.value = ''
-            inputDelayText.dispatchEvent(new Event('input'))
+    try {
+        let type = null
+        let button = null
+        let abbr = null
+        let input = null
+        let delay = null
+        if (IsWType) {
+            type = 'idivTextarea'
+            button = 'iOnOffStateTypingMSG'
+            abbr = 'iabbrOnOffStateTypingMSG'
+            input = 'idelayTextTime'
+            delay = 'idivDelayText'
+        } else {
+            type = 'ifileTypeMSG'
+            button = 'iOnOffStateTypingFile'
+            abbr = 'iabbrOnOffStateTypingFile'
+            input = 'idelayTexAudioTime'
+            delay = 'idivDelayTextAudio'
         }
 
-        buttonStateTyping.style.cssText =
-            `display: ${currentButtonStateTypingDisplay}; opacity: ${currentButtonStateTypingOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonStateTyping.textContent = `O`
+        const typeElement = buttonElement.closest(`#${type}`)
+        const divElement = typeElement || buttonElement
+        console.log(divElement)
+        const buttonStateTyping = divElement.querySelector(`#${button}`)
+        const abbrStateTyping = divElement.querySelector(`#${abbr}`)
+        
+        const inputDelayText = divElement.querySelector(`#${input}`)
+        const divDelayStateTyping = divElement.querySelector(`#${delay}`)
 
-        abbrStateTyping.title = `StateTyping STATUS: off`
+        const computedSyle2 = window.getComputedStyle(buttonStateTyping)
+        const currentButtonStateTypingDisplay = computedSyle2.display
+        const currentButtonStateTypingOpacity = computedSyle2.opacity
 
-        divDelayStateTyping.style.cssText =
-            'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-        setTimeout(function() {
+        const isShown_divDelayTextStateRecording = window.getComputedStyle(divDelayStateTyping).height
+        
+        if (isShown_divDelayTextStateRecording === '0px') {
+            buttonStateTyping.style.cssText =
+                `display: ${currentButtonStateTypingDisplay}; opacity: ${currentButtonStateTypingOpacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
+            buttonStateTyping.textContent = `-`
+            
+            abbrStateTyping.title = `StateTyping STATUS: on`
+
             divDelayStateTyping.style.cssText =
-                'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-        }, 300)
+                'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            setTimeout(function() {
+                divDelayStateTyping.style.cssText =
+                    'display: flex; height: 0vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+            }, -1)
+            setTimeout(function() {
+                divDelayStateTyping.style.cssText =
+                    'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+            }, 100)
+        } else {
+            if (inputDelayText.value !== '') {
+                inputDelayText.value = ''
+                inputDelayText.dispatchEvent(new Event('input'))
+            }
+
+            buttonStateTyping.style.cssText =
+                `display: ${currentButtonStateTypingDisplay}; opacity: ${currentButtonStateTypingOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonStateTyping.textContent = `O`
+
+            abbrStateTyping.title = `StateTyping STATUS: off`
+
+            divDelayStateTyping.style.cssText =
+                'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            setTimeout(function() {
+                divDelayStateTyping.style.cssText =
+                    'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            }, 300)
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR StateTypingMSG: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> StateTypingMSG: ${error.message}`, setLogError)
     }
 }
 async function StateRecordingMSG(buttonElement) {
-    const divElement = buttonElement.closest('#ifileTypeMSG')
+    try {
+        const divElement = buttonElement.closest('#ifileTypeMSG')
 
-    const buttonStateRecording = divElement.querySelector(`#iOnOffStateRecordingFile`)
-    const abbrStateRecording = divElement.querySelector(`#iabbrOnOffStateRecordingFile`)
-    
-    const inputDelayTextAudio = divElement.querySelector(`#idelayTexAudioTime`)
-    const divDelayStateRecording = divElement.querySelector(`#idivDelayTextAudio`)
-
-    const computedSyle2 = window.getComputedStyle(buttonStateRecording)
-    const currentButtonStateRecordingDisplay = computedSyle2.display
-    const currentButtonStateRecordingOpacity = computedSyle2.opacity
-    
-    const isShown_divDelayTextStateRecording = window.getComputedStyle(divDelayStateRecording).height
-    
-    if (isShown_divDelayTextStateRecording === '0px') {
-        buttonStateRecording.style.cssText =
-            `display: ${currentButtonStateRecordingDisplay}; opacity: ${currentButtonStateRecordingOpacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
-        buttonStateRecording.textContent = `-`
+        const buttonStateRecording = divElement.querySelector(`#iOnOffStateRecordingFile`)
+        const abbrStateRecording = divElement.querySelector(`#iabbrOnOffStateRecordingFile`)
         
-        abbrStateRecording.title = `StateTyping STATUS: on`
+        const inputDelayTextAudio = divElement.querySelector(`#idelayTexAudioTime`)
+        const divDelayStateRecording = divElement.querySelector(`#idivDelayTextAudio`)
 
-        divDelayStateRecording.style.cssText =
-            'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-        setTimeout(function() {
+        const computedSyle2 = window.getComputedStyle(buttonStateRecording)
+        const currentButtonStateRecordingDisplay = computedSyle2.display
+        const currentButtonStateRecordingOpacity = computedSyle2.opacity
+        
+        const isShown_divDelayTextStateRecording = window.getComputedStyle(divDelayStateRecording).height
+        
+        if (isShown_divDelayTextStateRecording === '0px') {
+            buttonStateRecording.style.cssText =
+                `display: ${currentButtonStateRecordingDisplay}; opacity: ${currentButtonStateRecordingOpacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
+            buttonStateRecording.textContent = `-`
+            
+            abbrStateRecording.title = `StateTyping STATUS: on`
+
             divDelayStateRecording.style.cssText =
-                'display: flex; height: 0vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
-        }, -1)
-        setTimeout(function() {
+                'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            setTimeout(function() {
+                divDelayStateRecording.style.cssText =
+                    'display: flex; height: 0vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+            }, -1)
+            setTimeout(function() {
+                divDelayStateRecording.style.cssText =
+                    'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+            }, 100)
+        } else {
+            if (inputDelayTextAudio.value >= 1) {
+                inputDelayTextAudio.value = ''
+                inputDelayTextAudio.dispatchEvent(new Event('input'))
+            }
+
+            buttonStateRecording.style.cssText =
+                `display: ${currentButtonStateRecordingDisplay}; opacity: ${currentButtonStateRecordingOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonStateRecording.textContent = `O`
+
+            abbrStateRecording.title = `StateTyping STATUS: off`
+
             divDelayStateRecording.style.cssText =
-                'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
-        }, 100)
-    } else {
-        if (inputDelayTextAudio.value >= 1) {
-            inputDelayTextAudio.value = ''
-            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            setTimeout(function() {
+                divDelayStateRecording.style.cssText =
+                    'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+            }, 300)
         }
-
-        buttonStateRecording.style.cssText =
-            `display: ${currentButtonStateRecordingDisplay}; opacity: ${currentButtonStateRecordingOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonStateRecording.textContent = `O`
-
-        abbrStateRecording.title = `StateTyping STATUS: off`
-
-        divDelayStateRecording.style.cssText =
-            'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-        setTimeout(function() {
-            divDelayStateRecording.style.cssText =
-                'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
-        }, 300)
+    } catch (error) {
+        console.error(`> ⚠️ ERROR StateRecordingMSG: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> StateRecordingMSG: ${error.message}`, setLogError)
     }
 }
 async function CaptionFileMSG(buttonElement) {
-    const divElement = buttonElement.closest('#ifileTypeMSG')
-    
-    const buttonCaption = divElement.querySelector(`#iOnOffCaption`)
-    const abbrCaption = divElement.querySelector(`#iabbrOnOffCaption`)
-    const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-
-    const buttonLigtDark = divElement.querySelector(`#iOnOffLightDarkCaption`)
-    const currentLightDarkBackground_Color = buttonLigtDark.style.backgroundColor
-    const currentLightDarkColor = buttonLigtDark.style.color
-    const buttonLightDarkColor = divElement.querySelector(`#iOnOffLightDarkColorCaption`)
-    const currentLightDarkColorBackground_Color = buttonLightDarkColor.style.backgroundColor
-    const currentLightDarkColorColor = buttonLightDarkColor.style.color
-    
-    const buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
-    const buttonDesktopScreen2 = divElement.querySelector(`#iOnOffVLockScreenSetupCaption2`)
-    const currentButtonDesktopScreen2Background_Color = buttonDesktopScreen2.style.backgroundColor
-    const currentButtonDesktopScreen2Color = buttonDesktopScreen2.style.color
-    const buttonDesktopScreen3 = divElement.querySelector(`#iOnOffDesktopScreenSetupCaption3`)
-    const currentButtonDesktopScreen3Background_Color = buttonDesktopScreen3.style.backgroundColor
-    const currentButtonDesktopScreen3Color = buttonDesktopScreen3.style.color
-    const buttonDesktopScreen4 = divElement.querySelector(`#iOnOffPhoneScreenSetupCaption4`)
-    const currentButtonDesktopScreen4Background_Color = buttonDesktopScreen4.style.backgroundColor
-    const currentButtonDesktopScreen4Color = buttonDesktopScreen4.style.color
-
-    const isShown_divTextAreaCaption = window.getComputedStyle(divTextAreaCaption).display
-    const currentTextAreaBackground_Color = divTextAreaCaption.style.backgroundColor
-    const currentTextAreaColor = divTextAreaCaption.style.color
-    const currentTextAreaWidth = divTextAreaCaption.style.width
-    const currentTextAreaResize = divTextAreaCaption.style.resize
-
-    if (isShown_divTextAreaCaption === 'none') {
-        buttonCaption.style.cssText =
-            'background-color: var(--colorWhite); color: var(--colorBlack);'
-        buttonCaption.textContent = `-`
+    try {
+        const divElement = buttonElement.closest('#ifileTypeMSG')
         
-        abbrCaption.title = `Area de texto STATUS: on`
+        const buttonCaption = divElement.querySelector(`#iOnOffCaption`)
+        const abbrCaption = divElement.querySelector(`#iabbrOnOffCaption`)
+        const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+
+        const buttonLigtDark = divElement.querySelector(`#iOnOffLightDarkCaption`)
+        const currentLightDarkBackground_Color = buttonLigtDark.style.backgroundColor
+        const currentLightDarkColor = buttonLigtDark.style.color
+        const buttonLightDarkColor = divElement.querySelector(`#iOnOffLightDarkColorCaption`)
+        const currentLightDarkColorBackground_Color = buttonLightDarkColor.style.backgroundColor
+        const currentLightDarkColorColor = buttonLightDarkColor.style.color
         
-        divTextAreaCaption.style.cssText =
-            `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
-        setTimeout(function() {
-            divTextAreaCaption.style.cssText =
-                `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 6px; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
-        }, -1)
-        setTimeout(function() {
-            divTextAreaCaption.style.cssText =
-                `display: block; height: 13em; width: ${currentTextAreaWidth}; padding: 6px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
-        }, 100)
+        const buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
+        const buttonDesktopScreen2 = divElement.querySelector(`#iOnOffVLockScreenSetupCaption2`)
+        const currentButtonDesktopScreen2Background_Color = buttonDesktopScreen2.style.backgroundColor
+        const currentButtonDesktopScreen2Color = buttonDesktopScreen2.style.color
+        const buttonDesktopScreen3 = divElement.querySelector(`#iOnOffDesktopScreenSetupCaption3`)
+        const currentButtonDesktopScreen3Background_Color = buttonDesktopScreen3.style.backgroundColor
+        const currentButtonDesktopScreen3Color = buttonDesktopScreen3.style.color
+        const buttonDesktopScreen4 = divElement.querySelector(`#iOnOffPhoneScreenSetupCaption4`)
+        const currentButtonDesktopScreen4Background_Color = buttonDesktopScreen4.style.backgroundColor
+        const currentButtonDesktopScreen4Color = buttonDesktopScreen4.style.color
 
-        buttonLigtDark.style.cssText =
-            `display: inline; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
-        buttonLightDarkColor.style.cssText =
-            `display: inline; opacity: 0; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
+        const isShown_divTextAreaCaption = window.getComputedStyle(divTextAreaCaption).display
+        const currentTextAreaBackground_Color = divTextAreaCaption.style.backgroundColor
+        const currentTextAreaColor = divTextAreaCaption.style.color
+        const currentTextAreaWidth = divTextAreaCaption.style.width
+        const currentTextAreaResize = divTextAreaCaption.style.resize
 
-        buttonDesktopScreen1.style.cssText =
-            `display: inline; opacity: 0;`
-        buttonDesktopScreen2.style.cssText =
-            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
-        buttonDesktopScreen3.style.cssText =
-            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
-        buttonDesktopScreen4.style.cssText =
-            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
-        setTimeout(function() {
+        if (isShown_divTextAreaCaption === 'none') {
+            buttonCaption.style.cssText =
+                'background-color: var(--colorWhite); color: var(--colorBlack);'
+            buttonCaption.textContent = `-`
+            
+            abbrCaption.title = `Area de texto STATUS: on`
+            
+            divTextAreaCaption.style.cssText =
+                `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
+            setTimeout(function() {
+                divTextAreaCaption.style.cssText =
+                    `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 6px; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
+            }, -1)
+            setTimeout(function() {
+                divTextAreaCaption.style.cssText =
+                    `display: block; height: 13em; width: ${currentTextAreaWidth}; padding: 6px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
+            }, 100)
+
             buttonLigtDark.style.cssText =
-                `display: inline; opacity: 1; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
+                `display: inline; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
             buttonLightDarkColor.style.cssText =
-                `display: inline; opacity: 1; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
+                `display: inline; opacity: 0; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
 
             buttonDesktopScreen1.style.cssText =
-                `display: inline; opacity: 1;`
+                `display: inline; opacity: 0;`
             buttonDesktopScreen2.style.cssText =
-                `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
+                `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
             buttonDesktopScreen3.style.cssText =
-                `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
+                `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
             buttonDesktopScreen4.style.cssText =
-                `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
-        }, 100)
-    } else {
-        if (divTextAreaCaption.value !== '') {
-            divTextAreaCaption.value = ''
-            divTextAreaCaption.dispatchEvent(new Event('input'))
+                `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
+            setTimeout(function() {
+                buttonLigtDark.style.cssText =
+                    `display: inline; opacity: 1; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
+                buttonLightDarkColor.style.cssText =
+                    `display: inline; opacity: 1; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
+
+                buttonDesktopScreen1.style.cssText =
+                    `display: inline; opacity: 1;`
+                buttonDesktopScreen2.style.cssText =
+                    `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
+                buttonDesktopScreen3.style.cssText =
+                    `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
+                buttonDesktopScreen4.style.cssText =
+                    `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
+            }, 100)
+        } else {
+            if (divTextAreaCaption.value !== '') {
+                divTextAreaCaption.value = ''
+                divTextAreaCaption.dispatchEvent(new Event('input'))
+            }
+
+            buttonLigtDark.style.cssText =
+                `display: inline; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
+            buttonLightDarkColor.style.cssText =
+                `display: inline; opacity: 0; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
+
+            buttonDesktopScreen1.style.cssText =
+                `display: inline; opacity: 0;`
+            buttonDesktopScreen2.style.cssText =
+                `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
+            buttonDesktopScreen3.style.cssText =
+                `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
+            buttonDesktopScreen4.style.cssText =
+                `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
+            setTimeout(function() {
+                buttonLigtDark.style.cssText =
+                    `display: none; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
+                buttonLightDarkColor.style.cssText =
+                    `display: none; opacity: 0; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
+
+                buttonDesktopScreen1.style.cssText =
+                    `display: none; opacity: 0;`
+                buttonDesktopScreen2.style.cssText =
+                    `display: none; opacity: 0; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
+                buttonDesktopScreen3.style.cssText =
+                    `display: none; opacity: 0; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
+                buttonDesktopScreen4.style.cssText =
+                    `display: none; opacity: 0; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
+            }, 300)
+
+            buttonCaption.style.cssText =
+                'background-color: var(--colorBlack); color: var(--colorWhite);'
+            buttonCaption.textContent = `O`
+            
+            abbrCaption.title = `Area de texto STATUS: off`
+            
+            divTextAreaCaption.style.cssText =
+                `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
+            setTimeout(function() {
+                divTextAreaCaption.style.cssText =
+                    `display: none; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
+            }, 300)
         }
-
-        buttonLigtDark.style.cssText =
-            `display: inline; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
-        buttonLightDarkColor.style.cssText =
-            `display: inline; opacity: 0; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
-
-        buttonDesktopScreen1.style.cssText =
-            `display: inline; opacity: 0;`
-        buttonDesktopScreen2.style.cssText =
-            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
-        buttonDesktopScreen3.style.cssText =
-            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
-        buttonDesktopScreen4.style.cssText =
-            `display: inline; opacity: 0; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
-        setTimeout(function() {
-            buttonLigtDark.style.cssText =
-                `display: none; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
-            buttonLightDarkColor.style.cssText =
-                `display: none; opacity: 0; background-color: ${currentLightDarkColorBackground_Color}; color: ${currentLightDarkColorColor};`
-
-            buttonDesktopScreen1.style.cssText =
-                `display: none; opacity: 0;`
-            buttonDesktopScreen2.style.cssText =
-                `display: none; opacity: 0; background-color: ${currentButtonDesktopScreen2Background_Color}; color: ${currentButtonDesktopScreen2Color};`
-            buttonDesktopScreen3.style.cssText =
-                `display: none; opacity: 0; background-color: ${currentButtonDesktopScreen3Background_Color}; color: ${currentButtonDesktopScreen3Color};`
-            buttonDesktopScreen4.style.cssText =
-                `display: none; opacity: 0; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
-        }, 300)
-
-        buttonCaption.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
-        buttonCaption.textContent = `O`
-        
-        abbrCaption.title = `Area de texto STATUS: off`
-        
-        divTextAreaCaption.style.cssText =
-            `display: block; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
-        setTimeout(function() {
-            divTextAreaCaption.style.cssText =
-                `display: none; height: 0em; width: ${currentTextAreaWidth}; padding: 0px;  background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; resize: ${currentTextAreaResize};`
-        }, 300)
+    } catch (error) {
+        console.error(`> ⚠️ ERROR CaptionFileMSG: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> CaptionFileMSG: ${error.message}`, setLogError)
     }
 }
 
 async function LightDarkMSG(buttonElement, IsWType) {
-    let type = null
-    let button = null
-    let abbrButton = null
-    let colorButton = null
-    let textarea = null
-    if (IsWType) {
-        type = 'idivTextarea'
-        button = 'iOnOffLightDarkMSG'
-        abbrButton = 'iabbrOnOffLightDarkMSG'
-        colorButton = 'iOnOffLightDarkColorMSG'
-        textarea = 'itextAreaTypeMSG'
-    } else {
-        type = 'ifileTypeMSG'
-        button = 'iOnOffLightDarkCaption'
-        abbrButton = 'iabbrOnOffLightDarkCaption'
-        colorButton = 'iOnOffLightDarkColorCaption'
-        textarea = 'itextAreaCaption'
-    }
-    const divElement = buttonElement.closest(`#${type}`)
-    
-    const buttonLightDark = divElement.querySelector(`#${button}`)
-    const abbrLightDark = divElement.querySelector(`#${abbrButton}`)
-    const buttonLightDarkColor = divElement.querySelector(`#${colorButton}`)
-    const textAreaDiv = divElement.querySelector(`#${textarea}`)
-
-    const computedSyle = window.getComputedStyle(textAreaDiv)
-    const currentTextAreaWidth = computedSyle.width
-    const currentTextAreaHeight = computedSyle.height
-    const currentTextAreaDisplay = computedSyle.display
-    const currentTextAreaPadding = computedSyle.padding
-    
-    const computedSyle2 = window.getComputedStyle(buttonLightDark)
-    const currentButtonLightDarkDisplay = computedSyle2.display
-    const currentButtonLightDarkOpacity = computedSyle2.opacity
-    const computedSyle3 = window.getComputedStyle(buttonLightDarkColor)
-    const currentButtonLightDarkColorDisplay = computedSyle3.display
-    const currentButtonLightDarkColorOpacity = computedSyle3.opacity
-
-    const isWMode_textAreaMSG = computedSyle.backgroundColor
-
-    const black = 'rgb(27, 27, 27)'
-    const white = 'rgb(240, 240, 240)'
-    const modeDark = 'rgb(33, 33, 33)'
-    const modeLight = 'rgb(240, 240, 240)'
-    const greenDark = 'rgb(0, 64, 52)'
-    const greenLight = 'rgb(215, 241, 178)'
-    if (isWMode_textAreaMSG === modeDark || isWMode_textAreaMSG === greenDark) {
-        if (isWMode_textAreaMSG === modeDark) {
-            buttonLightDarkColor.style.cssText =
-                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-            textAreaDiv.style.cssText =
-                `background-color: ${modeLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-        } else if (isWMode_textAreaMSG === greenDark) {
-            buttonLightDarkColor.style.cssText =
-                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenLight}; color: ${black};`
-            textAreaDiv.style.cssText =
-                `background-color: ${greenLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+    try {
+        let type = null
+        let button = null
+        let abbrButton = null
+        let colorButton = null
+        let textarea = null
+        if (IsWType) {
+            type = 'idivTextarea'
+            button = 'iOnOffLightDarkMSG'
+            abbrButton = 'iabbrOnOffLightDarkMSG'
+            colorButton = 'iOnOffLightDarkColorMSG'
+            textarea = 'itextAreaTypeMSG'
+        } else {
+            type = 'ifileTypeMSG'
+            button = 'iOnOffLightDarkCaption'
+            abbrButton = 'iabbrOnOffLightDarkCaption'
+            colorButton = 'iOnOffLightDarkColorCaption'
+            textarea = 'itextAreaCaption'
         }
+        const divElement = buttonElement.closest(`#${type}`)
         
-        buttonLightDark.style.cssText =
-            `display: ${currentButtonLightDarkDisplay}; opacity: ${currentButtonLightDarkOpacity}; background-color: ${modeLight}; color: ${black}`
-        buttonLightDark.textContent = `-`
-        abbrLightDark.title = `Modo Claro/Escuro STATUS: claro`
-    } else if (isWMode_textAreaMSG === modeLight || isWMode_textAreaMSG === greenLight) {
-        if (isWMode_textAreaMSG === modeLight) {
-            buttonLightDarkColor.style.cssText =
-                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-            textAreaDiv.style.cssText =
-                `background-color: ${modeDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-        } else if (isWMode_textAreaMSG === greenLight) {
-            buttonLightDarkColor.style.cssText =
-                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenDark}; color: ${white};`
-            textAreaDiv.style.cssText =
-                `background-color: ${greenDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+        const buttonLightDark = divElement.querySelector(`#${button}`)
+        const abbrLightDark = divElement.querySelector(`#${abbrButton}`)
+        const buttonLightDarkColor = divElement.querySelector(`#${colorButton}`)
+        const textAreaDiv = divElement.querySelector(`#${textarea}`)
+
+        const computedSyle = window.getComputedStyle(textAreaDiv)
+        const currentTextAreaWidth = computedSyle.width
+        const currentTextAreaHeight = computedSyle.height
+        const currentTextAreaDisplay = computedSyle.display
+        const currentTextAreaPadding = computedSyle.padding
+        
+        const computedSyle2 = window.getComputedStyle(buttonLightDark)
+        const currentButtonLightDarkDisplay = computedSyle2.display
+        const currentButtonLightDarkOpacity = computedSyle2.opacity
+        const computedSyle3 = window.getComputedStyle(buttonLightDarkColor)
+        const currentButtonLightDarkColorDisplay = computedSyle3.display
+        const currentButtonLightDarkColorOpacity = computedSyle3.opacity
+
+        const isWMode_textAreaMSG = computedSyle.backgroundColor
+
+        const black = 'rgb(27, 27, 27)'
+        const white = 'rgb(240, 240, 240)'
+        const modeDark = 'rgb(33, 33, 33)'
+        const modeLight = 'rgb(240, 240, 240)'
+        const greenDark = 'rgb(0, 64, 52)'
+        const greenLight = 'rgb(215, 241, 178)'
+        if (isWMode_textAreaMSG === modeDark || isWMode_textAreaMSG === greenDark) {
+            if (isWMode_textAreaMSG === modeDark) {
+                buttonLightDarkColor.style.cssText =
+                    `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+                textAreaDiv.style.cssText =
+                    `background-color: ${modeLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+            } else if (isWMode_textAreaMSG === greenDark) {
+                buttonLightDarkColor.style.cssText =
+                    `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenLight}; color: ${black};`
+                textAreaDiv.style.cssText =
+                    `background-color: ${greenLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+            }
+            
+            buttonLightDark.style.cssText =
+                `display: ${currentButtonLightDarkDisplay}; opacity: ${currentButtonLightDarkOpacity}; background-color: ${modeLight}; color: ${black}`
+            buttonLightDark.textContent = `-`
+            abbrLightDark.title = `Modo Claro/Escuro STATUS: claro`
+        } else if (isWMode_textAreaMSG === modeLight || isWMode_textAreaMSG === greenLight) {
+            if (isWMode_textAreaMSG === modeLight) {
+                buttonLightDarkColor.style.cssText =
+                    `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+                textAreaDiv.style.cssText =
+                    `background-color: ${modeDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+            } else if (isWMode_textAreaMSG === greenLight) {
+                buttonLightDarkColor.style.cssText =
+                    `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenDark}; color: ${white};`
+                textAreaDiv.style.cssText =
+                    `background-color: ${greenDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+            }
+            
+            buttonLightDark.style.cssText =
+                `display: ${currentButtonLightDarkDisplay}; opacity: ${currentButtonLightDarkOpacity}; background-color: ${modeDark}; color: ${white}`
+            buttonLightDark.textContent = `O`
+            abbrLightDark.title = `Modo Claro/Escuro STATUS: escuro`
         }
-        
-        buttonLightDark.style.cssText =
-            `display: ${currentButtonLightDarkDisplay}; opacity: ${currentButtonLightDarkOpacity}; background-color: ${modeDark}; color: ${white}`
-        buttonLightDark.textContent = `O`
-        abbrLightDark.title = `Modo Claro/Escuro STATUS: escuro`
+    } catch (error) {
+        console.error(`> ⚠️ ERROR LightDarkMSG: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> LightDarkMSG: ${error.message}`, setLogError)
     }
 }
 async function LightDarkColorMSG(buttonElement, IsWType) {
-    let type = null
-    let abbrButton = null
-    let colorButton = null
-    let textarea = null
-    if (IsWType) {
-        type = 'idivTextarea'
-        abbrButton = 'iabbrOnOffLightDarkColorMSG'
-        colorButton = 'iOnOffLightDarkColorMSG'
-        textarea = 'itextAreaTypeMSG'
-    } else {
-        type = 'ifileTypeMSG'
-        abbrButton = 'iabbrOnOffLightDarkColorCaption'
-        colorButton = 'iOnOffLightDarkColorCaption'
-        textarea = 'itextAreaCaption'
-    }
-    const divElement = buttonElement.closest(`#${type}`)
-    
-    const abbrColor = divElement.querySelector(`#${abbrButton}`)
-    const buttonLightDarkColor = divElement.querySelector(`#${colorButton}`)
-    const textAreaDiv = divElement.querySelector(`#${textarea}`)
-
-    const computedSyle = window.getComputedStyle(textAreaDiv)
-    const currentTextAreaWidth = computedSyle.width
-    const currentTextAreaHeight = computedSyle.height
-    const currentTextAreaDisplay = computedSyle.display
-    const currentTextAreaPadding = computedSyle.padding
-    
-    const computedSyle2 = window.getComputedStyle(buttonLightDarkColor)
-    const currentButtonLightDarkColorDisplay = computedSyle2.display
-    const currentButtonLightDarkColorOpacity = computedSyle2.opacity
-
-    const isWMode_textAreaMSG = computedSyle.backgroundColor
-    
-    
-    const black = 'rgb(27, 27, 27)'
-    const white = 'rgb(240, 240, 240)'
-    const modeDark = 'rgb(33, 33, 33)'
-    const modeLight = 'rgb(240, 240, 240)'
-    const greenDark = 'rgb(0, 64, 52)'
-    const greenLight = 'rgb(215, 241, 178)'
-    if (isWMode_textAreaMSG === modeDark || isWMode_textAreaMSG === modeLight) {
-        if (isWMode_textAreaMSG === modeDark) {
-            buttonLightDarkColor.style.cssText =
-                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenDark}; color: ${white};`
-            textAreaDiv.style.cssText =
-                `background-color: ${greenDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-        } else if (isWMode_textAreaMSG === modeLight){
-            buttonLightDarkColor.style.cssText =
-                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenLight}; color: ${black};`
-            textAreaDiv.style.cssText =
-                `background-color: ${greenLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+    try {
+        let type = null
+        let abbrButton = null
+        let colorButton = null
+        let textarea = null
+        if (IsWType) {
+            type = 'idivTextarea'
+            abbrButton = 'iabbrOnOffLightDarkColorMSG'
+            colorButton = 'iOnOffLightDarkColorMSG'
+            textarea = 'itextAreaTypeMSG'
+        } else {
+            type = 'ifileTypeMSG'
+            abbrButton = 'iabbrOnOffLightDarkColorCaption'
+            colorButton = 'iOnOffLightDarkColorCaption'
+            textarea = 'itextAreaCaption'
         }
-            
-        buttonLightDarkColor.textContent = `-`
-        abbrColor.title = `Modo Cliente/Usuario STATUS: usuario`
-    } else if (isWMode_textAreaMSG === greenDark || isWMode_textAreaMSG === greenLight) {
-        if (isWMode_textAreaMSG === greenDark) {
-            textAreaDiv.style.cssText =
-                `background-color: ${modeDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-        } else if (isWMode_textAreaMSG === greenLight){
-            textAreaDiv.style.cssText =
-                `background-color: ${modeLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
-        }
+        const divElement = buttonElement.closest(`#${type}`)
+        
+        const abbrColor = divElement.querySelector(`#${abbrButton}`)
+        const buttonLightDarkColor = divElement.querySelector(`#${colorButton}`)
+        const textAreaDiv = divElement.querySelector(`#${textarea}`)
+
+        const computedSyle = window.getComputedStyle(textAreaDiv)
+        const currentTextAreaWidth = computedSyle.width
+        const currentTextAreaHeight = computedSyle.height
+        const currentTextAreaDisplay = computedSyle.display
+        const currentTextAreaPadding = computedSyle.padding
+        
+        const computedSyle2 = window.getComputedStyle(buttonLightDarkColor)
+        const currentButtonLightDarkColorDisplay = computedSyle2.display
+        const currentButtonLightDarkColorOpacity = computedSyle2.opacity
+
+        const isWMode_textAreaMSG = computedSyle.backgroundColor
+        
+        
+        const black = 'rgb(27, 27, 27)'
+        const white = 'rgb(240, 240, 240)'
+        const modeDark = 'rgb(33, 33, 33)'
+        const modeLight = 'rgb(240, 240, 240)'
+        const greenDark = 'rgb(0, 64, 52)'
+        const greenLight = 'rgb(215, 241, 178)'
+        if (isWMode_textAreaMSG === modeDark || isWMode_textAreaMSG === modeLight) {
+            if (isWMode_textAreaMSG === modeDark) {
+                buttonLightDarkColor.style.cssText =
+                    `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenDark}; color: ${white};`
+                textAreaDiv.style.cssText =
+                    `background-color: ${greenDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+            } else if (isWMode_textAreaMSG === modeLight){
+                buttonLightDarkColor.style.cssText =
+                    `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: ${greenLight}; color: ${black};`
+                textAreaDiv.style.cssText =
+                    `background-color: ${greenLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+            }
                 
-        buttonLightDarkColor.style.cssText =
-            `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonLightDarkColor.textContent = `O`
-        abbrColor.title = `Modo Cliente/Usuario STATUS: cliente`
+            buttonLightDarkColor.textContent = `-`
+            abbrColor.title = `Modo Cliente/Usuario STATUS: usuario`
+        } else if (isWMode_textAreaMSG === greenDark || isWMode_textAreaMSG === greenLight) {
+            if (isWMode_textAreaMSG === greenDark) {
+                textAreaDiv.style.cssText =
+                    `background-color: ${modeDark}; color: ${white}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+            } else if (isWMode_textAreaMSG === greenLight){
+                textAreaDiv.style.cssText =
+                    `background-color: ${modeLight}; color: ${black}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; display: ${currentTextAreaDisplay}; padding: ${currentTextAreaPadding};`
+            }
+                    
+            buttonLightDarkColor.style.cssText =
+                `display: ${currentButtonLightDarkColorDisplay}; opacity: ${currentButtonLightDarkColorOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonLightDarkColor.textContent = `O`
+            abbrColor.title = `Modo Cliente/Usuario STATUS: cliente`
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR LightDarkColorMSG: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> LightDarkColorMSG: ${error.message}`, setLogError)
     }
 }
 
 async function resetScreenSetup(buttonElement, IsWType) {
-    let type = null
-    let button2 = null
-    let abbr2 = null
-    let button3 = null
-    let abbr3 = null
-    let button4 = null
-    let abbr4 = null
-    let textarea = null
-    if (IsWType) {
-        type = 'idivTextarea'
-        button2 = 'iOnOffVLockScreenSetupText2'
-        abbr2 = 'iabbrOnOffVLockScreenSetupText2'
-        button3 = 'iOnOffDesktopScreenSetupText3'
-        abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
-        button4 = 'iOnOffPhoneScreenSetupText4'
-        abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
-        textarea = 'itextAreaTypeMSG'
-    } else {
-        type = 'ifileTypeMSG'
-        button2 = 'iOnOffVLockScreenSetupCaption2'
-        abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
-        button3 = 'iOnOffDesktopScreenSetupCaption3'
-        abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
-        button4 = 'iOnOffPhoneScreenSetupCaption4'
-        abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
-        textarea = 'itextAreaCaption'
-    }
-    const divElement = buttonElement.closest(`#${type}`)
-    
-    const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
-    const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
-    const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
-    const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
-    const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
-    const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
-    const textAreaMSG = divElement.querySelector(`#${textarea}`)
-    
-    const computedSyle = window.getComputedStyle(textAreaMSG)
-    const currentTextAreaBackground_Color = computedSyle.backgroundColor
-    const currentTextAreaColor = computedSyle.color
-    const currentTextAreaDisplay = computedSyle.display
-    
-    let buttonDesktopScreen1 = null
-    let computedSyle2 = null
-    let currentButtonDesktopScreen1Display = null
-    let currentButtonDesktopScreen1Opacity = null
-    let computedSyle3 = null
-    let currentButtonDesktopScreen2Display = null
-    let currentButtonDesktopScreen2Opacity = null
-    let computedSyle4 = null
-    let currentButtonDesktopScreen3Display = null
-    let currentButtonDesktopScreen3Opacity = null
-    let computedSyle5 = null
-    let currentButtonDesktopScreen4Display = null
-    let currentButtonDesktopScreen4Opacity = null
-
-    if (IsWType) {
-        buttonDesktopScreen2.style.cssText =
-            `background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen2.textContent = `O`
-        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
-        buttonDesktopScreen3.style.cssText =
-            `background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen3.textContent = `O`
-        abbrDesktopScreen3.title = `PC Tela STATUS: off`
-        buttonDesktopScreen4.style.cssText =
-            `background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen4.textContent = `O`
-        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
-    } else {
-        buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
-        computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
-        currentButtonDesktopScreen1Display = computedSyle2.display
-        currentButtonDesktopScreen1Opacity = computedSyle2.opacity
-        computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
-        currentButtonDesktopScreen2Display = computedSyle3.display
-        currentButtonDesktopScreen2Opacity = computedSyle3.opacity
-        computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
-        currentButtonDesktopScreen3Display = computedSyle4.display
-        currentButtonDesktopScreen3Opacity = computedSyle4.opacity
-        computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
-        currentButtonDesktopScreen4Display = computedSyle5.display
-        currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+    try {
+        let type = null
+        let button2 = null
+        let abbr2 = null
+        let button3 = null
+        let abbr3 = null
+        let button4 = null
+        let abbr4 = null
+        let textarea = null
+        if (IsWType) {
+            type = 'idivTextarea'
+            button2 = 'iOnOffVLockScreenSetupText2'
+            abbr2 = 'iabbrOnOffVLockScreenSetupText2'
+            button3 = 'iOnOffDesktopScreenSetupText3'
+            abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
+            button4 = 'iOnOffPhoneScreenSetupText4'
+            abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
+            textarea = 'itextAreaTypeMSG'
+        } else {
+            type = 'ifileTypeMSG'
+            button2 = 'iOnOffVLockScreenSetupCaption2'
+            abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
+            button3 = 'iOnOffDesktopScreenSetupCaption3'
+            abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
+            button4 = 'iOnOffPhoneScreenSetupCaption4'
+            abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
+            textarea = 'itextAreaCaption'
+        }
+        const divElement = buttonElement.closest(`#${type}`)
         
-        buttonDesktopScreen1.style.cssText =
-            `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
+        const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
+        const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
+        const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
+        const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
+        const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
+        const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
+        const textAreaMSG = divElement.querySelector(`#${textarea}`)
+        
+        const computedSyle = window.getComputedStyle(textAreaMSG)
+        const currentTextAreaBackground_Color = computedSyle.backgroundColor
+        const currentTextAreaColor = computedSyle.color
+        const currentTextAreaDisplay = computedSyle.display
+        
+        let buttonDesktopScreen1 = null
+        let computedSyle2 = null
+        let currentButtonDesktopScreen1Display = null
+        let currentButtonDesktopScreen1Opacity = null
+        let computedSyle3 = null
+        let currentButtonDesktopScreen2Display = null
+        let currentButtonDesktopScreen2Opacity = null
+        let computedSyle4 = null
+        let currentButtonDesktopScreen3Display = null
+        let currentButtonDesktopScreen3Opacity = null
+        let computedSyle5 = null
+        let currentButtonDesktopScreen4Display = null
+        let currentButtonDesktopScreen4Opacity = null
 
-        buttonDesktopScreen2.style.cssText =
-            `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen2.textContent = `O`
-        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
-        buttonDesktopScreen3.style.cssText =
-            `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen3.textContent = `O`
-        abbrDesktopScreen3.title = `PC Tela STATUS: off`
-        buttonDesktopScreen4.style.cssText =
-            `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen4.textContent = `O`
-        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+        if (IsWType) {
+            buttonDesktopScreen2.style.cssText =
+                `background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen2.textContent = `O`
+            abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+            buttonDesktopScreen3.style.cssText =
+                `background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen3.textContent = `O`
+            abbrDesktopScreen3.title = `PC Tela STATUS: off`
+            buttonDesktopScreen4.style.cssText =
+                `background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen4.textContent = `O`
+            abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+        } else {
+            buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
+            computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
+            currentButtonDesktopScreen1Display = computedSyle2.display
+            currentButtonDesktopScreen1Opacity = computedSyle2.opacity
+            computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
+            currentButtonDesktopScreen2Display = computedSyle3.display
+            currentButtonDesktopScreen2Opacity = computedSyle3.opacity
+            computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
+            currentButtonDesktopScreen3Display = computedSyle4.display
+            currentButtonDesktopScreen3Opacity = computedSyle4.opacity
+            computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
+            currentButtonDesktopScreen4Display = computedSyle5.display
+            currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+            
+            buttonDesktopScreen1.style.cssText =
+                `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
+
+            buttonDesktopScreen2.style.cssText =
+                `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen2.textContent = `O`
+            abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+            buttonDesktopScreen3.style.cssText =
+                `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen3.textContent = `O`
+            abbrDesktopScreen3.title = `PC Tela STATUS: off`
+            buttonDesktopScreen4.style.cssText =
+                `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen4.textContent = `O`
+            abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+        }
+
+        textAreaMSG.style.cssText =
+            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: 13em; resize: both;`
+    } catch (error) {
+        console.error(`> ⚠️ ERROR resetScreenSetup: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> resetScreenSetup: ${error.message}`, setLogError)
     }
-
-    textAreaMSG.style.cssText =
-        `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: 13em; resize: both;`
 }
 async function VLockScreenSetup(buttonElement, IsWType) {
-    let type = null
-    let button2 = null
-    let abbr2 = null
-    let button3 = null
-    let abbr3 = null
-    let button4 = null
-    let abbr4 = null
-    let textarea = null
-    if (IsWType) {
-        type = 'idivTextarea'
-        button2 = 'iOnOffVLockScreenSetupText2'
-        abbr2 = 'iabbrOnOffVLockScreenSetupText2'
-        button3 = 'iOnOffDesktopScreenSetupText3'
-        abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
-        button4 = 'iOnOffPhoneScreenSetupText4'
-        abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
-        textarea = 'itextAreaTypeMSG'
-    } else {
-        type = 'ifileTypeMSG'
-        button2 = 'iOnOffVLockScreenSetupCaption2'
-        abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
-        button3 = 'iOnOffDesktopScreenSetupCaption3'
-        abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
-        button4 = 'iOnOffPhoneScreenSetupCaption4'
-        abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
-        textarea = 'itextAreaCaption'
-    }
-    const divElement = buttonElement.closest(`#${type}`)
-    
-    const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
-    const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
-    const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
-    const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
-    const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
-    const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
-    const textAreaMSG = divElement.querySelector(`#${textarea}`)
-    const computedSyle = window.getComputedStyle(textAreaMSG)
-    const currentTextAreaWidth = computedSyle.width
-    const currentTextAreaHeight = computedSyle.height
-    const currentTextAreaBackground_Color = computedSyle.backgroundColor
-    const currentTextAreaColor = computedSyle.color
-    const currentTextAreaDisplay = computedSyle.display
-    
-    let buttonDesktopScreen1 = null
-    let computedSyle2 = null
-    let currentButtonDesktopScreen1Display = null
-    let currentButtonDesktopScreen1Opacity = null
-    let computedSyle3 = null
-    let currentButtonDesktopScreen2Display = null
-    let currentButtonDesktopScreen2Opacity = null
-    let computedSyle4 = null
-    let currentButtonDesktopScreen3Display = null
-    let currentButtonDesktopScreen3Opacity = null
-    let computedSyle5 = null
-    let currentButtonDesktopScreen4Display = null
-    let currentButtonDesktopScreen4Opacity = null
-
-    if (IsWType) {
-        buttonDesktopScreen3.style.cssText =
-            `background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen3.textContent = `O`
-        abbrDesktopScreen3.title = `PC Tela STATUS: off`
-        buttonDesktopScreen4.style.cssText =
-            `background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen4.textContent = `O`
-        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
-    } else {
-        buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
-        computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
-        currentButtonDesktopScreen1Display = computedSyle2.display
-        currentButtonDesktopScreen1Opacity = computedSyle2.opacity
-        computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
-        currentButtonDesktopScreen2Display = computedSyle3.display
-        currentButtonDesktopScreen2Opacity = computedSyle3.opacity
-        computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
-        currentButtonDesktopScreen3Display = computedSyle4.display
-        currentButtonDesktopScreen3Opacity = computedSyle4.opacity
-        computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
-        currentButtonDesktopScreen4Display = computedSyle5.display
-        currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+    try {
+        let type = null
+        let button2 = null
+        let abbr2 = null
+        let button3 = null
+        let abbr3 = null
+        let button4 = null
+        let abbr4 = null
+        let textarea = null
+        if (IsWType) {
+            type = 'idivTextarea'
+            button2 = 'iOnOffVLockScreenSetupText2'
+            abbr2 = 'iabbrOnOffVLockScreenSetupText2'
+            button3 = 'iOnOffDesktopScreenSetupText3'
+            abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
+            button4 = 'iOnOffPhoneScreenSetupText4'
+            abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
+            textarea = 'itextAreaTypeMSG'
+        } else {
+            type = 'ifileTypeMSG'
+            button2 = 'iOnOffVLockScreenSetupCaption2'
+            abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
+            button3 = 'iOnOffDesktopScreenSetupCaption3'
+            abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
+            button4 = 'iOnOffPhoneScreenSetupCaption4'
+            abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
+            textarea = 'itextAreaCaption'
+        }
+        const divElement = buttonElement.closest(`#${type}`)
         
-        buttonDesktopScreen1.style.cssText =
-            `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
-
-        buttonDesktopScreen3.style.cssText =
-            `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen3.textContent = `O`
-        abbrDesktopScreen3.title = `PC Tela STATUS: off`
-        buttonDesktopScreen4.style.cssText =
-            `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen4.textContent = `O`
-        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
-    }
+        const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
+        const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
+        const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
+        const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
+        const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
+        const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
+        const textAreaMSG = divElement.querySelector(`#${textarea}`)
+        const computedSyle = window.getComputedStyle(textAreaMSG)
+        const currentTextAreaWidth = computedSyle.width
+        const currentTextAreaHeight = computedSyle.height
+        const currentTextAreaBackground_Color = computedSyle.backgroundColor
+        const currentTextAreaColor = computedSyle.color
+        const currentTextAreaDisplay = computedSyle.display
         
-    const isWMode_abbrDesktopScreen2 = abbrDesktopScreen2.title
+        let buttonDesktopScreen1 = null
+        let computedSyle2 = null
+        let currentButtonDesktopScreen1Display = null
+        let currentButtonDesktopScreen1Opacity = null
+        let computedSyle3 = null
+        let currentButtonDesktopScreen2Display = null
+        let currentButtonDesktopScreen2Opacity = null
+        let computedSyle4 = null
+        let currentButtonDesktopScreen3Display = null
+        let currentButtonDesktopScreen3Opacity = null
+        let computedSyle5 = null
+        let currentButtonDesktopScreen4Display = null
+        let currentButtonDesktopScreen4Opacity = null
 
-    if (isWMode_abbrDesktopScreen2 === 'VLock Tela STATUS: off') {
-        buttonDesktopScreen2.style.cssText =
-            `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
-        buttonDesktopScreen2.textContent = `-`
-        abbrDesktopScreen2.title = `VLock Tela STATUS: on`
-    
-        textAreaMSG.style.cssText =
-            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: vertical;`
-    } else {
-        buttonDesktopScreen2.style.cssText =
-            `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen2.textContent = `O`
-    
-        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+        if (IsWType) {
+            buttonDesktopScreen3.style.cssText =
+                `background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen3.textContent = `O`
+            abbrDesktopScreen3.title = `PC Tela STATUS: off`
+            buttonDesktopScreen4.style.cssText =
+                `background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen4.textContent = `O`
+            abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+        } else {
+            buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
+            computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
+            currentButtonDesktopScreen1Display = computedSyle2.display
+            currentButtonDesktopScreen1Opacity = computedSyle2.opacity
+            computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
+            currentButtonDesktopScreen2Display = computedSyle3.display
+            currentButtonDesktopScreen2Opacity = computedSyle3.opacity
+            computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
+            currentButtonDesktopScreen3Display = computedSyle4.display
+            currentButtonDesktopScreen3Opacity = computedSyle4.opacity
+            computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
+            currentButtonDesktopScreen4Display = computedSyle5.display
+            currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+            
+            buttonDesktopScreen1.style.cssText =
+                `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
+
+            buttonDesktopScreen3.style.cssText =
+                `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen3.textContent = `O`
+            abbrDesktopScreen3.title = `PC Tela STATUS: off`
+            buttonDesktopScreen4.style.cssText =
+                `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen4.textContent = `O`
+            abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+        }
+            
+        const isWMode_abbrDesktopScreen2 = abbrDesktopScreen2.title
+
+        if (isWMode_abbrDesktopScreen2 === 'VLock Tela STATUS: off') {
+            buttonDesktopScreen2.style.cssText =
+                `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
+            buttonDesktopScreen2.textContent = `-`
+            abbrDesktopScreen2.title = `VLock Tela STATUS: on`
         
-        textAreaMSG.style.cssText =
-            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: both;`
+            textAreaMSG.style.cssText =
+                `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: vertical;`
+        } else {
+            buttonDesktopScreen2.style.cssText =
+                `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen2.textContent = `O`
+        
+            abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+            
+            textAreaMSG.style.cssText =
+                `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: ${currentTextAreaWidth}; height: ${currentTextAreaHeight}; resize: both;`
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR VlockScreenSetup: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> VlockScreenSetup: ${error.message}`, setLogError)
     }
 }
 async function desktopScreenSetup(buttonElement, IsWType) {
-    let type = null
-    let button2 = null
-    let abbr2 = null
-    let button3 = null
-    let abbr3 = null
-    let button4 = null
-    let abbr4 = null
-    let textarea = null
-    if (IsWType) {
-        type = 'idivTextarea'
-        button2 = 'iOnOffVLockScreenSetupText2'
-        abbr2 = 'iabbrOnOffVLockScreenSetupText2'
-        button3 = 'iOnOffDesktopScreenSetupText3'
-        abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
-        button4 = 'iOnOffPhoneScreenSetupText4'
-        abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
-        textarea = 'itextAreaTypeMSG'
-    } else {
-        type = 'ifileTypeMSG'
-        button2 = 'iOnOffVLockScreenSetupCaption2'
-        abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
-        button3 = 'iOnOffDesktopScreenSetupCaption3'
-        abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
-        button4 = 'iOnOffPhoneScreenSetupCaption4'
-        abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
-        textarea = 'itextAreaCaption'
-    }
-    const divElement = buttonElement.closest(`#${type}`)
-    
-    const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
-    const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
-    const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
-    const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
-    const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
-    const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
-    const textAreaMSG = divElement.querySelector(`#${textarea}`)
-    const computedSyle = window.getComputedStyle(textAreaMSG)
-    const currentTextAreaHeight = computedSyle.height
-    const currentTextAreaBackground_Color = computedSyle.backgroundColor
-    const currentTextAreaColor = computedSyle.color
-    const currentTextAreaDisplay = computedSyle.display
-
-    let buttonDesktopScreen1 = null
-    let computedSyle2 = null
-    let currentButtonDesktopScreen1Display = null
-    let currentButtonDesktopScreen1Opacity = null
-    let computedSyle3 = null
-    let currentButtonDesktopScreen2Display = null
-    let currentButtonDesktopScreen2Opacity = null
-    let computedSyle4 = null
-    let currentButtonDesktopScreen3Display = null
-    let currentButtonDesktopScreen3Opacity = null
-    let computedSyle5 = null
-    let currentButtonDesktopScreen4Display = null
-    let currentButtonDesktopScreen4Opacity = null
-
-    if (IsWType) {
-        buttonDesktopScreen2.style.cssText =
-            `background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen2.textContent = `O`
-        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
-        buttonDesktopScreen4.style.cssText =
-            `background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen4.textContent = `O`
-        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
-    } else {
-        buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
-        computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
-        currentButtonDesktopScreen1Display = computedSyle2.display
-        currentButtonDesktopScreen1Opacity = computedSyle2.opacity
-        computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
-        currentButtonDesktopScreen2Display = computedSyle3.display
-        currentButtonDesktopScreen2Opacity = computedSyle3.opacity
-        computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
-        currentButtonDesktopScreen3Display = computedSyle4.display
-        currentButtonDesktopScreen3Opacity = computedSyle4.opacity
-        computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
-        currentButtonDesktopScreen4Display = computedSyle5.display
-        currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+    try {
+        let type = null
+        let button2 = null
+        let abbr2 = null
+        let button3 = null
+        let abbr3 = null
+        let button4 = null
+        let abbr4 = null
+        let textarea = null
+        if (IsWType) {
+            type = 'idivTextarea'
+            button2 = 'iOnOffVLockScreenSetupText2'
+            abbr2 = 'iabbrOnOffVLockScreenSetupText2'
+            button3 = 'iOnOffDesktopScreenSetupText3'
+            abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
+            button4 = 'iOnOffPhoneScreenSetupText4'
+            abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
+            textarea = 'itextAreaTypeMSG'
+        } else {
+            type = 'ifileTypeMSG'
+            button2 = 'iOnOffVLockScreenSetupCaption2'
+            abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
+            button3 = 'iOnOffDesktopScreenSetupCaption3'
+            abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
+            button4 = 'iOnOffPhoneScreenSetupCaption4'
+            abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
+            textarea = 'itextAreaCaption'
+        }
+        const divElement = buttonElement.closest(`#${type}`)
         
-        buttonDesktopScreen1.style.cssText =
-            `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
+        const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
+        const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
+        const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
+        const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
+        const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
+        const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
+        const textAreaMSG = divElement.querySelector(`#${textarea}`)
+        const computedSyle = window.getComputedStyle(textAreaMSG)
+        const currentTextAreaHeight = computedSyle.height
+        const currentTextAreaBackground_Color = computedSyle.backgroundColor
+        const currentTextAreaColor = computedSyle.color
+        const currentTextAreaDisplay = computedSyle.display
 
-        buttonDesktopScreen2.style.cssText =
-            `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen2.textContent = `O`
-        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
-        buttonDesktopScreen4.style.cssText =
-            `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen4.textContent = `O`
-        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
-    }
+        let buttonDesktopScreen1 = null
+        let computedSyle2 = null
+        let currentButtonDesktopScreen1Display = null
+        let currentButtonDesktopScreen1Opacity = null
+        let computedSyle3 = null
+        let currentButtonDesktopScreen2Display = null
+        let currentButtonDesktopScreen2Opacity = null
+        let computedSyle4 = null
+        let currentButtonDesktopScreen3Display = null
+        let currentButtonDesktopScreen3Opacity = null
+        let computedSyle5 = null
+        let currentButtonDesktopScreen4Display = null
+        let currentButtonDesktopScreen4Opacity = null
 
-    const isWMode_abbrDesktopScreen3 = abbrDesktopScreen3.title
+        if (IsWType) {
+            buttonDesktopScreen2.style.cssText =
+                `background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen2.textContent = `O`
+            abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+            buttonDesktopScreen4.style.cssText =
+                `background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen4.textContent = `O`
+            abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+        } else {
+            buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
+            computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
+            currentButtonDesktopScreen1Display = computedSyle2.display
+            currentButtonDesktopScreen1Opacity = computedSyle2.opacity
+            computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
+            currentButtonDesktopScreen2Display = computedSyle3.display
+            currentButtonDesktopScreen2Opacity = computedSyle3.opacity
+            computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
+            currentButtonDesktopScreen3Display = computedSyle4.display
+            currentButtonDesktopScreen3Opacity = computedSyle4.opacity
+            computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
+            currentButtonDesktopScreen4Display = computedSyle5.display
+            currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+            
+            buttonDesktopScreen1.style.cssText =
+                `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
 
-    if (isWMode_abbrDesktopScreen3 === 'PC Tela STATUS: off') {
-        buttonDesktopScreen3.style.cssText =
-            `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
-        buttonDesktopScreen3.textContent = `-`
-        abbrDesktopScreen3.title = `PC Tela STATUS: on`
-    
-        textAreaMSG.style.cssText =
-            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 44.35em; height: ${currentTextAreaHeight}; resize: vertical;`
-    } else {
-        buttonDesktopScreen3.style.cssText =
-            `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen3.textContent = `O`
-    
-        abbrDesktopScreen3.title = `PC Tela STATUS: off`
+            buttonDesktopScreen2.style.cssText =
+                `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen2.textContent = `O`
+            abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+            buttonDesktopScreen4.style.cssText =
+                `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen4.textContent = `O`
+            abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+        }
+
+        const isWMode_abbrDesktopScreen3 = abbrDesktopScreen3.title
+
+        if (isWMode_abbrDesktopScreen3 === 'PC Tela STATUS: off') {
+            buttonDesktopScreen3.style.cssText =
+                `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
+            buttonDesktopScreen3.textContent = `-`
+            abbrDesktopScreen3.title = `PC Tela STATUS: on`
         
-        textAreaMSG.style.cssText =
-            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: ${currentTextAreaHeight}; resize: both;`
+            textAreaMSG.style.cssText =
+                `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 44.35em; height: ${currentTextAreaHeight}; resize: vertical;`
+        } else {
+            buttonDesktopScreen3.style.cssText =
+                `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen3.textContent = `O`
+        
+            abbrDesktopScreen3.title = `PC Tela STATUS: off`
+            
+            textAreaMSG.style.cssText =
+                `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: ${currentTextAreaHeight}; resize: both;`
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR desktopScreenSetup: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> desktopScreenSetup: ${error.message}`, setLogError)
     }
 }
 async function phoneScreenSetup(buttonElement, IsWType) {
-    let type = null
-    let button2 = null
-    let abbr2 = null
-    let button3 = null
-    let abbr3 = null
-    let button4 = null
-    let abbr4 = null
-    let textarea = null
-    if (IsWType) {
-        type = 'idivTextarea'
-        button2 = 'iOnOffVLockScreenSetupText2'
-        abbr2 = 'iabbrOnOffVLockScreenSetupText2'
-        button3 = 'iOnOffDesktopScreenSetupText3'
-        abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
-        button4 = 'iOnOffPhoneScreenSetupText4'
-        abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
-        textarea = 'itextAreaTypeMSG'
-    } else {
-        type = 'ifileTypeMSG'
-        button2 = 'iOnOffVLockScreenSetupCaption2'
-        abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
-        button3 = 'iOnOffDesktopScreenSetupCaption3'
-        abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
-        button4 = 'iOnOffPhoneScreenSetupCaption4'
-        abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
-        textarea = 'itextAreaCaption'
-    }
-    const divElement = buttonElement.closest(`#${type}`)
-    
-    const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
-    const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
-    const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
-    const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
-    const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
-    const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
-    const textAreaMSG = divElement.querySelector(`#${textarea}`)
-    const computedSyle = window.getComputedStyle(textAreaMSG)
-    const currentTextAreaHeight = computedSyle.height
-    const currentTextAreaBackground_Color = computedSyle.backgroundColor
-    const currentTextAreaColor = computedSyle.color
-    const currentTextAreaDisplay = computedSyle.display
-
-    let buttonDesktopScreen1 = null
-    let computedSyle2 = null
-    let currentButtonDesktopScreen1Display = null
-    let currentButtonDesktopScreen1Opacity = null
-    let computedSyle3 = null
-    let currentButtonDesktopScreen2Display = null
-    let currentButtonDesktopScreen2Opacity = null
-    let computedSyle4 = null
-    let currentButtonDesktopScreen3Display = null
-    let currentButtonDesktopScreen3Opacity = null
-    let computedSyle5 = null
-    let currentButtonDesktopScreen4Display = null
-    let currentButtonDesktopScreen4Opacity = null
-
-    if (IsWType) {
-        buttonDesktopScreen2.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
-        buttonDesktopScreen2.textContent = `O`
-        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
-        buttonDesktopScreen3.style.cssText =
-            'background-color: var(--colorBlack); color: var(--colorWhite);'
-        buttonDesktopScreen3.textContent = `O`
-        abbrDesktopScreen3.title = `PC Tela STATUS: off`
-    } else {
-        buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
-        computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
-        currentButtonDesktopScreen1Display = computedSyle2.display
-        currentButtonDesktopScreen1Opacity = computedSyle2.opacity
-        computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
-        currentButtonDesktopScreen2Display = computedSyle3.display
-        currentButtonDesktopScreen2Opacity = computedSyle3.opacity
-        computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
-        currentButtonDesktopScreen3Display = computedSyle4.display
-        currentButtonDesktopScreen3Opacity = computedSyle4.opacity
-        computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
-        currentButtonDesktopScreen4Display = computedSyle5.display
-        currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+    try {
+        let type = null
+        let button2 = null
+        let abbr2 = null
+        let button3 = null
+        let abbr3 = null
+        let button4 = null
+        let abbr4 = null
+        let textarea = null
+        if (IsWType) {
+            type = 'idivTextarea'
+            button2 = 'iOnOffVLockScreenSetupText2'
+            abbr2 = 'iabbrOnOffVLockScreenSetupText2'
+            button3 = 'iOnOffDesktopScreenSetupText3'
+            abbr3 = 'iabbrOnOffDesktopScreenSetupText3'
+            button4 = 'iOnOffPhoneScreenSetupText4'
+            abbr4 = 'iabbrOnOffPhoneScreenSetupText4'
+            textarea = 'itextAreaTypeMSG'
+        } else {
+            type = 'ifileTypeMSG'
+            button2 = 'iOnOffVLockScreenSetupCaption2'
+            abbr2 = 'iabbrOnOffVLockScreenSetupCaption2'
+            button3 = 'iOnOffDesktopScreenSetupCaption3'
+            abbr3 = 'iabbrOnOffDesktopScreenSetupCaption3'
+            button4 = 'iOnOffPhoneScreenSetupCaption4'
+            abbr4 = 'iabbrOnOffPhoneScreenSetupCaption4'
+            textarea = 'itextAreaCaption'
+        }
+        const divElement = buttonElement.closest(`#${type}`)
         
-        buttonDesktopScreen1.style.cssText =
-            `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
+        const buttonDesktopScreen2 = divElement.querySelector(`#${button2}`)
+        const abbrDesktopScreen2 = divElement.querySelector(`#${abbr2}`)
+        const buttonDesktopScreen3 = divElement.querySelector(`#${button3}`)
+        const abbrDesktopScreen3 = divElement.querySelector(`#${abbr3}`)
+        const buttonDesktopScreen4 = divElement.querySelector(`#${button4}`)
+        const abbrDesktopScreen4 = divElement.querySelector(`#${abbr4}`)
+        const textAreaMSG = divElement.querySelector(`#${textarea}`)
+        const computedSyle = window.getComputedStyle(textAreaMSG)
+        const currentTextAreaHeight = computedSyle.height
+        const currentTextAreaBackground_Color = computedSyle.backgroundColor
+        const currentTextAreaColor = computedSyle.color
+        const currentTextAreaDisplay = computedSyle.display
 
-        buttonDesktopScreen2.style.cssText =
-            `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen2.textContent = `O`
-        abbrDesktopScreen2.title = `VLock Tela STATUS: off`
-        buttonDesktopScreen3.style.cssText =
-            `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen3.textContent = `O`
-        abbrDesktopScreen3.title = `PC Tela STATUS: off`
-    }
+        let buttonDesktopScreen1 = null
+        let computedSyle2 = null
+        let currentButtonDesktopScreen1Display = null
+        let currentButtonDesktopScreen1Opacity = null
+        let computedSyle3 = null
+        let currentButtonDesktopScreen2Display = null
+        let currentButtonDesktopScreen2Opacity = null
+        let computedSyle4 = null
+        let currentButtonDesktopScreen3Display = null
+        let currentButtonDesktopScreen3Opacity = null
+        let computedSyle5 = null
+        let currentButtonDesktopScreen4Display = null
+        let currentButtonDesktopScreen4Opacity = null
 
-    const isWMode_abbrDesktopScreen4 = abbrDesktopScreen4.title
+        if (IsWType) {
+            buttonDesktopScreen2.style.cssText =
+                'background-color: var(--colorBlack); color: var(--colorWhite);'
+            buttonDesktopScreen2.textContent = `O`
+            abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+            buttonDesktopScreen3.style.cssText =
+                'background-color: var(--colorBlack); color: var(--colorWhite);'
+            buttonDesktopScreen3.textContent = `O`
+            abbrDesktopScreen3.title = `PC Tela STATUS: off`
+        } else {
+            buttonDesktopScreen1 = divElement.querySelector(`#iOnOffResetScreenSetupCaption1`)
+            computedSyle2 = window.getComputedStyle(buttonDesktopScreen1)
+            currentButtonDesktopScreen1Display = computedSyle2.display
+            currentButtonDesktopScreen1Opacity = computedSyle2.opacity
+            computedSyle3 = window.getComputedStyle(buttonDesktopScreen2)
+            currentButtonDesktopScreen2Display = computedSyle3.display
+            currentButtonDesktopScreen2Opacity = computedSyle3.opacity
+            computedSyle4 = window.getComputedStyle(buttonDesktopScreen3)
+            currentButtonDesktopScreen3Display = computedSyle4.display
+            currentButtonDesktopScreen3Opacity = computedSyle4.opacity
+            computedSyle5 = window.getComputedStyle(buttonDesktopScreen4)
+            currentButtonDesktopScreen4Display = computedSyle5.display
+            currentButtonDesktopScreen4Opacity = computedSyle5.opacity
+            
+            buttonDesktopScreen1.style.cssText =
+                `display: ${currentButtonDesktopScreen1Display}; opacity: ${currentButtonDesktopScreen1Opacity};`
 
-    if (isWMode_abbrDesktopScreen4 === 'Celular Tela STATUS: off') {
-        buttonDesktopScreen4.style.cssText =
-            `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
-        buttonDesktopScreen4.textContent = `-`
-        abbrDesktopScreen4.title = `Celular Tela STATUS: on`
-    
-        textAreaMSG.style.cssText =
-            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 23.35em; height: ${currentTextAreaHeight}; resize: vertical;`
-    } else {
-        buttonDesktopScreen4.style.cssText =
-            `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
-        buttonDesktopScreen4.textContent = `O`
-    
-        abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+            buttonDesktopScreen2.style.cssText =
+                `display: ${currentButtonDesktopScreen2Display}; opacity: ${currentButtonDesktopScreen2Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen2.textContent = `O`
+            abbrDesktopScreen2.title = `VLock Tela STATUS: off`
+            buttonDesktopScreen3.style.cssText =
+                `display: ${currentButtonDesktopScreen3Display}; opacity: ${currentButtonDesktopScreen3Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen3.textContent = `O`
+            abbrDesktopScreen3.title = `PC Tela STATUS: off`
+        }
+
+        const isWMode_abbrDesktopScreen4 = abbrDesktopScreen4.title
+
+        if (isWMode_abbrDesktopScreen4 === 'Celular Tela STATUS: off') {
+            buttonDesktopScreen4.style.cssText =
+                `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorWhite); color: var(--colorBlack);`
+            buttonDesktopScreen4.textContent = `-`
+            abbrDesktopScreen4.title = `Celular Tela STATUS: on`
         
-        textAreaMSG.style.cssText =
-            `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: ${currentTextAreaHeight}; resize: both;`
+            textAreaMSG.style.cssText =
+                `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 23.35em; height: ${currentTextAreaHeight}; resize: vertical;`
+        } else {
+            buttonDesktopScreen4.style.cssText =
+                `display: ${currentButtonDesktopScreen4Display}; opacity: ${currentButtonDesktopScreen4Opacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
+            buttonDesktopScreen4.textContent = `O`
+        
+            abbrDesktopScreen4.title = `Celular Tela STATUS: off`
+            
+            textAreaMSG.style.cssText =
+                `display: ${currentTextAreaDisplay}; background-color: ${currentTextAreaBackground_Color}; color: ${currentTextAreaColor}; width: 100%; height: ${currentTextAreaHeight}; resize: both;`
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR phoneScreenSetup: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> phoneScreenSetup: ${error.message}`, setLogError)
     }
 }
 
 //pro sistemas de mandar arquivo, as funcoes a adicionar... um botao que deseleciona o arquivo e um pra apagar do funil o card(isso de apagar o card vai ter em todos os tipos de cards do funil) e pra poder apagar o card tera que deseleciona primeiro entao faze um esquema de desgin que no lugar do botao pra deseleciona dps de clical muda pro apagar, e tbm algum esqueme de dps de selecionar mandar enviar ele retrai o tamanho pra n ficar mt grande na tela ne e talves tirar a funcao de arrasta pra mandar ou sla, e claro em todos os card tem do lado um lugar que vc pega seleciona segurando e deixa onde na posica odo funil ele vai ficar e tals personalizavel
 async function getFileData(divElementBridge, file) {
-    let barL = document.querySelector('#barLoading')
-    barL.style.cssText =
-        'width: 100vw; visibility: visible;'
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
 
-    const divElement = divElementBridge.closest('.fileTypeMSG')
-    const divFunctions = divElement.querySelector('#idivFileFunctions')
-    const typeFile = divElement.querySelector('#ifileTypeSelected')
-    
-    const buttonStateTyping = divElement.querySelector('#iOnOffStateTypingFile')
-    const buttonStateRecording = divElement.querySelector('#iOnOffStateRecordingFile')
-
-    let buttonErasePositionMSG = null
-
-    let divDelayStateTypingRecording = null
-    let computedSyle = null
-    let currentDivDelayStateTypingDisplay = null
-    let computedSyle2 = null
-    let currentButtonStateTypingDisplay = null
-    let computedSyle3 = null
-    let currentButtonStateRecordingDisplay = null
-
-    let divTextAreaCaption = null
-    let abbrDivTextAreaCaption = null
-    let computedSyle4 = null
-    let currentDivTextAreaCaptionDisplay = null
-
-    let divDelayTextAudioTitle = null
-    
-    if (file === null || file === undefined || file === '...') {
-        await sendToFunil(divElementBridge, 3, null, file)
+        const divElement = divElementBridge.closest('.fileTypeMSG')
+        const divFunctions = divElement.querySelector('#idivFileFunctions')
+        const typeFile = divElement.querySelector('#ifileTypeSelected')
         
-        typeFile.textContent = `...`
+        const buttonStateTyping = divElement.querySelector('#iOnOffStateTypingFile')
+        const buttonStateRecording = divElement.querySelector('#iOnOffStateRecordingFile')
+
+        let buttonErasePositionMSG = null
+
+        let divDelayStateTypingRecording = null
+        let computedSyle = null
+        let currentDivDelayStateTypingDisplay = null
+        let computedSyle2 = null
+        let currentButtonStateTypingDisplay = null
+        let computedSyle3 = null
+        let currentButtonStateRecordingDisplay = null
+
+        let divTextAreaCaption = null
+        let abbrDivTextAreaCaption = null
+        let computedSyle4 = null
+        let currentDivTextAreaCaptionDisplay = null
+
+        let divDelayTextAudioTitle = null
         
-        divFunctions.style.cssText =
-            'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0;'
-        setTimeout(function() {
+        if (file === null || file === undefined || file === '...') {
+            await sendToFunil(divElementBridge, 3, null, file)
+            
+            typeFile.textContent = `...`
+            
             divFunctions.style.cssText =
-                'display: none; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0;' 
-        }, 100)
+                'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0;'
+            setTimeout(function() {
+                divFunctions.style.cssText =
+                    'display: none; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0;' 
+            }, 100)
 
 
-        const divPosition = divElement.parentElement.parentElement
-        buttonErasePositionMSG = divPosition.querySelector(`#ierasePositionMSG`)
-        const IdDivPosition = divPosition.id
-        const IdNumberPosition = IdDivPosition.match(/\d+/g)
-        buttonErasePositionMSG.title = `Deletar posição MSG (${IdNumberPosition})`
+            const divPosition = divElement.parentElement.parentElement
+            buttonErasePositionMSG = divPosition.querySelector(`#ierasePositionMSG`)
+            const IdDivPosition = divPosition.id
+            const IdNumberPosition = IdDivPosition.match(/\d+/g)
+            buttonErasePositionMSG.title = `Deletar posição MSG (${IdNumberPosition})`
 
-        await resetScreenSetup(divElementBridge, false)
-        divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
-        computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
-        currentDivDelayStateTypingDisplay = computedSyle.display
-        computedSyle2 = window.getComputedStyle(buttonStateTyping)
-        currentButtonStateTypingDisplay = computedSyle2.display
-        computedSyle3 = window.getComputedStyle(buttonStateRecording)
-        currentButtonStateRecordingDisplay = computedSyle3.display
-        if (currentButtonStateTypingDisplay === 'inline-block') {
-            if (currentDivDelayStateTypingDisplay === 'flex') {
-                await StateTypingMSG(divElementBridge, false)
+            await resetScreenSetup(divElementBridge, false)
+            divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+            computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+            currentDivDelayStateTypingDisplay = computedSyle.display
+            computedSyle2 = window.getComputedStyle(buttonStateTyping)
+            currentButtonStateTypingDisplay = computedSyle2.display
+            computedSyle3 = window.getComputedStyle(buttonStateRecording)
+            currentButtonStateRecordingDisplay = computedSyle3.display
+            if (currentButtonStateTypingDisplay === 'inline-block') {
+                if (currentDivDelayStateTypingDisplay === 'flex') {
+                    await StateTypingMSG(divElementBridge, false)
+                }
+            } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                if (currentDivDelayStateTypingDisplay === 'flex') {
+                    await StateRecordingMSG(divElementBridge)
+                }
             }
-        } else if (currentButtonStateRecordingDisplay === 'inline-block') {
-            if (currentDivDelayStateTypingDisplay === 'flex') {
-                await StateRecordingMSG(divElementBridge)
+            buttonStateTyping.style.cssText =
+                `display: none; opacity: 0;`
+            buttonStateRecording.style.cssText =
+                `display: none; opacity: 0;`
+            divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+            computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+            currentDivTextAreaCaptionDisplay = computedSyle4.display
+            if (currentDivTextAreaCaptionDisplay === 'block') {
+                await CaptionFileMSG(divElementBridge)
             }
-        }
-        buttonStateTyping.style.cssText =
-            `display: none; opacity: 0;`
-        buttonStateRecording.style.cssText =
-            `display: none; opacity: 0;`
-        divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-        computedSyle4 = window.getComputedStyle(divTextAreaCaption)
-        currentDivTextAreaCaptionDisplay = computedSyle4.display
-        if (currentDivTextAreaCaptionDisplay === 'block') {
-            await CaptionFileMSG(divElementBridge)
-        }
-        divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-        abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
-        divTextAreaCaption.placeholder = `Legenda do (...): >...`
-        abbrDivTextAreaCaption.title = `Digite a legenda do (...)`
-        divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
-        divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
+            divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+            abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+            divTextAreaCaption.placeholder = `Legenda do (...): >...`
+            abbrDivTextAreaCaption.title = `Digite a legenda do (...)`
+            divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+            divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
-        resetLoadingBar()
-        return
-    } else {
-        /*if (divElement.querySelector('input#ifileTypeMSGAux[type="file"]').files[0] ) {   
-            if (file === divElement.querySelector('input#ifileTypeMSGAux[type="file"]').files[0]) {
-                displayOnConsole('cuuuuuuuuuuu')
-                await sendToFunil(divElementBridge, 3, null, file)
-                return
-            }
-        }*/
-        divFunctions.style.cssText =
-            'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0;'
-        setTimeout(function() {
+            resetLoadingBar()
+            return
+        } else {
+            /*if (divElement.querySelector('input#ifileTypeMSGAux[type="file"]').files[0] ) {   
+                if (file === divElement.querySelector('input#ifileTypeMSGAux[type="file"]').files[0]) {
+                    displayOnConsole('cuuuuuuuuuuu')
+                    await sendToFunil(divElementBridge, 3, null, file)
+                    return
+                }
+            }*/
             divFunctions.style.cssText =
-                'display: flex; border: 2px solid var(--colorBlack); border-bottom: 3.5px solid var(--colorBlack); height: 5vh;'//mudar o 5vh n fica bom pra diferentes telas
-        }, 300)
+                'display: flex; border: 0px solid var(--colorBlack); border-bottom: 0px solid var(--colorBlack); height: 0;'
+            setTimeout(function() {
+                divFunctions.style.cssText =
+                    'display: flex; border: 2px solid var(--colorBlack); border-bottom: 3.5px solid var(--colorBlack); height: 5vh;'//mudar o 5vh n fica bom pra diferentes telas
+            }, 300)
 
-        const divPosition = divElement.parentElement.parentElement
-        console.log(divPosition)
-        buttonErasePositionMSG = divPosition.querySelector(`#ierasePositionMSG`)
-        console.log(buttonErasePositionMSG)
-        buttonErasePositionMSG.title = `Deselecionar arquivo (${file.name})`
+            const divPosition = divElement.parentElement.parentElement
+            console.log(divPosition)
+            buttonErasePositionMSG = divPosition.querySelector(`#ierasePositionMSG`)
+            console.log(buttonErasePositionMSG)
+            buttonErasePositionMSG.title = `Deselecionar arquivo (${file.name})`
 
-        //melhora esse de reseta o style de tudo tbm pra cada file novo ou igual, talves verificar ser o file é igual ou novo se n ele fas nada sla
-        displayOnConsole(file.type)
-        const fileType = file.type
-        switch (fileType) {//conforme vai indo adicionar o maximo possivel de tipos de arquivos para cada e assim ser mais completo e preciso
-            case 'video/mp4':
-            case 'video/avi':
-            case 'video/mov':
-            case 'video/mkv':
-                typeFile.textContent = `video`
-                
-                await resetScreenSetup(divElementBridge, false)
-                divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
-                computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
-                currentDivDelayStateTypingDisplay = computedSyle.display
-                computedSyle2 = window.getComputedStyle(buttonStateTyping)
-                currentButtonStateTypingDisplay = computedSyle2.display
-                computedSyle3 = window.getComputedStyle(buttonStateRecording)
-                currentButtonStateRecordingDisplay = computedSyle3.display
-                if (currentButtonStateTypingDisplay === 'inline-block') {
-                    if (currentDivDelayStateTypingDisplay === 'flex') {
-                        await StateTypingMSG(divElementBridge, false)
+            //melhora esse de reseta o style de tudo tbm pra cada file novo ou igual, talves verificar ser o file é igual ou novo se n ele fas nada sla
+            displayOnConsole(file.type)
+            const fileType = file.type
+            switch (fileType) {//conforme vai indo adicionar o maximo possivel de tipos de arquivos para cada e assim ser mais completo e preciso
+                case 'video/mp4':
+                case 'video/avi':
+                case 'video/mov':
+                case 'video/mkv':
+                    typeFile.textContent = `video`
+                    
+                    await resetScreenSetup(divElementBridge, false)
+                    divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+                    computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+                    currentDivDelayStateTypingDisplay = computedSyle.display
+                    computedSyle2 = window.getComputedStyle(buttonStateTyping)
+                    currentButtonStateTypingDisplay = computedSyle2.display
+                    computedSyle3 = window.getComputedStyle(buttonStateRecording)
+                    currentButtonStateRecordingDisplay = computedSyle3.display
+                    if (currentButtonStateTypingDisplay === 'inline-block') {
+                        if (currentDivDelayStateTypingDisplay === 'flex') {
+                            await StateTypingMSG(divElementBridge, false)
+                        }
+                    } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                        if (currentDivDelayStateTypingDisplay === 'flex') {
+                            await StateRecordingMSG(divElementBridge)
+                        }
                     }
-                } else if (currentButtonStateRecordingDisplay === 'inline-block') {
-                    if (currentDivDelayStateTypingDisplay === 'flex') {
-                        await StateRecordingMSG(divElementBridge)
-                    }
-                }
-                buttonStateTyping.style.cssText =
-                    `display: none; opacity: 0;`
-                buttonStateRecording.style.cssText =
-                    `display: none; opacity: 0;`
-                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                computedSyle4 = window.getComputedStyle(divTextAreaCaption)
-                currentDivTextAreaCaptionDisplay = computedSyle4.display
-                if (currentDivTextAreaCaptionDisplay === 'block') {
-                    await CaptionFileMSG(divElementBridge)
-                }
-                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
-                divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
-                abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
-                divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
-                divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
-
-                await sendToFunil(divElementBridge, 3, null, file)
-
-                break;
-            case 'audio/x-m4a':
-            case 'audio/wav':
-            case 'audio/mp3':
-            case 'audio/gif':
-                typeFile.textContent = `audio`
-
-                await resetScreenSetup(divElementBridge, false)
-                divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
-                computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
-                currentDivDelayStateTypingDisplay = computedSyle.display
-                computedSyle2 = window.getComputedStyle(buttonStateTyping)
-                currentButtonStateTypingDisplay = computedSyle2.display
-                computedSyle3 = window.getComputedStyle(buttonStateRecording)
-                currentButtonStateRecordingDisplay = computedSyle3.display
-                if (currentButtonStateTypingDisplay === 'inline-block') {
-                    if (currentDivDelayStateTypingDisplay === 'flex') {
-                        await StateTypingMSG(divElementBridge, false)
-                    }
-                } else if (currentButtonStateRecordingDisplay === 'inline-block') {
-                    if (currentDivDelayStateTypingDisplay === 'flex') {
-                        await StateRecordingMSG(divElementBridge)
-                    }
-                }
-                buttonStateTyping.style.cssText =
-                    `display: none; opacity: 0;`
-                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                computedSyle4 = window.getComputedStyle(divTextAreaCaption)
-                currentDivTextAreaCaptionDisplay = computedSyle4.display
-                if (currentDivTextAreaCaptionDisplay === 'block') {
-                    await CaptionFileMSG(divElementBridge)
-                }
-                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
-                divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
-                abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
-                
-                buttonStateRecording.style.cssText =
-                    `display: inline; opacity: 0;`
-                setTimeout(function() {
-                    buttonStateRecording.style.cssText =
-                        `display: inline; opacity: 1;`
-                }, 300)
-
-                divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
-                divDelayTextAudioTitle.textContent = 'ATRASO-State=Recording:'
-                
-                await sendToFunil(divElementBridge, 3, null, file)
-
-                break;
-            case 'image/jpg':
-            case 'image/png':
-                typeFile.textContent = `imagem`
-                
-                await resetScreenSetup(divElementBridge, false)
-                divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
-                computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
-                currentDivDelayStateTypingDisplay = computedSyle.display
-                computedSyle2 = window.getComputedStyle(buttonStateTyping)
-                currentButtonStateTypingDisplay = computedSyle2.display
-                computedSyle3 = window.getComputedStyle(buttonStateRecording)
-                currentButtonStateRecordingDisplay = computedSyle3.display
-                if (currentButtonStateTypingDisplay === 'inline-block') {
-                    if (currentDivDelayStateTypingDisplay === 'flex') {
-                        await StateTypingMSG(divElementBridge, false)
-                    }
-                } else if (currentButtonStateRecordingDisplay === 'inline-block') {
-                    if (currentDivDelayStateTypingDisplay === 'flex') {
-                        await StateRecordingMSG(divElementBridge)
-                    }
-                }
-                buttonStateTyping.style.cssText =
-                    `display: none; opacity: 0;`
-                buttonStateRecording.style.cssText =
-                    `display: none; opacity: 0;`
-                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                computedSyle4 = window.getComputedStyle(divTextAreaCaption)
-                currentDivTextAreaCaptionDisplay = computedSyle4.display
-                if (currentDivTextAreaCaptionDisplay === 'block') {
-                    await CaptionFileMSG(divElementBridge)
-                }
-                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
-                divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
-                abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
-                divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
-                divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
-
-                await sendToFunil(divElementBridge, 3, null, file)
-
-                break;
-            case 'text/plain':
-            case 'application/pdf':
-            case 'application/msword':
-                typeFile.textContent = `texto`
-                
-                await resetScreenSetup(divElementBridge, false)
-                divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
-                computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
-                currentDivDelayStateTypingDisplay = computedSyle.display
-                computedSyle2 = window.getComputedStyle(buttonStateTyping)
-                currentButtonStateTypingDisplay = computedSyle2.display
-                computedSyle3 = window.getComputedStyle(buttonStateRecording)
-                currentButtonStateRecordingDisplay = computedSyle3.display
-                if (currentButtonStateTypingDisplay === 'inline-block') {
-                    if (currentDivDelayStateTypingDisplay === 'flex') {
-                        await StateTypingMSG(divElementBridge, false)
-                    }
-                } else if (currentButtonStateRecordingDisplay === 'inline-block') {
-                    if (currentDivDelayStateTypingDisplay === 'flex') {
-                        await StateRecordingMSG(divElementBridge)
-                    }
-                }
-                buttonStateRecording.style.cssText =
-                    `display: none; opacity: 0;`
-                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                computedSyle4 = window.getComputedStyle(divTextAreaCaption)
-                currentDivTextAreaCaptionDisplay = computedSyle4.display
-                if (currentDivTextAreaCaptionDisplay === 'block') {
-                    await CaptionFileMSG(divElementBridge)
-                }
-
-                buttonStateTyping.style.cssText =
-                    `display: inline; opacity: 0;`
-                setTimeout(function() {
                     buttonStateTyping.style.cssText =
-                    `display: inline; opacity: 1;`
-                }, 300)
-
-                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
-                divTextAreaCaption.placeholder = 'TEXTO-MSG: >...'
-                abbrDivTextAreaCaption.title = 'Digite a MSG'
-                
-                divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
-                divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing:'
-
-                await sendToFunil(divElementBridge, 3, null, file)
-
-                break;
-            default:
-                typeFile.textContent = `documento`
-                
-                await resetScreenSetup(divElementBridge, false)
-                divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
-                computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
-                currentDivDelayStateTypingDisplay = computedSyle.display
-                computedSyle2 = window.getComputedStyle(buttonStateTyping)
-                currentButtonStateTypingDisplay = computedSyle2.display
-                computedSyle3 = window.getComputedStyle(buttonStateRecording)
-                currentButtonStateRecordingDisplay = computedSyle3.display
-                if (currentButtonStateTypingDisplay === 'inline-block') {
-                    if (currentDivDelayStateTypingDisplay === 'flex') {
-                        await StateTypingMSG(divElementBridge, false)
+                        `display: none; opacity: 0;`
+                    buttonStateRecording.style.cssText =
+                        `display: none; opacity: 0;`
+                    divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                    computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+                    currentDivTextAreaCaptionDisplay = computedSyle4.display
+                    if (currentDivTextAreaCaptionDisplay === 'block') {
+                        await CaptionFileMSG(divElementBridge)
                     }
-                } else if (currentButtonStateRecordingDisplay === 'inline-block') {
-                    if (currentDivDelayStateTypingDisplay === 'flex') {
-                        await StateRecordingMSG(divElementBridge)
+                    divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                    abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+                    divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
+                    abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
+                    divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+                    divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
+
+                    await sendToFunil(divElementBridge, 3, null, file)
+
+                    break;
+                case 'audio/x-m4a':
+                case 'audio/wav':
+                case 'audio/mp3':
+                case 'audio/gif':
+                    typeFile.textContent = `audio`
+
+                    await resetScreenSetup(divElementBridge, false)
+                    divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+                    computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+                    currentDivDelayStateTypingDisplay = computedSyle.display
+                    computedSyle2 = window.getComputedStyle(buttonStateTyping)
+                    currentButtonStateTypingDisplay = computedSyle2.display
+                    computedSyle3 = window.getComputedStyle(buttonStateRecording)
+                    currentButtonStateRecordingDisplay = computedSyle3.display
+                    if (currentButtonStateTypingDisplay === 'inline-block') {
+                        if (currentDivDelayStateTypingDisplay === 'flex') {
+                            await StateTypingMSG(divElementBridge, false)
+                        }
+                    } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                        if (currentDivDelayStateTypingDisplay === 'flex') {
+                            await StateRecordingMSG(divElementBridge)
+                        }
                     }
-                }
-                buttonStateTyping.style.cssText =
-                    `display: none; opacity: 0;`
-                buttonStateRecording.style.cssText =
-                    `display: none; opacity: 0;`
-                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                computedSyle4 = window.getComputedStyle(divTextAreaCaption)
-                currentDivTextAreaCaptionDisplay = computedSyle4.display
-                if (currentDivTextAreaCaptionDisplay === 'block') {
-                    await CaptionFileMSG(divElementBridge)
-                }
-                divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
-                divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
-                abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
-                divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
-                divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
+                    buttonStateTyping.style.cssText =
+                        `display: none; opacity: 0;`
+                    divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                    computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+                    currentDivTextAreaCaptionDisplay = computedSyle4.display
+                    if (currentDivTextAreaCaptionDisplay === 'block') {
+                        await CaptionFileMSG(divElementBridge)
+                    }
+                    divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                    abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+                    divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
+                    abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
+                    
+                    buttonStateRecording.style.cssText =
+                        `display: inline; opacity: 0;`
+                    setTimeout(function() {
+                        buttonStateRecording.style.cssText =
+                            `display: inline; opacity: 1;`
+                    }, 300)
 
-                await sendToFunil(divElementBridge, 3, null, file)
+                    divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+                    divDelayTextAudioTitle.textContent = 'ATRASO-State=Recording:'
+                    
+                    await sendToFunil(divElementBridge, 3, null, file)
 
-                break;
+                    break;
+                case 'image/jpg':
+                case 'image/png':
+                    typeFile.textContent = `imagem`
+                    
+                    await resetScreenSetup(divElementBridge, false)
+                    divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+                    computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+                    currentDivDelayStateTypingDisplay = computedSyle.display
+                    computedSyle2 = window.getComputedStyle(buttonStateTyping)
+                    currentButtonStateTypingDisplay = computedSyle2.display
+                    computedSyle3 = window.getComputedStyle(buttonStateRecording)
+                    currentButtonStateRecordingDisplay = computedSyle3.display
+                    if (currentButtonStateTypingDisplay === 'inline-block') {
+                        if (currentDivDelayStateTypingDisplay === 'flex') {
+                            await StateTypingMSG(divElementBridge, false)
+                        }
+                    } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                        if (currentDivDelayStateTypingDisplay === 'flex') {
+                            await StateRecordingMSG(divElementBridge)
+                        }
+                    }
+                    buttonStateTyping.style.cssText =
+                        `display: none; opacity: 0;`
+                    buttonStateRecording.style.cssText =
+                        `display: none; opacity: 0;`
+                    divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                    computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+                    currentDivTextAreaCaptionDisplay = computedSyle4.display
+                    if (currentDivTextAreaCaptionDisplay === 'block') {
+                        await CaptionFileMSG(divElementBridge)
+                    }
+                    divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                    abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+                    divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
+                    abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
+                    divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+                    divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
+
+                    await sendToFunil(divElementBridge, 3, null, file)
+
+                    break;
+                case 'text/plain':
+                case 'application/pdf':
+                case 'application/msword':
+                    typeFile.textContent = `texto`
+                    
+                    await resetScreenSetup(divElementBridge, false)
+                    divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+                    computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+                    currentDivDelayStateTypingDisplay = computedSyle.display
+                    computedSyle2 = window.getComputedStyle(buttonStateTyping)
+                    currentButtonStateTypingDisplay = computedSyle2.display
+                    computedSyle3 = window.getComputedStyle(buttonStateRecording)
+                    currentButtonStateRecordingDisplay = computedSyle3.display
+                    if (currentButtonStateTypingDisplay === 'inline-block') {
+                        if (currentDivDelayStateTypingDisplay === 'flex') {
+                            await StateTypingMSG(divElementBridge, false)
+                        }
+                    } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                        if (currentDivDelayStateTypingDisplay === 'flex') {
+                            await StateRecordingMSG(divElementBridge)
+                        }
+                    }
+                    buttonStateRecording.style.cssText =
+                        `display: none; opacity: 0;`
+                    divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                    computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+                    currentDivTextAreaCaptionDisplay = computedSyle4.display
+                    if (currentDivTextAreaCaptionDisplay === 'block') {
+                        await CaptionFileMSG(divElementBridge)
+                    }
+
+                    buttonStateTyping.style.cssText =
+                        `display: inline; opacity: 0;`
+                    setTimeout(function() {
+                        buttonStateTyping.style.cssText =
+                        `display: inline; opacity: 1;`
+                    }, 300)
+
+                    divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                    abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+                    divTextAreaCaption.placeholder = 'TEXTO-MSG: >...'
+                    abbrDivTextAreaCaption.title = 'Digite a MSG'
+                    
+                    divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+                    divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing:'
+
+                    await sendToFunil(divElementBridge, 3, null, file)
+
+                    break;
+                default:
+                    typeFile.textContent = `documento`
+                    
+                    await resetScreenSetup(divElementBridge, false)
+                    divDelayStateTypingRecording = divElement.querySelector('#idivDelayTextAudio')
+                    computedSyle = window.getComputedStyle(divDelayStateTypingRecording)
+                    currentDivDelayStateTypingDisplay = computedSyle.display
+                    computedSyle2 = window.getComputedStyle(buttonStateTyping)
+                    currentButtonStateTypingDisplay = computedSyle2.display
+                    computedSyle3 = window.getComputedStyle(buttonStateRecording)
+                    currentButtonStateRecordingDisplay = computedSyle3.display
+                    if (currentButtonStateTypingDisplay === 'inline-block') {
+                        if (currentDivDelayStateTypingDisplay === 'flex') {
+                            await StateTypingMSG(divElementBridge, false)
+                        }
+                    } else if (currentButtonStateRecordingDisplay === 'inline-block') {
+                        if (currentDivDelayStateTypingDisplay === 'flex') {
+                            await StateRecordingMSG(divElementBridge)
+                        }
+                    }
+                    buttonStateTyping.style.cssText =
+                        `display: none; opacity: 0;`
+                    buttonStateRecording.style.cssText =
+                        `display: none; opacity: 0;`
+                    divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                    computedSyle4 = window.getComputedStyle(divTextAreaCaption)
+                    currentDivTextAreaCaptionDisplay = computedSyle4.display
+                    if (currentDivTextAreaCaptionDisplay === 'block') {
+                        await CaptionFileMSG(divElementBridge)
+                    }
+                    divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
+                    abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
+                    divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
+                    abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
+                    divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
+                    divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
+
+                    await sendToFunil(divElementBridge, 3, null, file)
+
+                    break;
+            }
+
+            resetLoadingBar()
         }
-
-        resetLoadingBar()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR getFileData: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> getFileData: ${error.message}`, setLogError)
     }
 }
 async function fileTypeAction(event, isClick, divElement) {
-    let barL = document.querySelector('#barLoading')
-    barL.style.cssText =
-        'width: 100vw; visibility: visible;'
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
 
-    divElement.classList.remove('enter')
+        divElement.classList.remove('enter')
 
-    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
-    
-    let file = null
-    if (isClick) {
-        file = fileInput.files[0]
-    } else {
-        event.preventDefault()
-        event.stopPropagation()
+        const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
         
-        
-        file = event.dataTransfer.files[0]
-    }
-    
-    const nameFile = divElement.querySelector('#ifileNameSelected')
-    const statusFile = divElement.querySelector('#ifileStatus')
-    const abbrFileZone = divElement.closest('abbr')
-    
-    if (file === null || file === undefined) {
-        nameFile.textContent = `...`
-        statusFile.textContent = `Clique ou arraste um arquivo`
-        abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
-        
-        file = '...'
-        await getFileData(divElement, file)
-
-        resetLoadingBar()
-    } else {
-        /*if () {
-            return
-        }*/
-        if (!isClick) {
-            const dataTransfer = new DataTransfer()
-            dataTransfer.items.add(file)
-            fileInput.files = dataTransfer.files
+        let file = null
+        if (isClick) {
+            file = fileInput.files[0]
+        } else {
+            event.preventDefault()
+            event.stopPropagation()
+            
+            
+            file = event.dataTransfer.files[0]
         }
         
-        nameFile.textContent = file.name
-        statusFile.textContent = `Arquivo selecionado`
-        abbrFileZone.title = `Arquivo: ${file.name}`
+        const nameFile = divElement.querySelector('#ifileNameSelected')
+        const statusFile = divElement.querySelector('#ifileStatus')
+        const abbrFileZone = divElement.closest('abbr')
+        
+        if (file === null || file === undefined) {
+            nameFile.textContent = `...`
+            statusFile.textContent = `Clique ou arraste um arquivo`
+            abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
+            
+            file = '...'
+            await getFileData(divElement, file)
 
-        await getFileData(divElement, file)
+            resetLoadingBar()
+        } else {
+            /*if () {
+                return
+            }*/
+            if (!isClick) {
+                const dataTransfer = new DataTransfer()
+                dataTransfer.items.add(file)
+                fileInput.files = dataTransfer.files
+            }
+            
+            nameFile.textContent = file.name
+            statusFile.textContent = `Arquivo selecionado`
+            abbrFileZone.title = `Arquivo: ${file.name}`
 
-        resetLoadingBar()
+            await getFileData(divElement, file)
+
+            resetLoadingBar()
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR fileTypeAction: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> fileTypeAction: ${error.message}`, setLogError)
     }
 }
 
 async function fileHandleDragLeave(event, divElement) {//fica ativando quando mexe rapido dentro inves de quando sai mesmo da area
-    event.preventDefault()
-    event.stopPropagation()
+    try {
+        event.preventDefault()
+        event.stopPropagation()
 
-    divElement.classList.remove('enter')
+        divElement.classList.remove('enter')
 
-    const statusFile = divElement.querySelector('#ifileStatus')
-    
-    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
-    if (fileInput.files.length >= 1) {
-        statusFile.textContent = `Arquivo selecionado`
-    } else {
-        statusFile.textContent = `Clique ou arraste um arquivo`
+        const statusFile = divElement.querySelector('#ifileStatus')
+        
+        const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+        if (fileInput.files.length >= 1) {
+            statusFile.textContent = `Arquivo selecionado`
+        } else {
+            statusFile.textContent = `Clique ou arraste um arquivo`
 
-        const abbrFileZone = divElement.closest('abbr')
-        abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
+            const abbrFileZone = divElement.closest('abbr')
+            abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR fileHandDragLeave: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> fileHandDragLeave: ${error.message}`, setLogError)
     }
 }
 async function fileHandleDragEnter(event, divElement) {
-    event.preventDefault()
-    event.stopPropagation()
+    try {
+        event.preventDefault()
+        event.stopPropagation()
 
-    divElement.classList.add('enter')
-    
-    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
-    if (fileInput.files.length === 0) {
-        const abbrFileZone = divElement.closest('abbr')
-        abbrFileZone.title = `Solte para enviar o arquivo`
+        divElement.classList.add('enter')
+
+        const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+        if (fileInput.files.length === 0) {
+            const abbrFileZone = divElement.closest('abbr')
+            abbrFileZone.title = `Solte para enviar o arquivo`
+        }
+        const statusFile = divElement.querySelector('#ifileStatus')
+        statusFile.textContent = `Solte`
+    } catch (error) {
+        console.error(`> ⚠️ ERROR fileHandDragEnter: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> fileHandDragLeave: ${error.message}`, setLogError)
     }
-    const statusFile = divElement.querySelector('#ifileStatus')
-    statusFile.textContent = `Solte`
 }
 async function fileHoverLeave(divElement) {
-    const statusFile = divElement.querySelector('#ifileStatus')
-    
-    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
-    if (fileInput.files.length >= 1) {
-        statusFile.textContent = `Arquivo selecionado`
-    } else {
-        statusFile.textContent = `Clique ou arraste um arquivo`
+    try {
+        const statusFile = divElement.querySelector('#ifileStatus')
+        
+        const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+        if (fileInput.files.length >= 1) {
+            statusFile.textContent = `Arquivo selecionado`
+        } else {
+            statusFile.textContent = `Clique ou arraste um arquivo`
 
-        const abbrFileZone = divElement.closest('abbr')
-        abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
+            const abbrFileZone = divElement.closest('abbr')
+            abbrFileZone.title = `Clique e selecione ou arraste um arquivo aqui para poder enviar`
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR fileHoverLeave: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> fileHoverLeave: ${error.message}`, setLogError)
     }
 }
 async function fileHoverEnter(divElement) {
-    const statusFile = divElement.querySelector('#ifileStatus')
-    statusFile.textContent = `Clique`
+    try {
+        const statusFile = divElement.querySelector('#ifileStatus')
+        statusFile.textContent = `Clique`
 
-    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
-    if (fileInput.files.length === 0) {
-        const abbrFileZone = divElement.closest('abbr')
-        abbrFileZone.title = `Clique e selecione um arquivo para enviar o arquivo`
+        const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+        if (fileInput.files.length === 0) {
+            const abbrFileZone = divElement.closest('abbr')
+            abbrFileZone.title = `Clique e selecione um arquivo para enviar o arquivo`
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR fileHoverEnter: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> fileHoverEnter: ${error.message}`, setLogError)
     }
 }
 async function fileAuxAction(divElement) {
-    const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
+    try {
+        const fileInput = divElement.querySelector('input#ifileTypeMSGAux[type="file"]')
 
-    const statusFile = divElement.querySelector('#ifileStatus')
-    const abbrFileZone = divElement.closest('abbr')
-    
-    if (fileInput.files.length === 0) {
-        abbrFileZone.title = `Selecione um arquivo para enviar o arquivo`
+        const statusFile = divElement.querySelector('#ifileStatus')
+        const abbrFileZone = divElement.closest('abbr')
+        
+        if (fileInput.files.length === 0) {
+            abbrFileZone.title = `Selecione um arquivo para enviar o arquivo`
+        }
+        statusFile.textContent = `Selecione`
+        
+        await fileInput.click()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR fileAuxAction: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> fileAuxAction: ${error.message}`, setLogError)
     }
-    statusFile.textContent = `Selecione`
-    
-    await fileInput.click()
 }
 
 async function delayLimitLength(input) {
-    if (input.value.length > 5) {
-        const newValue = input.value.slice(0, 5)
-        input.value = newValue
+    try {
+        if (input.value.length > 5) {
+            const newValue = input.value.slice(0, 5)
+            input.value = newValue
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR delayLimitLength: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> delayLimitLength: ${error.message}`, setLogError)
     }
 }
 
 async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado na hora pra modificar unicamente por MSG para aparecer bunitin opacity e tals
-    let barL = document.querySelector('#barLoading')
-    barL.style.cssText =
-        'width: 100vw; visibility: visible;'
+    try {  
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
 
-    await newTypeMSGShown()
-    
-    const divFunil = document.querySelector('#funilArea')
-    const allConteinerFunilMSG = divFunil.querySelectorAll('.conteinerFunilMSG')
-    let arrayIdNumberPosition = []
-    allConteinerFunilMSG.forEach((divElement) => { 
-        arrayIdNumberPosition.push(parseInt(divElement.id.match(/\d+/g)[0]))  
-    })
-    const response = await axios.get('/funil/insert_exponecial_position_MSG', { params: { arrayIdNumberPosition } })
-    const idNumberPositionDivAdjacent = response.data.idnumberpositiondivadjacent
-    const isFirstUndefined = response.data.isfirstundefined 
+        await newTypeMSGShown()
+        
+        const divFunil = document.querySelector('#funilArea')
+        const allConteinerFunilMSG = divFunil.querySelectorAll('.conteinerFunilMSG')
+        let arrayIdNumberPosition = []
+        allConteinerFunilMSG.forEach((divElement) => { 
+            arrayIdNumberPosition.push(Number(divElement.id.match(/\d+/g)))  
+        })
+        let idNumberPositionDivAdjacent = null
+        let isFirstUndefined = null 
+        if (arrayIdNumberPosition.length > 0) {   
+            const response = await axios.get('/funil/insert_exponecial_position_MSG', { params: { arrayIdNumberPosition } })
+            idNumberPositionDivAdjacent = response.data.idnumberpositiondivadjacent
+            isFirstUndefined = response.data.isfirstundefined 
+        }
 
-    const response2 = await axios.post('/funil/new-MSG')
-    const Id_Position_MSG = response2.data.idpositionmsg
+        const response2 = await axios.post('/funil/new-MSG')
+        const Id_Position_MSG = response2.data.idpositionmsg
 
-    const divAdjacent = document.querySelector(`#${idNumberPositionDivAdjacent}`)
-    let conteinerMSG = null
-    switch (type) {
-        case 1:
-            const MSGHTMlDelay = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+        const divAdjacent = document.querySelector(`#${idNumberPositionDivAdjacent}`)
+        let conteinerMSG = null
+        switch (type) {
+            case 1:
+                const MSGHTMlDelay = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
 
-                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG">
-                                        <label title="Selecione esta posição (${Id_Position_MSG})" class="divSelectionPositionMSG" id="idivSelectionPositionMSGDelay">
-                                            <input type="checkbox" class="inputCheckboxSelection" id="iinputCheckboxSelection${Id_Position_MSG}" onchange="selectionPositionMSG(this, 1)">
-                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
-                                        </label>
-                                        <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
-                                        <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
+                                        <div class="divInfoPositionMSG" id="idivInfoPositionMSG${Id_Position_MSG}">
+                                            <label title="Selecione esta posição (${Id_Position_MSG})" class="divSelectionPositionMSG">
+                                                <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG${Id_Position_MSG}" onchange="selectionPositionMSG(this, 1)">
+                                                <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                            </label>
+                                            <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                            <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
 
-                                        <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 1)">D</button>
-                                    </div>
-
-                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
-
-                                        <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
-                                            <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
-                                        
-                                            <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
-                                                <option value="none" selected>Nenhum</option>
-                                                <option value="seconds">Segundos</option>
-                                                <option value="minutes">Minutos</option>
-                                                <option value="hours">Horas</option>
-                                                <option value="days">Dias</option>
-                                            </select>
+                                            <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 1)">D</button>
                                         </div>
 
-                                    </div>
+                                        <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
 
-                                </div>`
-            if (divAdjacent) {
-                if (isFirstUndefined) {
-                    divAdjacent.insertAdjacentHTML('beforebegin', MSGHTMlDelay)
-                } else {
-                    divAdjacent.insertAdjacentHTML('afterend', MSGHTMlDelay)
-                }
-            } else {
-                divFunil.innerHTML += MSGHTMlDelay
-            }
-
-            conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
-            conteinerMSG.style.cssText =
-                `display: flex; opacity: 0;`
-            setTimeout(function() {
-                conteinerMSG.style.cssText =
-                    `display: flex; opacity: 1;`
-            }, 300)
-
-            resetLoadingBar()
-            break
-        case 2:
-            const MSGHTMlText = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
-
-                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG">
-                                        <label title="Selecione esta posição (${Id_Position_MSG})" class="divSelectionPositionMSG" id="idivSelectionPositionMSGDelay">
-                                            <input type="checkbox" class="inputCheckboxSelection" id="iinputCheckboxSelection${Id_Position_MSG}" onchange="selectionPositionMSG(this, 2)">
-                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
-                                        </label>
-                                        <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
-                                        <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
-
-                                        <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 2)">D</button>
-                                    </div>
-
-                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
-
-                                        <div class="divTextarea" id="idivTextarea">
-                                            <div class="divTextareaFunctions" id="idivTextareaFunctions">
-                                                <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
-                                                
-                                                <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
-                                                <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
-                                                
-                                                <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
-                                                <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
-                                                <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
-                                                <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
-                                            </div>
-                                        
-                                            <div class="divDelayText" id="idivDelayText">
-                                                <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
-                                                
-                                                <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 2, this, null)">
+                                            <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
+                                                <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
+                                            
+                                                <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
                                                     <option value="none" selected>Nenhum</option>
                                                     <option value="seconds">Segundos</option>
                                                     <option value="minutes">Minutos</option>
@@ -2936,179 +3225,252 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                                     <option value="days">Dias</option>
                                                 </select>
                                             </div>
-                                            
-                                            <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
+
                                         </div>
 
-                                    </div>
-
-                                </div>`
-            if (divAdjacent) {
-                if (isFirstUndefined) {
-                    divAdjacent.insertAdjacentHTML('beforebegin', MSGHTMlText)
+                                    </div>`
+                if (divAdjacent) {
+                    if (isFirstUndefined) {
+                        divAdjacent.insertAdjacentHTML('beforebegin', MSGHTMlDelay)
+                    } else {
+                        divAdjacent.insertAdjacentHTML('afterend', MSGHTMlDelay)
+                    }
                 } else {
-                    divAdjacent.insertAdjacentHTML('afterend', MSGHTMlText)
+                    divFunil.innerHTML += MSGHTMlDelay
                 }
-            } else {
-                divFunil.innerHTML += MSGHTMlText
-            }
-            
-            conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
-            conteinerMSG.style.cssText =
-                `display: flex; opacity: 0;`
-            setTimeout(function() {
+
+                conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
-                    `display: flex; opacity: 1;`
-            }, 300)
+                    `display: flex; opacity: 0;`
+                setTimeout(function() {
+                    conteinerMSG.style.cssText =
+                        `display: flex; opacity: 1;`
+                }, 300)
 
-            resetLoadingBar()
-            break
-        case 3:
-            const MSGHTMlFile = ` <div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+                resetLoadingBar()
+                break
+            case 2:
+                const MSGHTMlText = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
 
-                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG">
-                                        <label title="Selecione esta posição (${Id_Position_MSG})" class="divSelectionPositionMSG" id="idivSelectionPositionMSGDelay">
-                                            <input type="checkbox" class="inputCheckboxSelection" id="iinputCheckboxSelection${Id_Position_MSG}" onchange="selectionPositionMSG(this, 3)">
-                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
-                                        </label>
-                                        <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
-                                        <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
+                                        <div class="divInfoPositionMSG" id="idivInfoPositionMSG${Id_Position_MSG}">
+                                            <label title="Selecione esta posição (${Id_Position_MSG})" class="divSelectionPositionMSG">
+                                                <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG${Id_Position_MSG}" onchange="selectionPositionMSG(this, 2)">
+                                                <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                            </label>
+                                            <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                            <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
 
-                                        <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 3)">D</button>
-                                    </div>
+                                            <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 2)">D</button>
+                                        </div>
 
-                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+                                        <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
 
-                                        <div class="fileTypeMSG" id="ifileTypeMSG">
-                                            <div class="divFileFunctions" id="idivFileFunctions">
-                                                <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
-                                                <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
-                                                <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
-                                                
-                                                <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
-                                                <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
-                                                
-                                                <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
-                                                <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
-                                                <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
-                                                <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
-                                            </div>
-                                            
-                                            <div class="divDelayTextAudio" id="idivDelayTextAudio">
-                                                <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
-                                                
-                                                <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 3, this, null)">
-                                                    <option value="none" selected>Nenhum</option>
-                                                    <option value="seconds">Segundos</option>
-                                                    <option value="minutes">Minutos</option>
-                                                    <option value="hours">Horas</option>
-                                                    <option value="days">Dias</option>
-                                                </select>
-                                            </div>
-                                            
-                                            <div class="divFileSelectMSG">
-                                                <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
-                                                    <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
-                                                    <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
-                                                    <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
-                                                    <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                            <div class="divTextarea" id="idivTextarea">
+                                                <div class="divTextareaFunctions" id="idivTextareaFunctions">
+                                                    <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
                                                     
-                                                    <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
-                                                </div></abbr>
+                                                    <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
+                                                    <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
+                                                    
+                                                    <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
+                                                    <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
+                                                    <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
+                                                    <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
+                                                </div>
+                                            
+                                                <div class="divDelayText" id="idivDelayText">
+                                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
+                                                    
+                                                    <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 2, this, null)">
+                                                        <option value="none" selected>Nenhum</option>
+                                                        <option value="seconds">Segundos</option>
+                                                        <option value="minutes">Minutos</option>
+                                                        <option value="hours">Horas</option>
+                                                        <option value="days">Dias</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
                                             </div>
 
-                                            <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
                                         </div>
-                                        
-                                    </div>
 
-                                </div>`
-            if (divAdjacent) {
-                if (isFirstUndefined) {
-                    divAdjacent.insertAdjacentHTML('beforebegin', MSGHTMlFile)
+                                    </div>`
+                if (divAdjacent) {
+                    if (isFirstUndefined) {
+                        divAdjacent.insertAdjacentHTML('beforebegin', MSGHTMlText)
+                    } else {
+                        divAdjacent.insertAdjacentHTML('afterend', MSGHTMlText)
+                    }
                 } else {
-                    divAdjacent.insertAdjacentHTML('afterend', MSGHTMlFile)
+                    divFunil.innerHTML += MSGHTMlText
                 }
-            } else {
-                divFunil.innerHTML += MSGHTMlFile
-            }
-
-            conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
-            conteinerMSG.style.cssText =
-                `display: flex; opacity: 0;`
-            setTimeout(function() {
+                
+                conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
-                    `display: flex; opacity: 1;`
-            }, 300)
+                    `display: flex; opacity: 0;`
+                setTimeout(function() {
+                    conteinerMSG.style.cssText =
+                        `display: flex; opacity: 1;`
+                }, 300)
 
-            resetLoadingBar()
-            break
+                resetLoadingBar()
+                break
+            case 3:
+                const MSGHTMlFile = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+
+                                        <div class="divInfoPositionMSG" id="idivInfoPositionMSG${Id_Position_MSG}">
+                                            <label title="Selecione esta posição (${Id_Position_MSG})" class="divSelectionPositionMSG">
+                                                <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG${Id_Position_MSG}" onchange="selectionPositionMSG(this, 3)">
+                                                <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                            </label>
+                                            <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                            <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
+
+                                            <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 3)">D</button>
+                                        </div>
+
+                                        <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                            <div class="fileTypeMSG" id="ifileTypeMSG">
+                                                <div class="divFileFunctions" id="idivFileFunctions">
+                                                    <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
+                                                    <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
+                                                    <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
+                                                    
+                                                    <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
+                                                    <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
+                                                    
+                                                    <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
+                                                    <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
+                                                    <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
+                                                    <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
+                                                </div>
+                                                
+                                                <div class="divDelayTextAudio" id="idivDelayTextAudio">
+                                                    <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
+                                                    
+                                                    <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 3, this, null)">
+                                                        <option value="none" selected>Nenhum</option>
+                                                        <option value="seconds">Segundos</option>
+                                                        <option value="minutes">Minutos</option>
+                                                        <option value="hours">Horas</option>
+                                                        <option value="days">Dias</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="divFileSelectMSG">
+                                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                                        <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
+                                                        <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
+                                                        <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                                        <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                                        
+                                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
+                                                    </div></abbr>
+                                                </div>
+
+                                                <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
+                                            </div>
+                                            
+                                        </div>
+
+                                    </div>`
+                if (divAdjacent) {
+                    if (isFirstUndefined) {
+                        divAdjacent.insertAdjacentHTML('beforebegin', MSGHTMlFile)
+                    } else {
+                        divAdjacent.insertAdjacentHTML('afterend', MSGHTMlFile)
+                    }
+                } else {
+                    divFunil.innerHTML += MSGHTMlFile
+                }
+
+                conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
+                conteinerMSG.style.cssText =
+                    `display: flex; opacity: 0;`
+                setTimeout(function() {
+                    conteinerMSG.style.cssText =
+                        `display: flex; opacity: 1;`
+                }, 300)
+
+                resetLoadingBar()
+                break
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR newTypeMSG: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> newTypeMSG: ${error.message}`, setLogError)
     }
 }
 
 async function newTypeMSGShown() {
-    const divAddNewTypeMSG = document.querySelector('#addTypeMSG')
-    const typeSelect = document.querySelector('#typeSelectMSG')
-    const typeDelay = document.querySelector('#typeDelayMSG')
-    const typeText = document.querySelector('#typeTextMSG')
-    const typeFile = document.querySelector('#typeFileMSG')
-    const isShown_typeSelect = window.getComputedStyle(typeSelect).display
+    try {
+        const divAddNewTypeMSG = document.querySelector('#addTypeMSG')
+        const typeSelect = document.querySelector('#typeSelectMSG')
+        const typeDelay = document.querySelector('#typeDelayMSG')
+        const typeText = document.querySelector('#typeTextMSG')
+        const typeFile = document.querySelector('#typeFileMSG')
+        const isShown_typeSelect = window.getComputedStyle(typeSelect).display
 
-    if (isShown_typeSelect === 'block') {
-        typeDelay.style.cssText =
-            'display: block; opacity: 0;'
-        typeText.style.cssText =
-            'display: block; opacity: 0;'
-        typeFile.style.cssText =
-            'display: block; opacity: 0;'
-
-        setTimeout(function() {
+        if (isShown_typeSelect === 'block') {
             typeDelay.style.cssText =
-                'display: none; opacity: 0;'
+                'display: block; opacity: 0;'
             typeText.style.cssText =
-                'display: none; opacity: 0;'
+                'display: block; opacity: 0;'
             typeFile.style.cssText =
-                'display: none; opacity: 0;'
-
-            typeSelect.style.cssText =
-                'display: block; height: 0vh; padding: 0px 10px 0px 10px;'
-            setTimeout(function() {
-                typeSelect.style.cssText =
-                    'display: none; height: 0vh; padding: 0px 10px 0px 10px;'
-                
-                divAddNewTypeMSG.style.cssText = 
-                    'border-radius: 50px 50px 50px 50px;' 
-            }, 300)
-        }, 300)
-    } else {
-        divAddNewTypeMSG.style.cssText = 
-            'border-radius: 0px 0px 50px 50px;'
-
-        setTimeout(function() {
-            typeSelect.style.cssText =
-                'display: block; height: 0vh; padding: 0px 10px 0px 10px;'
-            setTimeout(function() {
-                typeSelect.style.cssText =
-                    'display: block; height: 30vh; padding: 7px 10px 0px 10px;'
-            }, 100)
+                'display: block; opacity: 0;'
 
             setTimeout(function() {
                 typeDelay.style.cssText =
-                    'display: block; opacity: 0;'
+                    'display: none; opacity: 0;'
                 typeText.style.cssText =
-                    'display: block; opacity: 0;'
+                    'display: none; opacity: 0;'
                 typeFile.style.cssText =
-                    'display: block; opacity: 0;'
+                    'display: none; opacity: 0;'
+
+                typeSelect.style.cssText =
+                    'display: block; height: 0vh; padding: 0px 10px 0px 10px;'
+                setTimeout(function() {
+                    typeSelect.style.cssText =
+                        'display: none; height: 0vh; padding: 0px 10px 0px 10px;'
+                    
+                    divAddNewTypeMSG.style.cssText = 
+                        'border-radius: 50px 50px 50px 50px;' 
+                }, 300)
+            }, 300)
+        } else {
+            divAddNewTypeMSG.style.cssText = 
+                'border-radius: 0px 0px 50px 50px;'
+
+            setTimeout(function() {
+                typeSelect.style.cssText =
+                    'display: block; height: 0vh; padding: 0px 10px 0px 10px;'
+                setTimeout(function() {
+                    typeSelect.style.cssText =
+                        'display: block; height: 30vh; padding: 7px 10px 0px 10px;'
+                }, 100)
+
                 setTimeout(function() {
                     typeDelay.style.cssText =
-                        'display: block; opacity: 1;'
+                        'display: block; opacity: 0;'
                     typeText.style.cssText =
-                        'display: block; opacity: 1;'
+                        'display: block; opacity: 0;'
                     typeFile.style.cssText =
-                        'display: block; opacity: 1;'
-                }, 100)
+                        'display: block; opacity: 0;'
+                    setTimeout(function() {
+                        typeDelay.style.cssText =
+                            'display: block; opacity: 1;'
+                        typeText.style.cssText =
+                            'display: block; opacity: 1;'
+                        typeFile.style.cssText =
+                            'display: block; opacity: 1;'
+                    }, 100)
+                }, 300)
             }, 300)
-        }, 300)
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR newTypeMSGShown: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> newTypeMSGShown: ${error.message}`, setLogError)
     }
 }
 
@@ -4072,14 +4434,17 @@ async function insertClient_Front(Clientt_, isActive) {
         const allConteinerClients_ = ClientsDiv.querySelectorAll('.divClients_')
         let arrayIdNameClients_ = []
         allConteinerClients_.forEach((divElement) => {
-            const Client_Id = parseInt(divElement.id.match(/\d+/g)[0])
+            const Client_Id = Number(divElement.id.match(/\d+/g))
             const Client_Name = divElement.id.split('_').slice(2, -1).join('_')
             arrayIdNameClients_.push({ Client_Id, Client_Name })
         })
-
-        const response = await axios.get('/client/insert_exponecial_position_Client_', { params: { arrayIdNameClients_ } })
-        const idNumberClient_DivAdjacent = response.data.idnumberclient_divadjacent
-        const isFirstUndefined = response.data.isfirstundefined
+        let idNumberClient_DivAdjacent = null
+        let isFirstUndefined = null
+        if (arrayIdNameClients_.length > 0) {
+            const response = await axios.get('/client/insert_exponecial_position_Client_', { params: { arrayIdNameClients_ } })
+            idNumberClient_DivAdjacent = response.data.idnumberclient_divadjacent
+            isFirstUndefined = response.data.isfirstundefined
+        }
     
         const divAdjacent = document.querySelector(`#${idNumberClient_DivAdjacent}`)
         if (isActive) {
@@ -4101,11 +4466,14 @@ async function insertClient_Front(Clientt_, isActive) {
                                             </div>`
             if (divAdjacent) {
                 if (isFirstUndefined) {
+                    console.log('toto2')
                     divAdjacent.insertAdjacentHTML('beforebegin', clientHTMLReinitialize)
                 } else {
+                    console.log('toto22')
                     divAdjacent.insertAdjacentHTML('afterend', clientHTMLReinitialize)
                 }
             } else {
+                console.log('toto33')
                 ClientsDiv.innerHTML += clientHTMLReinitialize
             }
         }

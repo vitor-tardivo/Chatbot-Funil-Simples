@@ -37,7 +37,8 @@ router.get('/', (req, res) => {
 
 router.get('/funil/insert_exponecial_position_MSG', async (req, res) => {
     try {
-        const arrayidnumberposition = req.query.arrayIdNumberPosition
+        let arrayidnumberposition = req.query.arrayIdNumberPosition
+        arrayidnumberposition = arrayidnumberposition.map(Number)
         const { idNumberPositionDivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_MSG(arrayidnumberposition)
         
         res.status(200).send({ sucess: true, message: `Sucessfully sent the insert info exponecial position MSG.`, idnumberpositiondivadjacent: idNumberPositionDivAdjacent, isfirstundefined: isFirstUndefined })
@@ -186,7 +187,7 @@ router.get('/client/insert_exponecial_position_Client_', async (req, res) => {
         
         res.status(200).send({ sucess: true, message: `Sucessfully sent the insert info exponecial position Client_.`, idnumberclient_divadjacent: idNumberClient_DivAdjacent, isfirstundefined: isFirstUndefined })
     } catch (error) {
-        console.error(`> ❌ ERROR /funil/insert_exponecial_position_MSG: ${error}`)
+        console.error(`> ❌ ERROR /client/insert_exponecial_position_Client_: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, idnumberclient_divadjacent: null, isfirstundefined: null })
     }
 })
