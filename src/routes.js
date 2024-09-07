@@ -23,6 +23,9 @@ const {
     Generate_MSG_Position_Id,
     Position_MSG_Erase,
     Insert_Exponecial_Position_MSG,
+    New_Funil_,
+    Insert_Exponecial_Position_Funil_,
+    Select_Funil_,
 } = require('./app')
 
 router.get('/', (req, res) => {
@@ -35,6 +38,40 @@ router.get('/', (req, res) => {
     }
 })
 
+router.post('/funil/select', async (req, res) => {
+    try {
+        const { Funil_ } = req.body
+        
+        await Select_Funil_(Funil_)
+        
+        res.status(200).send({ sucess: true, message: `Funil_ ${Funil_} selected.`})
+    } catch (error) {
+        console.error(`> ❌ ERROR /funil/select: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`})
+    }
+})
+router.get('/funil/insert_exponecial_position_Funil_', async (req, res) => {
+    try {
+        const arrayidnamefunils_ = req.query.arrayIdNameFunils_
+        const { idNumberFunil_DivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_Funil_(arrayidnamefunils_)
+        
+        res.status(200).send({ sucess: true, message: `Sucessfully sent the insert info exponecial position Funil_.`, idnumberfunil_divadjacent: idNumberFunil_DivAdjacent, isfirstundefined: isFirstUndefined })
+    } catch (error) {
+        console.error(`> ❌ ERROR /funil/insert_exponecial_position_Funil_: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, idnumberfunil_divadjacent: null, isfirstundefined: null })
+    }
+})
+router.post('/funil/new', async (req, res) => {
+    try {
+        //global.Is_From_New = true
+        const { Sucess, Funil_ } = await New_Funil_()
+
+        res.status(200).send({ sucess: Sucess, message: `New Funil_ created.`, Funilt_: Funil_ })
+    } catch (error) {
+        console.error(`> ❌ ERROR /funil/new: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, Funilt_: null })
+    }
+})
 router.get('/funil/insert_exponecial_position_MSG', async (req, res) => {
     try {
         let arrayidnumberposition = req.query.arrayIdNumberPosition
@@ -179,7 +216,6 @@ router.post('/features/command', express.json(), (req, res) => {
     }
 })
 
-
 router.get('/client/insert_exponecial_position_Client_', async (req, res) => {
     try {
         const arrayidnameclients_ = req.query.arrayIdNameClients_
@@ -265,7 +301,7 @@ router.post('/client/new', async (req, res) => {
         global.Is_From_New = true
         await New_Client_()
 
-        res.status(200).send({ sucess: true, message: `New Client ${Clientt_} initialized.` })
+        res.status(200).send({ sucess: true, message: `New Client_ ${Clientt_} initialized.` })
     } catch (error) {
         console.error(`> ❌ ERROR /client/new: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
@@ -274,7 +310,8 @@ router.post('/client/new', async (req, res) => {
 
 router.get('/clients/dir', async (req, res) => {//REST representacao de recurso
     try {
-        const Directories_ = await List_Directories('Local_Auth')
+        const dirpath = req.query.dir_Path
+        const Directories_ = await List_Directories(dirpath)
         
         res.status(200).send({ sucess: true, message: `All Clients_ dir sent.`, dirs: Directories_ })
     } catch (error) {

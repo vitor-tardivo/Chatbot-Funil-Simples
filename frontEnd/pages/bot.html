@@ -52,7 +52,7 @@
                     </div></abbr>
 
                     <div id="divInput">
-                        <abbr title="Digite um comando do console..."><input type="text" id="commandInput" placeholder="..."></abbr>       
+                        <abbr title="Digite um comando do console..."><input type="text" id="commandInput" placeholder=">..."></abbr>       
                     </div>
                 </div>
             </div>
@@ -63,9 +63,9 @@
         </article>
         <section id="content">
             <div id="divFunctions">
-                <abbr title="Lista STATUS: null" id="abbrShowList"><button class="functionsDiv" id="showList" onclick="showTableList()">-O</button></abbr>
                 <abbr title="WebSocket STATUS: null" id="abbrReload"><button class="functionsDiv" id="reload" onclick="reconnectWebSocket()">WS</button></abbr>
                 <abbr title="Funil STATUS: escondido" id="abbrShowFunil"><button class="functionsDiv" id="showFunil" onclick="showFunil()">O</button></abbr>
+                <abbr title="Lista STATUS: null" id="abbrShowList"><button class="functionsDiv" id="showList" onclick="showTableList()">-O</button></abbr>
             </div>
             <abbr title="Status do Bot"><div class="divs" id="divStatus">
                 <p id="pStatus"><span id="status">...</span></p>
@@ -75,14 +75,14 @@
                 <div id="Clients_">
                     
                 
-                <!--<div class="divClients_" id="_2_Client_">
-                    <abbr title="Client_ _2_Client_" id="abbrselect-_2_Client_"><button class="Clients_" id="select-_2_Client_" onclick="selectClient_('_2_Client_')">_2_Client_</button></abbr><abbr title="Desligar _2_Client_" id="abbrDestroy-_2_Client_"><button class="Clients_Destroy" id="Destroy-_2_Client_" onclick="DestroyClient_('_2_Client_')"><</button></abbr><abbr title="Apagar _2_Client_" id="abbrerase-_2_Client_"><button class="Clients_Erase" id="erase-_2_Client_" onclick="eraseClient_(false, '_2_Client_')"><</button></abbr>
-                </div>-->
+                    <!--<div class="divClients_" id="_2_Client_">
+                        <abbr title="Client_ _2_Client_" id="abbrselect-_2_Client_"><button class="Clients_" id="select-_2_Client_" onclick="selectClient_('_2_Client_')">_2_Client_</button></abbr><abbr title="Desligar _2_Client_" id="abbrDestroy-_2_Client_"><button class="Clients_Destroy" id="Destroy-_2_Client_" onclick="DestroyClient_('_2_Client_')"><</button></abbr><abbr title="Apagar _2_Client_" id="abbrerase-_2_Client_"><button class="Clients_Erase" id="erase-_2_Client_" onclick="eraseClient_(false, '_2_Client_')"><</button></abbr>
+                    </div>-->
 
 
                 </div>
 
-                <abbr title="+ Cria um novo Client_"><button id="newClient" onclick="newClients()" ><stronger>+</stronger></button></abbr><!-- BUTTON NEW CLIENT BOT -->
+                <abbr title="+ Cria um novo Client_"><button id="newClient" onclick="newClients()" ><stronger>+</stronger></button></abbr>
             </div>
             <div id="innerContent">
                 <div class="divs" id="divStart">
@@ -98,17 +98,17 @@
                     </div></abbr>
                 </div>
 
-                <div class="sections" id="section1">
+                <!--<div class="sections" id="section1">
 
                     <div class="divInfoSection" id="idivInfoSection1">
-                        <label title="Selecione o Funil" class="divSelectionPositionSection">
+                        <label title="Selecione esta Seção (1)" class="divSelectionPositionSection">
                             <input type="checkbox" class="inputCheckboxSelectionSection" id="iinputCheckboxSelectionSection1" onchange="selectionPositionSection(this)">
                             <span class="checkSelectionSection" id="icheckSelectionSection"></span>
                         </label>
                         <h2 class="titleSection" id="ititleSection">Tabela</h2>
                     </div>
 
-                    <div class="divInnerConteinerSection" id="idivInnerConteinerSection">
+                    <div class="divInnerConteinerSection" id="idivInnerConteinerSection">-->
 
                         <div id="listTable">
                             <div class="divs" id="divButtonList">
@@ -119,7 +119,7 @@
                                 
                                 <div class="divs" id="sendInputList">
                                     <div id="divInputList">
-                                        <abbr title="Digite um nome ou numero de contato..."><input type="text" id="inputList" placeholder="..."></abbr>       
+                                        <abbr title="Digite um nome ou numero de contato..."><input type="text" id="inputList" placeholder=">..."></abbr>       
                                     </div>
 
                                     <abbr title="Pesquisa um nome ou numero de contato"><div id="divSendList">
@@ -160,24 +160,38 @@
                             </div>
                         </div>
 
-                    </div>
+                    <!--</div>
 
-                </div>
+                </div>-->
                 
-                <div class="sections" id="section2">
+                <!--<div class="sections" id="section2">
 
                     <div class="divInfoSection" id="idivInfoSection2">
-                        <label title="Selecione o Funil" class="divSelectionPositionSection">
+                        <label title="Selecione esta Seção (2)" class="divSelectionPositionSection">
                             <input type="checkbox" class="inputCheckboxSelectionSection" id="iinputCheckboxSelectionSection2" onchange="selectionPositionSection(this)">
                             <span class="checkSelectionSection" id="icheckSelectionSection"></span>
                         </label>
                         <h2 class="titleSection" id="ititleSection">Funil</h2>
                     </div>
 
-                    <div class="divInnerConteinerSection" id="idivInnerConteinerSection">
+                    <div class="divInnerConteinerSection" id="idivInnerConteinerSection">-->
 
                         <div class="divs" id="divFunil">
                             <div id="divInnerFunil">
+                                <div id="divNewFunil">
+                
+                                    <div id="Funils_">
+                                        
+                                    
+                                        <!--<div class="divFunils_" id="_2_Funil_">
+                                            <abbr title="Funil_ _2_Funil_" id="abbrselect-_2_Funil_"><button class="Funils_" id="select-_2_Funil_" onclick="selectFunil_('_2_Funil_')">_2_Funil__</button></abbr><abbr title="Apagar _2_Funil_" id="abbrerase-_2_Funil_"><button class="Funils_Erase" id="erase-_2_Funil_" onclick="eraseFunil_(false, '_2_Funil_')"><</button></abbr>
+                                        </div>-->
+                    
+                    
+                                    </div>
+                    
+                                    <abbr title="+ Cria um novo Funil"><button id="newFunil" onclick="newFunils()" ><stronger>+</stronger></button></abbr>
+                                </div>
                                 <div id="divFunilFunctions">
                                     <abbr title="Schedule Erase STATUS: null" id="abbrScheduleErase"><button class="functionsDivStart" id="OnOffScheduleErase" onclick="">-O</button></abbr>
                                 </div>
@@ -345,9 +359,9 @@
                             </div>
                         </div>
 
-                    </div>
+                    <!--</div>
 
-                </div>
+                </div>-->
 
             </div>
         </section>

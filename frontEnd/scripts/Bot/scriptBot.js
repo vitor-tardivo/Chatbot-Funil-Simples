@@ -38,6 +38,9 @@ let isHideAP = true
 
 let isStarted = false
 
+let Funilt_Temp = null
+let Funil_ = null
+
 let nameApp = null
 let versionApp = null
 
@@ -126,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
                 isStarted = true
             }
             isQrOff = false
-            generateQrCode(QR_Counter, Client_)
+            await generateQrCode(QR_Counter, Client_)
         }
         if (stage === 2) {
             if (!isFromNew) {
@@ -143,7 +146,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
             await ready(Client_)
             let isFromNew = true
             isQrOff = false
-            generateQrCode(QR_Counter)
+            await generateQrCode(QR_Counter)
         }
 
         const reloadButton = document.querySelector('#reload')
@@ -156,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         if (wss) wss.close(), wss = null
         wss = new WebSocket(`ws://${window.location.host}`)
         /*wss = new WebSocket(`wss://${window.location.host}`)*/
-        webSocket()
+        await webSocket()
 
         /*const originalConsoleLog = console.log
         console.log = function (...args) {
@@ -185,14 +188,31 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
 
         await loadConsoleStyles()
         await loadFunilStyles()
-        await loadSectionsHtml()
+        const dir_Path = 'Funils_'
+        const response3 = await axios.get('/clients/dir', { params: { dir_Path } })
+        const Directories_ = response3.data.dirs
+        if (Directories_.length-1 === -1) {
+            
+            
+        } else {
+            let Counter_Clients_ = 1
+            for (let i = 1; i <= Directories_.length; i++) {
+                const match = Directories_[Counter_Clients_-1].match(/=(.+)\.json/)
+                const Funilt_ = match ? match[1] : null
+                await insertFunil_Front(Funilt_)
+                await selectFunil_(Funilt_)
+                
+                Counter_Clients_++
+            }
+        }
+        //await loadSectionsHtml()
     } catch (error) {
         console.error(`> ⚠️ ERROR DOMContentLoaded: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> DOMContentLoaded: ${error.message}`, setLogError)
     }
 })
 
-function reconnectWebSocket() {
+async function reconnectWebSocket() {
     try {
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
@@ -211,7 +231,7 @@ function reconnectWebSocket() {
         if (wss) wss.close(), wss = null
         wss = new WebSocket(`ws://${window.location.host}`)
         //wss = new WebSocket(`wss://${window.location.host}`)
-        webSocket()
+        await webSocket()
 
     } catch (error) {
         console.error(`> ⚠️ ERROR reconnectConsole: ${error}`)
@@ -641,7 +661,8 @@ async function ready(Client_) {
         if (!isAlreadyDir) {
             //o codigo abaixo e possivel botar tudo numa rota e devolver e fazer oq fas aqui que nsei como explica certinho, modelo REST e tals (se for preciso)
 
-            const response = await axios.get('/clients/dir')
+            const dir_Path = 'Local_Auth'
+            const response = await axios.get('/clients/dir', { params: { dir_Path } })
             const Directories_ = response.data.dirs
             
             if (Directories_.length-1 === -1) {
@@ -831,7 +852,7 @@ async function showTableList() {
         const listShowAbbr = document.querySelector('#abbrShowList')
         const list = document.querySelector('#listTable')
 
-        const sectionActual = list.parentElement.parentElement
+        //const sectionActual = list.parentElement.parentElement
         
         if (isTableHidden === null || undefined) {
             isTableHidden = true 
@@ -845,13 +866,13 @@ async function showTableList() {
             
             list.style.cssText =
                 'display: inline-block; opacity: 0;'
-            sectionActual.style.cssText =
-                'display: unset; opacity: 0;'
+            /*sectionActual.style.cssText =
+                'display: unset; opacity: 0;'*/
             setTimeout(function() {
                 list.style.cssText =
                     'display: inline-block; opacity: 1;'
-                sectionActual.style.cssText =
-                    'display: unset; opacity: 1;'
+                /*sectionActual.style.cssText =
+                    'display: unset; opacity: 1;'*/
             }, 100)
             
             await saveTableStyles()
@@ -865,13 +886,13 @@ async function showTableList() {
             
             list.style.cssText =
                 'display: inline-block; opacity: 0;'
-            sectionActual.style.cssText =
-                'display: unset; opacity: 0;'
+            /*sectionActual.style.cssText =
+                'display: unset; opacity: 0;'*/
             setTimeout(function() {
                 list.style.cssText =
                     'display: none; opacity: 0;'
-                sectionActual.style.cssText =
-                    'display: none; opacity: 0;'
+                /*sectionActual.style.cssText =
+                    'display: none; opacity: 0;'*/
             }, 300)
 
             await saveTableStyles()
@@ -916,28 +937,13 @@ async function showFunil() {
         const funilShowAbbr = document.querySelector('#abbrShowFunil')
         const funil = document.querySelector('#divFunil')
 
-        const sectionActual = funil.parentElement.parentElement
+        //const sectionActual = funil.parentElement.parentElement
+
+        if (isFunilHidden === null || undefined) {
+            isFunilHidden = true 
+        }
 
         if (isFunilHidden) {
-            funilShow.style.cssText = 
-                'display: inline-block; background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
-            funilShow.textContent = 'O'
-            funilShowAbbr.title = `Funil STATUS: escondido`
-            
-            funil.style.cssText =
-                'display: inline-block; opacity: 0;'
-            sectionActual.style.cssText =
-                'display: unset; opacity: 0;'
-            setTimeout(function() {
-                funil.style.cssText =
-                    'display: none; opacity: 0;'
-                sectionActual.style.cssText =
-                    'display: none; opacity: 0;'
-            }, 300)
-
-            await saveFunilStyles()
-            isFunilHidden = false
-        } else {
             funilShow.style.cssText = 
                 'display: inline-block; background-color: var(--colorWhite); color: var(--colorBlack); cursor: pointer; pointer-events: auto; opacity: 1;'
             funilShow.textContent = '-'
@@ -945,14 +951,33 @@ async function showFunil() {
             
             funil.style.cssText =
                 'display: inline-block; opacity: 0;'
-            sectionActual.style.cssText =
-                'display: unset; opacity: 0;'
+            /*sectionActual.style.cssText =
+                'display: unset; opacity: 0;'*/
             setTimeout(function() {
                 funil.style.cssText =
                     'display: inline-block; opacity: 1;'
-                sectionActual.style.cssText =
-                    'display: unset; opacity: 1;'
+                /*sectionActual.style.cssText =
+                    'display: unset; opacity: 1;'*/
             }, 100)
+
+            await saveFunilStyles()
+            isFunilHidden = false
+        } else {
+            funilShow.style.cssText = 
+                'display: inline-block; background-color: var(--colorBlack); color: var(--colorWhite); cursor: pointer; pointer-events: auto; opacity: 1;'
+            funilShow.textContent = 'O'
+            funilShowAbbr.title = `Funil STATUS: escondido`
+            
+            funil.style.cssText =
+                'display: inline-block; opacity: 0;'
+            /*sectionActual.style.cssText =
+                'display: unset; opacity: 0;'*/
+            setTimeout(function() {
+                funil.style.cssText =
+                    'display: none; opacity: 0;'
+                /*sectionActual.style.cssText =
+                    'display: none; opacity: 0;'*/
+            }, 300)
             
             await saveFunilStyles()
             isFunilHidden = true
@@ -1029,7 +1054,7 @@ async function clsConsole() {
     }
 }
 
-async function saveSectionsHtml() {
+/*async function saveSectionsHtml() {
     let sectionIndex = 1
     let isEnded = true
     while (isEnded === true) {
@@ -1072,6 +1097,10 @@ async function loadSectionsHtml() {
         const savedTitleText = localStorage.getItem(`sectionTitleText_${sectionIndex}`)
         if (savedTitleText) {
             titleSection.textContent = savedTitleText
+            displayOnConsole(titleSection.textContent)
+            if (titleSection.textContent === 'Tabela') {
+                await loadFunilStyles()
+            }
         }
 
         sectionIndex++
@@ -1174,7 +1203,7 @@ async function selectionPositionSection(checkElement) {
         console.error(`> ⚠️ ERROR selectionPositionSection: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> selectedPositionSection: ${error.message}`, setLogError)
     }
-}
+}*/
 
 /*window.onscroll = function() { scrollFunction() }// CALL FUNCTION FOR HEADER AND FOOTER CUSTOMS
 
@@ -1270,6 +1299,162 @@ async function sendCommand() {
     }
 }
 
+async function selectFunil_(Funilt_) {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        //Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const divFunilt_ = document.querySelector(`#${Funilt_}`)
+        const capList = document.querySelector(`caption`)
+
+        const divFunilt_Temp = document.querySelector(`#${Funilt_Temp}`)
+        if (divFunilt_Temp !== null) {
+            divFunilt_Temp.style.cssText =
+                'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+        }
+        if (divFunilt_ === null) {
+            status.innerHTML = `Client_ <strong>${Funilt_}</strong> <strong>Não</strong> existe!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Funilt_}</strong> <strong>Não</strong> existe!`)
+            resetLoadingBar()
+
+            //Funil_NotReady = false
+            
+            return
+        }
+
+        const response = await axios.post('/funil/select', { Funil_: Funilt_ })
+        let Sucess = response.data.sucess
+        if (Sucess) {
+            divFunilt_.style.cssText =
+                'border-top: 5px solid var(--colorBlue); border-bottom: 5px solid var(--colorBlue); transition: var(--configTrasition03s);'
+
+            capList.innerHTML = `<stronger>${Funilt_}</stronger>`
+
+            Funilt_Temp = Funilt_
+            Funil_ = Funilt_
+
+            status.innerHTML = `Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>.`)
+        } else {
+            status.innerHTML = `<i><strong>ERROR</strong></i> <strong>selecionando</strong> Funil_ <strong>${Funilt_}</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Funil_ <strong>${Funilt_}</strong>!`)
+        }
+
+        resetLoadingBar()
+        //Client_NotReady = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR selectFunil_ ${Funilt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> selectFunil_ <strong>${Funilt_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
+async function insertFunil_Front(Funilt_) {
+    /*if (!Client_NotReady) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        //Client_NotReady = false
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const FunilsDiv = document.querySelector('#Funils_')
+        const allConteinerFunils_ = FunilsDiv.querySelectorAll('.divFunils_')
+        let arrayIdNameFunils_ = []
+        allConteinerFunils_.forEach((divElement) => {
+            const Funil_Id = Number(divElement.id.match(/\d+/g))
+            const Funil_Name = divElement.id.split('_').slice(2, -1).join('_')
+            arrayIdNameFunils_.push({ Funil_Id, Funil_Name })
+        })
+        let idNumberFunil_DivAdjacent = null
+        let isFirstUndefined = null
+        if (arrayIdNameFunils_.length > 0) {
+            const response = await axios.get('/funil/insert_exponecial_position_Funil_', { params: { arrayIdNameFunils_ } })
+            idNumberFunil_DivAdjacent = response.data.idnumberfunil_divadjacent
+            isFirstUndefined = response.data.isfirstundefined
+        }
+    
+        const divAdjacent = document.querySelector(`#${idNumberFunil_DivAdjacent}`)
+
+        const funilHTMlDestroy = `\n<div class="divFunils_" id="${Funilt_}">\n<abbr title="Funil_ ${Funilt_}" id="abbrselect-${Funilt_}"><button class="Funils_" id="select-${Funilt_}" onclick="selectFunil_('${Funilt_}')">${Funilt_}</button></abbr><abbr title="Apagar ${Funilt_}" id="abbrerase-${Funilt_}"><button class="Funils_Erase" id="erase-${Funilt_}" onclick="eraseFunil_(false, '${Funilt_}')"><</button></abbr>\n</div>\n`
+        if (divAdjacent) {
+            if (isFirstUndefined) {
+                divAdjacent.insertAdjacentHTML('beforebegin', funilHTMlDestroy)
+            } else {
+                divAdjacent.insertAdjacentHTML('afterend', funilHTMlDestroy)
+            }
+        } else {
+            FunilsDiv.innerHTML += funilHTMlDestroy
+        }
+
+        const divFunilt_ = document.querySelector(`#${Funilt_}`)
+        divFunilt_.style.cssText =
+            'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+
+        //console.log(document.documentElement.outerHTML)
+        resetLoadingBar()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR insertFunil_Front ${Funilt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> insertFunil_Front <strong>${Funilt_}</strong>: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+async function newFunils() {
+    /*if (isStartedNew) {
+        displayOnConsole('>  ℹ️ <strong>newClients</strong> not Ready.', setLogError)
+        return
+    }*/
+    try {
+        //isStartedNew = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        let userConfirmation = confirm('Tem certeza de que deseja criar um novo Funil_?')
+        if (!userConfirmation) {
+            resetLoadingBar()
+
+            //isStartedNew = false
+
+            return
+        }
+
+        //isFromNew = true
+
+        const response = await axios.post('/funil/new')
+        const Sucess = response.data.sucess
+        const Funil_ = response.data.Funilt_
+        if (Sucess) {
+            await insertFunil_Front(Funil_)
+            await selectFunil_(Funil_)
+
+            resetLoadingBar()
+        } else {
+
+
+            resetLoadingBar()
+            return
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR newFunils: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> newFunils: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+
 let positionSelectedMSG = null
 async function selectionPositionMSG(checkElement, typeMSG) {
     try {
@@ -1277,6 +1462,10 @@ async function selectionPositionMSG(checkElement, typeMSG) {
         const idNumberPositionMSG = divPosition.id.match(/\d+/g)
 
         if (positionSelectedMSG !== null && checkElement.checked === true) {
+            let barL = document.querySelector('#barLoading')
+            barL.style.cssText =
+                'width: 100vw; visibility: visible;'
+
             checkElement.checked = false
             
             let userConfirmation = confirm(`Tem certeza de que deseja trocar a Posição MSG (${positionSelectedMSG.idNumberPositionSelected}) para a Posição MSG (${idNumberPositionMSG})?`)
@@ -1356,12 +1545,12 @@ async function selectionPositionMSG(checkElement, typeMSG) {
                         document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).checked = false
                         document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).dispatchEvent(new Event('change'))
                         
-                        
+                        resetLoadingBar()
                     }, 300)
                 }, 100)
             } else {
 
-
+                resetLoadingBar()
                 return
             }
             return
@@ -3538,7 +3727,8 @@ async function eraseClient_(Clientt_) {
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
 
                 await sleep(1.5 * 1000)
-                const response2 = await axios.get('/clients/dir')
+                const dir_Path = 'Local_Auth'
+                const response2 = await axios.get('/clients/dir', { params: { dir_Path } })
                 const Directories_2 = response2.data.dirs
 
                 if (Directories_2.length-1 === -1) {
@@ -3641,7 +3831,7 @@ async function DestroyClient_(Clientt_) {
                 return  
             } 
             if (Sucess) {
-                const clientHTMLReinitialize = `<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>`
+                const clientHTMLReinitialize = `\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>\n`
                 document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLReinitialize
 
                 status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`
@@ -3649,7 +3839,8 @@ async function DestroyClient_(Clientt_) {
     
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient, modelo REST e tals (se for preciso)
 
-                const response = await axios.get('/clients/dir')
+                const dir_Path = 'Local_Auth'
+                const response = await axios.get('/clients/dir', { params: { dir_Path } })
                 const Directories_ = response.data.dirs
 
                 if (Directories_.length-1 > 0) {
@@ -3734,7 +3925,7 @@ async function ReinitializeClient_(Clientt_) {
             return  
         } 
         if (Sucess) {
-            const clientHTMLDestroy = `<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abb<abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abb<abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>`
+            const clientHTMLDestroy = `\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abb<abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abb<abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>\n`
             document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLDestroy
 
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`
@@ -3796,6 +3987,7 @@ async function selectClient_(Clientt_) {
             Clientt_Temp = Clientt_
             Client_ = Clientt_
 
+            document.title = `Selecionado ${Clientt_}`
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>.`)
         } else {
@@ -4448,9 +4640,7 @@ async function insertClient_Front(Clientt_, isActive) {
     
         const divAdjacent = document.querySelector(`#${idNumberClient_DivAdjacent}`)
         if (isActive) {
-            const clientHTMlDestroy = `<div class="divClients_" id="${Clientt_}">
-                                            <abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>
-                                        </div>`
+            const clientHTMlDestroy = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>\n</div>\n`
             if (divAdjacent) {
                 if (isFirstUndefined) {
                     divAdjacent.insertAdjacentHTML('beforebegin', clientHTMlDestroy)
@@ -4461,9 +4651,7 @@ async function insertClient_Front(Clientt_, isActive) {
                 ClientsDiv.innerHTML += clientHTMlDestroy
             }
         } else {
-            const clientHTMLReinitialize = `<div class="divClients_" id="${Clientt_}">
-                                                <abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>
-                                            </div>`
+            const clientHTMLReinitialize = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>\n</div>\n`
             if (divAdjacent) {
                 if (isFirstUndefined) {
                     console.log('toto2')

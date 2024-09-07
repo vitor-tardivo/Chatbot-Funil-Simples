@@ -211,6 +211,24 @@ async function askForConfirmation(Clientt_) {
     }
 }
 
+async function List_Directories(dir_Path) {
+    try {
+        let Files_ = null
+        let Directories_ = null
+        if (dir_Path === 'Funils_') {
+            Files_ = await fs.readdir(dir_Path)
+            Directories_ = Files_
+        } else if (dir_Path === 'Local_Auth') {
+            Files_ = await fs.readdir(dir_Path, { withFileTypes: true })
+            Directories_ = Files_.filter(file => file.isDirectory()).map(dir => dir.name)
+        }
+        return Directories_
+    } catch (error) {
+        console.error(`> ❌ ERROR List_Directories: ${error}`)
+        return []
+    }
+}
+
 let initialize_Not_Ready = false
 let initialize_Client_Not_Ready = true
 
@@ -224,6 +242,9 @@ global.Is_From_New = false
 global.Client_ = null
 global.Client_Name = 'Client'
 global.MAX_Clients_ = 3//actual null, vai ser atrubuido o valor na funcao de pegar o quantos o usuario tem direito
+
+global.Funil_Name = 'Funil'
+global.Funil_ = null
 
 let Client_Not_Ready = null
 const Client_Not_Ready_Aux = false
@@ -452,19 +473,173 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
     }
 }
 
+async function Select_Funil_(Funilt_) {
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ ${Funilt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Funilt_}</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+
+        global.Funil_ = Funilt_
+
+        //global.File_Data_Chat_Data = `Chat_Data=${Funilt_}.json`
+        //global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Funilt_}.json`)
+
+        //global.File_Data_Clients_ = `Client=${Funilt_}.json`
+        //global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Funilt_}.json`)
+
+        console.log(`>  ℹ️ Funil_ ${Funilt_} selected.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i>Funil_ <strong>${Funilt_}</strong> <strong>selected</strong>.`)
+            
+        //Client_Not_Ready = false
+    } catch (error) {
+        console.error(`> ❌ Select_Funil_ ${Funilt_}: ${error}`)
+        //Client_Not_Ready = false
+    }
+}
+async function Insert_Exponecial_Position_Funil_(arrayIdNameFunils_) {
+    try {
+        let isFirstUndefined = false
+        let idNumberFunil_DivAdjacent = null
+        for (let i = 0; i < arrayIdNameFunils_.length; i++) {
+            if (Number(arrayIdNameFunils_[0].Funil_Id) !== 1) {
+                isFirstUndefined = true
+                idNumberFunil_DivAdjacent = `_${Number(arrayIdNameFunils_[0].Funil_Id)}_${arrayIdNameFunils_[0].Funil_Name}_`
+                break
+            } 
+            const currentNumber = Number(arrayIdNameFunils_[i].Funil_Id)
+            let nextNumber = null
+            if (i+1 < arrayIdNameFunils_.length) {
+                nextNumber = Number(arrayIdNameFunils_[i+1].Funil_Id)
+            } else {
+                nextNumber = undefined
+            }
+            if (nextNumber !== undefined) {
+                if (currentNumber !== nextNumber-1) {
+                    idNumberFunil_DivAdjacent = `_${Number(arrayIdNameFunils_[currentNumber-1].Funil_Id)}_${arrayIdNameFunils_[currentNumber-1].Funil_Name}_`
+                    break
+                }
+            } 
+            idNumberFunil_DivAdjacent = `_${currentNumber}_${arrayIdNameFunils_[i].Funil_Name}_`
+        }
+
+        return { idNumberFunil_DivAdjacent: idNumberFunil_DivAdjacent, isFirstUndefined: isFirstUndefined }
+    } catch (error) {
+        console.error(`> ❌ ERROR Insert_Exponecial_Position_Funil_: ${error}`)
+        return { idNumberFunil_DivAdjacent: null, isFirstUndefined: null }
+    }
+}
+async function Dir_Funils_() {
+    try {
+        const jsons = await fs.readdir(global.Directory_Dir_Funils_)
+        let Counter_Id_Funils_ = []
+
+        for (const file of jsons) {
+            if (path.extname(file) === '.json') {
+                const filePath = path.join(global.Directory_Dir_Funils_, file)
+                const data = await fs.readFile(filePath, 'utf8')
+                const json = JSON.parse(data)
+
+                json.forEach(item => {
+                    if (item.Funilt_) {
+                        const match = item.Funilt_.match(/\d+/g)
+                        if (match) {
+                            Counter_Id_Funils_.push(Number(match))
+                        }
+                    }
+                })
+            }
+        }
+        return Counter_Id_Funils_
+    } catch (error) {
+        console.error(`> ❌ ERROR Dir_Funils_: ${error}`)
+        return []
+    }
+}
+global.Directory_Dir_Funils_ = path.join(Root_Dir, `Funils_`)
+async function Generate_Funil_Id() {
+    /*if (Generate_Id_Not_Ready) {
+        console.log('>  ℹ️ Generate_Client_Id not Ready.')
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Generate_Client_Id</strong> not Ready.`)
+        return null
+    }*/
+       try {
+        //Generate_Id_Not_Ready = true
+        const Counter_Id_Funils_ = await Dir_Funils_()
+
+        let Id_Funil_ = null
+        let Counter_Funils_ = 1
+        let i = false
+        while (!i) {
+            if (Counter_Id_Funils_[Counter_Funils_-1] === undefined) {
+                Id_Funil_ = Counter_Funils_
+                Counter_Id_Funils_.push(Id_Funil_)
+
+                i = true
+            } else {
+                if (Counter_Funils_ !== Counter_Id_Funils_[Counter_Funils_-1]) {
+                    Id_Funil_ = Counter_Funils_
+                    Counter_Id_Funils_.splice(Counter_Funils_-1, 0, Id_Funil_)
+                    
+                    i = true
+                } else {
+                    Counter_Funils_++
+                }
+            }
+        }
+        return Id_Funil_
+    } catch (error) {
+        console.error(`> ❌ ERROR Generate_Funil_Id: ${error}`)
+        return null
+    }
+}
+async function New_Funil_() {
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ New_Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>New_Client_</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+
+        const NameFunil_ = global.Funil_Name
+        const Id_Funil_ = await Generate_Funil_Id()
+        const Funilt_ = `_${Id_Funil_}_${NameFunil_}_`
+
+        await fs.mkdir(global.Directory_Dir_Funils_, { recursive: true } )
+        const Data_File_Funils_ = path.join(global.Directory_Dir_Funils_, `Funil=${Funilt_}.json`)
+        
+        const New_Funil_ = [{ Funilt_ }]
+        const jsonString = '[\n' + New_Funil_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        await fs.writeFile(Data_File_Funils_, jsonString, 'utf8')
+
+        return { Sucess: true, Funil_: Funilt_ }
+    } catch (error) {
+        console.error(`> ❌ New_Funil: ${error}`)
+        return { Sucess: false, Funil_: Funilt_ }
+        //Client_Not_Ready = false
+    }
+}
 async function Insert_Exponecial_Position_MSG(arrayIdNumberPosition) {
     try {
         let isFirstUndefined = false
         let idNumberPositionDivAdjacent = null
         for (let i = 0; i < arrayIdNumberPosition.length; i++) {
-        const currentNumber = arrayIdNumberPosition[i]
-        const nextNumber = arrayIdNumberPosition[i + 1]
         if (arrayIdNumberPosition[0] !== 1) {
             isFirstUndefined = true
             idNumberPositionDivAdjacent = `conteinerFunilMSG${arrayIdNumberPosition[0]}`
             break
         } 
-        if (nextNumber !== undefined && nextNumber !== null) {
+        const currentNumber = arrayIdNumberPosition[i]
+        let nextNumber = null
+        if (i+1 < arrayIdNumberPosition.length) {
+                nextNumber = arrayIdNumberPosition[i+1]
+            } else {
+                nextNumber = undefined
+            }
+        if (nextNumber !== undefined) {
             if (currentNumber !== nextNumber-1) {
                 idNumberPositionDivAdjacent = `conteinerFunilMSG${arrayIdNumberPosition[currentNumber-1]}`
                 break
@@ -482,7 +657,6 @@ async function Insert_Exponecial_Position_MSG(arrayIdNumberPosition) {
 async function Position_MSG_Erase(IdNumberPosition) {
     try {
         Counter_Id_Position_MSG.splice(IdNumberPosition-1, 1)
-        console.log(Counter_Id_Position_MSG)
         return true
     } catch (error) {
         console.error(`> ❌ ERROR Position_MSG_Erase: ${error}`)
@@ -867,14 +1041,19 @@ async function Insert_Exponecial_Position_Client_(arrayIdNameClients_) {
         let isFirstUndefined = false
         let idNumberClient_DivAdjacent = null
         for (let i = 0; i < arrayIdNameClients_.length; i++) {
-            const currentNumber = Number(arrayIdNameClients_[i].Client_Id)
-            const nextNumber = Number(arrayIdNameClients_[i++].Client_Id)
             if (Number(arrayIdNameClients_[0].Client_Id) !== 1) {
                 isFirstUndefined = true
                 idNumberClient_DivAdjacent = `_${Number(arrayIdNameClients_[0].Client_Id)}_${arrayIdNameClients_[0].Client_Name}_`
                 break
             } 
-            if (nextNumber !== undefined && nextNumber !== null) {
+            const currentNumber = Number(arrayIdNameClients_[i].Client_Id)
+            let nextNumber = null
+            if (i+1 < arrayIdNameClients_.length) {
+                nextNumber = Number(arrayIdNameClients_[i+1].Client_Id)
+            } else {
+                nextNumber = undefined
+            }
+            if (nextNumber !== undefined) {
                 if (currentNumber !== nextNumber-1) {
                     idNumberClient_DivAdjacent = `_${Number(arrayIdNameClients_[currentNumber-1].Client_Id)}_${arrayIdNameClients_[currentNumber-1].Client_Name}_`
                     break
@@ -927,7 +1106,6 @@ async function New_Client_() {
         const NameClient_ = global.Client_Name
         Generate_Id_Not_Ready = false
         const Id_Client_ = await Generate_Client_Id()
-        console.log(Id_Client_)
         initialize_Client_Not_Ready = false
         let Is_New_Client_ = true
         let Is_Initialize_Clients_ = false
@@ -1381,17 +1559,6 @@ async function Schedule_Erase_Chat_Data(chatId, time, Clientt_) {
     }
 }
 
-async function List_Directories(dir_Path) {
-    try {
-        const Files_ = await fs.readdir(dir_Path, { withFileTypes: true })
-        const Directories_ = Files_.filter(file => file.isDirectory()).map(dir => dir.name)
-
-        return Directories_
-    } catch (error) {
-        console.error(`> ❌ ERROR List_Directories: ${error}`)
-        return []
-    }
-}
 async function List_Active_Clients_() {
     try {
         Actives_ = Clientts_
@@ -2205,6 +2372,9 @@ module.exports = {
     Generate_MSG_Position_Id,
     Position_MSG_Erase,
     Insert_Exponecial_Position_MSG,
+    New_Funil_,
+    Insert_Exponecial_Position_Funil_,
+    Select_Funil_,
 }
 
 console.log(`> ✅ FINISHED(Starting functions)`)
