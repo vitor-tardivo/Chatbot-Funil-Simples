@@ -26,6 +26,7 @@ const {
     New_Funil_,
     Insert_Exponecial_Position_Funil_,
     Select_Funil_,
+    Erase_Funil_,
 } = require('./app')
 
 router.get('/', (req, res) => {
@@ -38,6 +39,21 @@ router.get('/', (req, res) => {
     }
 })
 
+router.delete('/funil/erase', async (req, res) => {
+    try {
+        const Funil_ = req.query.Funilt_
+        let Is_From_End = false
+        const { Sucess, Is_Empty, Is_Empty_Input, Not_Selected } = await Erase_Funil_(Is_From_End, Funil_)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully erased ${Funil_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to erase ${Funil_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /funil/erase: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null, selected: null })
+    }
+})
 router.post('/funil/select', async (req, res) => {
     try {
         const { Funil_ } = req.body
@@ -117,7 +133,7 @@ router.get('/api/data', async (req, res) => {
 
 router.get('/back/what-stage', async (req, res) => {
     try {
-        res.status(200).send({ sucess: true, message: `sucessfully get stage.`, data: global.Stage_, data2: global.QR_Counter, data3: global.Client_ })
+        res.status(200).send({ sucess: true, message: `sucessfully get stage.`, data: global.Stage_, data2: global.QR_Counter, data3: global.Client_, data4: global.Funil_ })
     } catch (error) {
         console.error(`> ❌ ERROR /back/what-stage: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, data: null, data2: null, data3: null })
@@ -308,14 +324,14 @@ router.post('/client/new', async (req, res) => {
     }
 })
 
-router.get('/clients/dir', async (req, res) => {//REST representacao de recurso
+router.get('/functions/dir', async (req, res) => {//REST representacao de recurso
     try {
         const dirpath = req.query.dir_Path
         const Directories_ = await List_Directories(dirpath)
         
         res.status(200).send({ sucess: true, message: `All Clients_ dir sent.`, dirs: Directories_ })
     } catch (error) {
-        console.error(`> ❌ ERROR /clients/dir: ${error}`)
+        console.error(`> ❌ ERROR /functions/dir: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, dirs: [] })
     }
 })

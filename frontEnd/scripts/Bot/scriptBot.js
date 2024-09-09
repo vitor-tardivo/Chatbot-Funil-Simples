@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         const stage = response2.data.data
         const QR_Counter = response2.data.data2
         Client_ = response2.data.data3
+        Funil_ = response2.data.data4
         
         if (stage === 0) {
             
@@ -189,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         await loadConsoleStyles()
         await loadFunilStyles()
         const dir_Path = 'Funils_'
-        const response3 = await axios.get('/clients/dir', { params: { dir_Path } })
+        const response3 = await axios.get('/functions/dir', { params: { dir_Path } })
         const Directories_ = response3.data.dirs
         if (Directories_.length-1 === -1) {
             
@@ -662,7 +663,7 @@ async function ready(Client_) {
             //o codigo abaixo e possivel botar tudo numa rota e devolver e fazer oq fas aqui que nsei como explica certinho, modelo REST e tals (se for preciso)
 
             const dir_Path = 'Local_Auth'
-            const response = await axios.get('/clients/dir', { params: { dir_Path } })
+            const response = await axios.get('/functions/dir', { params: { dir_Path } })
             const Directories_ = response.data.dirs
             
             if (Directories_.length-1 === -1) {
@@ -1299,6 +1300,117 @@ async function sendCommand() {
     }
 }
 
+async function eraseFunil_(Funilt_) {
+    /*if (Client_NotReady) {
+        displayOnConsole(`>  ℹ️  ${Funilt_} not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        //Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        let userConfirmation = confirm(`Tem certeza de que deseja apagar o Funil_ ${Funilt_}?\nsera apagada para sempre.`)
+        if (userConfirmation) {
+            const status = document.querySelector('#status')
+
+            const response = await axios.delete('/funil/erase', { params: { Funilt_ } })
+            const Sucess = response.data.sucess
+            const Is_Empty = response.data.empty
+            const Is_Empty_Input = response.data.empty_input
+            const Not_Selected = response.nselected
+            if (Not_Selected) {
+                status.innerHTML = `O Funil_ <strong>${Funilt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Funil_ <strong>selecionado</strong> é <strong>${Funil_}</strong> então <strong>selecione</strong> <strong>${Funilt_}</strong> para poder <strong>apaga-lo</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Funil_ <strong>${Funilt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Funil_ <strong>selecionado</strong> é <strong>${Funil_}</strong> então <strong>selecione</strong> <strong>${Funilt_}</strong> para poder <strong>apaga-lo</strong>!`)
+                
+                resetLoadingBar()
+                
+                //Client_NotReady = false
+
+                return
+            }
+            if (Is_Empty) {
+                status.innerHTML = `Dados de <strong>${Funilt_}</strong> esta <strong>vazio</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Funilt_}</strong> esta <strong>vazio</strong>`)
+
+                resetLoadingBar()
+                
+                //Client_NotReady = false
+                
+                return
+            }
+            if (Is_Empty_Input) {
+                status.innerHTML = `Funil_ <strong>${Funilt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
+
+                resetLoadingBar()
+                
+                //Client_NotReady = false
+                
+                return  
+            } 
+            if (Sucess) {
+                const divFunilt_ = document.querySelector(`#${Funilt_}`)
+                divFunilt_.remove()
+                
+                status.innerHTML = `Funil_ <strong>${Funilt_}</strong> foi <strong>Apagado</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> foi <strong>Apagado</strong>!`)
+
+                //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
+                const dir_Path = 'Funils_'
+                const response = await axios.get('/functions/dir', { params: { dir_Path } })
+                const Directories = response.data.dirs
+
+                if (Directories.length === 0) {
+                    status.innerHTML = `<strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
+                    displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
+                } else {
+                    const funilIdNumber = Number(Funilt_.match(/\d+/g))
+
+                    let Counter_Funils_ = 0
+                    let posArrayFunil = null
+                    for (let i = 0; i < Directories.length; i++) {
+                        const funilDirIdNumber = Number(Directories[Counter_Funils_].match(/_.*?_.*?_/)[0].match(/\d+/g))
+
+                        if (funilIdNumber === funilDirIdNumber) {
+                            posArrayFunil = Counter_Funils_
+
+                            if (Directories[posArrayFunil+1] === undefined) {
+                                posArrayFunil--
+                            } else {
+                                posArrayFunil++
+                            }
+                        } else {
+                            //aqui pega o numero e o nome inves do nome so e manda...
+                            posArrayFunil = Number(Directories[Counter_Funils_].match(/_.*?_.*?_/)[0].match(/\d+/g))
+                            Counter_Funils_++
+                        }
+                    }
+
+                    //aqui
+                    await selectFunil_(`_${Number(posArrayFunil)}_Funil_`)
+                }
+            } else {
+                status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Funil_ <strong>${Funilt_}</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Funil_ <strong>${Funilt_}</strong>!`)
+            }
+        } else {
+            resetLoadingBar()
+            //Client_NotReady = false
+            return
+        }
+
+        resetLoadingBar()
+        //Client_NotReady = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR eraseFunil_ ${Funilt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> eraseFunil_ <strong>${Funilt_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
 async function selectFunil_(Funilt_) {
     /*if (Client_NotReady = false) {
         displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
@@ -1388,7 +1500,7 @@ async function insertFunil_Front(Funilt_) {
     
         const divAdjacent = document.querySelector(`#${idNumberFunil_DivAdjacent}`)
 
-        const funilHTMlDestroy = `\n<div class="divFunils_" id="${Funilt_}">\n<abbr title="Funil_ ${Funilt_}" id="abbrselect-${Funilt_}"><button class="Funils_" id="select-${Funilt_}" onclick="selectFunil_('${Funilt_}')">${Funilt_}</button></abbr><abbr title="Apagar ${Funilt_}" id="abbrerase-${Funilt_}"><button class="Funils_Erase" id="erase-${Funilt_}" onclick="eraseFunil_(false, '${Funilt_}')"><</button></abbr>\n</div>\n`
+        const funilHTMlDestroy = `\n<div class="divFunils_" id="${Funilt_}">\n<abbr title="Funil_ ${Funilt_}" id="abbrselect-${Funilt_}"><button class="Funils_" id="select-${Funilt_}" onclick="selectFunil_('${Funilt_}')">${Funilt_}</button></abbr><abbr title="Apagar ${Funilt_}" id="abbrerase-${Funilt_}"><button class="Funils_Erase" id="erase-${Funilt_}" onclick="eraseFunil_('${Funilt_}')"><</button></abbr>\n</div>\n`
         if (divAdjacent) {
             if (isFirstUndefined) {
                 divAdjacent.insertAdjacentHTML('beforebegin', funilHTMlDestroy)
@@ -3715,7 +3827,9 @@ async function eraseClient_(Clientt_) {
                 return  
             } 
             if (Sucess) {
-                const response1 = await axios.get('/clients/dir')
+                let dir_Path = null
+                dir_Path = 'Local_Auth'
+                const response1 = await axios.get('/functions/dir', { params: { dir_Path } })
                 const Directories_1 = response1.data.dirs
 
                 const divClientt_ = document.querySelector(`#${Clientt_}`)
@@ -3727,8 +3841,8 @@ async function eraseClient_(Clientt_) {
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
 
                 await sleep(1.5 * 1000)
-                const dir_Path = 'Local_Auth'
-                const response2 = await axios.get('/clients/dir', { params: { dir_Path } })
+                dir_Path = 'Local_Auth'
+                const response2 = await axios.get('/functions/dir', { params: { dir_Path } })
                 const Directories_2 = response2.data.dirs
 
                 if (Directories_2.length-1 === -1) {
@@ -3742,13 +3856,14 @@ async function eraseClient_(Clientt_) {
                     const clientIdNumber = Clientt_.match(/\d+/g)
 
                     let Counter_Clients_ = 0
+                    let posArrayClient = null
                     for (let i = -1; i < Directories_1.length-1; i++) {
                         const clientDirIdNumber = Directories_2[Counter_Clients_-1].match(/\d+/g)
 
                         if (clientIdNumber === clientDirIdNumber) {
-                            let posArrayClient = Counter_Clients_
+                            posArrayClient = Counter_Clients_
 
-                            if (Directories_1[posArrayClient++] === null) {
+                            if (Directories_1[posArrayClient++] === undefined) {
                                 posArrayClient--
                             } else {
                                 posArrayClient++
@@ -3758,7 +3873,7 @@ async function eraseClient_(Clientt_) {
                         }
                     }
     
-                    await selectClient_(`Client_${posArrayClient}`)
+                    await selectClient_(`_${posArrayClient}_Client_`)
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`
@@ -3831,7 +3946,7 @@ async function DestroyClient_(Clientt_) {
                 return  
             } 
             if (Sucess) {
-                const clientHTMLReinitialize = `\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>\n`
+                const clientHTMLReinitialize = `\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n`
                 document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLReinitialize
 
                 status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`
@@ -3840,7 +3955,7 @@ async function DestroyClient_(Clientt_) {
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient, modelo REST e tals (se for preciso)
 
                 const dir_Path = 'Local_Auth'
-                const response = await axios.get('/clients/dir', { params: { dir_Path } })
+                const response = await axios.get('/functions/dir', { params: { dir_Path } })
                 const Directories_ = response.data.dirs
 
                 if (Directories_.length-1 > 0) {
@@ -3925,7 +4040,7 @@ async function ReinitializeClient_(Clientt_) {
             return  
         } 
         if (Sucess) {
-            const clientHTMLDestroy = `\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abb<abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abb<abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>\n`
+            const clientHTMLDestroy = `\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abb<abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abb<abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n`
             document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLDestroy
 
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`
@@ -4640,7 +4755,7 @@ async function insertClient_Front(Clientt_, isActive) {
     
         const divAdjacent = document.querySelector(`#${idNumberClient_DivAdjacent}`)
         if (isActive) {
-            const clientHTMlDestroy = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>\n</div>\n`
+            const clientHTMlDestroy = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
             if (divAdjacent) {
                 if (isFirstUndefined) {
                     divAdjacent.insertAdjacentHTML('beforebegin', clientHTMlDestroy)
@@ -4651,7 +4766,7 @@ async function insertClient_Front(Clientt_, isActive) {
                 ClientsDiv.innerHTML += clientHTMlDestroy
             }
         } else {
-            const clientHTMLReinitialize = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_(false, '${Clientt_}')"><</button></abbr>\n</div>\n`
+            const clientHTMLReinitialize = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
             if (divAdjacent) {
                 if (isFirstUndefined) {
                     console.log('toto2')

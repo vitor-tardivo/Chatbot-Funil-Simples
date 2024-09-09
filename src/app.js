@@ -473,6 +473,96 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
     }
 }
 
+async function Erase_Funil_(Is_From_End, Funilt_) { // quando for adicionar pra apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar o client criar no caso ou se n mas estiver la que iniciou ent iniciar pra apagar ou n vai dar, sistema de apagar do json memo ja existe so pegar
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ ${Clientt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
+        return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
+    }*/ 
+    try {
+        //Client_Not_Ready = true
+
+        const Funils_ = JSON.parse(await fs.readFile(global.Data_File_Funils_, 'utf8'))   
+        const Dir_Funils_ = (await fs.access(`Funils_\\Funil=${Funilt_}.json`, fs.constants.F_OK).then(() => true).catch(() => false))
+        if (Funils_.length === 0 || null && Dir_Funils_ === false) {
+            console.log(`> ⚠️  ${global.Data_File_Funils_}, Funils_(${Funilt_}), array(Funilts_[${Funilt_}]) is ALL empty, does not contain any data.`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Data_File_Funils_}, Funils_(${Funilt_}), array(Funilts_[${Funilt_}])</strong> is <strong>ALL</strong> empty, does <strong>not</strong> <strong>contain</strong> any <strong>data</strong>.`)
+            
+            //Client_Not_Ready = false
+            
+            return { Sucess: false, Is_Empty: true, Is_Empty_Input: false, Not_Selected: false }
+        }
+        if (global.Funil_ !== Funilt_) {
+            console.log(`> ⚠️  The Funil_ ${Funilt_} is to be erase it is not selected, the Funil_ selected is ${global.Funil_} so select ${Funilt_} to erase it.}`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>The Client_ <strong>${Funilt_}</strong> is to be <strong>erase</strong> it is <strong>not</strong> <strong>selected</strong>, the Client_ <strong>selected</strong> is <strong>${global.Funil_}</strong> so <strong>select</strong> <strong>${Funilt_}</strong> to <strong>erase</strong> it.`)
+
+            //Client_Not_Ready = false
+
+            return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: true }
+        }
+        if (Funilt_.length === 0 || null) {
+            console.log(`> ⚠️  No Funil_ found by the valor received: ${Funilt_}.`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>No</strong> Funil_ <strong>found</strong> by the valor <strong>received: ${Funilt_}</strong>.`)
+            
+            //Client_Not_Ready = false
+            
+            return { Sucess: false, Is_Empty: false, Is_Empty_Input: true, Not_Selected: false }
+        }
+
+        let Erased_ = false
+        if (Is_From_End) {
+            console.log(`> ⚠️  Are you sure that you want to erase Client ${Funilt_} from ${global.File_Data_Clients_}?`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Are you <strong>sure</strong> that you <strong>want</strong> to <strong>erase</strong> Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>?`)
+            const answer = await askForConfirmation(Funilt_)
+            if (answer.toLowerCase() === 'y') {
+                console.log(`>  ◌ Erasing Funil_ ${Funilt_} from ${global.File_Data_Funils_}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Erasing Funil_ <strong>${Funilt_}</strong> from <strong>${global.File_Data_Funils_}</strong>...`)
+                
+                fse.remove(`Funils_\\${global.File_Data_Funils_}`)
+                
+                Erased_ = true
+            } else if (answer.toLowerCase() === 'n') {
+                console.log(`> ⚠️  Funil_ ${Funilt_} from ${global.File_Data_Funils_}: DECLINED`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Funil_ <strong>${Funilt_}</strong> from <strong>${global.File_Data_Funils_}: DECLINED</strong>`)
+                
+                //Client_Not_Ready = false
+                
+                return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: false }
+            } else {
+                console.log(`> ⚠️  Funil_ ${Funilt_} from ${global.File_Data_Funils_}: NOT Answered to erase`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Funil_ <strong>${Funilt_}</strong> from <strong>${global.File_Data_Funils_}: NOT Answered to erase</strong>`)
+                
+                //Client_Not_Ready = false
+                
+                return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: false }
+            }
+            
+        } else {
+            console.log(`>  ◌ Erasing Funil_ ${Funilt_} from ${global.File_Data_Funils_}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> Funil_ <strong>${Funilt_}</strong> from <strong>${global.File_Data_Funils_}</strong>...`)
+            
+            fse.remove(`Funils_\\${global.File_Data_Funils_}`)
+            
+            Erased_ = true
+        }
+        
+
+        if (Erased_) {
+            console.log(`> ✅ Funil_ ${Funilt_} from ${global.File_Data_Funils_}: ERASED`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>Funil_ <strong>${Funilt_}</strong> from <strong>${global.File_Data_Funils_}: ERASED</strong>`)
+            
+            //Client_Not_Ready = false
+
+            return { Sucess: true, Is_Empty: false, Is_Empty_Input: false, Not_Selected: false }
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR Erase_Funil_ ${Funilt_}: ${error}`)
+        
+        //Client_Not_Ready = false
+        
+        return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
+    }
+}
 async function Select_Funil_(Funilt_) {
     /*if (Client_Not_Ready || Client_Not_Ready === null) {
         console.log(`>  ℹ️ ${Funilt_} not Ready.`)
@@ -483,6 +573,8 @@ async function Select_Funil_(Funilt_) {
         //Client_Not_Ready = true
 
         global.Funil_ = Funilt_
+        global.File_Data_Funils_ = `Funil=${Funilt_}.json`
+        global.Data_File_Funils_ = path.join(global.Directory_Dir_Funils_, `Funil=${Funilt_}.json`)
 
         //global.File_Data_Chat_Data = `Chat_Data=${Funilt_}.json`
         //global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Funilt_}.json`)
@@ -559,6 +651,8 @@ async function Dir_Funils_() {
     }
 }
 global.Directory_Dir_Funils_ = path.join(Root_Dir, `Funils_`)
+global.File_Data_Funils_ = `Funil= .json`
+global.Data_File_Funils_ = path.join(global.Directory_Dir_Funils_, `Funil= .json`)
 async function Generate_Funil_Id() {
     /*if (Generate_Id_Not_Ready) {
         console.log('>  ℹ️ Generate_Client_Id not Ready.')
@@ -608,8 +702,11 @@ async function New_Funil_() {
         const Id_Funil_ = await Generate_Funil_Id()
         const Funilt_ = `_${Id_Funil_}_${NameFunil_}_`
 
+        global.File_Data_Funils_ = `Funil=${Funilt_}.json`
+        global.Data_File_Funils_ = path.join(global.Directory_Dir_Funils_, `Funil=${Funilt_}.json`)
+        
         await fs.mkdir(global.Directory_Dir_Funils_, { recursive: true } )
-        const Data_File_Funils_ = path.join(global.Directory_Dir_Funils_, `Funil=${Funilt_}.json`)
+        const Data_File_Funils_ = global.Data_File_Funils_
         
         const New_Funil_ = [{ Funilt_ }]
         const jsonString = '[\n' + New_Funil_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
@@ -693,7 +790,6 @@ async function Generate_MSG_Position_Id() {
                 }
             }
         }
-        console.log(Counter_Id_Position_MSG)
         return Id_Position_MSG
     } catch (error) {
         console.error(`> ❌ ERROR Generate_MSG_Position_Id: ${error}`)
@@ -788,8 +884,8 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
         Client_Not_Ready = true
 
         const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))   
-        const Local_Auth = (await fs.access(`Local_Auth\\${Clientt_}`, fs.constants.F_OK).then(() => true).catch(() => false))
-        if (Clients_.length === 0 || null & Local_Auth === false & Clientts_[Clientt_] === 0 || null ) {
+        const Dir_Local_Auth = (await fs.access(`Local_Auth\\${Clientt_}`, fs.constants.F_OK).then(() => true).catch(() => false))
+        if (Clients_.length === 0 || null && Dir_Local_Auth === false && Clientts_[Clientt_] === 0 || null ) {
             console.log(`> ⚠️  ${global.Data_File_Clients_}, Local_Auth(${Clientt_}), array(Clientts_[${Clientt_}]) is ALL empty, does not contain any data.`)
             if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Data_File_Clients_}, Local_Auth(dir), array(Clientts_)</strong> is <strong>ALL</strong> empty, does <strong>not</strong> <strong>contain</strong> any <strong>data</strong>.`)
             
@@ -2375,6 +2471,7 @@ module.exports = {
     New_Funil_,
     Insert_Exponecial_Position_Funil_,
     Select_Funil_,
+    Erase_Funil_,
 }
 
 console.log(`> ✅ FINISHED(Starting functions)`)
