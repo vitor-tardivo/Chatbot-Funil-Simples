@@ -41,6 +41,9 @@ let isStarted = false
 let Funilt_Temp = null
 let Funil_ = null
 
+let Templatet_Temp = null
+let Template_ = null
+
 let nameApp = null
 let versionApp = null
 
@@ -121,6 +124,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         const QR_Counter = response2.data.data2
         Client_ = response2.data.data3
         Funil_ = response2.data.data4
+        Template_ = response2.data.data5
         
         if (stage === 0) {
             
@@ -189,9 +193,11 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
 
         await loadConsoleStyles()
         await loadFunilStyles()
-        const dir_Path = 'Funils_'
+        let dir_Path = null
+        let Directories_ = null
+        dir_Path = 'Funils_'
         const response3 = await axios.get('/functions/dir', { params: { dir_Path } })
-        const Directories_ = response3.data.dirs
+        Directories_ = response3.data.dirs
         if (Directories_.length-1 === -1) {
             
             
@@ -204,6 +210,24 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
                 await selectFunil_(Funilt_)
                 
                 Counter_Clients_++
+            }
+        }
+
+        dir_Path = 'Templates_'
+        const response4 = await axios.get('/functions/dir', { params: { dir_Path } })
+        Directories_ = response4.data.dirs
+        if (Directories_.length-1 === -1) {
+            
+            
+        } else {
+            let Counter_Templates_ = 1
+            for (let i = 1; i <= Directories_.length; i++) {
+                const match = Directories_[Counter_Templates_-1].match(/=(.+)\.json/)
+                const Templatet_ = match ? match[1] : null
+                await insertTemplate_Front(Templatet_)
+                await selectTemplate_(Templatet_)
+                
+                Counter_Templates_++
             }
         }
         //await loadSectionsHtml()
@@ -411,7 +435,7 @@ async function handleWebSocketData(dataWebSocket) {
             let isActive = true
             await insertClient_Front(Client__, isActive)
             break
-        case '/client/qr-code':
+        case 'WS=/client/qr-code':
             const QR_Counter = dataWebSocket.data
             const Client___ = dataWebSocket.data2
 
@@ -1300,6 +1324,275 @@ async function sendCommand() {
     }
 }
 
+async function eraseTemplate_(Templatet_) {
+    /*if (Client_NotReady) {
+        displayOnConsole(`>  ℹ️  ${Funilt_} not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        //Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        let userConfirmation = confirm(`Tem certeza de que deseja apagar o Template_ ${Templatet_}?\nsera apagada para sempre.`)
+        if (userConfirmation) {
+            const status = document.querySelector('#status')
+
+            const response = await axios.delete('/template/erase', { params: { Templatet_ } })
+            const Sucess = response.data.sucess
+            const Is_Empty = response.data.empty
+            const Is_Empty_Input = response.data.empty_input
+            const Not_Selected = response.nselected
+            if (Not_Selected) {
+                status.innerHTML = `O Template_ <strong>${Templatet_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Template_ <strong>selecionado</strong> é <strong>${Template_}</strong> então <strong>selecione</strong> <strong>${Templatet_}</strong> para poder <strong>apaga-lo</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Template_ <strong>${Templatet_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Template_ <strong>selecionado</strong> é <strong>${Template_}</strong> então <strong>selecione</strong> <strong>${Templatet_}</strong> para poder <strong>apaga-lo</strong>!`)
+                
+                resetLoadingBar()
+                
+                //Client_NotReady = false
+
+                return
+            }
+            if (Is_Empty) {
+                status.innerHTML = `Dados de <strong>${Templatet_}</strong> esta <strong>vazio</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Templatet_}</strong> esta <strong>vazio</strong>`)
+
+                resetLoadingBar()
+                
+                //Client_NotReady = false
+                
+                return
+            }
+            if (Is_Empty_Input) {
+                status.innerHTML = `Template_ <strong>${Templatet_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
+
+                resetLoadingBar()
+                
+                //Client_NotReady = false
+                
+                return  
+            } 
+            if (Sucess) {
+                const divTemplatet_ = document.querySelector(`#${Templatet_}`)
+                divTemplatet_.remove()
+                
+                status.innerHTML = `Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`)
+
+                //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
+                const dir_Path = 'Templates_'
+                const response = await axios.get('/functions/dir', { params: { dir_Path } })
+                const Directories = response.data.dirs
+
+                if (Directories.length === 0) {
+                    status.innerHTML = `<strong>Dir</strong> off Templates_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
+                    displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Templates_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
+                } else {
+                    const templateIdNumber = Number(Templatet_.match(/\d+/g))
+
+                    let Counter_Templates_ = 0
+                    let posArrayTemplateId = null
+                    let posArrayTemplateName = null
+                    for (let i = 0; i < Directories.length; i++) {
+                        const templateDirIdNumber = Number(Directories[Counter_Templates_].match(/_.*?_.*?_/)[0].match(/\d+/g))
+
+                        if (templateIdNumber === templateDirIdNumber) {
+                            posArrayTemplateId = Counter_Templates_
+
+                            if (Directories[posArrayTemplateId+1] === undefined) {
+                                posArrayTemplateId--
+                                posArrayTemplateName = Directories[posArrayTemplateId--].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
+                            } else {
+                                posArrayTemplateId++
+                                posArrayTemplateName = Directories[posArrayTemplateId++].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
+                            }
+                        } else {
+                            posArrayTemplateId = Number(Directories[Counter_Templates_].match(/_.*?_.*?_/)[0].match(/\d+/g))
+                            posArrayTemplateName = Directories[Counter_Templates_].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
+                            Counter_Templates_++
+                        }
+                    }
+
+                    await selectTemplate_(`_${Number(posArrayTemplateId)}_${posArrayTemplateName}_`)
+                }
+            } else {
+                status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Template_ <strong>${Templatet_}</strong>!`
+                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Template_ <strong>${Templatet_}</strong>!`)
+            }
+        } else {
+            resetLoadingBar()
+            //Client_NotReady = false
+            return
+        }
+
+        resetLoadingBar()
+        //Client_NotReady = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR eraseTemplate_ ${Templatet_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> eraseTemplate_ <strong>${Templatet_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
+async function selectTemplate_(Templatet_) {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        //Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const divTemplatet_ = document.querySelector(`#${Templatet_}`)
+        const capList = document.querySelector(`caption`)
+
+        const divTemplatet_Temp = document.querySelector(`#${Templatet_Temp}`)
+        if (divTemplatet_Temp !== null) {
+            divTemplatet_Temp.style.cssText =
+                'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+        }
+        if (divTemplatet_ === null) {
+            status.innerHTML = `Template_ <strong>${Templatet_}</strong> <strong>Não</strong> existe!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> <strong>Não</strong> existe!`)
+            resetLoadingBar()
+
+            //Funil_NotReady = false
+            
+            return
+        }
+
+        const response = await axios.post('/template/select', { Template_: Templatet_ })
+        let Sucess = response.data.sucess
+        if (Sucess) {
+            divTemplatet_.style.cssText =
+                'border-top: 5px solid var(--colorBlue); border-bottom: 5px solid var(--colorBlue); transition: var(--configTrasition03s);'
+
+            capList.innerHTML = `<stronger>${Templatet_}</stronger>`
+
+            Templatet_Temp = Templatet_
+            Template_ = Templatet_
+
+            status.innerHTML = `Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>.`)
+        } else {
+            status.innerHTML = `<i><strong>ERROR</strong></i> <strong>selecionando</strong> Template_ <strong>${Templatet_}</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Template_ <strong>${Templatet_}</strong>!`)
+        }
+
+        resetLoadingBar()
+        //Client_NotReady = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR selectTemplate_ ${Templatet_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> selectTemplate_ <strong>${Templatet_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
+async function insertTemplate_Front(Templatet_) {
+    /*if (!Client_NotReady) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        //Client_NotReady = false
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const TemplatesDiv = document.querySelector('#Templates_')
+        const allConteinerTemplates_ = TemplatesDiv.querySelectorAll('.divTemplates_')
+        let arrayIdNameTemplates_ = []
+        allConteinerTemplates_.forEach((divElement) => {
+            const Template_Id = Number(divElement.id.match(/\d+/g))
+            const Template_Name = divElement.id.split('_').slice(2, -1).join('_')
+            arrayIdNameTemplates_.push({ Template_Id, Template_Name })
+        })
+        let idNumberTemplate_DivAdjacent = null
+        let isFirstUndefined = null
+        if (arrayIdNameTemplates_.length > 0) {
+            const response = await axios.get('/template/insert_exponecial_position_Template_', { params: { arrayIdNameTemplates_ } })
+            idNumberTemplate_DivAdjacent = response.data.idnumbertemplate_divadjacent
+            isFirstUndefined = response.data.isfirstundefined
+        }
+    
+        const divAdjacent = document.querySelector(`#${idNumberTemplate_DivAdjacent}`)
+
+        const templateHTMlDestroy = `\n<div class="divTemplates_" id="${Templatet_}">\n<abbr title="Template_ ${Templatet_}" id="abbrselect-${Templatet_}"><button class="Templates_" id="select-${Templatet_}" onclick="selectTemplate_('${Templatet_}')">${Templatet_}</button></abbr><abbr title="Apagar ${Templatet_}" id="abbrerase-${Templatet_}"><button class="Templates_Erase" id="erase-${Templatet_}" onclick="eraseTemplate_('${Templatet_}')"><</button></abbr>\n</div>\n`
+        if (divAdjacent) {
+            if (isFirstUndefined) {
+                divAdjacent.insertAdjacentHTML('beforebegin', templateHTMlDestroy)
+            } else {
+                divAdjacent.insertAdjacentHTML('afterend', templateHTMlDestroy)
+            }
+        } else {
+            TemplatesDiv.innerHTML += templateHTMlDestroy
+        }
+
+        const divTemplatet_ = document.querySelector(`#${Templatet_}`)
+        divTemplatet_.style.cssText =
+            'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+
+        //console.log(document.documentElement.outerHTML)
+        resetLoadingBar()
+    } catch (error) {
+        console.error(`> ⚠️ ERROR insertTemplate_Front ${Templatet_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> insertTemplate_Front <strong>${Templatet_}</strong>: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+async function newTemplates() {
+    /*if (isStartedNew) {
+        displayOnConsole('>  ℹ️ <strong>newClients</strong> not Ready.', setLogError)
+        return
+    }*/
+    try {
+        //isStartedNew = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        let userConfirmation = confirm('Tem certeza de que deseja criar um novo Template_?')
+        if (!userConfirmation) {
+            resetLoadingBar()
+
+            //isStartedNew = false
+
+            return
+        }
+
+        //isFromNew = true
+
+        const response = await axios.post('/template/new')
+        const Sucess = response.data.sucess
+        const Template_ = response.data.Templatet_
+        if (Sucess) {
+            await insertTemplate_Front(Template_)
+            await selectTemplate_(Template_)
+
+            resetLoadingBar()
+        } else {
+
+
+            resetLoadingBar()
+            return
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR newTemplates: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> newTemplates: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+
 async function eraseFunil_(Funilt_) {
     /*if (Client_NotReady) {
         displayOnConsole(`>  ℹ️  ${Funilt_} not Ready.`, setLogError)
@@ -1370,27 +1663,31 @@ async function eraseFunil_(Funilt_) {
                     const funilIdNumber = Number(Funilt_.match(/\d+/g))
 
                     let Counter_Funils_ = 0
-                    let posArrayFunil = null
+                    let posArrayFunilId = null
+                    let posArrayFunilName = null
                     for (let i = 0; i < Directories.length; i++) {
                         const funilDirIdNumber = Number(Directories[Counter_Funils_].match(/_.*?_.*?_/)[0].match(/\d+/g))
 
                         if (funilIdNumber === funilDirIdNumber) {
-                            posArrayFunil = Counter_Funils_
+                            posArrayFunilId = Counter_Funils_
 
-                            if (Directories[posArrayFunil+1] === undefined) {
-                                posArrayFunil--
+                            if (Directories[posArrayFunilId+1] === undefined) {
+                                posArrayFunilId--
+                                posArrayFunilName = Directories[posArrayFunilId--].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
                             } else {
-                                posArrayFunil++
+                                posArrayFunilId++
+                                posArrayFunilName = Directories[posArrayFunilId++].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
                             }
                         } else {
                             //aqui pega o numero e o nome inves do nome so e manda...
-                            posArrayFunil = Number(Directories[Counter_Funils_].match(/_.*?_.*?_/)[0].match(/\d+/g))
+                            posArrayFunilId = Number(Directories[Counter_Funils_].match(/_.*?_.*?_/)[0].match(/\d+/g))
+                            posArrayFunilName = Directories[Counter_Funils_].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
                             Counter_Funils_++
                         }
                     }
 
                     //aqui
-                    await selectFunil_(`_${Number(posArrayFunil)}_Funil_`)
+                    await selectFunil_(`_${Number(posArrayFunilId)}_${posArrayFunilName}_`)
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Funil_ <strong>${Funilt_}</strong>!`
@@ -1434,8 +1731,8 @@ async function selectFunil_(Funilt_) {
                 'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
         }
         if (divFunilt_ === null) {
-            status.innerHTML = `Client_ <strong>${Funilt_}</strong> <strong>Não</strong> existe!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Funilt_}</strong> <strong>Não</strong> existe!`)
+            status.innerHTML = `Funil_ <strong>${Funilt_}</strong> <strong>Não</strong> existe!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> <strong>Não</strong> existe!`)
             resetLoadingBar()
 
             //Funil_NotReady = false
@@ -3827,11 +4124,6 @@ async function eraseClient_(Clientt_) {
                 return  
             } 
             if (Sucess) {
-                let dir_Path = null
-                dir_Path = 'Local_Auth'
-                const response1 = await axios.get('/functions/dir', { params: { dir_Path } })
-                const Directories_1 = response1.data.dirs
-
                 const divClientt_ = document.querySelector(`#${Clientt_}`)
                 divClientt_.remove()
 
@@ -3839,41 +4131,44 @@ async function eraseClient_(Clientt_) {
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`)
 
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
+                const dir_Path = 'Local_Auth'
+                const response = await axios.get('/functions/dir', { params: { dir_Path } })
+                const Directories = response.data.dirs
 
-                await sleep(1.5 * 1000)
-                dir_Path = 'Local_Auth'
-                const response2 = await axios.get('/functions/dir', { params: { dir_Path } })
-                const Directories_2 = response2.data.dirs
-
-                if (Directories_2.length-1 === -1) {
-                    status.innerHTML = `<strong>Dir</strong> off Clients_ (<strong>${Directories_2.length}</strong>) is <strong>empty</strong>!`
-                    displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Clients_ (<strong>${Directories_2.length}</strong>) is <strong>empty</strong>!`)
+                if (Directories.length === 0) {
+                    status.innerHTML = `<strong>Dir</strong> off Clients_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
+                    displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Clients_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
 
                     let exitInten = true
                     await exit(exitInten)
                     await axios.put('/back/reset')
                 } else {
-                    const clientIdNumber = Clientt_.match(/\d+/g)
+                    const clientIdNumber = Number(Clientt_.match(/\d+/g))
 
                     let Counter_Clients_ = 0
-                    let posArrayClient = null
-                    for (let i = -1; i < Directories_1.length-1; i++) {
-                        const clientDirIdNumber = Directories_2[Counter_Clients_-1].match(/\d+/g)
+                    let posArrayClientId = null
+                    let posArrayClientName = null
+                    for (let i = 0; i < Directories.length; i++) {
+                        const clientDirIdNumber = Number(Directories[Counter_Clients_].match(/_.*?_.*?_/)[0].match(/\d+/g))
 
                         if (clientIdNumber === clientDirIdNumber) {
-                            posArrayClient = Counter_Clients_
+                            posArrayClientId = Counter_Clients_
 
-                            if (Directories_1[posArrayClient++] === undefined) {
-                                posArrayClient--
+                            if (Directories[posArrayClientId+1] === undefined) {
+                                posArrayClientId--
+                                posArrayClientName = Directories[posArrayClientId--].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
                             } else {
-                                posArrayClient++
+                                posArrayClientId++
+                                posArrayClientName = Directories[posArrayClientId++].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
                             }
                         } else {
+                            posArrayClientId = Number(Directories[Counter_Clients_].match(/_.*?_.*?_/)[0].match(/\d+/g))
+                            posArrayClientName = Directories[Counter_Clients_].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
                             Counter_Clients_++
                         }
                     }
-    
-                    await selectClient_(`_${posArrayClient}_Client_`)
+                    
+                    await selectClient_(`_${posArrayClientId}_${posArrayClientName}_`)
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`
@@ -4661,7 +4956,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
         status.innerHTML = `<strong>${Clientt_}</strong> Gerando <strong>Qr-Code</strong>...`
         displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${Clientt_}</strong> Gerando <strong>Qr-Code</strong>...`)
         
-        axios.get('/client/qr-code')
+        const response = await axios.get('/client/qr-code')
         const { qrString, Is_Conected } = response.data
         if (Is_Conected) {
             setTimeout(function() {

@@ -27,6 +27,10 @@ const {
     Insert_Exponecial_Position_Funil_,
     Select_Funil_,
     Erase_Funil_,
+    New_Template_,
+    Insert_Exponecial_Position_Template_,
+    Select_Template_,
+    Erase_Template_,
 } = require('./app')
 
 router.get('/', (req, res) => {
@@ -36,6 +40,56 @@ router.get('/', (req, res) => {
     } catch (error) {
         console.error(`> ❌ ERROR /: ${error}`)
         res.status(500).send({ sucess: false, message: 'ERROR Internal server' })
+    }
+})
+
+router.delete('/template/erase', async (req, res) => {
+    try {
+        const Template_ = req.query.Templatet_
+        let Is_From_End = false
+        const { Sucess, Is_Empty, Is_Empty_Input, Not_Selected } = await Erase_Template_(Is_From_End, Template_)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully erased ${Template_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to erase ${Template_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/erase: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, empty: null, empty_input: null, selected: null })
+    }
+})
+router.post('/template/select', async (req, res) => {
+    try {
+        const { Template_ } = req.body
+        
+        await Select_Template_(Template_)
+        
+        res.status(200).send({ sucess: true, message: `Template_ ${Template_} selected.`})
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/select: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`})
+    }
+})
+router.get('/template/insert_exponecial_position_Template_', async (req, res) => {
+    try {
+        const arrayidnametemplates_ = req.query.arrayIdNameTemplates_
+        const { idNumberTemplate_DivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_Template_(arrayidnametemplates_)
+        
+        res.status(200).send({ sucess: true, message: `Sucessfully sent the insert info exponecial position Template_.`, idnumbertemplate_divadjacent: idNumberTemplate_DivAdjacent, isfirstundefined: isFirstUndefined })
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/insert_exponecial_position_Template_: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, idnumbertemplate_divadjacent: null, isfirstundefined: null })
+    }
+})
+router.post('/template/new', async (req, res) => {
+    try {
+        //global.Is_From_New = true
+        const { Sucess, Template_ } = await New_Template_()
+
+        res.status(200).send({ sucess: Sucess, message: `New Funil_ created.`, Templatet_: Template_ })
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/new: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, Funilt_: null })
     }
 })
 
@@ -133,7 +187,7 @@ router.get('/api/data', async (req, res) => {
 
 router.get('/back/what-stage', async (req, res) => {
     try {
-        res.status(200).send({ sucess: true, message: `sucessfully get stage.`, data: global.Stage_, data2: global.QR_Counter, data3: global.Client_, data4: global.Funil_ })
+        res.status(200).send({ sucess: true, message: `sucessfully get stage.`, data: global.Stage_, data2: global.QR_Counter, data3: global.Client_, data4: global.Funil_, data5: global.Template_ })
     } catch (error) {
         console.error(`> ❌ ERROR /back/what-stage: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, data: null, data2: null, data3: null })
@@ -317,7 +371,7 @@ router.post('/client/new', async (req, res) => {
         global.Is_From_New = true
         await New_Client_()
 
-        res.status(200).send({ sucess: true, message: `New Client_ ${Clientt_} initialized.` })
+        res.status(200).send({ sucess: true, message: `New Client_ ${global.Client_} initialized.` })
     } catch (error) {
         console.error(`> ❌ ERROR /client/new: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })

@@ -10,6 +10,7 @@ if (global.Log_Callback) global.Log_Callback(`>  ◌ <i><strong><span class="sob
 const dotenv = require('dotenv')
 dotenv.config()
 const { Client, LocalAuth, MessageMedia, Buttons } = require('whatsapp-web.js')
+const puppeteer = require('puppeteer')
 const qrcode = require('qrcode-terminal')
 const path = require('path')
 const fs = require('fs').promises
@@ -213,12 +214,17 @@ async function askForConfirmation(Clientt_) {
 
 async function List_Directories(dir_Path) {
     try {
+        await fs.mkdir(path.join(Root_Dir, dir_Path), { recursive: true } )
         let Files_ = null
         let Directories_ = null
         if (dir_Path === 'Funils_') {
             Files_ = await fs.readdir(dir_Path)
             Directories_ = Files_
+        } else if (dir_Path === 'Templates_') {
+            Files_ = await fs.readdir(dir_Path)
+            Directories_ = Files_
         } else if (dir_Path === 'Local_Auth') {
+
             Files_ = await fs.readdir(dir_Path, { withFileTypes: true })
             Directories_ = Files_.filter(file => file.isDirectory()).map(dir => dir.name)
         }
@@ -245,6 +251,9 @@ global.MAX_Clients_ = 3//actual null, vai ser atrubuido o valor na funcao de peg
 
 global.Funil_Name = 'Funil'
 global.Funil_ = null
+
+global.Template_Name = 'Template'
+global.Template_ = null
 
 let Client_Not_Ready = null
 const Client_Not_Ready_Aux = false
@@ -473,6 +482,252 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
     }
 }
 
+async function Erase_Template_(Is_From_End, Templatet_) { // quando for adicionar pra apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar o client criar no caso ou se n mas estiver la que iniciou ent iniciar pra apagar ou n vai dar, sistema de apagar do json memo ja existe so pegar
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ ${Clientt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
+        return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
+    }*/ 
+    try {
+        //Client_Not_Ready = true
+
+        const Templates_ = JSON.parse(await fs.readFile(global.Data_File_Templates_, 'utf8'))   
+        const Dir_Templates_ = (await fs.access(`Templates_\\Template=${Templatet_}.json`, fs.constants.F_OK).then(() => true).catch(() => false))
+        if (Templates_.length === 0 || null && Dir_Templates_ === false) {
+            console.log(`> ⚠️  ${global.Data_File_Templates_}, Templates_(${Templatet_}), array(Templatets_[${Templatet_}]) is ALL empty, does not contain any data.`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Data_File_Templates_}, Templates_(${Templatet_}), array(Templatets_[${Templatet_}])</strong> is <strong>ALL</strong> empty, does <strong>not</strong> <strong>contain</strong> any <strong>data</strong>.`)
+            
+            //Client_Not_Ready = false
+            
+            return { Sucess: false, Is_Empty: true, Is_Empty_Input: false, Not_Selected: false }
+        }
+        if (global.Template_ !== Templatet_) {
+            console.log(`> ⚠️  The Template_ ${Templatet_} is to be erase it is not selected, the Template_ selected is ${global.Template_} so select ${Templatet_} to erase it.}`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>The Template_ <strong>${Templatet_}</strong> is to be <strong>erase</strong> it is <strong>not</strong> <strong>selected</strong>, the Template_ <strong>selected</strong> is <strong>${global.Template_}</strong> so <strong>select</strong> <strong>${Templatet_}</strong> to <strong>erase</strong> it.`)
+
+            //Client_Not_Ready = false
+
+            return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: true }
+        }
+        if (Templatet_.length === 0 || null) {
+            console.log(`> ⚠️  No Template_ found by the valor received: ${Templatet_}.`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>No</strong> Template_ <strong>found</strong> by the valor <strong>received: ${Templatet_}</strong>.`)
+            
+            //Client_Not_Ready = false
+            
+            return { Sucess: false, Is_Empty: false, Is_Empty_Input: true, Not_Selected: false }
+        }
+
+        let Erased_ = false
+        if (Is_From_End) {
+            console.log(`> ⚠️  Are you sure that you want to erase Template_ ${Templatet_} from ${global.File_Data_Templates_}?`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Are you <strong>sure</strong> that you <strong>want</strong> to <strong>erase</strong> Template_ <strong>${Templatet_}</strong> from <strong>${global.File_Data_Templates_}</strong>?`)
+            const answer = await askForConfirmation(Templatet_)
+            if (answer.toLowerCase() === 'y') {
+                console.log(`>  ◌ Erasing Funil_ ${Templatet_} from ${global.File_Data_Templates_}...`)
+                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Erasing Funil_ <strong>${Templatet_}</strong> from <strong>${global.File_Data_Templates_}</strong>...`)
+                
+                fse.remove(`Templates_\\${global.File_Data_Templates_}`)
+                
+                Erased_ = true
+            } else if (answer.toLowerCase() === 'n') {
+                console.log(`> ⚠️  Template_ ${Templatet_} from ${global.File_Data_Templates_}: DECLINED`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Funil_ <strong>${Templatet_}</strong> from <strong>${global.File_Data_Templates_}: DECLINED</strong>`)
+                
+                //Client_Not_Ready = false
+                
+                return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: false }
+            } else {
+                console.log(`> ⚠️  Template_ ${Templatet_} from ${global.File_Data_Templates_}: NOT Answered to erase`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Template_ <strong>${Templatet_}</strong> from <strong>${global.File_Data_Templates_}: NOT Answered to erase</strong>`)
+                
+                //Client_Not_Ready = false
+                
+                return { Sucess: false, Is_Empty: false, Is_Empty_Input: false, Not_Selected: false }
+            }
+            
+        } else {
+            console.log(`>  ◌ Erasing Template_ ${Templatet_} from ${global.File_Data_Templates_}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> Template_ <strong>${Templatet_}</strong> from <strong>${global.File_Data_Templates_}</strong>...`)
+            
+            fse.remove(`Templates_\\${global.File_Data_Templates_}`)
+            
+            Erased_ = true
+        }
+        
+
+        if (Erased_) {
+            console.log(`> ✅ Template_ ${Templatet_} from ${global.File_Data_Templates_}: ERASED`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>Template_ <strong>${Templatet_}</strong> from <strong>${global.File_Data_Templates_}: ERASED</strong>`)
+            
+            //Client_Not_Ready = false
+
+            return { Sucess: true, Is_Empty: false, Is_Empty_Input: false, Not_Selected: false }
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR Erase_Template_ ${Templatet_}: ${error}`)
+        
+        //Client_Not_Ready = false
+        
+        return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
+    }
+}
+async function Select_Template_(Templatet_) {
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ ${Funilt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Funilt_}</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+
+        global.Template_ = Templatet_
+        global.File_Data_Templates_ = `Template=${Templatet_}.json`
+        global.Data_File_Templates_ = path.join(global.Directory_Dir_Templates_, `Template=${Templatet_}.json`)
+
+        //global.File_Data_Chat_Data = `Chat_Data=${Funilt_}.json`
+        //global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Funilt_}.json`)
+
+        //global.File_Data_Clients_ = `Client=${Funilt_}.json`
+        //global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Funilt_}.json`)
+
+        console.log(`>  ℹ️ Template_ ${Templatet_} selected.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i>Template_ <strong>${Templatet_}</strong> <strong>selected</strong>.`)
+            
+        //Client_Not_Ready = false
+    } catch (error) {
+        console.error(`> ❌ Select_Template_ ${Templatet_}: ${error}`)
+        //Client_Not_Ready = false
+    }
+}
+async function Insert_Exponecial_Position_Template_(arrayIdNameTemplates_) {
+    try {
+        let isFirstUndefined = false
+        let idNumberTemplate_DivAdjacent = null
+        for (let i = 0; i < arrayIdNameTemplates_.length; i++) {
+            if (Number(arrayIdNameTemplates_[0].Template_Id) !== 1) {
+                isFirstUndefined = true
+                idNumberTemplate_DivAdjacent = `_${Number(arrayIdNameTemplates_[0].Template_Id)}_${arrayIdNameTemplates_[0].Template_Name}_`
+                break
+            } 
+            const currentNumber = Number(arrayIdNameTemplates_[i].Template_Id)
+            let nextNumber = null
+            if (i+1 < arrayIdNameTemplates_.length) {
+                nextNumber = Number(arrayIdNameTemplates_[i+1].Template_Id)
+            } else {
+                nextNumber = undefined
+            }
+            if (nextNumber !== undefined) {
+                if (currentNumber !== nextNumber-1) {
+                    idNumberTemplate_DivAdjacent = `_${Number(arrayIdNameTemplates_[currentNumber-1].Template_Id)}_${arrayIdNameTemplates_[currentNumber-1].Template_Name}_`
+                    break
+                }
+            } 
+            idNumberFunil_DivAdjacent = `_${currentNumber}_${arrayIdNameTemplates_[i].Template_Name}_`
+        }
+
+        return { idNumberTemplate_DivAdjacent: idNumberTemplate_DivAdjacent, isFirstUndefined: isFirstUndefined }
+    } catch (error) {
+        console.error(`> ❌ ERROR Insert_Exponecial_Position_Template_: ${error}`)
+        return { idNumberTemplate_DivAdjacent: null, isFirstUndefined: null }
+    }
+}
+async function Dir_Templates_() {
+    try {
+        const jsons = await fs.readdir(global.Directory_Dir_Templates_)
+        let Counter_Id_Templates_ = []
+
+        for (const file of jsons) {
+            if (path.extname(file) === '.json') {
+                const filePath = path.join(global.Directory_Dir_Templates_, file)
+                const data = await fs.readFile(filePath, 'utf8')
+                const json = JSON.parse(data)
+
+                json.forEach(item => {
+                    if (item.Templatet_) {
+                        const match = Number(item.Templatet_.match(/\d+/g))
+                        if (match) {
+                            Counter_Id_Templates_.push(Number(match))
+                        }
+                    }
+                })
+            }
+        }
+        return Counter_Id_Templates_
+    } catch (error) {
+        console.error(`> ❌ ERROR Dir_Templates_: ${error}`)
+        return []
+    }
+}
+global.Directory_Dir_Templates_ = path.join(Root_Dir, `Templates_`)
+global.File_Data_Templates_ = `Template= .json`
+global.Data_File_Templates_ = path.join(global.Directory_Dir_Templates_, `Template= .json`)
+async function Generate_Template_Id() {
+    /*if (Generate_Id_Not_Ready) {
+        console.log('>  ℹ️ Generate_Client_Id not Ready.')
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Generate_Client_Id</strong> not Ready.`)
+        return null
+    }*/
+       try {
+        //Generate_Id_Not_Ready = true
+        const Counter_Id_Templates_ = await Dir_Templates_()
+
+        let Id_Template_ = null
+        let Counter_Templates_ = 1
+        let i = false
+        while (!i) {
+            if (Counter_Id_Templates_[Counter_Templates_-1] === undefined) {
+                Id_Template_ = Counter_Templates_
+                Counter_Id_Templates_.push(Id_Template_)
+
+                i = true
+            } else {
+                if (Counter_Templates_ !== Counter_Id_Templates_[Counter_Templates_-1]) {
+                    Id_Template_ = Counter_Templates_
+                    Counter_Id_Templates_.splice(Counter_Templates_-1, 0, Id_Template_)
+                    
+                    i = true
+                } else {
+                    Counter_Templates_++
+                }
+            }
+        }
+        return Id_Template_
+    } catch (error) {
+        console.error(`> ❌ ERROR Generate_Template_Id: ${error}`)
+        return null
+    }
+}
+async function New_Template_() {
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ New_Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>New_Client_</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+
+        const NameTemplate_ = global.Template_Name
+        const Id_Template_ = await Generate_Template_Id()
+        const Templatet_ = `_${Id_Template_}_${NameTemplate_}_`
+
+        global.File_Data_Templates_ = `Template=${Templatet_}.json`
+        global.Data_File_Templates_ = path.join(global.Directory_Dir_Templates_, `Template=${Templatet_}.json`)
+        
+        await fs.mkdir(global.Directory_Dir_Templates_, { recursive: true } )
+        
+        const New_Template_ = [{ Templatet_ }]
+        const jsonString = '[\n' + New_Template_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
+
+        return { Sucess: true, Template_: Templatet_ }
+    } catch (error) {
+        console.error(`> ❌ New_Template_: ${error}`)
+        return { Sucess: false, Template_: Templatet_ }
+        //Client_Not_Ready = false
+    }
+}
+
 async function Erase_Funil_(Is_From_End, Funilt_) { // quando for adicionar pra apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar o client criar no caso ou se n mas estiver la que iniciou ent iniciar pra apagar ou n vai dar, sistema de apagar do json memo ja existe so pegar
     /*if (Client_Not_Ready || Client_Not_Ready === null) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
@@ -494,7 +749,7 @@ async function Erase_Funil_(Is_From_End, Funilt_) { // quando for adicionar pra 
         }
         if (global.Funil_ !== Funilt_) {
             console.log(`> ⚠️  The Funil_ ${Funilt_} is to be erase it is not selected, the Funil_ selected is ${global.Funil_} so select ${Funilt_} to erase it.}`)
-            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>The Client_ <strong>${Funilt_}</strong> is to be <strong>erase</strong> it is <strong>not</strong> <strong>selected</strong>, the Client_ <strong>selected</strong> is <strong>${global.Funil_}</strong> so <strong>select</strong> <strong>${Funilt_}</strong> to <strong>erase</strong> it.`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>The Funil_ <strong>${Funilt_}</strong> is to be <strong>erase</strong> it is <strong>not</strong> <strong>selected</strong>, the Funil_ <strong>selected</strong> is <strong>${global.Funil_}</strong> so <strong>select</strong> <strong>${Funilt_}</strong> to <strong>erase</strong> it.`)
 
             //Client_Not_Ready = false
 
@@ -511,8 +766,8 @@ async function Erase_Funil_(Is_From_End, Funilt_) { // quando for adicionar pra 
 
         let Erased_ = false
         if (Is_From_End) {
-            console.log(`> ⚠️  Are you sure that you want to erase Client ${Funilt_} from ${global.File_Data_Clients_}?`)
-            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Are you <strong>sure</strong> that you <strong>want</strong> to <strong>erase</strong> Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>?`)
+            console.log(`> ⚠️  Are you sure that you want to erase Funil ${Funilt_} from ${global.File_Data_Funils_}?`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Are you <strong>sure</strong> that you <strong>want</strong> to <strong>erase</strong> Funil_ <strong>${Funilt_}</strong> from <strong>${global.File_Data_Funils_}</strong>?`)
             const answer = await askForConfirmation(Funilt_)
             if (answer.toLowerCase() === 'y') {
                 console.log(`>  ◌ Erasing Funil_ ${Funilt_} from ${global.File_Data_Funils_}...`)
@@ -636,7 +891,7 @@ async function Dir_Funils_() {
 
                 json.forEach(item => {
                     if (item.Funilt_) {
-                        const match = item.Funilt_.match(/\d+/g)
+                        const match = Number(item.Funilt_.match(/\d+/g))
                         if (match) {
                             Counter_Id_Funils_.push(Number(match))
                         }
@@ -706,11 +961,10 @@ async function New_Funil_() {
         global.Data_File_Funils_ = path.join(global.Directory_Dir_Funils_, `Funil=${Funilt_}.json`)
         
         await fs.mkdir(global.Directory_Dir_Funils_, { recursive: true } )
-        const Data_File_Funils_ = global.Data_File_Funils_
         
         const New_Funil_ = [{ Funilt_ }]
         const jsonString = '[\n' + New_Funil_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
-        await fs.writeFile(Data_File_Funils_, jsonString, 'utf8')
+        await fs.writeFile(global.Data_File_Funils_, jsonString, 'utf8')
 
         return { Sucess: true, Funil_: Funilt_ }
     } catch (error) {
@@ -719,6 +973,7 @@ async function New_Funil_() {
         //Client_Not_Ready = false
     }
 }
+
 async function Insert_Exponecial_Position_MSG(arrayIdNumberPosition) {
     try {
         let isFirstUndefined = false
@@ -1191,6 +1446,7 @@ async function Select_Client_(Clientt_) {
     }
 }
 async function New_Client_() {
+    console.log(Client_Not_Ready)
     if (Client_Not_Ready || Client_Not_Ready === null) {
         console.log(`>  ℹ️ New_Client_ not Ready.`)
         if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>New_Client_</strong> not Ready.`)
@@ -1202,6 +1458,7 @@ async function New_Client_() {
         const NameClient_ = global.Client_Name
         Generate_Id_Not_Ready = false
         const Id_Client_ = await Generate_Client_Id()
+        console.log(Id_Client_)
         initialize_Client_Not_Ready = false
         let Is_New_Client_ = true
         let Is_Initialize_Clients_ = false
@@ -1741,11 +1998,11 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
             // unused because package.json: "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#webpack-exodus" solves everything
             //webVersionCache: { type: 'remote', remotePath: 'https://raw.githubusercontent.com/guigo613/alternative-wa-version/main/html/2.2412.54v2.html' }, //for video messages working version
             //webVersionCache: { type: 'remote', remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html', } //"normal" version
-
+            
             puppeteer: {
                 executablePath: process.env.BROWSER_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
                 args: ['--no-sandbox', '--disable-gpu'],
-                headless: true, //debug
+                headless: /*process.env.BROWSER_HEADLESS/*debug ||*/ false
             },
         })
         const QR_Counter_Exceeds = 5 //5
@@ -2403,6 +2660,7 @@ async function initialize() {
             
             let Counter_Clients_ = 0
             if (Directories_.length-1 === -1) {
+                Client_Not_Ready = false
                 await New_Client_()
             } else {
                 for (let i = -1; i < Directories_.length-1; i++) {
@@ -2472,6 +2730,10 @@ module.exports = {
     Insert_Exponecial_Position_Funil_,
     Select_Funil_,
     Erase_Funil_,
+    New_Template_,
+    Insert_Exponecial_Position_Template_,
+    Select_Template_,
+    Erase_Template_,
 }
 
 console.log(`> ✅ FINISHED(Starting functions)`)
