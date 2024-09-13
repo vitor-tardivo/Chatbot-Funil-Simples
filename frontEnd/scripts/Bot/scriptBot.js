@@ -2097,7 +2097,7 @@ async function erasePosition(divPosition, typeMSG) {
     }
 }
 
-async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {
+async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o id do position aqui e manda tbm vai precisar obiviu
     try {
         let divElement = null
 
@@ -2344,6 +2344,8 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {
                 //const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                 if (data) {
                     displayOnConsole(`3=file:`)   
+                    displayOnConsole(`3=fileType:`)   
+                    displayOnConsole(typeTypeMSG)   
                     displayOnConsole(data.name)   
                     console.log(data || '')
                     displayOnConsole(`3=textarea:`)   
@@ -3413,7 +3415,7 @@ async function getFileData(divElementBridge, file) {
                     divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
                     divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
-                    await sendToFunil(divElementBridge, 3, null, file)
+                    await sendToFunil(divElementBridge, 3, 'video', file)
 
                     break;
                 case 'audio/x-m4a':
@@ -3462,7 +3464,7 @@ async function getFileData(divElementBridge, file) {
                     divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
                     divDelayTextAudioTitle.textContent = 'ATRASO-State=Recording:'
                     
-                    await sendToFunil(divElementBridge, 3, null, file)
+                    await sendToFunil(divElementBridge, 3, 'audio', file)
 
                     break;
                 case 'image/jpg':
@@ -3503,7 +3505,7 @@ async function getFileData(divElementBridge, file) {
                     divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
                     divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
-                    await sendToFunil(divElementBridge, 3, null, file)
+                    await sendToFunil(divElementBridge, 3, 'image', file)
 
                     break;
                 case 'text/plain':
@@ -3552,7 +3554,7 @@ async function getFileData(divElementBridge, file) {
                     divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
                     divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing:'
 
-                    await sendToFunil(divElementBridge, 3, null, file)
+                    await sendToFunil(divElementBridge, 3, 'text', file)
 
                     break;
                 default:
@@ -3592,7 +3594,7 @@ async function getFileData(divElementBridge, file) {
                     divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
                     divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
-                    await sendToFunil(divElementBridge, 3, null, file)
+                    await sendToFunil(divElementBridge, 3, 'document', file)
 
                     break;
             }

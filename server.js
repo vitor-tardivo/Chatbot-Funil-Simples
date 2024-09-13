@@ -8,7 +8,7 @@ const http = require('http')
 const axios = require('axios')
 const path = require('path')
 const os = require('os')
-const routes = require('./src/routes')
+const Router = require('./src/routes')
 const {
     sleep,
 } = require('./src/app')
@@ -39,7 +39,7 @@ app.use(express.json())
 
 app.use(express.static(path.join(__dirname, 'frontEnd')))
 
-app.use('/', routes)
+app.use('/', Router)
 
 setupWebSocket(server)
 

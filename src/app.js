@@ -2002,7 +2002,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
             puppeteer: {
                 executablePath: process.env.BROWSER_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
                 args: ['--no-sandbox', '--disable-gpu'],
-                headless: /*process.env.BROWSER_HEADLESS/*debug ||*/ false
+                headless: process.env.BROWSER_HEADLESS/*debug*/ || true
             },
         })
         const QR_Counter_Exceeds = 5 //5
@@ -2237,6 +2237,8 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                 return 
             } else {
                 try {
+                    await sleep(1 * 1000)
+
                     let MSG = true
                     let timer = null
                     let Is_Ended_By_MSG = null
@@ -2276,8 +2278,141 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                     Client_.sendMessage(msg.from, 'teste', 'utf8')*/
 
 
+                    let data = null
+                    data = fss.readFileSync(global.Data_File_Templates_, 'utf8')//pega pra pegar o json do template selecionado do funil selecionado, talves mudar a forma das pastas pros template dos funil e tals
+                    console.log(data)
+                    let templateData = null
+                    templateData = JSON.parse(data)
+                    console.log(templateData)
+                    let positions = null
+                    positions = templateData.filter(item => item.PositionMSG)
+                    console.log(positions)
+                    
+                    let TimeType = null
+                    console.log(positions.length)
+                    for (let i = 0; i < positions.length; i++) {
+                        const item = positions[i]
 
-                    console.log(`>  ◌ Sending .Message_debug1.1....`)
+                        switch (item.TypeMSG) {
+                            case 1:
+                                console.log(`>  ◌ Sending Message_${i+1}_...`)
+                                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>Message_${i+1}_</strong>...`)
+
+                                TimeType = null
+                                switch (item.TimeType) {
+                                    case 'seconds':
+                                        TimeType = 1000
+                                        break;
+                                    case 'minutes':
+                                        TimeType = 60 * 1000
+                                        break;
+                                    case 'hours':
+                                        TimeType = 60 * 60 * 1000
+                                        break;
+                                    case 'days':
+                                        TimeType = 24 * 60 * 60 * 1000
+                                        break;
+                                }
+                                await sleep(item.Time * TimeType)
+
+                                console.log(`> ✅ Message_${i+1}_ Sent.`)
+                                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Message_${i+1}_</strong> <strong>Sent</strong>.`)
+                                break;
+                            case 2:
+                                console.log(`>  ◌ Sending Message_${i+1}_...`)
+                                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>Message_${i+1}_</strong>...`)
+
+                                chat.sendStateTyping()
+                                TimeType = null
+                                switch (item.TimeType) {
+                                    case 'seconds':
+                                        TimeType = 1000
+                                        break;
+                                    case 'minutes':
+                                        TimeType = 60 * 1000
+                                        break;
+                                    case 'hours':
+                                        TimeType = 60 * 60 * 1000
+                                        break;
+                                    case 'days':
+                                        TimeType = 24 * 60 * 60 * 1000
+                                        break;
+                                }
+                                await sleep(item.Time * TimeType)
+                                Client_.sendMessage(msg.from, item.TextMSG, 'utf8')
+
+                                console.log(`> ✅ Message_${i+1}_ Sent.`)
+                                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Message_${i+1}_</strong> <strong>Sent</strong>.`)
+                                break;
+                            case 3://mudar os fromFilePath e readFile pra pega os arquivo do json salvo nele e tals
+                                console.log(`>  ◌ Sending Message_${i+1}_...`)
+                                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>Message_${i+1}_</strong>...`)
+
+                                switch (item.FileType) {
+                                    case 'video':
+                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.File), { caption: item.CaptionMSG })
+                                        break;
+                                    case 'audio':
+                                        chat.sendStateRecording()
+                                        switch (item.TimeType) {
+                                            case 'seconds':
+                                                TimeType = 1000
+                                                break;
+                                            case 'minutes':
+                                                TimeType = 60 * 1000
+                                                break;
+                                            case 'hours':
+                                                TimeType = 60 * 60 * 1000
+                                                break;
+                                            case 'days':
+                                                TimeType = 24 * 60 * 60 * 1000
+                                                break;
+                                        }
+                                        await sleep(item.Time * TimeType)
+                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.File), { sendAudioAsVoice: true })
+                                        break;
+                                    case 'image':
+                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.File), { caption: item.CaptionMSG })
+                                        break;
+                                    case 'text':
+                                        chat.sendStateTyping()
+                                        TimeType = null
+                                        switch (item.TimeType) {
+                                            case 'seconds':
+                                                TimeType = 1000
+                                                break;
+                                            case 'minutes':
+                                                TimeType = 60 * 1000
+                                                break;
+                                            case 'hours':
+                                                TimeType = 60 * 60 * 1000
+                                                break;
+                                            case 'days':
+                                                TimeType = 24 * 60 * 60 * 1000
+                                                break;
+                                        }
+                                        await sleep(item.Time * TimeType)
+                                        Client_.sendMessage(msg.from, await fs.readFile(item.File, 'utf8'))
+                                        break;
+                                    case 'document':
+                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.File), { caption: item.CaptionMSG })
+                                        break;
+                                }
+
+                                console.log(`> ✅ Message_${i+1}_ Sent.`)
+                                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Message_${i+1}_</strong> <strong>Sent</strong>.`)
+                                break;
+                        }
+                    }
+                    data = null
+                    templateData = null
+                    positions = null
+
+                    TimeType = null
+
+
+
+                    /*console.log(`>  ◌ Sending .Message_debug1.1....`)
                     if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
 
                     await sleep(1.5 * 1000)
@@ -2286,10 +2421,10 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                     Client_.sendMessage(msg.from, 'debug1.1', 'utf8')
 
                     console.log(`> ✅ .Message_debug1.1. Sent.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
+                    if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)*/
 
                     
-                    console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
+                    /*console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
                     if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message...`)
                     timer = setTimeout (async () => {
                         clearTimeout(timer)
@@ -2428,9 +2563,9 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                     Is_Ended_By_MSG = await Sleep_Timer(13 * 1000, Chat_States[chatId].Cancel_Promise, chatId)
                     await Chat_States[chatId].Promise_
                     
-                    /*if (Is_Ended_By_MSG) {
-                        await sleep(0.5 * 1000)
-                    }*/
+                    //if (Is_Ended_By_MSG) {
+                        //await sleep(0.5 * 1000)
+                    //}
                     if (MSG) {
                         clearTimeout(timer)
                         timer = null
@@ -2450,7 +2585,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                         if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
                     } else {
                         MSG = true 
-                    }
+                    }*/
 
                     
 
@@ -2480,7 +2615,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
         Client_.on('message_create', async msg => {
             try {
                 const chat = await msg.getChat()
-                const chatId = chat.id._serialized.slice(0, -5)
+                const chatId = Number(chat.id._serialized.slice(0, -5))
                 const contact = await chat.getContact()
                 const name = chat.name || contact.pushname || contact.verifiedName || 'Unknown'
 
@@ -2662,6 +2797,10 @@ async function initialize() {
             if (Directories_.length-1 === -1) {
                 Client_Not_Ready = false
                 await New_Client_()
+
+                initialize_Not_Ready = true
+                
+                return { Sucess: true }
             } else {
                 for (let i = -1; i < Directories_.length-1; i++) {
                     initialize_Client_Not_Ready = false
@@ -2670,11 +2809,11 @@ async function initialize() {
                     await Initialize_Client_(Directories_[Counter_Clients_], Is_New_Client_, Is_Initialize_Clients_)
                     Counter_Clients_++
                 }
-            }
 
-            initialize_Not_Ready = true
-            
-            return { Sucess: true }
+                initialize_Not_Ready = true
+                
+                return { Sucess: true }
+            }
         } catch (error) {
             console.error(`> ❌ ERROR initialize: ${error}`)
             //const clientIdNumber = Clientt_.match(/\d+/g)
