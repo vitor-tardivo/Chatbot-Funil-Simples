@@ -3,7 +3,7 @@ yarn.lock
 node_modules/
 Clients_/
 Chat_Datas/
-Funils_/
+Funil/
 Templates_/
 Local_Auth/
 .wwebjs_cache/

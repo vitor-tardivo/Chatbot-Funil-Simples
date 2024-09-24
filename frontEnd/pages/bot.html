@@ -206,81 +206,44 @@
                     
                                     <abbr title="+ Cria um novo Template"><button id="newTemplate" onclick="newTemplates()" ><stronger>+</stronger></button></abbr>
                                 </div>
-                                <div id="divFunilFunctions">
-                                    <abbr title="Schedule Erase STATUS: null" id="abbrScheduleErase"><button class="functionsDivStart" id="OnOffScheduleErase" onclick="">-O</button></abbr>
-                                </div>
-                                
-                                <div id="divCreateFunctionFunil">
-                                    <h3 id="titleFunil"><stronger>Criação e customização do Funil</stronger></h3>
 
-                                        <div id="funilArea">
-                                        
+                                <div id="divInnerTemplate">
+                                    <div id="divFunilFunctions">
+                                        <abbr title="Schedule Erase STATUS: null" id="abbrScheduleErase"><button class="functionsDivStart" id="OnOffScheduleErase" onclick="">-O</button></abbr>
+                                    </div>
+                                    
+                                    <div id="divCreateFunctionFunil">
+                                        <div id="titleContentFunils">
+                                            <h3 id="titleFunil"><stronger>Criação e customização</stronger></h3>
+                                            <div id="selecteds">
+                                                <p id="titleSelectedFunil">Funil: <span id="SelectedFunil">_?_Funil</span></p>
+                                                <p id="titleSelectedFunil">Template: <span id="SelectedTemplate">_?_Template</span></p>
+                                            </div>
+                                        </div>
+
+                                            <div id="funilArea">
+                                            
 
 
-                                            <--<div class="conteinerFunilMSG" id="conteinerFunilMSG1">
+                                                <!--<div class="conteinerFunilMSG" id="conteinerFunilMSG1">
 
-                                                <div class="divInfoPositionMSG" id="idivInfoPositionMSG1">
-                                                    <label title="Selecione esta posição (1)" class="divSelectionPositionMSG">
-                                                        <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG1" onchange="selectionPositionMSG(this, 1)">
-                                                        <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
-                                                    </label>
-                                                    <h4 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h4>
-                                                    <p class="positionMSG" id="ipositionMSG">(1)</p>
+                                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG1">
+                                                        <label title="Selecione esta posição (1)" class="divSelectionPositionMSG">
+                                                            <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG1" onchange="selectionPositionMSG(this, 1)">
+                                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                                        </label>
+                                                        <h4 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h4>
+                                                        <p class="positionMSG" id="ipositionMSG">(1)</p>
 
-                                                    <button title="Deletar posição MSG (1)" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 1)">D</button>
-                                                </div>
-
-                                                <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
-
-                                                    <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
-                                                        <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
-                                                    
-                                                        <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
-                                                            <option value="none" selected>Nenhum</option>
-                                                            <option value="seconds">Segundos</option>
-                                                            <option value="minutes">Minutos</option>
-                                                            <option value="hours">Horas</option>
-                                                            <option value="days">Dias</option>
-                                                        </select>
+                                                        <button title="Deletar posição MSG (1)" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 1)">D</button>
                                                     </div>
 
-                                                </div>
+                                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
 
-                                            </div>
-
-
-                                            <div class="conteinerFunilMSG" id="conteinerFunilMSG2">
-
-                                                <div class="divInfoPositionMSG" id="idivInfoPositionMSG2">
-                                                    <label title="Selecione esta posição (2)" class="divSelectionPositionMSG">
-                                                        <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG2" onchange="selectionPositionMSG(this, 2)">
-                                                        <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
-                                                    </label>
-                                                    <h4 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h4>
-                                                    <p class="positionMSG" id="ipositionMSG">(2)</p>
-
-                                                    <button title="Deletar posição MSG (2)" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 2)">D</button>
-                                                </div>
-
-                                                <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
-
-                                                    <div class="divTextarea" id="idivTextarea">
-                                                        <div class="divTextareaFunctions" id="idivTextareaFunctions">
-                                                            <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
-                                                            
-                                                            <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
-                                                            <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
-                                                            
-                                                            <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
-                                                            <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
-                                                            <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
-                                                            <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
-                                                        </div>
-                                                    
-                                                        <div class="divDelayText" id="idivDelayText">
-                                                            <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
-                                                            
-                                                            <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 2, this, null)">
+                                                        <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
+                                                            <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
+                                                        
+                                                            <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
                                                                 <option value="none" selected>Nenhum</option>
                                                                 <option value="seconds">Segundos</option>
                                                                 <option value="minutes">Minutos</option>
@@ -288,88 +251,135 @@
                                                                 <option value="days">Dias</option>
                                                             </select>
                                                         </div>
-                                                        
-                                                        <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
+
                                                     </div>
 
                                                 </div>
 
-                                            </div>
 
+                                                <div class="conteinerFunilMSG" id="conteinerFunilMSG2">
 
-                                            <div class="conteinerFunilMSG" id="conteinerFunilMSG3">
+                                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG2">
+                                                        <label title="Selecione esta posição (2)" class="divSelectionPositionMSG">
+                                                            <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG2" onchange="selectionPositionMSG(this, 2)">
+                                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                                        </label>
+                                                        <h4 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h4>
+                                                        <p class="positionMSG" id="ipositionMSG">(2)</p>
 
-                                                <div class="divInfoPositionMSG" id="idivInfoPositionMSG3">
-                                                    <label title="Selecione esta posição (3)" class="divSelectionPositionMSG">
-                                                        <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG3" onchange="selectionPositionMSG(this, 3)">
-                                                        <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
-                                                    </label>
-                                                    <h4 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h4>
-                                                    <p class="positionMSG" id="ipositionMSG">(3)</p>
+                                                        <button title="Deletar posição MSG (2)" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 2)">D</button>
+                                                    </div>
 
-                                                    <button title="Deletar posição MSG (3)" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 3)">D</button>
-                                                </div>
+                                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
 
-                                                <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
-
-                                                    <div class="fileTypeMSG" id="ifileTypeMSG">
-                                                        <div class="divFileFunctions" id="idivFileFunctions">
-                                                            <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
-                                                            <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
-                                                            <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
-                                                            
-                                                            <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
-                                                            <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
-                                                            
-                                                            <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
-                                                            <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
-                                                            <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
-                                                            <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
-                                                        </div>
-                                                        
-                                                        <div class="divDelayTextAudio" id="idivDelayTextAudio">
-                                                            <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
-                                                            
-                                                            <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 3, this, null)">
-                                                                <option value="none" selected>Nenhum</option>
-                                                                <option value="seconds">Segundos</option>
-                                                                <option value="minutes">Minutos</option>
-                                                                <option value="hours">Horas</option>
-                                                                <option value="days">Dias</option>
-                                                            </select>
-                                                        </div>
-                                                        
-                                                        <div class="divFileSelectMSG">
-                                                            <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
-                                                                <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
-                                                                <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
-                                                                <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
-                                                                <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                                        <div class="divTextarea" id="idivTextarea">
+                                                            <div class="divTextareaFunctions" id="idivTextareaFunctions">
+                                                                <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
                                                                 
-                                                                <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
-                                                            </div></abbr>
+                                                                <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
+                                                                <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
+                                                                
+                                                                <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
+                                                                <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
+                                                                <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
+                                                                <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
+                                                            </div>
+                                                        
+                                                            <div class="divDelayText" id="idivDelayText">
+                                                                <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
+                                                                
+                                                                <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 2, this, null)">
+                                                                    <option value="none" selected>Nenhum</option>
+                                                                    <option value="seconds">Segundos</option>
+                                                                    <option value="minutes">Minutos</option>
+                                                                    <option value="hours">Horas</option>
+                                                                    <option value="days">Dias</option>
+                                                                </select>
+                                                            </div>
+                                                            
+                                                            <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, undefined, this)"></textarea></abbr>
                                                         </div>
 
-                                                        <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
                                                     </div>
-                                                    
+
                                                 </div>
 
-                                            </div>-->
+
+                                                <div class="conteinerFunilMSG" id="conteinerFunilMSG3">
+
+                                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG3">
+                                                        <label title="Selecione esta posição (3)" class="divSelectionPositionMSG">
+                                                            <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG3" onchange="selectionPositionMSG(this, 3)">
+                                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                                        </label>
+                                                        <h4 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h4>
+                                                        <p class="positionMSG" id="ipositionMSG">(3)</p>
+
+                                                        <button title="Deletar posição MSG (3)" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 3)">D</button>
+                                                    </div>
+
+                                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                                        <div class="fileTypeMSG" id="ifileTypeMSG">
+                                                            <div class="divFileFunctions" id="idivFileFunctions">
+                                                                <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
+                                                                <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
+                                                                <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
+                                                                
+                                                                <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
+                                                                <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
+                                                                
+                                                                <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
+                                                                <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
+                                                                <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
+                                                                <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
+                                                            </div>
+                                                            
+                                                            <div class="divDelayTextAudio" id="idivDelayTextAudio">
+                                                                <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
+                                                                
+                                                                <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 3, this, null)">
+                                                                    <option value="none" selected>Nenhum</option>
+                                                                    <option value="seconds">Segundos</option>
+                                                                    <option value="minutes">Minutos</option>
+                                                                    <option value="hours">Horas</option>
+                                                                    <option value="days">Dias</option>
+                                                                </select>
+                                                            </div>
+                                                            
+                                                            <div class="divFileSelectMSG">
+                                                                <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                                                    <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
+                                                                    <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
+                                                                    <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                                                    <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                                                    
+                                                                    <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
+                                                                </div></abbr>
+                                                            </div>
+
+                                                            <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, undefined, this)"></textarea></abbr>
+                                                        </div>
+                                                        
+                                                    </div>
+
+                                                </div>-->
 
 
+                                            </div>
+                                            
+                                        <div id="plusTypeMSG">
+                                            <div id="typeSelectMSG">
+                                                <abbr title="+ Adicione o tipo Atraso de MSG"><button id="typeDelayMSG" onclick="newTypeMSG(1)">TYPE-MSG: Atraso</button></abbr>
+                                                <abbr title="+ Adicione o tipo Texto de MSG"><button id="typeTextMSG" onclick="newTypeMSG(2)">TYPE-MSG: Texto</button></abbr>
+                                                <abbr title="+ Adicione o tipo Arquivo de MSG"><button id="typeFileMSG" onclick="newTypeMSG(3)">TYPE-MSG: File</button></abbr>
+                                            </div>
+                                            
+                                            <abbr title="+ Adicione um tipo de MSG"><button id="addTypeMSG" onclick="newTypeMSGShown()"><strong>+</strong></button></abbr>
                                         </div>
-                                        
-                                    <div id="plusTypeMSG">
-                                        <div id="typeSelectMSG">
-                                            <abbr title="+ Adicione o tipo Atraso de MSG"><button id="typeDelayMSG" onclick="newTypeMSG(1)">TYPE-MSG: Atraso</button></abbr>
-                                            <abbr title="+ Adicione o tipo Texto de MSG"><button id="typeTextMSG" onclick="newTypeMSG(2)">TYPE-MSG: Texto</button></abbr>
-                                            <abbr title="+ Adicione o tipo Arquivo de MSG"><button id="typeFileMSG" onclick="newTypeMSG(3)">TYPE-MSG: File</button></abbr>
-                                        </div>
-                                        
-                                        <abbr title="+ Adicione um tipo de MSG"><button id="addTypeMSG" onclick="newTypeMSGShown()"><strong>+</strong></button></abbr>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
 

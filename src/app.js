@@ -217,10 +217,10 @@ async function List_Directories(dir_Path) {
         await fs.mkdir(path.join(Root_Dir, dir_Path), { recursive: true } )
         let Files_ = null
         let Directories_ = null
-        if (dir_Path === 'Funils_') {
+        if (dir_Path === 'Funil') {
             Files_ = await fs.readdir(dir_Path)
             Directories_ = Files_
-        } else if (dir_Path === 'Templates_') {
+        } else if (dir_Path.startsWith('Funil') && dir_Path.length > 'Funil'.length) {
             Files_ = await fs.readdir(dir_Path)
             Directories_ = Files_
         } else if (dir_Path === 'Local_Auth') {
@@ -482,7 +482,14 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
     }
 }
 
-async function Erase_Template_(Is_From_End, Templatet_) { // quando for adicionar pra apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar o client criar no caso ou se n mas estiver la que iniciou ent iniciar pra apagar ou n vai dar, sistema de apagar do json memo ja existe so pegar
+global.Directory_Dir_Funil = path.join(Root_Dir, `Funil`)
+global.Directory_Dir_Funils_ = path.join(global.Directory_Dir_Funil, ``)
+global.File_Data_Funils_ = ``
+
+global.File_Data_Templates_ = `Template= .json`
+global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template= .json`)
+
+async function Erase_Template_(Is_From_End, Templatet_, Funilt_) { // quando for adicionar pra apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar o client criar no caso ou se n mas estiver la que iniciou ent iniciar pra apagar ou n vai dar, sistema de apagar do json memo ja existe so pegar
     /*if (Client_Not_Ready || Client_Not_Ready === null) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
         if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
@@ -491,8 +498,8 @@ async function Erase_Template_(Is_From_End, Templatet_) { // quando for adiciona
     try {
         //Client_Not_Ready = true
 
-        const Templates_ = JSON.parse(await fs.readFile(global.Data_File_Templates_, 'utf8'))   
-        const Dir_Templates_ = (await fs.access(`Templates_\\Template=${Templatet_}.json`, fs.constants.F_OK).then(() => true).catch(() => false))
+        const Templates_ = JSON.parse(await fs.readFile(global.Data_File_Templates_, 'utf8'))
+        const Dir_Templates_ = (await fs.access(`Funil\\${Funilt_}\\Template=${Templatet_}.json`, fs.constants.F_OK).then(() => true).catch(() => false))
         if (Templates_.length === 0 || null && Dir_Templates_ === false) {
             console.log(`> ⚠️  ${global.Data_File_Templates_}, Templates_(${Templatet_}), array(Templatets_[${Templatet_}]) is ALL empty, does not contain any data.`)
             if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Data_File_Templates_}, Templates_(${Templatet_}), array(Templatets_[${Templatet_}])</strong> is <strong>ALL</strong> empty, does <strong>not</strong> <strong>contain</strong> any <strong>data</strong>.`)
@@ -527,7 +534,7 @@ async function Erase_Template_(Is_From_End, Templatet_) { // quando for adiciona
                 console.log(`>  ◌ Erasing Funil_ ${Templatet_} from ${global.File_Data_Templates_}...`)
                 if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Erasing Funil_ <strong>${Templatet_}</strong> from <strong>${global.File_Data_Templates_}</strong>...`)
                 
-                fse.remove(`Templates_\\${global.File_Data_Templates_}`)
+                    fse.remove(`Funil\\${Funilt_}\\${global.File_Data_Templates_}`)
                 
                 Erased_ = true
             } else if (answer.toLowerCase() === 'n') {
@@ -550,7 +557,7 @@ async function Erase_Template_(Is_From_End, Templatet_) { // quando for adiciona
             console.log(`>  ◌ Erasing Template_ ${Templatet_} from ${global.File_Data_Templates_}...`)
             if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> Template_ <strong>${Templatet_}</strong> from <strong>${global.File_Data_Templates_}</strong>...`)
             
-            fse.remove(`Templates_\\${global.File_Data_Templates_}`)
+            fse.remove(`Funil\\${Funilt_}\\${global.File_Data_Templates_}`)
             
             Erased_ = true
         }
@@ -583,7 +590,7 @@ async function Select_Template_(Templatet_) {
 
         global.Template_ = Templatet_
         global.File_Data_Templates_ = `Template=${Templatet_}.json`
-        global.Data_File_Templates_ = path.join(global.Directory_Dir_Templates_, `Template=${Templatet_}.json`)
+        global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template=${Templatet_}.json`)
 
         //global.File_Data_Chat_Data = `Chat_Data=${Funilt_}.json`
         //global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Funilt_}.json`)
@@ -634,12 +641,12 @@ async function Insert_Exponecial_Position_Template_(arrayIdNameTemplates_) {
 }
 async function Dir_Templates_() {
     try {
-        const jsons = await fs.readdir(global.Directory_Dir_Templates_)
+        const jsons = await fs.readdir(global.Directory_Dir_Funils_)
         let Counter_Id_Templates_ = []
 
         for (const file of jsons) {
             if (path.extname(file) === '.json') {
-                const filePath = path.join(global.Directory_Dir_Templates_, file)
+                const filePath = path.join(global.Directory_Dir_Funils_, file)
                 const data = await fs.readFile(filePath, 'utf8')
                 const json = JSON.parse(data)
 
@@ -659,9 +666,6 @@ async function Dir_Templates_() {
         return []
     }
 }
-global.Directory_Dir_Templates_ = path.join(Root_Dir, `Templates_`)
-global.File_Data_Templates_ = `Template= .json`
-global.Data_File_Templates_ = path.join(global.Directory_Dir_Templates_, `Template= .json`)
 async function Generate_Template_Id() {
     /*if (Generate_Id_Not_Ready) {
         console.log('>  ℹ️ Generate_Client_Id not Ready.')
@@ -712,9 +716,7 @@ async function New_Template_() {
         const Templatet_ = `_${Id_Template_}_${NameTemplate_}_`
 
         global.File_Data_Templates_ = `Template=${Templatet_}.json`
-        global.Data_File_Templates_ = path.join(global.Directory_Dir_Templates_, `Template=${Templatet_}.json`)
-        
-        await fs.mkdir(global.Directory_Dir_Templates_, { recursive: true } )
+        global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template=${Templatet_}.json`)
         
         const New_Template_ = [{ Templatet_ }]
         const jsonString = '[\n' + New_Template_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
@@ -737,18 +739,18 @@ async function Erase_Funil_(Is_From_End, Funilt_) { // quando for adicionar pra 
     try {
         //Client_Not_Ready = true
 
-        const Funils_ = JSON.parse(await fs.readFile(global.Data_File_Funils_, 'utf8'))   
-        const Dir_Funils_ = (await fs.access(`Funils_\\Funil=${Funilt_}.json`, fs.constants.F_OK).then(() => true).catch(() => false))
-        if (Funils_.length === 0 || null && Dir_Funils_ === false) {
-            console.log(`> ⚠️  ${global.Data_File_Funils_}, Funils_(${Funilt_}), array(Funilts_[${Funilt_}]) is ALL empty, does not contain any data.`)
-            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Data_File_Funils_}, Funils_(${Funilt_}), array(Funilts_[${Funilt_}])</strong> is <strong>ALL</strong> empty, does <strong>not</strong> <strong>contain</strong> any <strong>data</strong>.`)
+        const Funils_ = await fs.readdir(global.Directory_Dir_Funil)
+        //const Dir_Funils_ = (await fs.access(`Funils_\\Funil=${Funilt_}.json`, fs.constants.F_OK).then(() => true).catch(() => false))
+        if (Funils_.length === 0 || null) {//&& Dir_Funils_ === false) {
+            console.log(`> ⚠️  ${global.Directory_Dir_Funils_}, Funils_(${Funilt_}), array(Funilts_[${Funilt_}]) is ALL empty, does not contain any data.`)
+            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Directory_Dir_Funils_}, Funils_(${Funilt_}), array(Funilts_[${Funilt_}])</strong> is <strong>ALL</strong> empty, does <strong>not</strong> <strong>contain</strong> any <strong>data</strong>.`)
             
             //Client_Not_Ready = false
             
             return { Sucess: false, Is_Empty: true, Is_Empty_Input: false, Not_Selected: false }
         }
         if (global.Funil_ !== Funilt_) {
-            console.log(`> ⚠️  The Funil_ ${Funilt_} is to be erase it is not selected, the Funil_ selected is ${global.Funil_} so select ${Funilt_} to erase it.}`)
+            console.log(`> ⚠️  The Funil_ ${Funilt_} is to be erase it is not selected, the Funil_ selected is ${global.Funil_} so select ${Funilt_} to erase it.`)
             if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>The Funil_ <strong>${Funilt_}</strong> is to be <strong>erase</strong> it is <strong>not</strong> <strong>selected</strong>, the Funil_ <strong>selected</strong> is <strong>${global.Funil_}</strong> so <strong>select</strong> <strong>${Funilt_}</strong> to <strong>erase</strong> it.`)
 
             //Client_Not_Ready = false
@@ -773,7 +775,7 @@ async function Erase_Funil_(Is_From_End, Funilt_) { // quando for adicionar pra 
                 console.log(`>  ◌ Erasing Funil_ ${Funilt_} from ${global.File_Data_Funils_}...`)
                 if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Erasing Funil_ <strong>${Funilt_}</strong> from <strong>${global.File_Data_Funils_}</strong>...`)
                 
-                fse.remove(`Funils_\\${global.File_Data_Funils_}`)
+                fse.remove(`Funil\\${Funilt_}`)
                 
                 Erased_ = true
             } else if (answer.toLowerCase() === 'n') {
@@ -796,7 +798,7 @@ async function Erase_Funil_(Is_From_End, Funilt_) { // quando for adicionar pra 
             console.log(`>  ◌ Erasing Funil_ ${Funilt_} from ${global.File_Data_Funils_}...`)
             if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> Funil_ <strong>${Funilt_}</strong> from <strong>${global.File_Data_Funils_}</strong>...`)
             
-            fse.remove(`Funils_\\${global.File_Data_Funils_}`)
+            fse.remove(`Funil\\${Funilt_}`)
             
             Erased_ = true
         }
@@ -828,8 +830,8 @@ async function Select_Funil_(Funilt_) {
         //Client_Not_Ready = true
 
         global.Funil_ = Funilt_
-        global.File_Data_Funils_ = `Funil=${Funilt_}.json`
-        global.Data_File_Funils_ = path.join(global.Directory_Dir_Funils_, `Funil=${Funilt_}.json`)
+        global.Directory_Dir_Funils_ = path.join(global.Directory_Dir_Funil, `${Funilt_}`)
+        global.File_Data_Funils_ = `${Funilt_}`
 
         //global.File_Data_Chat_Data = `Chat_Data=${Funilt_}.json`
         //global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Funilt_}.json`)
@@ -880,34 +882,23 @@ async function Insert_Exponecial_Position_Funil_(arrayIdNameFunils_) {
 }
 async function Dir_Funils_() {
     try {
-        const jsons = await fs.readdir(global.Directory_Dir_Funils_)
+        const jsons = await fs.readdir(global.Directory_Dir_Funil)
         let Counter_Id_Funils_ = []
 
-        for (const file of jsons) {
-            if (path.extname(file) === '.json') {
-                const filePath = path.join(global.Directory_Dir_Funils_, file)
-                const data = await fs.readFile(filePath, 'utf8')
-                const json = JSON.parse(data)
-
-                json.forEach(item => {
-                    if (item.Funilt_) {
-                        const match = Number(item.Funilt_.match(/\d+/g))
-                        if (match) {
-                            Counter_Id_Funils_.push(Number(match))
-                        }
-                    }
-                })
+        jsons.forEach(item => {
+            if (item) {
+                const match = Number(item.match(/\d+/g))
+                if (match) {
+                    Counter_Id_Funils_.push(Number(match))
+                }
             }
-        }
+        })
         return Counter_Id_Funils_
     } catch (error) {
         console.error(`> ❌ ERROR Dir_Funils_: ${error}`)
         return []
     }
 }
-global.Directory_Dir_Funils_ = path.join(Root_Dir, `Funils_`)
-global.File_Data_Funils_ = `Funil= .json`
-global.Data_File_Funils_ = path.join(global.Directory_Dir_Funils_, `Funil= .json`)
 async function Generate_Funil_Id() {
     /*if (Generate_Id_Not_Ready) {
         console.log('>  ℹ️ Generate_Client_Id not Ready.')
@@ -957,14 +948,12 @@ async function New_Funil_() {
         const Id_Funil_ = await Generate_Funil_Id()
         const Funilt_ = `_${Id_Funil_}_${NameFunil_}_`
 
-        global.File_Data_Funils_ = `Funil=${Funilt_}.json`
-        global.Data_File_Funils_ = path.join(global.Directory_Dir_Funils_, `Funil=${Funilt_}.json`)
+        global.Directory_Dir_Funils_ = path.join(global.Directory_Dir_Funil, `${Funilt_}`)
         
+        global.File_Data_Funils_ = `${Funilt_}`
+
         await fs.mkdir(global.Directory_Dir_Funils_, { recursive: true } )
-        
-        const New_Funil_ = [{ Funilt_ }]
-        const jsonString = '[\n' + New_Funil_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
-        await fs.writeFile(global.Data_File_Funils_, jsonString, 'utf8')
+        //await fs.mkdir(global.Directory_Dir_Funils_, { recursive: true } )
 
         return { Sucess: true, Funil_: Funilt_ }
     } catch (error) {
@@ -979,25 +968,25 @@ async function Insert_Exponecial_Position_MSG(arrayIdNumberPosition) {
         let isFirstUndefined = false
         let idNumberPositionDivAdjacent = null
         for (let i = 0; i < arrayIdNumberPosition.length; i++) {
-        if (arrayIdNumberPosition[0] !== 1) {
-            isFirstUndefined = true
-            idNumberPositionDivAdjacent = `conteinerFunilMSG${arrayIdNumberPosition[0]}`
-            break
-        } 
-        const currentNumber = arrayIdNumberPosition[i]
-        let nextNumber = null
-        if (i+1 < arrayIdNumberPosition.length) {
-                nextNumber = arrayIdNumberPosition[i+1]
-            } else {
-                nextNumber = undefined
-            }
-        if (nextNumber !== undefined) {
-            if (currentNumber !== nextNumber-1) {
-                idNumberPositionDivAdjacent = `conteinerFunilMSG${arrayIdNumberPosition[currentNumber-1]}`
+            if (arrayIdNumberPosition[0] !== 1) {
+                isFirstUndefined = true
+                idNumberPositionDivAdjacent = `conteinerFunilMSG${arrayIdNumberPosition[0]}`
                 break
-            }
-        } 
-        idNumberPositionDivAdjacent = `conteinerFunilMSG${currentNumber}`
+            } 
+            const currentNumber = arrayIdNumberPosition[i]
+            let nextNumber = null
+            if (i+1 < arrayIdNumberPosition.length) {
+                    nextNumber = arrayIdNumberPosition[i+1]
+                } else {
+                    nextNumber = undefined
+                }
+            if (nextNumber !== undefined) {
+                if (currentNumber !== nextNumber-1) {
+                    idNumberPositionDivAdjacent = `conteinerFunilMSG${arrayIdNumberPosition[currentNumber-1]}`
+                    break
+                }
+            } 
+            idNumberPositionDivAdjacent = `conteinerFunilMSG${currentNumber}`
         }
 
         return { idNumberPositionDivAdjacent, isFirstUndefined }
@@ -1015,7 +1004,7 @@ async function Position_MSG_Erase(IdNumberPosition) {
         return false
     }
 }
-let Counter_Id_Position_MSG = [1, 2, 3]
+let Counter_Id_Position_MSG = [] //[1, 2, 3]
 async function Generate_MSG_Position_Id() {
     /*if (Generate_Id_Not_Ready) {
         console.log('>  ℹ️ Generate_Client_Id not Ready.')

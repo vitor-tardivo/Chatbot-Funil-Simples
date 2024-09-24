@@ -195,37 +195,53 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         await loadFunilStyles()
         let dir_Path = null
         let Directories_ = null
-        dir_Path = 'Funils_'
+        dir_Path = 'Funil'
         const response3 = await axios.get('/functions/dir', { params: { dir_Path } })
         Directories_ = response3.data.dirs
         if (Directories_.length-1 === -1) {
             
             
         } else {
+            let divTemplateFunctions = document.querySelector('#divNewTemplate')
+
             let Counter_Clients_ = 1
             for (let i = 1; i <= Directories_.length; i++) {
-                const match = Directories_[Counter_Clients_-1].match(/=(.+)\.json/)
-                const Funilt_ = match ? match[1] : null
-                await insertFunil_Front(Funilt_)
-                await selectFunil_(Funilt_)
+                await insertFunil_Front(Directories_[Counter_Clients_-1])
+                await selectFunil_(Directories_[Counter_Clients_-1], false)
+
+                divTemplateFunctions.style.cssText =
+                    'display: flex; opacity: 0;'
+                setTimeout(function() {
+                    divTemplateFunctions.style.cssText =
+                        'display: flex; opacity: 1;'
+                }, 100)
                 
                 Counter_Clients_++
             }
         }
 
-        dir_Path = 'Templates_'
+        dir_Path = `Funil\\${Funil_}`
         const response4 = await axios.get('/functions/dir', { params: { dir_Path } })
         Directories_ = response4.data.dirs
         if (Directories_.length-1 === -1) {
             
             
         } else {
+            let divTemplateInner = document.querySelector('#divInnerTemplate')
+
             let Counter_Templates_ = 1
             for (let i = 1; i <= Directories_.length; i++) {
                 const match = Directories_[Counter_Templates_-1].match(/=(.+)\.json/)
                 const Templatet_ = match ? match[1] : null
-                await insertTemplate_Front(Templatet_)
+                await insertTemplate_Front(Templatet_, Funil_)
                 await selectTemplate_(Templatet_)
+
+                divTemplateInner.style.cssText =
+                    'display: block; opacity: 0;'
+                setTimeout(function() {
+                    divTemplateInner.style.cssText =
+                        'display: block; opacity: 1;'
+                }, 100)
                 
                 Counter_Templates_++
             }
@@ -1324,7 +1340,7 @@ async function sendCommand() {
     }
 }
 
-async function eraseTemplate_(Templatet_) {
+async function eraseTemplate_(Templatet_, Funilt_) {
     /*if (Client_NotReady) {
         displayOnConsole(`>  ℹ️  ${Funilt_} not Ready.`, setLogError)
         return
@@ -1340,7 +1356,7 @@ async function eraseTemplate_(Templatet_) {
         if (userConfirmation) {
             const status = document.querySelector('#status')
 
-            const response = await axios.delete('/template/erase', { params: { Templatet_ } })
+            const response = await axios.delete('/template/erase', { params: { Templatet_, Funilt_ } })
             const Sucess = response.data.sucess
             const Is_Empty = response.data.empty
             const Is_Empty_Input = response.data.empty_input
@@ -1383,11 +1399,20 @@ async function eraseTemplate_(Templatet_) {
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`)
 
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
-                const dir_Path = 'Templates_'
+                let divTemplateInner = document.querySelector('#divInnerTemplate')
+
+                const dir_Path = `Funil\\${Funil_}`
                 const response = await axios.get('/functions/dir', { params: { dir_Path } })
                 const Directories = response.data.dirs
 
                 if (Directories.length === 0) {
+                    divTemplateInner.style.cssText =
+                        'display: block; opacity: 0;'
+                    setTimeout(function() {
+                        divTemplateInner.style.cssText =
+                            'display: none; opacity: 0;'
+                    }, 300)
+
                     status.innerHTML = `<strong>Dir</strong> off Templates_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
                     displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Templates_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
                 } else {
@@ -1416,7 +1441,7 @@ async function eraseTemplate_(Templatet_) {
                         }
                     }
 
-                    await selectTemplate_(`_${Number(posArrayTemplateId)}_${posArrayTemplateName}_`)
+                    await selectTemplate_(`_${Number(posArrayTemplateId)}_${posArrayTemplateName}_`, Funilt_)
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Template_ <strong>${Templatet_}</strong>!`
@@ -1482,6 +1507,9 @@ async function selectTemplate_(Templatet_) {
 
             status.innerHTML = `Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>.`)
+
+            const titleTemplate = document.querySelector(`#SelectedTemplate`)
+            titleTemplate.textContent = `${Templatet_}`
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> <strong>selecionando</strong> Template_ <strong>${Templatet_}</strong>!`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Template_ <strong>${Templatet_}</strong>!`)
@@ -1496,7 +1524,7 @@ async function selectTemplate_(Templatet_) {
         resetLoadingBar()
     }
 }
-async function insertTemplate_Front(Templatet_) {
+async function insertTemplate_Front(Templatet_, Funilt_) {
     /*if (!Client_NotReady) {
         displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
@@ -1526,7 +1554,7 @@ async function insertTemplate_Front(Templatet_) {
     
         const divAdjacent = document.querySelector(`#${idNumberTemplate_DivAdjacent}`)
 
-        const templateHTMlDestroy = `\n<div class="divTemplates_" id="${Templatet_}">\n<abbr title="Template_ ${Templatet_}" id="abbrselect-${Templatet_}"><button class="Templates_" id="select-${Templatet_}" onclick="selectTemplate_('${Templatet_}')">${Templatet_}</button></abbr><abbr title="Apagar ${Templatet_}" id="abbrerase-${Templatet_}"><button class="Templates_Erase" id="erase-${Templatet_}" onclick="eraseTemplate_('${Templatet_}')"><</button></abbr>\n</div>\n`
+        const templateHTMlDestroy = `\n<div class="divTemplates_" id="${Templatet_}">\n<abbr title="Template_ ${Templatet_}" id="abbrselect-${Templatet_}"><button class="Templates_" id="select-${Templatet_}" onclick="selectTemplate_('${Templatet_}')">${Templatet_}</button></abbr><abbr title="Apagar ${Templatet_}" id="abbrerase-${Templatet_}"><button class="Templates_Erase" id="erase-${Templatet_}" onclick="eraseTemplate_('${Templatet_}', '${Funilt_}')"><</button></abbr>\n</div>\n`
         if (divAdjacent) {
             if (isFirstUndefined) {
                 divAdjacent.insertAdjacentHTML('beforebegin', templateHTMlDestroy)
@@ -1569,6 +1597,7 @@ async function newTemplates() {
 
             return
         }
+        let divTemplateInner = document.querySelector('#divInnerTemplate')
 
         //isFromNew = true
 
@@ -1576,8 +1605,15 @@ async function newTemplates() {
         const Sucess = response.data.sucess
         const Template_ = response.data.Templatet_
         if (Sucess) {
-            await insertTemplate_Front(Template_)
-            await selectTemplate_(Template_)
+            await insertTemplate_Front(Template_, Funil_)
+            await selectTemplate_(Template_, Funil_)
+
+            divTemplateInner.style.cssText =
+                'display: block; opacity: 0;'
+            setTimeout(function() {
+                divTemplateInner.style.cssText =
+                    'display: block; opacity: 1;'
+            }, 100)
 
             resetLoadingBar()
         } else {
@@ -1652,11 +1688,20 @@ async function eraseFunil_(Funilt_) {
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> foi <strong>Apagado</strong>!`)
 
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
-                const dir_Path = 'Funils_'
+                let divTemplateFunctions = document.querySelector('#divNewTemplate')
+
+                const dir_Path = 'Funil'
                 const response = await axios.get('/functions/dir', { params: { dir_Path } })
                 const Directories = response.data.dirs
 
                 if (Directories.length === 0) {
+                    divTemplateFunctions.style.cssText =
+                        'display: flex; opacity: 0;'
+                    setTimeout(function() {
+                        divTemplateFunctions.style.cssText =
+                            'display: none; opacity: 0;'
+                    }, 300)
+
                     status.innerHTML = `<strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
                     displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
                 } else {
@@ -1708,7 +1753,7 @@ async function eraseFunil_(Funilt_) {
         resetLoadingBar()
     }
 }
-async function selectFunil_(Funilt_) {
+async function selectFunil_(Funilt_, isFromButton) {
     /*if (Client_NotReady = false) {
         displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
@@ -1753,6 +1798,39 @@ async function selectFunil_(Funilt_) {
 
             status.innerHTML = `Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>.`)
+
+            const titleFunil = document.querySelector(`#SelectedFunil`)
+            titleFunil.textContent = `${Funilt_}`
+
+            if (isFromButton) {
+                document.querySelector('#Templates_').innerHTML = ''
+                let dir_Path = `Funil\\${Funil_}`
+                const response4 = await axios.get('/functions/dir', { params: { dir_Path } })
+                let Directories_ = response4.data.dirs
+                if (Directories_.length-1 === -1) {
+                    
+                    
+                } else {
+                    let divTemplateInner = document.querySelector('#divInnerTemplate')
+
+                    let Counter_Templates_ = 1
+                    for (let i = 1; i <= Directories_.length; i++) {
+                        const match = Directories_[Counter_Templates_-1].match(/=(.+)\.json/)
+                        const Templatet_ = match ? match[1] : null
+                        await insertTemplate_Front(Templatet_, Funil_)
+                        await selectTemplate_(Templatet_)
+
+                        divTemplateInner.style.cssText =
+                            'display: block; opacity: 0;'
+                        setTimeout(function() {
+                            divTemplateInner.style.cssText =
+                                'display: block; opacity: 1;'
+                        }, 100)
+                        
+                        Counter_Templates_++
+                    }
+                }
+            }
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> <strong>selecionando</strong> Funil_ <strong>${Funilt_}</strong>!`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Funil_ <strong>${Funilt_}</strong>!`)
@@ -1797,7 +1875,7 @@ async function insertFunil_Front(Funilt_) {
     
         const divAdjacent = document.querySelector(`#${idNumberFunil_DivAdjacent}`)
 
-        const funilHTMlDestroy = `\n<div class="divFunils_" id="${Funilt_}">\n<abbr title="Funil_ ${Funilt_}" id="abbrselect-${Funilt_}"><button class="Funils_" id="select-${Funilt_}" onclick="selectFunil_('${Funilt_}')">${Funilt_}</button></abbr><abbr title="Apagar ${Funilt_}" id="abbrerase-${Funilt_}"><button class="Funils_Erase" id="erase-${Funilt_}" onclick="eraseFunil_('${Funilt_}')"><</button></abbr>\n</div>\n`
+        const funilHTMlDestroy = `\n<div class="divFunils_" id="${Funilt_}">\n<abbr title="Funil_ ${Funilt_}" id="abbrselect-${Funilt_}"><button class="Funils_" id="select-${Funilt_}" onclick="selectFunil_('${Funilt_}', true)">${Funilt_}</button></abbr><abbr title="Apagar ${Funilt_}" id="abbrerase-${Funilt_}"><button class="Funils_Erase" id="erase-${Funilt_}" onclick="eraseFunil_('${Funilt_}')"><</button></abbr>\n</div>\n`
         if (divAdjacent) {
             if (isFirstUndefined) {
                 divAdjacent.insertAdjacentHTML('beforebegin', funilHTMlDestroy)
@@ -1840,6 +1918,7 @@ async function newFunils() {
 
             return
         }
+        let divTemplateFunctions = document.querySelector('#divNewTemplate')
 
         //isFromNew = true
 
@@ -1849,6 +1928,13 @@ async function newFunils() {
         if (Sucess) {
             await insertFunil_Front(Funil_)
             await selectFunil_(Funil_)
+
+            divTemplateFunctions.style.cssText =
+                'display: flex; opacity: 0;'
+            setTimeout(function() {
+                divTemplateFunctions.style.cssText =
+                    'display: flex; opacity: 1;'
+            }, 100)
 
             resetLoadingBar()
         } else {

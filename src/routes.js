@@ -46,8 +46,9 @@ router.get('/', (req, res) => {
 router.delete('/template/erase', async (req, res) => {
     try {
         const Template_ = req.query.Templatet_
+        const Funil_ = req.query.Funilt_
         let Is_From_End = false
-        const { Sucess, Is_Empty, Is_Empty_Input, Not_Selected } = await Erase_Template_(Is_From_End, Template_)
+        const { Sucess, Is_Empty, Is_Empty_Input, Not_Selected } = await Erase_Template_(Is_From_End, Template_, Funil_)
         if (Sucess) {
             res.status(200).send({ sucess: Sucess, message: `Sucessfully erased ${Template_}.`, empty: Is_Empty, empty_input: Is_Empty_Input, nselected: Not_Selected })
         } else {
