@@ -2192,11 +2192,14 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                 divElement = bridgeElement.closest(`#idivDelayTypeMSG`)
                 
                 const inputDelayMSG = divElement.querySelector(`#idelayMSGTime`)
+                let typeTypeMSGValue = null
 
                 switch (typeTypeMSG.value || typeTypeMSG) {
                     case 'input':
                         displayOnConsole(`1=${typeTypeMSG}:`)
                         displayOnConsole(inputDelayMSG.value)
+                        const inputDelayMSGValue = inputDelayMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, typeTypeMSG, inputDelayMSGValue })
 
                         const selectDelayMSG = divElement.querySelector(`#idelayMSGSelect`)
                         if (inputDelayMSG.value >= 1) {
@@ -2210,57 +2213,56 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                                 selectDelayMSG.dispatchEvent(new Event('input'))
                             }
                         }
-
-
                         break;
                     case 'seconds':
                         displayOnConsole(`1=${typeTypeMSG.value}`)
+                        typeTypeMSGValue = typeTypeMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
                             inputDelayMSG.dispatchEvent(new Event('input'))
                         }
-
-
                         break;
                     case 'minutes':
                         displayOnConsole(`1=${typeTypeMSG.value}`)
+                        typeTypeMSGValue = typeTypeMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
                             inputDelayMSG.dispatchEvent(new Event('input'))
                         }
-
-
                         break;
                     case 'hours':
                         displayOnConsole(`1=${typeTypeMSG.value}`)
+                        typeTypeMSGValue = typeTypeMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
                             inputDelayMSG.dispatchEvent(new Event('input'))
                         }
-
-
                         break;
                     case 'days':
                         displayOnConsole(`1=${typeTypeMSG.value}`)
+                        typeTypeMSGValue = typeTypeMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
                             inputDelayMSG.dispatchEvent(new Event('input'))
                         }
-
-
                         break;
                     case 'none':
                         displayOnConsole(`1=${typeTypeMSG.value}`)
+                        typeTypeMSGValue = typeTypeMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                         if (inputDelayMSG.value !== '') {
                             inputDelayMSG.value = ''
                             inputDelayMSG.dispatchEvent(new Event('input'))
                         }
-
                         break;
                 }
                 break;
@@ -2274,6 +2276,8 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         case 'input':
                             displayOnConsole(`2=${typeTypeMSG}:`)
                             displayOnConsole(inputDelayText.value)
+                            const inputDelayTextValue = inputDelayText.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSG, inputDelayTextValue })
 
                             const selectDelayText = divElement.querySelector(`#idelayTextSelect`)
                             if (inputDelayText.value >= 1) {
@@ -2287,31 +2291,31 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                                     selectDelayText.dispatchEvent(new Event('input'))
                                 }
                             }
-                            
-
                             break;
                         case 'seconds':
                             displayOnConsole(`2=${typeTypeMSG.value}`)
+                            typeTypeMSGValue = typeTypeMSG.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
                                 inputDelayText.dispatchEvent(new Event('input'))
                             }
-                            
-                            
                             break;
                         case 'minutes':
                             displayOnConsole(`2=${typeTypeMSG.value}`)
+                            typeTypeMSGValue = typeTypeMSG.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
                                 inputDelayText.dispatchEvent(new Event('input'))
                             }
-                            
-                            
                             break;
                         case 'hours':
                             displayOnConsole(`2=${typeTypeMSG.value}`)
+                            typeTypeMSGValue = typeTypeMSG.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -2322,34 +2326,36 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             break;
                         case 'days':
                             displayOnConsole(`2=${typeTypeMSG.value}`)
+                            typeTypeMSGValue = typeTypeMSG.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
                                 inputDelayText.dispatchEvent(new Event('input'))
                             }
-
-                            
                             break;
                         case 'none':
                             displayOnConsole(`2=${typeTypeMSG.value}`)
+                            typeTypeMSGValue = typeTypeMSG.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                             if (inputDelayText.value !== '') {
                                 inputDelayText.value = ''
                                 inputDelayText.dispatchEvent(new Event('input'))
                             }
-
-                            
+                            break;
+                        case 'textarea':
+                                //const divTextAreaMSG = divElement.querySelector(`#itextAreaTypeMSG`)
+                                if (data) {
+                                    displayOnConsole(`2=${typeTypeMSG}:`) 
+                                    displayOnConsole(data.value)
+                                    typeTypeMSGValue = typeTypeMSG.value
+                                    const dataValue = data.value
+                                    await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, dataValue })
+                                }
                             break;
                     }
                 }
-                
-                //const divTextAreaMSG = divElement.querySelector(`#itextAreaTypeMSG`)
-                if (data) {
-                    displayOnConsole(`3=textarea:`) 
-                    displayOnConsole(data.value)
-                }
-
-
                 break;
             case 3:
                 divElement = bridgeElement.closest(`#ifileTypeMSG`)
@@ -2361,6 +2367,8 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         case 'input':
                             displayOnConsole(`3=${typeTypeMSG}:`)
                             displayOnConsole(inputDelayTextAudio.value)
+                            const inputDelayTextAudioValue = inputDelayTextAudio.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSG, inputDelayTextAudioValue })
 
                             const selectDelayTextAudio = divElement.querySelector(`#idelayTextAudioSelect`)
                             if (inputDelayTextAudio.value >= 1) {
@@ -2374,71 +2382,89 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                                     selectDelayTextAudio.dispatchEvent(new Event('input'))
                                 }
                             }
-
-
                             break;
                         case 'seconds':
                             displayOnConsole(`3=${typeTypeMSG.value}`)
+                            typeTypeMSGValue = typeTypeMSG.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                             if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                                 inputDelayTextAudio.value = 1
                                 inputDelayTextAudio.dispatchEvent(new Event('input'))
                             }
-                            
                             break;
                         case 'minutes':
                             displayOnConsole(`3=${typeTypeMSG.value}`)
+                            typeTypeMSGValue = typeTypeMSG.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                             if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                                 inputDelayTextAudio.value = 1
                                 inputDelayTextAudio.dispatchEvent(new Event('input'))
                             }
-                            
                             break;
                         case 'hours':
                             displayOnConsole(`3=${typeTypeMSG.value}`)
+                            typeTypeMSGValue = typeTypeMSG.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                             if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                                 inputDelayTextAudio.value = 1
                                 inputDelayTextAudio.dispatchEvent(new Event('input'))
                             }
-                            
                             break;
                         case 'days':
                             displayOnConsole(`3=${typeTypeMSG.value}`)
+                            typeTypeMSGValue = typeTypeMSG.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                             if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                                 inputDelayTextAudio.value = 1
                                 inputDelayTextAudio.dispatchEvent(new Event('input'))
                             }
-
-                            
                             break;
                         case 'none':
                             displayOnConsole(`3=${typeTypeMSG.value}`)
+                            typeTypeMSGValue = typeTypeMSG.value
+                            await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, undefined })
 
                             if (inputDelayTextAudio.value !== '') {
                                 inputDelayTextAudio.value = ''
                                 inputDelayTextAudio.dispatchEvent(new Event('input'))
                             }
-
-                            
+                            break;
+                        case 'textarea':
+                            //const divTextAreaMSG = divElement.querySelector(`#itextAreaTypeMSG`)
+                            if (data) {
+                                displayOnConsole(`3=${typeTypeMSG}:`) 
+                                displayOnConsole(data.value || '')
+                                typeTypeMSGValue = typeTypeMSG.value
+                                const dataValue = data.value
+                                await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, dataValue })
+                            }
+                            break;
+                        default:
+                            if (data) {
+                                displayOnConsole(`3=file:`)   
+                                displayOnConsole(`3=fileType:`)   
+                                displayOnConsole(typeTypeMSG)   
+                                displayOnConsole(data.name)   
+                                console.log(data || '')
+                                let stateType = null
+                                switch (typeTypeMSG) {
+                                    case 'audio':
+                                        stateType = 'recording'
+                                        break;
+                                    case 'text':
+                                        stateType = 'typing'
+                                        break;
+                                }
+                                typeTypeMSGValue = 'file'
+                                await axios.put('/funil/send-data', { typeMSG, typeTypeMSGValue, data, typeTypeMSG, stateType })
+                            }
                             break; 
                     }
                 }
-
-                //const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
-                if (data) {
-                    displayOnConsole(`3=file:`)   
-                    displayOnConsole(`3=fileType:`)   
-                    displayOnConsole(typeTypeMSG)   
-                    displayOnConsole(data.name)   
-                    console.log(data || '')
-                    displayOnConsole(`3=textarea:`)   
-                    displayOnConsole(data.value || '')   
-                }
-
-
                 break;
         }
     } catch (error) {
@@ -3501,7 +3527,7 @@ async function getFileData(divElementBridge, file) {
                     divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
                     divDelayTextAudioTitle.textContent = 'ATRASO-State=Typing&Recording:'
 
-                    await sendToFunil(divElementBridge, 3, 'video', file)
+                    await sendToFunil(divElementBridge, 3, 'video', file)//
 
                     break;
                 case 'audio/x-m4a':
