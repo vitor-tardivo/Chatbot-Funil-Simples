@@ -31,6 +31,7 @@ const {
     Insert_Exponecial_Position_Template_,
     Select_Template_,
     Erase_Template_,
+    Send_To_Funil,
 } = require('./app')
 
 router.get('/', (req, res) => {
@@ -40,6 +41,18 @@ router.get('/', (req, res) => {
     } catch (error) {
         console.error(`> ❌ ERROR /: ${error}`)
         res.status(500).send({ sucess: false, message: 'ERROR Internal server' })
+    }
+})
+
+router.put('/funil/send-data', async (req, res) => {
+    try {
+        const { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData } = req.body
+        console.log('cuuuuuuuuuuuuuuuu',fileData)
+        await Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData)
+        res.status(200).send({ sucess: true, message: `Sucessfully sent funil data.` })
+    } catch (error) {
+        console.error(`> ❌ ERROR /funil/send-data: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
 

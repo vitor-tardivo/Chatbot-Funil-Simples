@@ -482,6 +482,152 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
     }
 }
 
+async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData) {
+    try {
+        console.log(MSGType)
+        console.log(typeMSG)
+        console.log(positionId)
+        console.log(delayType)
+        console.log(delayData)
+        console.log(textareaData)
+        console.log(fileType)
+        console.log(stateFileType)
+        console.log(fileData)
+
+        //let Data_ = [{  }]
+
+        let existingData = [{  }]
+        const fileContent = await fs.readFile(global.Data_File_Templates_, 'utf8')
+        existingData = JSON.parse(fileContent)
+
+        let existingItem = existingData.find(item => item.positionId === positionId)
+        if (existingItem) {
+            switch (typeMSG) {
+                case 1:
+                    if (delayType === 'input') {
+                        existingItem.typeMSG = typeMSG
+                        existingItem.delayData = delayData
+                    } else {
+                        existingItem.typeMSG = typeMSG
+                        existingItem.delayType = delayType
+                    }
+                    break;
+                case 2:
+                    switch (MSGType) {
+                        case 'delay':
+                            if (delayType === 'input') {
+                                existingItem.typeMSG = typeMSG
+                                existingItem.delayData = delayData
+                            } else {
+                                existingItem.typeMSG = typeMSG
+                                existingItem.delayType = delayType
+                            }       
+                            break;
+                        case 'textarea':
+                            existingItem.typeMSG = typeMSG 
+                            existingItem.textareaData = textareaData
+                        break;
+                    }
+                    break;
+                case 3:
+                    switch (MSGType) {
+                        case 'delay':
+                            if (delayType === 'input') {
+                                existingItem.typeMSG = typeMSG
+                                existingItem.delayData = delayData
+                            } else {
+                                existingItem.typeMSG = typeMSG
+                                existingItem.delayType = delayType
+                            }       
+                            break;
+                        case 'textarea':
+                            existingItem.typeMSG = typeMSG
+                            existingItem.textareaData = textareaData
+                            break;
+                        case 'file':
+                            existingItem.typeMSG = typeMSG
+                            existingItem.fileType = fileType
+                            existingItem.stateFileType = stateFileType
+                            existingItem.fileData = fileData
+                            break;
+                    }
+                    break;
+            }
+        } else {
+            let newItem = { positionId }
+            switch (typeMSG) {
+                case 1:
+                    if (delayType === 'input') {
+                        newItem.typeMSG = typeMSG
+                        newItem.delayData = delayData
+                    } else {
+                        newItem.typeMSG = typeMSG
+                        newItem.delayType = delayType
+                    }
+                    break;
+                case 2:
+                    switch (MSGType) {
+                        case 'delay':
+                            if (delayType === 'input') {
+                                newItem.typeMSG = typeMSG
+                                newItem.delayData = delayData
+                                newItem.textareaData = ''
+                            } else {
+                                newItem.typeMSG = typeMSG
+                                newItem.delayType = delayType
+                                newItem.textareaData = ''
+                            }       
+                            break;
+                        case 'textarea':
+                            newItem.typeMSG = typeMSG
+                            newItem.delayData = ''
+                            newItem.delayType = 'none'
+                            newItem.textareaData = textareaData
+                        break;
+                    }
+                    break;
+                case 3:
+                    switch (MSGType) {
+                        case 'delay':
+                            if (delayType === 'input') {
+                                newItem.typeMSG = typeMSG
+                                newItem.delayData = delayData
+                                newItem.textareaData = ''
+                            } else {
+                                newItem.typeMSG = typeMSG
+                                newItem.delayType = delayType
+                                newItem.textareaData = ''
+                            }       
+                            break;
+                        case 'textarea':
+                            newItem.typeMSG = typeMSG
+                            newItem.delayData = ''
+                            newItem.delayType = 'none'
+                            newItem.textareaData = textareaData
+                            break;
+                        case 'file':
+                            newItem.typeMSG = typeMSG
+                            newItem.delayData = ''
+                            newItem.delayType = 'none'
+                            newItem.textareaData = ''
+                            newItem.fileType = fileType
+                            newItem.stateFileType = stateFileType
+                            newItem.fileData = fileData
+                            break;
+                    }
+                    break;
+            }
+
+            existingData.push(newItem)
+        }
+
+        const jsonString = '[\n' + existingData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
+    } catch (error) {
+        console.error(`> ❌ ERROR Send_To_Funil: ${error}`)
+    }
+}
+
 global.Directory_Dir_Funil = path.join(Root_Dir, `Funil`)
 global.Directory_Dir_Funils_ = path.join(global.Directory_Dir_Funil, ``)
 global.File_Data_Funils_ = ``
@@ -1004,7 +1150,7 @@ async function Position_MSG_Erase(IdNumberPosition) {
         return false
     }
 }
-let Counter_Id_Position_MSG = [] //[1, 2, 3]
+let Counter_Id_Position_MSG = [] //[1, 2, 3]/////////////coisa pra pegar dos json certo
 async function Generate_MSG_Position_Id() {
     /*if (Generate_Id_Not_Ready) {
         console.log('>  ℹ️ Generate_Client_Id not Ready.')
@@ -1034,6 +1180,7 @@ async function Generate_MSG_Position_Id() {
                 }
             }
         }
+        console.log(Counter_Id_Position_MSG)
         return Id_Position_MSG
     } catch (error) {
         console.error(`> ❌ ERROR Generate_MSG_Position_Id: ${error}`)
@@ -2862,6 +3009,7 @@ module.exports = {
     Insert_Exponecial_Position_Template_,
     Select_Template_,
     Erase_Template_,
+    Send_To_Funil,
 }
 
 console.log(`> ✅ FINISHED(Starting functions)`)
