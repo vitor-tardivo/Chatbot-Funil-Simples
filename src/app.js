@@ -482,7 +482,26 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
     }
 }
 
-async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData) {
+async function Insert_Template_Front() {
+    try {
+        console.log(Counter_Id_Position_MSG)
+        Counter_Id_Position_MSG = []
+        const Template_Data = JSON.parse(fss.readFileSync(global.Data_File_Templates_, 'utf8'))
+        console.log(Template_Data)
+        Template_Data.forEach(Template => {
+            if (Template.positionId !== undefined) {
+                Counter_Id_Position_MSG.push(Template.positionId)
+            }
+        })
+        console.log(Counter_Id_Position_MSG)
+        return { Sucess: true, jsonTemplate: Template_Data }
+    } catch (error) {
+        console.error(`> ❌ ERROR Insert_Template_Front: ${error}`)
+        return { Sucess: false }
+    }
+}
+
+async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData) {
     try {
         console.log(MSGType)
         console.log(typeMSG)
@@ -491,7 +510,6 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
         console.log(delayData)
         console.log(textareaData)
         console.log(fileType)
-        console.log(stateFileType)
         console.log(fileData)
 
         //let Data_ = [{  }]
@@ -546,8 +564,17 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                             break;
                         case 'file':
                             existingItem.typeMSG = typeMSG
+                            existingItem.delayType = 'none'
+                            existingItem.delayData = ''
+                            switch (fileType) {
+                                case 'audio':
+                                    existingItem.textareaData = null
+                                    break;
+                                default:
+                                    existingItem.textareaData = ''
+                                    break;
+                            }
                             existingItem.fileType = fileType
-                            existingItem.stateFileType = stateFileType
                             existingItem.fileData = fileData
                             break;
                     }
@@ -559,10 +586,12 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                 case 1:
                     if (delayType === 'input') {
                         newItem.typeMSG = typeMSG
+                        newItem.delayType = delayType
                         newItem.delayData = delayData
                     } else {
                         newItem.typeMSG = typeMSG
                         newItem.delayType = delayType
+                        newItem.delayData = delayData
                     }
                     break;
                 case 2:
@@ -570,18 +599,20 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                         case 'delay':
                             if (delayType === 'input') {
                                 newItem.typeMSG = typeMSG
+                                newItem.delayType = delayType
                                 newItem.delayData = delayData
                                 newItem.textareaData = ''
                             } else {
                                 newItem.typeMSG = typeMSG
                                 newItem.delayType = delayType
+                                newItem.delayData = delayData
                                 newItem.textareaData = ''
                             }       
                             break;
                         case 'textarea':
                             newItem.typeMSG = typeMSG
-                            newItem.delayData = ''
                             newItem.delayType = 'none'
+                            newItem.delayData = ''
                             newItem.textareaData = textareaData
                         break;
                     }
@@ -591,27 +622,31 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                         case 'delay':
                             if (delayType === 'input') {
                                 newItem.typeMSG = typeMSG
+                                newItem.delayType = delayType
                                 newItem.delayData = delayData
-                                newItem.textareaData = ''
                             } else {
                                 newItem.typeMSG = typeMSG
                                 newItem.delayType = delayType
-                                newItem.textareaData = ''
+                                newItem.delayData = delayData
                             }       
                             break;
                         case 'textarea':
                             newItem.typeMSG = typeMSG
-                            newItem.delayData = ''
-                            newItem.delayType = 'none'
                             newItem.textareaData = textareaData
                             break;
                         case 'file':
                             newItem.typeMSG = typeMSG
-                            newItem.delayData = ''
                             newItem.delayType = 'none'
-                            newItem.textareaData = ''
+                            newItem.delayData = ''
+                            switch (fileType) {
+                                case 'audio':
+                                    newItem.textareaData = null
+                                    break;
+                                default:
+                                    newItem.textareaData = ''
+                                    break;
+                            }
                             newItem.fileType = fileType
-                            newItem.stateFileType = stateFileType
                             newItem.fileData = fileData
                             break;
                     }
@@ -2421,7 +2456,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                     templateData = JSON.parse(data)
                     console.log(templateData)
                     let positions = null
-                    positions = templateData.filter(item => item.PositionMSG)
+                    positions = templateData.filter(item => item.positionId)
                     console.log(positions)
                     
                     let TimeType = null
@@ -2429,13 +2464,13 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                     for (let i = 0; i < positions.length; i++) {
                         const item = positions[i]
 
-                        switch (item.TypeMSG) {
+                        switch (item.typeMSG) {
                             case 1:
                                 console.log(`>  ◌ Sending Message_${i+1}_...`)
                                 if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>Message_${i+1}_</strong>...`)
 
                                 TimeType = null
-                                switch (item.TimeType) {
+                                switch (item.delayType) {
                                     case 'seconds':
                                         TimeType = 1000
                                         break;
@@ -2449,7 +2484,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                                         TimeType = 24 * 60 * 60 * 1000
                                         break;
                                 }
-                                await sleep(item.Time * TimeType)
+                                await sleep(item.delayData * TimeType)
 
                                 console.log(`> ✅ Message_${i+1}_ Sent.`)
                                 if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Message_${i+1}_</strong> <strong>Sent</strong>.`)
@@ -2458,24 +2493,26 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                                 console.log(`>  ◌ Sending Message_${i+1}_...`)
                                 if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>Message_${i+1}_</strong>...`)
 
-                                chat.sendStateTyping()
-                                TimeType = null
-                                switch (item.TimeType) {
-                                    case 'seconds':
-                                        TimeType = 1000
-                                        break;
-                                    case 'minutes':
-                                        TimeType = 60 * 1000
-                                        break;
-                                    case 'hours':
-                                        TimeType = 60 * 60 * 1000
-                                        break;
-                                    case 'days':
-                                        TimeType = 24 * 60 * 60 * 1000
-                                        break;
+                                if (item.delayType !== 'none' && item.delayData > 0 || item.delayData !== '') {
+                                    chat.sendStateTyping()
+                                    TimeType = null
+                                    switch (item.delayType) {
+                                        case 'seconds':
+                                            TimeType = 1000
+                                            break;
+                                        case 'minutes':
+                                            TimeType = 60 * 1000
+                                            break;
+                                        case 'hours':
+                                            TimeType = 60 * 60 * 1000
+                                            break;
+                                        case 'days':
+                                            TimeType = 24 * 60 * 60 * 1000
+                                            break;
+                                    }
+                                    await sleep(item.delayData * TimeType)
                                 }
-                                await sleep(item.Time * TimeType)
-                                Client_.sendMessage(msg.from, item.TextMSG, 'utf8')
+                                Client_.sendMessage(msg.from, item.textareaData, 'utf8')
 
                                 console.log(`> ✅ Message_${i+1}_ Sent.`)
                                 if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Message_${i+1}_</strong> <strong>Sent</strong>.`)
@@ -2484,54 +2521,58 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                                 console.log(`>  ◌ Sending Message_${i+1}_...`)
                                 if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>Message_${i+1}_</strong>...`)
 
-                                switch (item.FileType) {
+                                switch (item.fileType) {
                                     case 'video':
-                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.File), { caption: item.CaptionMSG })
+                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.fileData), { caption: item.textareaData })
                                         break;
                                     case 'audio':
-                                        chat.sendStateRecording()
-                                        switch (item.TimeType) {
-                                            case 'seconds':
-                                                TimeType = 1000
-                                                break;
-                                            case 'minutes':
-                                                TimeType = 60 * 1000
-                                                break;
-                                            case 'hours':
-                                                TimeType = 60 * 60 * 1000
-                                                break;
-                                            case 'days':
-                                                TimeType = 24 * 60 * 60 * 1000
-                                                break;
+                                        if (item.delayType !== 'none' && item.delayData > 0 || item.delayData !== '') {
+                                            chat.sendStateRecording()
+                                            switch (item.delayType) {
+                                                case 'seconds':
+                                                    TimeType = 1000
+                                                    break;
+                                                case 'minutes':
+                                                    TimeType = 60 * 1000
+                                                    break;
+                                                case 'hours':
+                                                    TimeType = 60 * 60 * 1000
+                                                    break;
+                                                case 'days':
+                                                    TimeType = 24 * 60 * 60 * 1000
+                                                    break;
+                                            }
+                                            await sleep(item.delayData * TimeType)
                                         }
-                                        await sleep(item.Time * TimeType)
-                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.File), { sendAudioAsVoice: true })
+                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.fileData), { sendAudioAsVoice: true })
                                         break;
                                     case 'image':
-                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.File), { caption: item.CaptionMSG })
+                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.fileData), { caption: item.textareaData })
                                         break;
                                     case 'text':
-                                        chat.sendStateTyping()
-                                        TimeType = null
-                                        switch (item.TimeType) {
-                                            case 'seconds':
-                                                TimeType = 1000
-                                                break;
-                                            case 'minutes':
-                                                TimeType = 60 * 1000
-                                                break;
-                                            case 'hours':
-                                                TimeType = 60 * 60 * 1000
-                                                break;
-                                            case 'days':
-                                                TimeType = 24 * 60 * 60 * 1000
-                                                break;
+                                        if (item.delayType !== 'none' && item.delayData > 0 || item.delayData !== '') {
+                                            chat.sendStateTyping()
+                                            TimeType = null
+                                            switch (item.delayType) {
+                                                case 'seconds':
+                                                    TimeType = 1000
+                                                    break;
+                                                case 'minutes':
+                                                    TimeType = 60 * 1000
+                                                    break;
+                                                case 'hours':
+                                                    TimeType = 60 * 60 * 1000
+                                                    break;
+                                                case 'days':
+                                                    TimeType = 24 * 60 * 60 * 1000
+                                                    break;
+                                            }
+                                            await sleep(item.delayData * TimeType)
                                         }
-                                        await sleep(item.Time * TimeType)
-                                        Client_.sendMessage(msg.from, await fs.readFile(item.File, 'utf8'))
+                                        Client_.sendMessage(msg.from, await fs.readFile(item.fileData, 'utf8'))
                                         break;
                                     case 'document':
-                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.File), { caption: item.CaptionMSG })
+                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.fileData), { caption: item.textareaData })
                                         break;
                                 }
 
@@ -3010,6 +3051,7 @@ module.exports = {
     Select_Template_,
     Erase_Template_,
     Send_To_Funil,
+    Insert_Template_Front,
 }
 
 console.log(`> ✅ FINISHED(Starting functions)`)

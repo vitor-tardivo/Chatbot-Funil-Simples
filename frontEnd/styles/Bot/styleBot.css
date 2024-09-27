@@ -1523,11 +1523,16 @@ td {
     transition: var(--configTrasition03s);
 }
 
+/*#funilArea {
+    display: block;
+    opacity: 1;
+}*/
+
 .conteinerFunilMSG {
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: center;
-    opacity: 1;
+    opacity: 0;
     transition: var(--configTrasition03s);
 }
 
@@ -2097,7 +2102,7 @@ td {
     border: 2px solid var(--colorWhite);
 }
 .OnOffCaption {
-    display: inline;
+    display: none;
     background-color: var(--colorBlack);
     color: var(--colorWhite);
     border: 2px solid var(--colorBlack);
@@ -2107,7 +2112,7 @@ td {
     word-break: break-word;
     cursor: pointer;
     pointer-events: unset;
-    opacity: 1;
+    opacity: 0;
     transition: var(--configTrasition03s);
 }
 .OnOffCaption:hover {

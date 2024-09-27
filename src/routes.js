@@ -32,6 +32,7 @@ const {
     Select_Template_,
     Erase_Template_,
     Send_To_Funil,
+    Insert_Template_Front,
 } = require('./app')
 
 router.get('/', (req, res) => {
@@ -46,9 +47,9 @@ router.get('/', (req, res) => {
 
 router.put('/funil/send-data', async (req, res) => {
     try {
-        const { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData } = req.body
+        const { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData } = req.body
         console.log('cuuuuuuuuuuuuuuuu',fileData)
-        await Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData)
+        await Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData)
         res.status(200).send({ sucess: true, message: `Sucessfully sent funil data.` })
     } catch (error) {
         console.error(`> ❌ ERROR /funil/send-data: ${error}`)
@@ -56,6 +57,16 @@ router.put('/funil/send-data', async (req, res) => {
     }
 })
 
+router.get('/template/insert-front', async (req, res) => {
+    try {
+        const { Sucess, jsonTemplate } = await Insert_Template_Front()
+        
+        res.status(200).send({ sucess: Sucess, message: `Funil of Template_ ${Template_} inserted front.`, jsontemplate: jsonTemplate})
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/insert-front: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`})
+    }
+})
 router.delete('/template/erase', async (req, res) => {
     try {
         const Template_ = req.query.Templatet_

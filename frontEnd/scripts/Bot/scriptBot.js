@@ -1510,6 +1510,277 @@ async function selectTemplate_(Templatet_) {
 
             const titleTemplate = document.querySelector(`#SelectedTemplate`)
             titleTemplate.textContent = `${Templatet_}`
+            
+            const divsConteiner = document.querySelector('.conteinerFunilMSG')
+            if (divsConteiner) {
+                divsConteiner.style.cssText =
+                    `display: flex; opacity: 0;`
+                setTimeout(function() {
+                    divsConteiner.style.cssText =
+                        `display: none; opacity: 0;`
+
+                    document.querySelector(`#funilArea`).innerHTML = ''
+
+                    divsConteiner.style.cssText =
+                        `display: flex; opacity: 0;`
+                    setTimeout(function() {
+                        divsConteiner.style.cssText =
+                            `display: flex; opacity: 1;`
+                    }, 300)
+                }, 100)
+            }
+
+            const response = await axios.get('/template/insert-front')
+            let Sucess = response.data.sucess
+            let jsonTemplate = response.data.jsontemplate
+            if (Sucess) {
+                positions = jsonTemplate.filter(item => item.positionId)
+                console.log(positions)
+
+                const divFunil = document.querySelector('#funilArea')
+
+                console.log(positions.length)
+                for (let i = 0; i < positions.length; i++) {
+                    const item = positions[i]
+
+                    switch (item.typeMSG) {
+                        case 1:
+                            const MSGHTMlDelay = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${item.positionId}">
+
+                                        <div class="divInfoPositionMSG" id="idivInfoPositionMSG${item.positionId}">
+                                            <label title="Selecione esta posição (${item.positionId})" class="divSelectionPositionMSG">
+                                                <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG${item.positionId}" onchange="selectionPositionMSG(this, 1)">
+                                                <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                            </label>
+                                            <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                            <p class="positionMSG" id="ipositionMSG">(${item.positionId})</p>
+
+                                            <button title="Deletar posição MSG (${item.positionId})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 1)">D</button>
+                                        </div>
+
+                                        <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                            <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
+                                                <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
+                                            
+                                                <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
+                                                    <option value="none" selected>Nenhum</option>
+                                                    <option value="seconds">Segundos</option>
+                                                    <option value="minutes">Minutos</option>
+                                                    <option value="hours">Horas</option>
+                                                    <option value="days">Dias</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+                                    </div>`
+
+                            divFunil.insertAdjacentHTML('beforeend', MSGHTMlDelay)
+
+                            const selectDelayMSG = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayMSGSelect`)
+                            switch (item.delayType) {
+                                case 'none':
+                                    selectDelayMSG.selectedIndex = 0
+                                    break;
+                                case 'seconds':
+                                    selectDelayMSG.selectedIndex = 1
+                                    break;
+                                case 'minutes':
+                                    selectDelayMSG.selectedIndex = 2
+                                    break;
+                                case 'hours':
+                                    selectDelayMSG.selectedIndex = 3
+                                    break;
+                                case 'days':
+                                    selectDelayMSG.selectedIndex = 4
+                                    break;
+                            }
+
+                            const inputDelayMSG = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayMSGTime`)
+                            inputDelayMSG.value = item.delayData
+                            break;
+                        case 2:
+                            const MSGHTMlText = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${item.positionId}">
+
+                                        <div class="divInfoPositionMSG" id="idivInfoPositionMSG${item.positionId}">
+                                            <label title="Selecione esta posição (${item.positionId})" class="divSelectionPositionMSG">
+                                                <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG${item.positionId}" onchange="selectionPositionMSG(this, 2)">
+                                                <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                            </label>
+                                            <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                            <p class="positionMSG" id="ipositionMSG">(${item.positionId})</p>
+
+                                            <button title="Deletar posição MSG (${item.positionId})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 2)">D</button>
+                                        </div>
+
+                                        <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                            <div class="divTextarea" id="idivTextarea">
+                                                <div class="divTextareaFunctions" id="idivTextareaFunctions">
+                                                    <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
+                                                    
+                                                    <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
+                                                    <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
+                                                    
+                                                    <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
+                                                    <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
+                                                    <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
+                                                    <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
+                                                </div>
+                                            
+                                                <div class="divDelayText" id="idivDelayText">
+                                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
+                                                    
+                                                    <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 2, this, null)">
+                                                        <option value="none" selected>Nenhum</option>
+                                                        <option value="seconds">Segundos</option>
+                                                        <option value="minutes">Minutos</option>
+                                                        <option value="hours">Horas</option>
+                                                        <option value="days">Dias</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, 'textarea', this)"></textarea></abbr>
+                                            </div>
+
+                                        </div>
+
+                                    </div>`
+
+                            divFunil.insertAdjacentHTML('beforeend', MSGHTMlText)
+
+                            const selectDelayText = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTextSelect`)
+                            switch (item.delayType) {
+                                case 'none':
+                                    selectDelayText.selectedIndex = 0
+                                    break;
+                                case 'seconds':
+                                    selectDelayText.selectedIndex = 1
+                                    break;
+                                case 'minutes':
+                                    selectDelayText.selectedIndex = 2
+                                    break;
+                                case 'hours':
+                                    selectDelayText.selectedIndex = 3
+                                    break;
+                                case 'days':
+                                    selectDelayText.selectedIndex = 4
+                                    break;
+                            }
+
+                            const inputDelayText = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTextTime`)
+                            inputDelayText.value = item.delayData
+                            if (item.delayType !== 'none') {
+                                await StateTypingMSG(document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffStateTypingMSG`), true)
+                            }
+
+                            const textareaMSG = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itextAreaTypeMSG`)
+                            textareaMSG.value = item.textareaData
+                            break;
+                        case 3:
+                            const MSGHTMlFile = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${item.positionId}">
+
+                                        <div class="divInfoPositionMSG" id="idivInfoPositionMSG${item.positionId}">
+                                            <label title="Selecione esta posição (${item.positionId})" class="divSelectionPositionMSG">
+                                                <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG${item.positionId}" onchange="selectionPositionMSG(this, 3)">
+                                                <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                            </label>
+                                            <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                            <p class="positionMSG" id="ipositionMSG">(${item.positionId})</p>
+
+                                            <button title="Deletar posição MSG (${item.positionId})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 3)">D</button>
+                                        </div>
+
+                                        <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                            <div class="fileTypeMSG" id="ifileTypeMSG">
+                                                <div class="divFileFunctions" id="idivFileFunctions">
+                                                    <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
+                                                    <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
+                                                    <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
+                                                    
+                                                    <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
+                                                    <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
+                                                    
+                                                    <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
+                                                    <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
+                                                    <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
+                                                    <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
+                                                </div>
+                                                
+                                                <div class="divDelayTextAudio" id="idivDelayTextAudio">
+                                                    <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
+                                                    
+                                                    <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 3, this, null)">
+                                                        <option value="none" selected>Nenhum</option>
+                                                        <option value="seconds">Segundos</option>
+                                                        <option value="minutes">Minutos</option>
+                                                        <option value="hours">Horas</option>
+                                                        <option value="days">Dias</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="divFileSelectMSG">
+                                                    <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                                        <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
+                                                        <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
+                                                        <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                                        <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                                        
+                                                        <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
+                                                    </div></abbr>
+                                                </div>
+
+                                                <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, 'textarea', this)"></textarea></abbr>
+                                            </div>
+                                            
+                                        </div>
+
+                                    </div>`
+
+                            divFunil.insertAdjacentHTML('beforeend', MSGHTMlFile)
+
+                            const selectDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTextAudioSelect`)
+                            switch (item.delayType) {
+                                case 'none':
+                                    selectDelayTextAudio.selectedIndex = 0
+                                    break;
+                                case 'seconds':
+                                    selectDelayTextAudio.selectedIndex = 1
+                                    break;
+                                case 'minutes':
+                                    selectDelayTextAudio.selectedIndex = 2
+                                    break;
+                                case 'hours':
+                                    selectDelayTextAudio.selectedIndex = 3
+                                    break;
+                                case 'days':
+                                    selectDelayTextAudio.selectedIndex = 4
+                                    break;
+                            }
+
+                            const inputDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTextAudioTime`)
+                            inputDelayTextAudio.value = item.delayData
+
+                            const textareaFile  = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itextAreaCaption`)
+                            textareaFile.value = item.textareaData
+
+                            //a fazer quando resolver de conseguir salvar um arquivo no json, mas so fazer adicionar por codigo no input o file e o resto o resto
+                            break;
+                    }
+
+                    document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
+                        `display: flex; opacity: 0;`
+                    setTimeout(function() {
+                        document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
+                            `display: flex; opacity: 1;`
+                    }, 300)
+                }
+            } else {
+
+            }
+            //resetLoadingBar()
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> <strong>selecionando</strong> Template_ <strong>${Templatet_}</strong>!`
             displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Template_ <strong>${Templatet_}</strong>!`)
@@ -2193,9 +2464,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
         let delayData = null
         let textareaData = null
         let fileType = null
-        const formData = new FormData()
         let fileData = null
-        let stateFileType = null
 
         switch (typeMSG) {
             case 1:
@@ -2212,7 +2481,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         MSGType = 'delay'
                         delayType = typeTypeMSG
                         delayData = inputDelayMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                         const selectDelayMSG = divElement.querySelector(`#idelayMSGSelect`)
                         if (inputDelayMSG.value >= 1) {
@@ -2231,7 +2500,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -2242,7 +2511,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -2253,7 +2522,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -2264,7 +2533,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -2275,7 +2544,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                         if (inputDelayMSG.value !== '') {
                             inputDelayMSG.value = ''
@@ -2299,7 +2568,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             MSGType = 'delay'
                             delayType = typeTypeMSG
                             delayData = inputDelayText.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             const selectDelayText = divElement.querySelector(`#idelayTextSelect`)
                             if (inputDelayText.value >= 1) {
@@ -2318,7 +2587,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -2329,7 +2598,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -2340,7 +2609,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -2353,7 +2622,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -2364,7 +2633,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             if (inputDelayText.value !== '') {
                                 inputDelayText.value = ''
@@ -2378,7 +2647,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                                     displayOnConsole(data.value)
                                     MSGType = 'textarea'
                                     textareaData = data.value
-                                    await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                                    await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
                                 }
                             break;
                     }
@@ -2399,7 +2668,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             MSGType = 'delay'
                             delayType = typeTypeMSG
                             delayData = inputDelayTextAudio.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             const selectDelayTextAudio = divElement.querySelector(`#idelayTextAudioSelect`)
                             if (inputDelayTextAudio.value >= 1) {
@@ -2418,7 +2687,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             displayOnConsole(`3=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                                 inputDelayTextAudio.value = 1
@@ -2429,7 +2698,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             displayOnConsole(`3=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                                 inputDelayTextAudio.value = 1
@@ -2440,7 +2709,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             displayOnConsole(`3=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                                 inputDelayTextAudio.value = 1
@@ -2451,7 +2720,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             displayOnConsole(`3=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                                 inputDelayTextAudio.value = 1
@@ -2462,7 +2731,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             displayOnConsole(`3=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                             if (inputDelayTextAudio.value !== '') {
                                 inputDelayTextAudio.value = ''
@@ -2476,7 +2745,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                                 displayOnConsole(data.value || '')
                                 MSGType = 'textarea'
                                 textareaData = data.value
-                                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
                             }
                             break;
                         default:
@@ -2486,18 +2755,10 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                                 displayOnConsole(typeTypeMSG)   
                                 displayOnConsole(data.name)   
                                 console.log(data || '')
-                                switch (typeTypeMSG) {
-                                    case 'audio':
-                                        stateFileType = 'recording'
-                                        break;
-                                    case 'text':
-                                        stateFileType = 'typing'
-                                        break;
-                                }
                                 MSGType = 'file'
                                 fileData = data
                                 fileType = typeTypeMSG
-                                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, stateFileType, fileData })
+                                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
                             }
                             break; 
                     }
@@ -2533,7 +2794,6 @@ async function StateTypingMSG(buttonElement, IsWType) {
 
         const typeElement = buttonElement.closest(`#${type}`)
         const divElement = typeElement || buttonElement
-        console.log(divElement)
         const buttonStateTyping = divElement.querySelector(`#${button}`)
         const abbrStateTyping = divElement.querySelector(`#${abbr}`)
         
@@ -3427,6 +3687,8 @@ async function getFileData(divElementBridge, file) {
         const buttonStateTyping = divElement.querySelector('#iOnOffStateTypingFile')
         const buttonStateRecording = divElement.querySelector('#iOnOffStateRecordingFile')
 
+        const buttonCaption = divElement.querySelector('#iOnOffCaption')
+
         let buttonErasePositionMSG = null
 
         let divDelayStateTypingRecording = null
@@ -3483,6 +3745,8 @@ async function getFileData(divElementBridge, file) {
             buttonStateTyping.style.cssText =
                 `display: none; opacity: 0;`
             buttonStateRecording.style.cssText =
+                `display: none; opacity: 0;`
+            buttonCaption.style.cssText =
                 `display: none; opacity: 0;`
             divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
             computedSyle4 = window.getComputedStyle(divTextAreaCaption)
@@ -3557,6 +3821,14 @@ async function getFileData(divElementBridge, file) {
                     if (currentDivTextAreaCaptionDisplay === 'block') {
                         await CaptionFileMSG(divElementBridge)
                     }
+
+                    buttonCaption.style.cssText =
+                        `display: inline; opacity: 0;`
+                    setTimeout(function() {
+                        buttonCaption.style.cssText =
+                            `display: inline; opacity: 1;`
+                    }, 300)
+
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                     abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
                     divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
@@ -3591,6 +3863,8 @@ async function getFileData(divElementBridge, file) {
                         }
                     }
                     buttonStateTyping.style.cssText =
+                        `display: none; opacity: 0;`
+                    buttonCaption.style.cssText =
                         `display: none; opacity: 0;`
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                     computedSyle4 = window.getComputedStyle(divTextAreaCaption)
@@ -3647,6 +3921,14 @@ async function getFileData(divElementBridge, file) {
                     if (currentDivTextAreaCaptionDisplay === 'block') {
                         await CaptionFileMSG(divElementBridge)
                     }
+
+                    buttonCaption.style.cssText =
+                        `display: inline; opacity: 0;`
+                    setTimeout(function() {
+                        buttonCaption.style.cssText =
+                            `display: inline; opacity: 1;`
+                    }, 300)
+
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                     abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
                     divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
@@ -3692,7 +3974,13 @@ async function getFileData(divElementBridge, file) {
                         `display: inline; opacity: 0;`
                     setTimeout(function() {
                         buttonStateTyping.style.cssText =
-                        `display: inline; opacity: 1;`
+                            `display: inline; opacity: 1;`
+                    }, 300)
+                    buttonCaption.style.cssText =
+                        `display: inline; opacity: 0;`
+                    setTimeout(function() {
+                        buttonCaption.style.cssText =
+                            `display: inline; opacity: 1;`
                     }, 300)
 
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
@@ -3736,6 +4024,14 @@ async function getFileData(divElementBridge, file) {
                     if (currentDivTextAreaCaptionDisplay === 'block') {
                         await CaptionFileMSG(divElementBridge)
                     }
+
+                    buttonCaption.style.cssText =
+                        `display: inline; opacity: 0;`
+                    setTimeout(function() {
+                        buttonCaption.style.cssText =
+                            `display: inline; opacity: 1;`
+                    }, 300)
+
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                     abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
                     divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
@@ -3925,6 +4221,15 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
+        let typeMSG = null
+        let MSGType = null
+        let positionId = null
+        let delayType = null
+        let delayData = null
+        let textareaData = null
+        let fileType = null
+        let fileData = null
+
         await newTypeMSGShown()
         
         const divFunil = document.querySelector('#funilArea')
@@ -3987,6 +4292,13 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                 } else {
                     divFunil.innerHTML += MSGHTMlDelay
                 }
+
+                typeMSG = type
+                MSGType = 'delay'
+                positionId = Id_Position_MSG
+                delayType = 'none'
+                delayData = ''
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                 conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
@@ -4054,6 +4366,14 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                 } else {
                     divFunil.innerHTML += MSGHTMlText
                 }
+
+                typeMSG = type
+                MSGType = 'textarea'
+                positionId = Id_Position_MSG
+                delayType = 'none'
+                delayData = ''
+                textareaData = ''
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
                 
                 conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
@@ -4134,6 +4454,16 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                 } else {
                     divFunil.innerHTML += MSGHTMlFile
                 }
+
+                typeMSG = type
+                MSGType = 'file'
+                positionId = Id_Position_MSG
+                delayType = 'none'
+                delayData = ''
+                textareaData = ''
+                fileType = ''
+                fileData = ''
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
                 conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
