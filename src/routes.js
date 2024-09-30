@@ -33,6 +33,7 @@ const {
     Erase_Template_,
     Send_To_Funil,
     Insert_Template_Front,
+    Change_Position_MSG,
 } = require('./app')
 
 router.get('/', (req, res) => {
@@ -42,6 +43,17 @@ router.get('/', (req, res) => {
     } catch (error) {
         console.error(`> ❌ ERROR /: ${error}`)
         res.status(500).send({ sucess: false, message: 'ERROR Internal server' })
+    }
+})
+
+router.put('/funil/position-change', async (req, res) => {
+    try {
+        const { selectedId, toChangeFor } = req.body
+        const { Sucess } = await Change_Position_MSG(selectedId, toChangeFor)
+        res.status(200).send({ sucess: Sucess, message: `Sucessfully changed ${selectedId} on ${toChangeFor}.` })
+    } catch (error) {
+        console.error(`> ❌ ERROR /funil/send-data: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
 

@@ -2236,84 +2236,100 @@ async function selectionPositionMSG(checkElement, typeMSG) {
             
             let userConfirmation = confirm(`Tem certeza de que deseja trocar a Posição MSG (${positionSelectedMSG.idNumberPositionSelected}) para a Posição MSG (${idNumberPositionMSG})?`)
             if (userConfirmation) {
-                const conteinerPositionMSGSelected = document.querySelector(`#conteinerFunilMSG${positionSelectedMSG.idNumberPositionSelected}`)
-                conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
-                    `display: flex; opacity: 0;`
-                const conteinerPositionMSGTochange = document.querySelector(`#conteinerFunilMSG${idNumberPositionMSG}`)
-                conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
-                    `display: flex; opacity: 0;`
-                setTimeout(function() {
-                    conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
-                        `display: none; opacity: 0;`
-                    conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
-                            `display: none; opacity: 0;`
-                
-                    const divInnerPositionMSGSelected = conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).cloneNode(true)
-                    conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).innerHTML = ''
+                const response = await axios.put('/funil/position-change', { selectedId:Number(positionSelectedMSG.idNumberPositionSelected), toChangeFor:Number(idNumberPositionMSG) })
+                const Sucess = response.data.sucess
+                if (Sucess) {//talves deixar desse jeito ou fazer ser bunitinho sumindo apenas o MSG type e aparecendo o outro, sla, talves algo parecido coma logica do selectTemplate mas so pro MSG type hmmmmmm
+                    document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).checked = false
+                    document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).dispatchEvent(new Event('change'))
 
-                    const divInnerPositionMSGTochange = conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).cloneNode(true)
-                    conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).innerHTML = ''
+                    document.querySelector(`#funilArea`).innerHTML = ''
+                    await selectTemplate_(Template_)
 
-                    conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).replaceWith(divInnerPositionMSGTochange)
+                    resetLoadingBar()
+
+                    /*const conteinerPositionMSGSelected = document.querySelector(`#conteinerFunilMSG${positionSelectedMSG.idNumberPositionSelected}`)
                     conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
                         `display: flex; opacity: 0;`
-                    conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).replaceWith(divInnerPositionMSGSelected)
+                    const conteinerPositionMSGTochange = document.querySelector(`#conteinerFunilMSG${idNumberPositionMSG}`)
                     conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
                         `display: flex; opacity: 0;`
                     setTimeout(function() {
                         conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
-                            `display: flex; opacity: 1;`
+                            `display: none; opacity: 0;`
                         conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
-                            `display: flex; opacity: 1;`
-
-                        //ja com valor no input delay ele roda o select duas vezes
-
-                        /*displayOnConsole(positionSelectedMSG.typeMSGSelected)
-                        switch (positionSelectedMSG.typeMSGSelected) {
-                            case 1:
-                                divPosition.querySelector(`#idelayMSGTime`).dispatchEvent(new Event('input'))
-                                divPosition.querySelector(`#idelayMSGSelect`).dispatchEvent(new Event('input'))
-                                break;
-                            case 2:
-                                divPosition.querySelector(`#idelayTextTime`).dispatchEvent(new Event('input'))
-                                divPosition.querySelector(`#idelayTextSelect`).dispatchEvent(new Event('input'))
-                                divPosition.querySelector(`#itextAreaTypeMSG`).dispatchEvent(new Event('input'))
-                                break;
-                            case 3:
-                                divPosition.querySelector(`#idelayTexAudioTime`).dispatchEvent(new Event('input'))
-                                divPosition.querySelector(`#idelayTextAudioSelect`).dispatchEvent(new Event('input'))
-                                divPosition.querySelector(`#itextAreaCaption`).dispatchEvent(new Event('input'))
-                                //divPosition.querySelector('input#ifileTypeMSGAux[type="file"]').dispatchEvent(new Event('change'))//deprecated
-                                break;
-                        }
-
-                        const divPositionTochange = document.querySelector(`#conteinerFunilMSG${positionSelectedMSG.idNumberPositionSelected}`)//caso n esteja entendo como ja mudo a posicao ent é isso... da certo tendeu?
-                        console.log(divPositionTochange)
-                        displayOnConsole(typeMSG)
-                        switch (typeMSG) {
-                            case 1:
-                                divPositionTochange.querySelector(`#idelayMSGTime`).dispatchEvent(new Event('input'))
-                                divPositionTochange.querySelector(`#idelayMSGSelect`).dispatchEvent(new Event('input'))
-                                break;
-                            case 2:
-                                divPositionTochange.querySelector(`#idelayTextTime`).dispatchEvent(new Event('input'))
-                                divPositionTochange.querySelector(`#idelayTextSelect`).dispatchEvent(new Event('input'))
-                                divPositionTochange.querySelector(`#itextAreaTypeMSG`).dispatchEvent(new Event('input'))
-                                break;
-                            case 3:
-                                divPositionTochange.querySelector(`#idelayTexAudioTime`).dispatchEvent(new Event('input'))
-                                divPositionTochange.querySelector(`#idelayTextAudioSelect`).dispatchEvent(new Event('input'))
-                                divPositionTochange.querySelector(`#itextAreaCaption`).dispatchEvent(new Event('input'))
-                                //divPositionTochange.querySelector('input#ifileTypeMSGAux[type="file"]').dispatchEvent(new Event('change'))//deprecated
-                                break;
-                        }*/
-
-                        document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).checked = false
-                        document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).dispatchEvent(new Event('change'))
+                                `display: none; opacity: 0;`
+                    
+                        const divInnerPositionMSGSelected = conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).cloneNode(true)
+                        console.log(divInnerPositionMSGSelected)
+                        conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).innerHTML = ''
                         
-                        resetLoadingBar()
-                    }, 300)
-                }, 100)
+                        const divInnerPositionMSGTochange = conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).cloneNode(true)
+                        console.log(divInnerPositionMSGTochange)
+                        conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).innerHTML = ''
+
+                        conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).replaceWith(divInnerPositionMSGTochange)
+                        conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                            `display: flex; opacity: 0;`
+                        conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).replaceWith(divInnerPositionMSGSelected)
+                        conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                            `display: flex; opacity: 0;`
+                        setTimeout(function() {
+                            conteinerPositionMSGSelected.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                                `display: flex; opacity: 1;`
+                            conteinerPositionMSGTochange.querySelector(`#idivInnerConteinerFunilMSG`).style.cssText =
+                                `display: flex; opacity: 1;`
+
+                            //ja com valor no input delay ele roda o select duas vezes
+
+                            /*displayOnConsole(positionSelectedMSG.typeMSGSelected)
+                            switch (positionSelectedMSG.typeMSGSelected) {
+                                case 1:
+                                    divPosition.querySelector(`#idelayMSGTime`).dispatchEvent(new Event('input'))
+                                    divPosition.querySelector(`#idelayMSGSelect`).dispatchEvent(new Event('input'))
+                                    break;
+                                case 2:
+                                    divPosition.querySelector(`#idelayTextTime`).dispatchEvent(new Event('input'))
+                                    divPosition.querySelector(`#idelayTextSelect`).dispatchEvent(new Event('input'))
+                                    divPosition.querySelector(`#itextAreaTypeMSG`).dispatchEvent(new Event('input'))
+                                    break;
+                                case 3:
+                                    divPosition.querySelector(`#idelayTexAudioTime`).dispatchEvent(new Event('input'))
+                                    divPosition.querySelector(`#idelayTextAudioSelect`).dispatchEvent(new Event('input'))
+                                    divPosition.querySelector(`#itextAreaCaption`).dispatchEvent(new Event('input'))
+                                    //divPosition.querySelector('input#ifileTypeMSGAux[type="file"]').dispatchEvent(new Event('change'))//deprecated
+                                    break;
+                            }
+
+                            const divPositionTochange = document.querySelector(`#conteinerFunilMSG${positionSelectedMSG.idNumberPositionSelected}`)//caso n esteja entendo como ja mudo a posicao ent é isso... da certo tendeu?
+                            console.log(divPositionTochange)
+                            displayOnConsole(typeMSG)
+                            switch (typeMSG) {
+                                case 1:
+                                    divPositionTochange.querySelector(`#idelayMSGTime`).dispatchEvent(new Event('input'))
+                                    divPositionTochange.querySelector(`#idelayMSGSelect`).dispatchEvent(new Event('input'))
+                                    break;
+                                case 2:
+                                    divPositionTochange.querySelector(`#idelayTextTime`).dispatchEvent(new Event('input'))
+                                    divPositionTochange.querySelector(`#idelayTextSelect`).dispatchEvent(new Event('input'))
+                                    divPositionTochange.querySelector(`#itextAreaTypeMSG`).dispatchEvent(new Event('input'))
+                                    break;
+                                case 3:
+                                    divPositionTochange.querySelector(`#idelayTexAudioTime`).dispatchEvent(new Event('input'))
+                                    divPositionTochange.querySelector(`#idelayTextAudioSelect`).dispatchEvent(new Event('input'))
+                                    divPositionTochange.querySelector(`#itextAreaCaption`).dispatchEvent(new Event('input'))
+                                    //divPositionTochange.querySelector('input#ifileTypeMSGAux[type="file"]').dispatchEvent(new Event('change'))//deprecated
+                                    break;
+                            }*/
+
+                            /*document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).checked = false
+                            document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).dispatchEvent(new Event('change'))
+                            
+                            resetLoadingBar()
+                        }, 300)
+                    }, 100)*/
+                } else {
+                    
+                }
             } else {
 
                 resetLoadingBar()
@@ -2369,11 +2385,11 @@ async function erasePosition(divPosition, typeMSG) {
                     response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
                     Sucess = response.data.sucess
                     if (Sucess) {
-                        const inputDelayMSG = divPosition.querySelector(`#idelayMSGTime`)
+                        /*const inputDelayMSG = divPosition.querySelector(`#idelayMSGTime`)
                         if (inputDelayMSG.value !== '') {
                             inputDelayMSG.value = ''
                             inputDelayMSG.dispatchEvent(new Event('input'))
-                        }
+                        }*/
 
                         const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
                         conteinerMSG.style.cssText =
@@ -2397,13 +2413,13 @@ async function erasePosition(divPosition, typeMSG) {
                             inputDelayText.value = ''
                             inputDelayText.dispatchEvent(new Event('input'))
                         }*/
-                        await StateTypingMSG(divPosition, true)
+                        /*await StateTypingMSG(divPosition, true)
 
                         const divTextAreaMSG = divPosition.querySelector(`#itextAreaTypeMSG`)
                         if (divTextAreaMSG.value !== '') {
                             divTextAreaMSG.value = ''
                             divTextAreaMSG.dispatchEvent(new Event('input'))
-                        }
+                        }*/
 
                         const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
                         conteinerMSG.style.cssText =
@@ -2419,7 +2435,7 @@ async function erasePosition(divPosition, typeMSG) {
                     }
                     break;
                 case 3:
-                    const fileInput = divPosition.querySelector('input#ifileTypeMSGAux[type="file"]')
+                    /*const fileInput = divPosition.querySelector('input#ifileTypeMSGAux[type="file"]')
                     if (fileInput.files[0] === undefined) {
                         response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
                         Sucess = response.data.sucess
@@ -2439,7 +2455,17 @@ async function erasePosition(divPosition, typeMSG) {
                     } else {
                         fileInput.value = ''
                         fileInput.dispatchEvent(new Event('change'))
-                    }
+                    }*/
+
+                    const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
+                    conteinerMSG.style.cssText =
+                        `display: flex; opacity: 0;`
+                    setTimeout(async function() {
+                        conteinerMSG.style.cssText =
+                            `display: none; opacity: 0;`
+
+                        divPosition.remove()
+                    }, 100)
                     break;
             }
 

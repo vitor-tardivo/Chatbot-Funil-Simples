@@ -482,6 +482,39 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
     }
 }
 
+async function Change_Position_MSG(selectedId, toChangeFor) {
+    try {
+        const data = await fs.readFile(global.Data_File_Templates_, 'utf8')
+        const jsonData = JSON.parse(data)
+        
+        const selectedIndex = jsonData.findIndex(item => item.positionId === selectedId)
+        const toChangeIndex = jsonData.findIndex(item => item.positionId === toChangeFor)
+
+        const tempDataSelected = { ...jsonData[selectedIndex] }
+        const tempDataToChange = { ...jsonData[toChangeIndex] }
+        
+        delete tempDataSelected.positionId
+        delete tempDataToChange.positionId
+
+        jsonData[selectedIndex] = {
+            positionId: selectedId,
+            ...tempDataToChange
+        }
+
+        jsonData[toChangeIndex] = {
+            positionId: toChangeFor,
+            ...tempDataSelected
+        }
+
+        await fs.writeFile(global.Data_File_Templates_, JSON.stringify(jsonData, null, 2), 'utf8')
+
+        return { Sucess: true }
+    } catch (error) {
+        console.error(`> ❌ ERROR Change_Position_MSG: ${error}`)
+        return { Sucess: false }
+    }
+}
+
 async function Insert_Template_Front() {
     try {
         console.log(Counter_Id_Position_MSG)
@@ -1178,7 +1211,18 @@ async function Insert_Exponecial_Position_MSG(arrayIdNumberPosition) {
 }
 async function Position_MSG_Erase(IdNumberPosition) {
     try {
+        const data = await fs.readFile(global.Data_File_Templates_, 'utf8')
+
+        const jsonData = JSON.parse(data)
+
+        const index = jsonData.findIndex(item => item.positionId === IdNumberPosition)
+
+        jsonData.splice(index, 1)
+
+        await fs.writeFile(global.Data_File_Templates_, JSON.stringify(jsonData, null, 2), 'utf8')//pra ficar padronizado apos apagar um so mudar o stringfy e tals...
+
         Counter_Id_Position_MSG.splice(IdNumberPosition-1, 1)
+
         return true
     } catch (error) {
         console.error(`> ❌ ERROR Position_MSG_Erase: ${error}`)
@@ -3052,6 +3096,7 @@ module.exports = {
     Erase_Template_,
     Send_To_Funil,
     Insert_Template_Front,
+    Change_Position_MSG,
 }
 
 console.log(`> ✅ FINISHED(Starting functions)`)
