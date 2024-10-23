@@ -1534,14 +1534,14 @@ async function selectTemplate_(Templatet_) {
             let Sucess = response.data.sucess
             let jsonTemplate = response.data.jsontemplate
             if (Sucess) {
-                positions = jsonTemplate.filter(item => item.positionId)
-                console.log(positions)
-
+                const positions = jsonTemplate.filter(item => item.positionId)
+                
                 const divFunil = document.querySelector('#funilArea')
-
+                
                 console.log(positions.length)
                 for (let i = 0; i < positions.length; i++) {
                     const item = positions[i]
+                    console.log(`${i}: `, item)
 
                     switch (item.typeMSG) {
                         case 1:
@@ -1741,6 +1741,17 @@ async function selectTemplate_(Templatet_) {
 
                             divFunil.insertAdjacentHTML('beforeend', MSGHTMlFile)
 
+                            const byteArray = new Uint8Array(item.fileData.buffer.data)
+                            const blob = new Blob([byteArray], { type: item.fileData.mimetype })
+                    
+                            const file = new File([blob], item.fileData.originalname, { type: item.fileData.mimetype })
+                            const fileInput = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector('input#ifileTypeMSGAux[type="file"]')
+                            const dataTransfer = new DataTransfer()
+                            dataTransfer.items.add(file)
+                            fileInput.files = dataTransfer.files
+                            console.log(fileInput.files[0])
+                            fileInput.dispatchEvent(new Event('change'))
+
                             const selectDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTextAudioSelect`)
                             switch (item.delayType) {
                                 case 'none':
@@ -1759,14 +1770,21 @@ async function selectTemplate_(Templatet_) {
                                     selectDelayTextAudio.selectedIndex = 4
                                     break;
                             }
+                            selectDelayTextAudio.dispatchEvent(new Event('input'))
 
-                            const inputDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTextAudioTime`)
+                            const inputDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTexAudioTime`)
                             inputDelayTextAudio.value = item.delayData
-
+                            if (item.delayType !== 'none') {
+                                await StateTypingMSG(document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffStateTypingFile`), false)
+                            }
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                            
                             const textareaFile  = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itextAreaCaption`)
                             textareaFile.value = item.textareaData
-
-                            //a fazer quando resolver de conseguir salvar um arquivo no json, mas so fazer adicionar por codigo no input o file e o resto o resto
+                            if (item.textareaData !== '') {
+                                await CaptionFileMSG(document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffCaption`))
+                            }
+                            textareaFile.dispatchEvent(new Event('input'))
                             break;
                     }
 
@@ -2782,11 +2800,24 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                                 displayOnConsole(data.name)   
                                 console.log(data || '')
                                 MSGType = 'file'
-                                fileData = data
                                 fileType = typeTypeMSG
-                                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
-                            }
-                            break; 
+                                fileData = data
+                                //await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
+                                const formData = new FormData()
+                                formData.append('typeMSG', typeMSG)
+                                formData.append('MSGType', MSGType)
+                                formData.append('positionId', positionId)
+                                formData.append('delayType', delayType)
+                                formData.append('delayData', delayData)
+                                formData.append('textareaData', textareaData)
+                                formData.append('fileType', fileType)
+                                formData.append('fileData', fileData, fileData.name)
+                                await axios.put('/funil/send-data', formData, {
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data'
+                                    }
+                                })
+                            } 
                     }
                 }
                 break;
@@ -2799,6 +2830,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
 
 async function StateTypingMSG(buttonElement, IsWType) {
     try {
+        console.log(buttonElement)
         let type = null
         let button = null
         let abbr = null
@@ -2819,6 +2851,7 @@ async function StateTypingMSG(buttonElement, IsWType) {
         }
 
         const typeElement = buttonElement.closest(`#${type}`)
+        console.log('aaaaaaaaaaaaaa',typeElement)
         const divElement = typeElement || buttonElement
         const buttonStateTyping = divElement.querySelector(`#${button}`)
         const abbrStateTyping = divElement.querySelector(`#${abbr}`)

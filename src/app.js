@@ -222,7 +222,7 @@ async function List_Directories(dir_Path) {
             Directories_ = Files_
         } else if (dir_Path.startsWith('Funil') && dir_Path.length > 'Funil'.length) {
             Files_ = await fs.readdir(dir_Path)
-            Directories_ = Files_
+            Directories_ = Files_.filter(file => file.endsWith('.json'))
         } else if (dir_Path === 'Local_Auth') {
 
             Files_ = await fs.readdir(dir_Path, { withFileTypes: true })
@@ -536,47 +536,74 @@ async function Insert_Template_Front() {
 
 async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData) {
     try {
-        console.log(MSGType)
-        console.log(typeMSG)
-        console.log(positionId)
-        console.log(delayType)
-        console.log(delayData)
-        console.log(textareaData)
-        console.log(fileType)
-        console.log(fileData)
+        console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
         //let Data_ = [{  }]
 
         let existingData = [{  }]
         const fileContent = await fs.readFile(global.Data_File_Templates_, 'utf8')
-        existingData = JSON.parse(fileContent)
+        if (fileContent.trim() !== '') {
+            try {
+                existingData = JSON.parse(fileContent)
+            } catch (jsonError) {
+                console.error('Conteúdo malformado. Tentando normalizar...')
+                const normalizedContent = fileContent
+                    .replace(/,\s*]$/, ']')  // Remove vírgulas erradas no final
+                    .replace(/,\s*}/g, '}')  // Remove vírgulas extras antes de chaves fechadas
+                    .replace(/\n\s+/g, ' ')  // Remove quebras de linha e espaços extras
+                    .slice(0, -1) 
+                    .trim()
+
+                try {
+                    existingData = JSON.parse(normalizedContent)
+                } catch (secondError) {
+                    console.error('Falha ao normalizar o JSON: ', secondError)
+                }
+            }
+        }
 
         let existingItem = existingData.find(item => item.positionId === positionId)
+        let isDifferent = false
         if (existingItem) {
             switch (typeMSG) {
                 case 1:
                     if (delayType === 'input') {
-                        existingItem.typeMSG = typeMSG
-                        existingItem.delayData = delayData
+                        if (existingItem.delayData !== delayData) {
+                            existingItem.typeMSG = typeMSG
+                            existingItem.delayData = delayData
+                            isDifferent = true
+                        }
                     } else {
-                        existingItem.typeMSG = typeMSG
-                        existingItem.delayType = delayType
+                        if (existingItem.delayType !== delayType) {
+                            existingItem.typeMSG = typeMSG
+                            existingItem.delayType = delayType
+                            isDifferent = true
+                        }
                     }
                     break;
                 case 2:
                     switch (MSGType) {
                         case 'delay':
                             if (delayType === 'input') {
-                                existingItem.typeMSG = typeMSG
-                                existingItem.delayData = delayData
+                                if (existingItem.delayData !== delayData) {
+                                    existingItem.typeMSG = typeMSG
+                                    existingItem.delayData = delayData
+                                    isDifferent = true
+                                }
                             } else {
-                                existingItem.typeMSG = typeMSG
-                                existingItem.delayType = delayType
+                                if (existingItem.delayType !== delayType) {
+                                    existingItem.typeMSG = typeMSG
+                                    existingItem.delayType = delayType
+                                    isDifferent = true
+                                }
                             }       
                             break;
                         case 'textarea':
-                            existingItem.typeMSG = typeMSG 
-                            existingItem.textareaData = textareaData
+                            if (existingItem.textareaData !== textareaData) {
+                                existingItem.typeMSG = typeMSG 
+                                existingItem.textareaData = textareaData
+                                isDifferent = true
+                            }
                         break;
                     }
                     break;
@@ -584,31 +611,57 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                     switch (MSGType) {
                         case 'delay':
                             if (delayType === 'input') {
-                                existingItem.typeMSG = typeMSG
-                                existingItem.delayData = delayData
+                                if (existingItem.delayData !== delayData) {
+                                    existingItem.typeMSG = typeMSG
+                                    existingItem.delayData = delayData
+                                    isDifferent = true
+                                    console.log('dbilau mole')
+                                }
                             } else {
-                                existingItem.typeMSG = typeMSG
-                                existingItem.delayType = delayType
+                                if (existingItem.delayType !== delayType) {
+                                    existingItem.typeMSG = typeMSG
+                                    existingItem.delayType = delayType
+                                    isDifferent = true
+                                    console.log('tttbilau mole')
+                                }
                             }       
                             break;
                         case 'textarea':
-                            existingItem.typeMSG = typeMSG
-                            existingItem.textareaData = textareaData
+                            if (existingItem.textareaData !== textareaData) {
+                                existingItem.typeMSG = typeMSG 
+                                existingItem.textareaData = textareaData
+                                isDifferent = true
+                                console.log('ttbilau mole')
+                            }
                             break;
                         case 'file':
                             existingItem.typeMSG = typeMSG
-                            existingItem.delayType = 'none'
-                            existingItem.delayData = ''
+                            //existingItem.delayType = 'none'
+                            //existingItem.delayData = ''
                             switch (fileType) {
                                 case 'audio':
-                                    existingItem.textareaData = null
+                                    //existingItem.textareaData = null
                                     break;
                                 default:
-                                    existingItem.textareaData = ''
+                                    //existingItem.textareaData = ''
                                     break;
                             }
-                            existingItem.fileType = fileType
-                            existingItem.fileData = fileData
+                            if (existingItem.fileData.fileType !== fileData.fileType) {
+                                existingItem.fileType = fileType
+                                isDifferent = true
+                                console.log('tbilau mole')
+                            }
+                            if (existingItem.fileData.originalname !== fileData.originalname || existingItem.fileData.mimetype !== fileData.mimetype || existingItem.fileData.buffer !== fileData.buffer || existingItem.fileData.size !== fileData.size) {
+                                existingItem.fileData = fileData = {
+                                    originalname: fileData.originalname,
+                                    mimetype: fileData.mimetype,
+                                    buffer: fileData.buffer,
+                                    size: fileData.size
+                                }
+                                isDifferent = true
+                                console.log('fbilau mole')
+                            }
+                            
                             break;
                     }
                     break;
@@ -680,7 +733,12 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                                     break;
                             }
                             newItem.fileType = fileType
-                            newItem.fileData = fileData
+                            newItem.fileData = {
+                                originalname: '',
+                                mimetype: '',
+                                buffer: '',
+                                size: ''
+                            }
                             break;
                     }
                     break;
@@ -689,8 +747,11 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
             existingData.push(newItem)
         }
 
-        const jsonString = '[\n' + existingData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
-        await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
+        if (isDifferent) {
+            console.log('pinto duro')   
+            const jsonString = '[\n' + existingData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+            await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
+        }
     } catch (error) {
         console.error(`> ❌ ERROR Send_To_Funil: ${error}`)
     }
@@ -931,10 +992,12 @@ async function New_Template_() {
 
         global.File_Data_Templates_ = `Template=${Templatet_}.json`
         global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template=${Templatet_}.json`)
+        const filesDir = path.join(global.Directory_Dir_Funils_, 'files')
         
         const New_Template_ = [{ Templatet_ }]
         const jsonString = '[\n' + New_Template_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
+        await fs.mkdir(filesDir, { recursive: true })
 
         return { Sucess: true, Template_: Templatet_ }
     } catch (error) {

@@ -2,6 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const path = require('path')
+const multer = require('multer')
 const {
     sleep,
     Reset_,
@@ -36,6 +37,8 @@ const {
     Change_Position_MSG,
 } = require('./app')
 
+const upload = multer({ storage: multer.memoryStorage() }) // Armazena o arquivo em memória
+
 router.get('/', (req, res) => {
     try {
         res.sendFile(path.join(__dirname, 'frontEnd', 'index.html'))
@@ -57,10 +60,14 @@ router.put('/funil/position-change', async (req, res) => {
     }
 })
 
-router.put('/funil/send-data', async (req, res) => {
+router.put('/funil/send-data', upload.single('fileData'), async (req, res) => {
     try {
-        const { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData } = req.body
-        console.log('cuuuuuuuuuuuuuuuu',fileData)
+        let { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType } = req.body
+        positionId = parseInt(positionId)
+        typeMSG = parseInt(typeMSG)
+        console.log('na rota: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
+        const fileData = req.file
+        console.log('arquivo: ', fileData)
         await Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData)
         res.status(200).send({ sucess: true, message: `Sucessfully sent funil data.` })
     } catch (error) {
