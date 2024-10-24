@@ -214,7 +214,7 @@ async function askForConfirmation(Clientt_) {
 
 async function List_Directories(dir_Path) {
     try {
-        await fs.mkdir(path.join(Root_Dir, dir_Path), { recursive: true } )
+        //await fs.mkdir(path.join(Root_Dir, dir_Path), { recursive: true } )
         let Files_ = null
         let Directories_ = null
         if (dir_Path === 'Funil') {
@@ -536,12 +536,14 @@ async function Insert_Template_Front() {
 
 async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData) {
     try {
-        console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+        console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
+        //console.log('arquivo na funcao: ', fileData)
 
         //let Data_ = [{  }]
 
         let existingData = [{  }]
         const fileContent = await fs.readFile(global.Data_File_Templates_, 'utf8')
+        //console.log(fileContent)
         if (fileContent.trim() !== '') {
             try {
                 existingData = JSON.parse(fileContent)
@@ -745,6 +747,7 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
             }
 
             existingData.push(newItem)
+            isDifferent = true
         }
 
         if (isDifferent) {
@@ -992,12 +995,12 @@ async function New_Template_() {
 
         global.File_Data_Templates_ = `Template=${Templatet_}.json`
         global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template=${Templatet_}.json`)
-        const filesDir = path.join(global.Directory_Dir_Funils_, 'files')
+        //const filesDir = path.join(global.Directory_Dir_Funils_, 'files')
         
         const New_Template_ = [{ Templatet_ }]
         const jsonString = '[\n' + New_Template_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
-        await fs.mkdir(filesDir, { recursive: true })
+        //await fs.mkdir(filesDir, { recursive: true })
 
         return { Sucess: true, Template_: Templatet_ }
     } catch (error) {
@@ -2630,7 +2633,11 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
 
                                 switch (item.fileType) {
                                     case 'video':
-                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.fileData), { caption: item.textareaData })
+                                        const audioBuffer = Buffer.from(item.fileData.buffer.data)
+                                        const audioBase64 = audioBuffer.toString('base64')
+                                        const media = new MessageMedia(item.fileData.mimetype, audioBase64, item.fileData.originalname)
+
+                                        Client_.sendMessage(msg.from, media, { caption: item.textareaData })
                                         break;
                                     case 'audio':
                                         if (item.delayType !== 'none' && item.delayData > 0 || item.delayData !== '') {
@@ -2651,10 +2658,19 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                                             }
                                             await sleep(item.delayData * TimeType)
                                         }
-                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.fileData), { sendAudioAsVoice: true })
+
+                                        const audioBuffer2 = Buffer.from(item.fileData.buffer.data)
+                                        const audioBase642 = audioBuffer2.toString('base64')
+                                        const media2 = new MessageMedia(item.fileData.mimetype, audioBase642, item.fileData.originalname)
+
+                                        Client_.sendMessage(msg.from, media2, { sendAudioAsVoice: true })
                                         break;
                                     case 'image':
-                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.fileData), { caption: item.textareaData })
+                                        const audioBuffer3 = Buffer.from(item.fileData.buffer.data)
+                                        const audioBase643 = audioBuffer3.toString('base64')
+                                        const media3 = new MessageMedia(item.fileData.mimetype, audioBase643, item.fileData.originalname)
+
+                                        Client_.sendMessage(msg.from, media3, { caption: item.textareaData })
                                         break;
                                     case 'text':
                                         if (item.delayType !== 'none' && item.delayData > 0 || item.delayData !== '') {
@@ -2676,10 +2692,17 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                                             }
                                             await sleep(item.delayData * TimeType)
                                         }
-                                        Client_.sendMessage(msg.from, await fs.readFile(item.fileData, 'utf8'))
+                                        
+                                        const textContent = Buffer.from(item.fileData.buffer.data).toString('utf8')
+
+                                        Client_.sendMessage(msg.from, textContent, 'utf8')
                                         break;
                                     case 'document':
-                                        Client_.sendMessage(msg.from, MessageMedia.fromFilePath(item.fileData), { caption: item.textareaData })
+                                        const audioBuffer4 = Buffer.from(item.fileData.buffer.data)
+                                        const audioBase644 = audioBuffer4.toString('base64')
+                                        const media4 = new MessageMedia(item.fileData.mimetype, audioBase644, item.fileData.originalname)
+
+                                        Client_.sendMessage(msg.from, media4, { caption: item.textareaData })
                                         break;
                                 }
 

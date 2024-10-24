@@ -67,7 +67,7 @@ router.put('/funil/send-data', upload.single('fileData'), async (req, res) => {
         typeMSG = parseInt(typeMSG)
         console.log('na rota: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
         const fileData = req.file
-        console.log('arquivo: ', fileData)
+        //console.log('arquivo na rota: ', fileData)
         await Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData)
         res.status(200).send({ sucess: true, message: `Sucessfully sent funil data.` })
     } catch (error) {

@@ -1770,21 +1770,21 @@ async function selectTemplate_(Templatet_) {
                                     selectDelayTextAudio.selectedIndex = 4
                                     break;
                             }
-                            selectDelayTextAudio.dispatchEvent(new Event('input'))
+                            //selectDelayTextAudio.dispatchEvent(new Event('input'))
 
-                            const inputDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTexAudioTime`)
-                            inputDelayTextAudio.value = item.delayData
                             if (item.delayType !== 'none') {
+                                const inputDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTexAudioTime`)
+                                inputDelayTextAudio.value = item.delayData
                                 await StateTypingMSG(document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffStateTypingFile`), false)
+                                //inputDelayTextAudio.dispatchEvent(new Event('input'))
                             }
-                            inputDelayTextAudio.dispatchEvent(new Event('input'))
                             
-                            const textareaFile  = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itextAreaCaption`)
-                            textareaFile.value = item.textareaData
-                            if (item.textareaData !== '') {
+                            if (item.textareaData.length !== 0) {
+                                const textareaFile = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itextAreaCaption`)
+                                textareaFile.value = item.textareaData
                                 await CaptionFileMSG(document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffCaption`))
+                                //textareaFile.dispatchEvent(new Event('input'))
                             }
-                            textareaFile.dispatchEvent(new Event('input'))
                             break;
                     }
 
@@ -2801,6 +2801,8 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                                 console.log(data || '')
                                 MSGType = 'file'
                                 fileType = typeTypeMSG
+                                console.log(typeTypeMSG)
+                                console.log(fileType)
                                 fileData = data
                                 //await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
                                 const formData = new FormData()
@@ -2822,6 +2824,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                 }
                 break;
         }
+    console.log('no front: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
     } catch (error) {
         console.error(`> ⚠️ ERROR sendToFunil: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> sendToFunil: ${error.message}`, setLogError)
@@ -2830,7 +2833,6 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
 
 async function StateTypingMSG(buttonElement, IsWType) {
     try {
-        console.log(buttonElement)
         let type = null
         let button = null
         let abbr = null
@@ -2851,7 +2853,6 @@ async function StateTypingMSG(buttonElement, IsWType) {
         }
 
         const typeElement = buttonElement.closest(`#${type}`)
-        console.log('aaaaaaaaaaaaaa',typeElement)
         const divElement = typeElement || buttonElement
         const buttonStateTyping = divElement.querySelector(`#${button}`)
         const abbrStateTyping = divElement.querySelector(`#${abbr}`)
@@ -2883,10 +2884,10 @@ async function StateTypingMSG(buttonElement, IsWType) {
                     'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
             }, 100)
         } else {
-            if (inputDelayText.value !== '') {
+            /*if (inputDelayText.value !== '') {
                 inputDelayText.value = ''
                 inputDelayText.dispatchEvent(new Event('input'))
-            }
+            }*/
 
             buttonStateTyping.style.cssText =
                 `display: ${currentButtonStateTypingDisplay}; opacity: ${currentButtonStateTypingOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
@@ -2940,10 +2941,10 @@ async function StateRecordingMSG(buttonElement) {
                     'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
             }, 100)
         } else {
-            if (inputDelayTextAudio.value >= 1) {
+            /*if (inputDelayTextAudio.value >= 1) {
                 inputDelayTextAudio.value = ''
                 inputDelayTextAudio.dispatchEvent(new Event('input'))
-            }
+            }*/
 
             buttonStateRecording.style.cssText =
                 `display: ${currentButtonStateRecordingDisplay}; opacity: ${currentButtonStateRecordingOpacity}; background-color: var(--colorBlack); color: var(--colorWhite);`
@@ -2968,6 +2969,8 @@ async function CaptionFileMSG(buttonElement) {
         const divElement = buttonElement.closest('#ifileTypeMSG')
         
         const buttonCaption = divElement.querySelector(`#iOnOffCaption`)
+        buttonCaption.style.cssText =
+            `display: inline; opacity: 1;`
         const abbrCaption = divElement.querySelector(`#iabbrOnOffCaption`)
         const divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
 
@@ -2989,6 +2992,12 @@ async function CaptionFileMSG(buttonElement) {
         const currentButtonDesktopScreen4Background_Color = buttonDesktopScreen4.style.backgroundColor
         const currentButtonDesktopScreen4Color = buttonDesktopScreen4.style.color
 
+        const buttonComputedStyle = window.getComputedStyle(buttonCaption)
+        const buttonDisplay = buttonComputedStyle.display
+        console.log(buttonDisplay)
+        const buttonOpacity = buttonComputedStyle.opacity
+        console.log(buttonOpacity)
+
         const isShown_divTextAreaCaption = window.getComputedStyle(divTextAreaCaption).display
         const currentTextAreaBackground_Color = divTextAreaCaption.style.backgroundColor
         const currentTextAreaColor = divTextAreaCaption.style.color
@@ -2996,8 +3005,11 @@ async function CaptionFileMSG(buttonElement) {
         const currentTextAreaResize = divTextAreaCaption.style.resize
 
         if (isShown_divTextAreaCaption === 'none') {
-            buttonCaption.style.cssText =
-                'background-color: var(--colorWhite); color: var(--colorBlack);'
+            console.log('pitolau')
+            buttonCaption.style.backgroundColor = 'var(--colorWhite)'
+            buttonCaption.style.color = 'var(--colorBlack)'
+            /*buttonCaption.style.cssText =
+                `background-color: var(--colorWhite); color: var(--colorBlack);` //display: ${buttonDisplay}; opacity: ${buttonOpacity};`*/
             buttonCaption.textContent = `-`
             
             abbrCaption.title = `Area de texto STATUS: on`
@@ -3042,10 +3054,11 @@ async function CaptionFileMSG(buttonElement) {
                     `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
             }, 100)
         } else {
-            if (divTextAreaCaption.value !== '') {
+            console.log('bucitau')
+            /*if (divTextAreaCaption.value !== '') {
                 divTextAreaCaption.value = ''
                 divTextAreaCaption.dispatchEvent(new Event('input'))
-            }
+            }*/
 
             buttonLigtDark.style.cssText =
                 `display: inline; opacity: 0; background-color: ${currentLightDarkBackground_Color}; color: ${currentLightDarkColor};`
@@ -3076,8 +3089,10 @@ async function CaptionFileMSG(buttonElement) {
                     `display: none; opacity: 0; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
             }, 300)
 
-            buttonCaption.style.cssText =
-                'background-color: var(--colorBlack); color: var(--colorWhite);'
+            buttonCaption.style.backgroundColor = 'var(--colorBlack)'
+            buttonCaption.style.color = 'var(--colorWhite)'
+            /*buttonCaption.style.cssText =
+                `background-color: var(--colorBlack); color: var(--colorWhite);` //${buttonDisplay}; opacity: ${buttonOpacity};`*/
             buttonCaption.textContent = `O`
             
             abbrCaption.title = `Area de texto STATUS: off`
@@ -3977,15 +3992,18 @@ async function getFileData(divElementBridge, file) {
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                     computedSyle4 = window.getComputedStyle(divTextAreaCaption)
                     currentDivTextAreaCaptionDisplay = computedSyle4.display
-                    if (currentDivTextAreaCaptionDisplay === 'block') {
-                        await CaptionFileMSG(divElementBridge)
+                    if (currentDivTextAreaCaptionDisplay === 'block') {///////////////////////////////////////////////////////////
+                        //await CaptionFileMSG(divElementBridge)/////////aaaaaaaaaa resolveir
                     }
 
-                    buttonCaption.style.cssText =
-                        `display: inline; opacity: 0;`
+                    buttonCaption.style.display = 'inline'
+                    buttonCaption.style.opacity = '0'
+                    /*buttonCaption.style.cssText =
+                    `display: inline; opacity: 0;`*/
                     setTimeout(function() {
-                        buttonCaption.style.cssText =
-                            `display: inline; opacity: 1;`
+                        buttonCaption.style.opacity = '1'
+                        /*buttonCaption.style.cssText =
+                            `display: inline; opacity: 1;`*/
                     }, 300)
 
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
@@ -4022,6 +4040,8 @@ async function getFileData(divElementBridge, file) {
                     }
                     buttonStateRecording.style.cssText =
                         `display: none; opacity: 0;`
+                    buttonCaption.style.cssText =
+                        `display: none; opacity: 0;`
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                     computedSyle4 = window.getComputedStyle(divTextAreaCaption)
                     currentDivTextAreaCaptionDisplay = computedSyle4.display
@@ -4033,12 +4053,6 @@ async function getFileData(divElementBridge, file) {
                         `display: inline; opacity: 0;`
                     setTimeout(function() {
                         buttonStateTyping.style.cssText =
-                            `display: inline; opacity: 1;`
-                    }, 300)
-                    buttonCaption.style.cssText =
-                        `display: inline; opacity: 0;`
-                    setTimeout(function() {
-                        buttonCaption.style.cssText =
                             `display: inline; opacity: 1;`
                     }, 300)
 
