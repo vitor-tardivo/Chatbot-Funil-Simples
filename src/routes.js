@@ -65,7 +65,7 @@ router.put('/funil/send-data', upload.single('fileData'), async (req, res) => {
         let { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType } = req.body
         positionId = parseInt(positionId)
         typeMSG = parseInt(typeMSG)
-        console.log('na rota: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
+        //console.log('na rota: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
         const fileData = req.file
         //console.log('arquivo na rota: ', fileData)
         await Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData)
@@ -200,6 +200,7 @@ router.get('/funil/insert_exponecial_position_MSG', async (req, res) => {
 })
 router.delete('/funil/erase-position-MSG', async (req, res) => {
     try {
+        console.log('cu murcho')
         const idnumberposition = req.query.IdNumberPosition
         const Sucess = await Position_MSG_Erase(idnumberposition)
         

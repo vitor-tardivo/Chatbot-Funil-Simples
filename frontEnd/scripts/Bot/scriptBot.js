@@ -1441,7 +1441,7 @@ async function eraseTemplate_(Templatet_, Funilt_) {
                         }
                     }
 
-                    await selectTemplate_(`_${Number(posArrayTemplateId)}_${posArrayTemplateName}_`, Funilt_)
+                    await selectTemplate_(`_${Number(posArrayTemplateId)}_${posArrayTemplateName}_`)
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Template_ <strong>${Templatet_}</strong>!`
@@ -1529,6 +1529,7 @@ async function selectTemplate_(Templatet_) {
                     }, 300)
                 }, 100)
             }
+            await sleep(400)
 
             const response = await axios.get('/template/insert-front')
             let Sucess = response.data.sucess
@@ -1538,10 +1539,10 @@ async function selectTemplate_(Templatet_) {
                 
                 const divFunil = document.querySelector('#funilArea')
                 
-                console.log(positions.length)
+                //console.log(positions.length)
                 for (let i = 0; i < positions.length; i++) {
                     const item = positions[i]
-                    console.log(`${i}: `, item)
+                    //console.log(`${i}: `, item)
 
                     switch (item.typeMSG) {
                         case 1:
@@ -1741,16 +1742,18 @@ async function selectTemplate_(Templatet_) {
 
                             divFunil.insertAdjacentHTML('beforeend', MSGHTMlFile)
 
-                            const byteArray = new Uint8Array(item.fileData.buffer.data)
-                            const blob = new Blob([byteArray], { type: item.fileData.mimetype })
-                    
-                            const file = new File([blob], item.fileData.originalname, { type: item.fileData.mimetype })
-                            const fileInput = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector('input#ifileTypeMSGAux[type="file"]')
-                            const dataTransfer = new DataTransfer()
-                            dataTransfer.items.add(file)
-                            fileInput.files = dataTransfer.files
-                            console.log(fileInput.files[0])
-                            fileInput.dispatchEvent(new Event('change'))
+                            if (item.fileData.buffer.data) {
+                                const byteArray = new Uint8Array(item.fileData.buffer.data)
+                                const blob = new Blob([byteArray], { type: item.fileData.mimetype })
+                        
+                                const file = new File([blob], item.fileData.originalname, { type: item.fileData.mimetype })
+                                const fileInput = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector('input#ifileTypeMSGAux[type="file"]')
+                                const dataTransfer = new DataTransfer()
+                                dataTransfer.items.add(file)
+                                fileInput.files = dataTransfer.files
+                                //console.log(fileInput.files[0])
+                                fileInput.dispatchEvent(new Event('change'))
+                            }
 
                             const selectDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTextAudioSelect`)
                             switch (item.delayType) {
@@ -1770,30 +1773,38 @@ async function selectTemplate_(Templatet_) {
                                     selectDelayTextAudio.selectedIndex = 4
                                     break;
                             }
-                            //selectDelayTextAudio.dispatchEvent(new Event('input'))
 
                             if (item.delayType !== 'none') {
-                                const inputDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTexAudioTime`)
-                                inputDelayTextAudio.value = item.delayData
-                                await StateTypingMSG(document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffStateTypingFile`), false)
-                                //inputDelayTextAudio.dispatchEvent(new Event('input'))
+                                if (item.fileType == 'audio') {
+                                    const inputDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTexAudioTime`)
+                                    inputDelayTextAudio.value = item.delayData
+                                    await StateRecordingMSG(document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffStateRecordingFile`))
+                                } else if (item.fileType == 'text') {
+                                    const inputDelayTextAudio = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayTexAudioTime`)
+                                    inputDelayTextAudio.value = item.delayData
+                                    await StateTypingMSG(document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffStateTypingFile`), false)
+                                }
                             }
                             
                             if (item.textareaData.length !== 0) {
-                                const textareaFile = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itextAreaCaption`)
-                                textareaFile.value = item.textareaData
-                                await CaptionFileMSG(document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffCaption`))
-                                //textareaFile.dispatchEvent(new Event('input'))
+                                if (item.fileType == 'image' || item.fileType == 'video' || item.fileType == 'document') {
+                                    const textareaFile = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itextAreaCaption`)
+                                    textareaFile.value = item.textareaData
+                                    await CaptionFileMSG(document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffCaption`))
+                                }
                             }
                             break;
                     }
 
-                    document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
-                        `display: flex; opacity: 0;`
-                    setTimeout(function() {
+                    if (document.querySelector(`#conteinerFunilMSG${item.positionId}`)) {
+                        document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
+                            `display: flex; opacity: 0;`
+                        await sleep(300)
                         document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
                             `display: flex; opacity: 1;`
-                    }, 300)
+                        /*setTimeout(function() {
+                        }, 300)*/
+                    }
                 }
             } else {
 
@@ -2021,7 +2032,7 @@ async function eraseFunil_(Funilt_) {
                     }
 
                     //aqui
-                    await selectFunil_(`_${Number(posArrayFunilId)}_${posArrayFunilName}_`)
+                    await selectFunil_(`_${Number(posArrayFunilId)}_${posArrayFunilName}_`, true)
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Funil_ <strong>${Funilt_}</strong>!`
@@ -2096,12 +2107,17 @@ async function selectFunil_(Funilt_, isFromButton) {
                 let dir_Path = `Funil\\${Funil_}`
                 const response4 = await axios.get('/functions/dir', { params: { dir_Path } })
                 let Directories_ = response4.data.dirs
+                let divTemplateInner = document.querySelector('#divInnerTemplate')
                 if (Directories_.length-1 === -1) {
-                    
-                    
-                } else {
-                    let divTemplateInner = document.querySelector('#divInnerTemplate')
+                    document.querySelector(`#funilArea`).innerHTML = ''
 
+                    divTemplateInner.style.cssText =
+                        'display: block; opacity: 0;'
+                    setTimeout(function() {
+                        divTemplateInner.style.cssText =
+                            'display: none; opacity: 0;'
+                    }, 300)
+                } else {
                     let Counter_Templates_ = 1
                     for (let i = 1; i <= Directories_.length; i++) {
                         const match = Directories_[Counter_Templates_-1].match(/=(.+)\.json/)
@@ -2216,7 +2232,7 @@ async function newFunils() {
         const Funil_ = response.data.Funilt_
         if (Sucess) {
             await insertFunil_Front(Funil_)
-            await selectFunil_(Funil_)
+            await selectFunil_(Funil_, true)
 
             divTemplateFunctions.style.cssText =
                 'display: flex; opacity: 0;'
@@ -2453,7 +2469,7 @@ async function erasePosition(divPosition, typeMSG) {
                     }
                     break;
                 case 3:
-                    /*const fileInput = divPosition.querySelector('input#ifileTypeMSGAux[type="file"]')
+                    const fileInput = divPosition.querySelector('input#ifileTypeMSGAux[type="file"]')
                     if (fileInput.files[0] === undefined) {
                         response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
                         Sucess = response.data.sucess
@@ -2473,17 +2489,7 @@ async function erasePosition(divPosition, typeMSG) {
                     } else {
                         fileInput.value = ''
                         fileInput.dispatchEvent(new Event('change'))
-                    }*/
-
-                    const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
-                    conteinerMSG.style.cssText =
-                        `display: flex; opacity: 0;`
-                    setTimeout(async function() {
-                        conteinerMSG.style.cssText =
-                            `display: none; opacity: 0;`
-
-                        divPosition.remove()
-                    }, 100)
+                    }
                     break;
             }
 
@@ -2520,8 +2526,8 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
 
                 switch (typeTypeMSG.value || typeTypeMSG) {
                     case 'input':
-                        displayOnConsole(`1=${typeTypeMSG}:`)
-                        displayOnConsole(inputDelayMSG.value)
+                        //displayOnConsole(`1=${typeTypeMSG}:`)
+                        //displayOnConsole(inputDelayMSG.value)
                         MSGType = 'delay'
                         delayType = typeTypeMSG
                         delayData = inputDelayMSG.value
@@ -2541,7 +2547,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         }
                         break;
                     case 'seconds':
-                        displayOnConsole(`1=${typeTypeMSG.value}`)
+                        //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
                         await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2552,7 +2558,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         }
                         break;
                     case 'minutes':
-                        displayOnConsole(`1=${typeTypeMSG.value}`)
+                        //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
                         await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2563,7 +2569,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         }
                         break;
                     case 'hours':
-                        displayOnConsole(`1=${typeTypeMSG.value}`)
+                        //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
                         await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2574,7 +2580,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         }
                         break;
                     case 'days':
-                        displayOnConsole(`1=${typeTypeMSG.value}`)
+                        //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
                         await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2585,7 +2591,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         }
                         break;
                     case 'none':
-                        displayOnConsole(`1=${typeTypeMSG.value}`)
+                        //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
                         await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2607,8 +2613,8 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                 if (typeTypeMSG) {
                     switch (typeTypeMSG.value || typeTypeMSG) {
                         case 'input':
-                            displayOnConsole(`2=${typeTypeMSG}:`)
-                            displayOnConsole(inputDelayText.value)
+                            //displayOnConsole(`2=${typeTypeMSG}:`)
+                            //displayOnConsole(inputDelayText.value)
                             MSGType = 'delay'
                             delayType = typeTypeMSG
                             delayData = inputDelayText.value
@@ -2628,7 +2634,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             }
                             break;
                         case 'seconds':
-                            displayOnConsole(`2=${typeTypeMSG.value}`)
+                            //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
                             await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2639,7 +2645,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             }
                             break;
                         case 'minutes':
-                            displayOnConsole(`2=${typeTypeMSG.value}`)
+                            //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
                             await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2650,7 +2656,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             }
                             break;
                         case 'hours':
-                            displayOnConsole(`2=${typeTypeMSG.value}`)
+                            //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
                             await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2663,7 +2669,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             
                             break;
                         case 'days':
-                            displayOnConsole(`2=${typeTypeMSG.value}`)
+                            //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
                             await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2674,7 +2680,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             }
                             break;
                         case 'none':
-                            displayOnConsole(`2=${typeTypeMSG.value}`)
+                            //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
                             await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2687,8 +2693,8 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         case 'textarea':
                                 //const divTextAreaMSG = divElement.querySelector(`#itextAreaTypeMSG`)
                                 if (data) {
-                                    displayOnConsole(`2=${typeTypeMSG}:`) 
-                                    displayOnConsole(data.value)
+                                    //displayOnConsole(`2=${typeTypeMSG}:`) 
+                                    //displayOnConsole(data.value)
                                     MSGType = 'textarea'
                                     textareaData = data.value
                                     await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
@@ -2704,127 +2710,123 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
 
                 positionId = Number(divElement.parentElement.parentElement.id.match(/\d+/g))
 
-                if (typeTypeMSG) {
-                    switch (typeTypeMSG.value || typeTypeMSG) {
-                        case 'input':
-                            displayOnConsole(`3=${typeTypeMSG}:`)
-                            displayOnConsole(inputDelayTextAudio.value)
-                            MSGType = 'delay'
-                            delayType = typeTypeMSG
-                            delayData = inputDelayTextAudio.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+                switch (typeTypeMSG.value || typeTypeMSG) {
+                    case 'input':
+                        //displayOnConsole(`3=${typeTypeMSG}:`)
+                        //displayOnConsole(inputDelayTextAudio.value)
+                        MSGType = 'delay'
+                        delayType = typeTypeMSG
+                        delayData = inputDelayTextAudio.value
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
 
-                            const selectDelayTextAudio = divElement.querySelector(`#idelayTextAudioSelect`)
-                            if (inputDelayTextAudio.value >= 1) {
-                                if (selectDelayTextAudio.selectedIndex === 0) {
-                                    selectDelayTextAudio.selectedIndex = 1
-                                    selectDelayTextAudio.dispatchEvent(new Event('input'))
+                        const selectDelayTextAudio = divElement.querySelector(`#idelayTextAudioSelect`)
+                        if (inputDelayTextAudio.value >= 1) {
+                            if (selectDelayTextAudio.selectedIndex === 0) {
+                                selectDelayTextAudio.selectedIndex = 1
+                                selectDelayTextAudio.dispatchEvent(new Event('input'))
+                            }
+                        } else {
+                            if (selectDelayTextAudio.selectedIndex !== 0) {
+                                selectDelayTextAudio.selectedIndex = 0
+                                selectDelayTextAudio.dispatchEvent(new Event('input'))
+                            }
+                        }
+                        break;
+                    case 'seconds':
+                        //displayOnConsole(`3=${typeTypeMSG.value}`)
+                        MSGType = 'delay'
+                        delayType = typeTypeMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+
+                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                            inputDelayTextAudio.value = 1
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                    case 'minutes':
+                        //displayOnConsole(`3=${typeTypeMSG.value}`)
+                        MSGType = 'delay'
+                        delayType = typeTypeMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+
+                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                            inputDelayTextAudio.value = 1
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                    case 'hours':
+                        //displayOnConsole(`3=${typeTypeMSG.value}`)
+                        MSGType = 'delay'
+                        delayType = typeTypeMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+
+                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                            inputDelayTextAudio.value = 1
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                    case 'days':
+                        //displayOnConsole(`3=${typeTypeMSG.value}`)
+                        MSGType = 'delay'
+                        delayType = typeTypeMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+
+                        if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
+                            inputDelayTextAudio.value = 1
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                    case 'none':
+                        //displayOnConsole(`3=${typeTypeMSG.value}`)
+                        MSGType = 'delay'
+                        delayType = typeTypeMSG.value
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+
+                        if (inputDelayTextAudio.value !== '') {
+                            inputDelayTextAudio.value = ''
+                            inputDelayTextAudio.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                    case 'textarea':
+                        //const divTextAreaMSG = divElement.querySelector(`#itextAreaTypeMSG`)
+                        if (data) {
+                            //displayOnConsole(`3=${typeTypeMSG}:`) 
+                            //displayOnConsole(data.value || '')
+                            MSGType = 'textarea'
+                            textareaData = data.value
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+                        }
+                        break;
+                    default:
+                        if (data) {
+                            //displayOnConsole(`3=file:`)   
+                            //displayOnConsole(`3=fileType:`)   
+                            //displayOnConsole(typeTypeMSG)   
+                            //displayOnConsole(data.name)   
+                            //console.log(data || '')
+                            MSGType = 'file'
+                            fileType = typeTypeMSG
+                            fileData = data
+                            //await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
+                            const formData = new FormData()
+                            formData.append('typeMSG', typeMSG)
+                            formData.append('MSGType', MSGType)
+                            formData.append('positionId', positionId)
+                            formData.append('delayType', delayType)
+                            formData.append('delayData', delayData)
+                            formData.append('textareaData', textareaData)
+                            formData.append('fileType', fileType)
+                            formData.append('fileData', fileData)
+                            await axios.put('/funil/send-data', formData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
                                 }
-                            } else {
-                                if (selectDelayTextAudio.selectedIndex !== 0) {
-                                    selectDelayTextAudio.selectedIndex = 0
-                                    selectDelayTextAudio.dispatchEvent(new Event('input'))
-                                }
-                            }
-                            break;
-                        case 'seconds':
-                            displayOnConsole(`3=${typeTypeMSG.value}`)
-                            MSGType = 'delay'
-                            delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
-
-                            if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
-                                inputDelayTextAudio.value = 1
-                                inputDelayTextAudio.dispatchEvent(new Event('input'))
-                            }
-                            break;
-                        case 'minutes':
-                            displayOnConsole(`3=${typeTypeMSG.value}`)
-                            MSGType = 'delay'
-                            delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
-
-                            if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
-                                inputDelayTextAudio.value = 1
-                                inputDelayTextAudio.dispatchEvent(new Event('input'))
-                            }
-                            break;
-                        case 'hours':
-                            displayOnConsole(`3=${typeTypeMSG.value}`)
-                            MSGType = 'delay'
-                            delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
-
-                            if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
-                                inputDelayTextAudio.value = 1
-                                inputDelayTextAudio.dispatchEvent(new Event('input'))
-                            }
-                            break;
-                        case 'days':
-                            displayOnConsole(`3=${typeTypeMSG.value}`)
-                            MSGType = 'delay'
-                            delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
-
-                            if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
-                                inputDelayTextAudio.value = 1
-                                inputDelayTextAudio.dispatchEvent(new Event('input'))
-                            }
-                            break;
-                        case 'none':
-                            displayOnConsole(`3=${typeTypeMSG.value}`)
-                            MSGType = 'delay'
-                            delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
-
-                            if (inputDelayTextAudio.value !== '') {
-                                inputDelayTextAudio.value = ''
-                                inputDelayTextAudio.dispatchEvent(new Event('input'))
-                            }
-                            break;
-                        case 'textarea':
-                            //const divTextAreaMSG = divElement.querySelector(`#itextAreaTypeMSG`)
-                            if (data) {
-                                displayOnConsole(`3=${typeTypeMSG}:`) 
-                                displayOnConsole(data.value || '')
-                                MSGType = 'textarea'
-                                textareaData = data.value
-                                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
-                            }
-                            break;
-                        default:
-                            if (data) {
-                                displayOnConsole(`3=file:`)   
-                                displayOnConsole(`3=fileType:`)   
-                                displayOnConsole(typeTypeMSG)   
-                                displayOnConsole(data.name)   
-                                console.log(data || '')
-                                MSGType = 'file'
-                                fileType = typeTypeMSG
-                                console.log(typeTypeMSG)
-                                console.log(fileType)
-                                fileData = data
-                                //await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
-                                const formData = new FormData()
-                                formData.append('typeMSG', typeMSG)
-                                formData.append('MSGType', MSGType)
-                                formData.append('positionId', positionId)
-                                formData.append('delayType', delayType)
-                                formData.append('delayData', delayData)
-                                formData.append('textareaData', textareaData)
-                                formData.append('fileType', fileType)
-                                formData.append('fileData', fileData, fileData.name)
-                                await axios.put('/funil/send-data', formData, {
-                                    headers: {
-                                        'Content-Type': 'multipart/form-data'
-                                    }
-                                })
-                            } 
-                    }
+                            })
+                        } 
                 }
                 break;
         }
-    console.log('no front: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+    //console.log('no front: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
     } catch (error) {
         console.error(`> ⚠️ ERROR sendToFunil: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> sendToFunil: ${error.message}`, setLogError)
@@ -2994,9 +2996,7 @@ async function CaptionFileMSG(buttonElement) {
 
         const buttonComputedStyle = window.getComputedStyle(buttonCaption)
         const buttonDisplay = buttonComputedStyle.display
-        console.log(buttonDisplay)
         const buttonOpacity = buttonComputedStyle.opacity
-        console.log(buttonOpacity)
 
         const isShown_divTextAreaCaption = window.getComputedStyle(divTextAreaCaption).display
         const currentTextAreaBackground_Color = divTextAreaCaption.style.backgroundColor
@@ -3005,7 +3005,6 @@ async function CaptionFileMSG(buttonElement) {
         const currentTextAreaResize = divTextAreaCaption.style.resize
 
         if (isShown_divTextAreaCaption === 'none') {
-            console.log('pitolau')
             buttonCaption.style.backgroundColor = 'var(--colorWhite)'
             buttonCaption.style.color = 'var(--colorBlack)'
             /*buttonCaption.style.cssText =
@@ -3054,7 +3053,6 @@ async function CaptionFileMSG(buttonElement) {
                     `display: inline; opacity: 1; background-color: ${currentButtonDesktopScreen4Background_Color}; color: ${currentButtonDesktopScreen4Color};`
             }, 100)
         } else {
-            console.log('bucitau')
             /*if (divTextAreaCaption.value !== '') {
                 divTextAreaCaption.value = ''
                 divTextAreaCaption.dispatchEvent(new Event('input'))
@@ -3780,8 +3778,9 @@ async function getFileData(divElementBridge, file) {
 
         let divDelayTextAudioTitle = null
         
+        console.log(file)
         if (file === null || file === undefined || file === '...') {
-            await sendToFunil(divElementBridge, 3, null, file)
+            await sendToFunil(divElementBridge, 3, '', file)
             
             typeFile.textContent = `...`
             
@@ -3853,13 +3852,11 @@ async function getFileData(divElementBridge, file) {
             }, 300)
 
             const divPosition = divElement.parentElement.parentElement
-            console.log(divPosition)
             buttonErasePositionMSG = divPosition.querySelector(`#ierasePositionMSG`)
-            console.log(buttonErasePositionMSG)
             buttonErasePositionMSG.title = `Deselecionar arquivo (${file.name})`
 
             //melhora esse de reseta o style de tudo tbm pra cada file novo ou igual, talves verificar ser o file é igual ou novo se n ele fas nada sla
-            displayOnConsole(file.type)
+            //displayOnConsole(file.type)
             const fileType = file.type
             switch (fileType) {//conforme vai indo adicionar o maximo possivel de tipos de arquivos para cada e assim ser mais completo e preciso
                 case 'video/mp4':
@@ -3938,24 +3935,27 @@ async function getFileData(divElementBridge, file) {
                     }
                     buttonStateTyping.style.cssText =
                         `display: none; opacity: 0;`
-                    buttonCaption.style.cssText =
-                        `display: none; opacity: 0;`
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                     computedSyle4 = window.getComputedStyle(divTextAreaCaption)
                     currentDivTextAreaCaptionDisplay = computedSyle4.display
                     if (currentDivTextAreaCaptionDisplay === 'block') {
                         await CaptionFileMSG(divElementBridge)
                     }
+                    buttonCaption.style.cssText =
+                        `display: none; opacity: 0;`
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                     abbrDivTextAreaCaption = divElement.querySelector(`#iabbrtextAreaCaption`)
                     divTextAreaCaption.placeholder = `Legenda do (${file.name || 'arquivo'}): >...`
                     abbrDivTextAreaCaption.title = `Digite a legenda do (${file.name || 'arquivo'})`
-                    
-                    buttonStateRecording.style.cssText =
-                        `display: inline; opacity: 0;`
+
+                    buttonStateRecording.style.display = 'inline'
+                    buttonStateRecording.style.opacity = '0'
+                    /*buttonStateRecording.style.cssText =
+                        `display: inline; opacity: 0;`*/
                     setTimeout(function() {
-                        buttonStateRecording.style.cssText =
-                            `display: inline; opacity: 1;`
+                        buttonStateRecording.style.opacity = '1'
+                        /*buttonStateRecording.style.cssText =
+                            `display: inline; opacity: 1;`*/
                     }, 300)
 
                     divDelayTextAudioTitle = divElement.querySelector(`#idelayTextAudioTitle`) 
@@ -3999,7 +3999,7 @@ async function getFileData(divElementBridge, file) {
                     buttonCaption.style.display = 'inline'
                     buttonCaption.style.opacity = '0'
                     /*buttonCaption.style.cssText =
-                    `display: inline; opacity: 0;`*/
+                        `display: inline; opacity: 0;`*/
                     setTimeout(function() {
                         buttonCaption.style.opacity = '1'
                         /*buttonCaption.style.cssText =
@@ -4040,20 +4040,23 @@ async function getFileData(divElementBridge, file) {
                     }
                     buttonStateRecording.style.cssText =
                         `display: none; opacity: 0;`
-                    buttonCaption.style.cssText =
-                        `display: none; opacity: 0;`
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)
                     computedSyle4 = window.getComputedStyle(divTextAreaCaption)
                     currentDivTextAreaCaptionDisplay = computedSyle4.display
                     if (currentDivTextAreaCaptionDisplay === 'block') {
                         await CaptionFileMSG(divElementBridge)
                     }
+                    buttonCaption.style.cssText =
+                        `display: none; opacity: 0;`
 
-                    buttonStateTyping.style.cssText =
-                        `display: inline; opacity: 0;`
+                    buttonStateTyping.style.display = 'inline'
+                    buttonStateTyping.style.opacity = '0'
+                    /*buttonStateTyping.style.cssText =
+                        `display: inline; opacity: 0;`*/
                     setTimeout(function() {
-                        buttonStateTyping.style.cssText =
-                            `display: inline; opacity: 1;`
+                        buttonStateTyping.style.opacity = '1'
+                        /*buttonStateTyping.style.cssText =
+                            `display: inline; opacity: 1;`*/
                     }, 300)
 
                     divTextAreaCaption = divElement.querySelector(`#itextAreaCaption`)

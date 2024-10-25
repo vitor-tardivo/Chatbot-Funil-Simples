@@ -517,10 +517,8 @@ async function Change_Position_MSG(selectedId, toChangeFor) {
 
 async function Insert_Template_Front() {
     try {
-        console.log(Counter_Id_Position_MSG)
         Counter_Id_Position_MSG = []
         const Template_Data = JSON.parse(fss.readFileSync(global.Data_File_Templates_, 'utf8'))
-        console.log(Template_Data)
         Template_Data.forEach(Template => {
             if (Template.positionId !== undefined) {
                 Counter_Id_Position_MSG.push(Template.positionId)
@@ -536,7 +534,7 @@ async function Insert_Template_Front() {
 
 async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData) {
     try {
-        console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
+        //console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
         //console.log('arquivo na funcao: ', fileData)
 
         //let Data_ = [{  }]
@@ -617,14 +615,12 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                                     existingItem.typeMSG = typeMSG
                                     existingItem.delayData = delayData
                                     isDifferent = true
-                                    console.log('dbilau mole')
                                 }
                             } else {
                                 if (existingItem.delayType !== delayType) {
                                     existingItem.typeMSG = typeMSG
                                     existingItem.delayType = delayType
                                     isDifferent = true
-                                    console.log('tttbilau mole')
                                 }
                             }       
                             break;
@@ -633,7 +629,6 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                                 existingItem.typeMSG = typeMSG 
                                 existingItem.textareaData = textareaData
                                 isDifferent = true
-                                console.log('ttbilau mole')
                             }
                             break;
                         case 'file':
@@ -648,20 +643,28 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                                     //existingItem.textareaData = ''
                                     break;
                             }
-                            if (existingItem.fileData.fileType !== fileData.fileType) {
+                            if (existingItem.fileType !== fileType) {
                                 existingItem.fileType = fileType
                                 isDifferent = true
-                                console.log('tbilau mole')
                             }
-                            if (existingItem.fileData.originalname !== fileData.originalname || existingItem.fileData.mimetype !== fileData.mimetype || existingItem.fileData.buffer !== fileData.buffer || existingItem.fileData.size !== fileData.size) {
+                            if (fileData) {
+                                if (existingItem.fileData.originalname !== fileData.originalname || existingItem.fileData.mimetype !== fileData.mimetype || existingItem.fileData.buffer !== fileData.buffer || existingItem.fileData.size !== fileData.size) {
+                                    existingItem.fileData = fileData = {
+                                        originalname: fileData.originalname,
+                                        mimetype: fileData.mimetype,
+                                        buffer: fileData.buffer,
+                                        size: fileData.size
+                                    }
+                                    isDifferent = true
+                                }
+                            } else {
                                 existingItem.fileData = fileData = {
-                                    originalname: fileData.originalname,
-                                    mimetype: fileData.mimetype,
-                                    buffer: fileData.buffer,
-                                    size: fileData.size
+                                    originalname: '',
+                                    mimetype: '',
+                                    buffer: '',
+                                    size: ''
                                 }
                                 isDifferent = true
-                                console.log('fbilau mole')
                             }
                             
                             break;
@@ -746,12 +749,12 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                     break;
             }
 
-            existingData.push(newItem)
             isDifferent = true
+            existingData.push(newItem)
+            existingData.sort((a, b) => a.positionId - b.positionId)
         }
-
+        
         if (isDifferent) {
-            console.log('pinto duro')   
             const jsonString = '[\n' + existingData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
             await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
         }
@@ -1277,15 +1280,17 @@ async function Insert_Exponecial_Position_MSG(arrayIdNumberPosition) {
 }
 async function Position_MSG_Erase(IdNumberPosition) {
     try {
+        IdNumberPosition = Number(IdNumberPosition)
         const data = await fs.readFile(global.Data_File_Templates_, 'utf8')
 
         const jsonData = JSON.parse(data)
 
         const index = jsonData.findIndex(item => item.positionId === IdNumberPosition)
-
+        
         jsonData.splice(index, 1)
 
-        await fs.writeFile(global.Data_File_Templates_, JSON.stringify(jsonData, null, 2), 'utf8')//pra ficar padronizado apos apagar um so mudar o stringfy e tals...
+        const jsonString = '[\n' + jsonData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
 
         Counter_Id_Position_MSG.splice(IdNumberPosition-1, 1)
 
@@ -1325,7 +1330,6 @@ async function Generate_MSG_Position_Id() {
                 }
             }
         }
-        console.log(Counter_Id_Position_MSG)
         return Id_Position_MSG
     } catch (error) {
         console.error(`> ❌ ERROR Generate_MSG_Position_Id: ${error}`)
