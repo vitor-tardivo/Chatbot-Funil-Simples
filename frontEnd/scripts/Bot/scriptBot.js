@@ -1510,6 +1510,22 @@ async function selectTemplate_(Templatet_) {
 
             const titleTemplate = document.querySelector(`#SelectedTemplate`)
             titleTemplate.textContent = `${Templatet_}`
+
+            const response1 = await axios.get('/template/status-erase-schedule', { Template_: Templatet_ })
+            const eraseScheduleIs = response1.data.erasescheduleis
+            const abbrScheduleErase = document.querySelector(`#abbrScheduleErase`)
+            const buttonScheduleErase = document.querySelector(`#OnOffScheduleErase`)
+            if (eraseScheduleIs) {
+                abbrScheduleErase.title = `Schedule Erase STATUS: on`
+                buttonScheduleErase.textContent = 'o'
+                buttonScheduleErase.style.cssText =
+                    `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
+            } else {
+                abbrScheduleErase.title = `Schedule Erase STATUS: off`
+                buttonScheduleErase.textContent = '-'
+                buttonScheduleErase.style.cssText =
+                    `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
+            }
             
             const divsConteiner = document.querySelector('.conteinerFunilMSG')
             if (divsConteiner) {
@@ -1531,9 +1547,9 @@ async function selectTemplate_(Templatet_) {
             }
             await sleep(400)
 
-            const response = await axios.get('/template/insert-front')
-            let Sucess = response.data.sucess
-            let jsonTemplate = response.data.jsontemplate
+            const response2 = await axios.get('/template/insert-front')
+            let Sucess = response2.data.sucess
+            let jsonTemplate = response2.data.jsontemplate
             if (Sucess) {
                 const positions = jsonTemplate.filter(item => item.positionId)
                 
@@ -1820,6 +1836,59 @@ async function selectTemplate_(Templatet_) {
     } catch (error) {
         console.error(`> ⚠️ ERROR selectTemplate_ ${Templatet_}: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> selectTemplate_ <strong>${Templatet_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
+async function setEraseSchedule() {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const buttonScheduleErase = document.querySelector(`#OnOffScheduleErase`)
+        const currentButtonEraseScheduleBackground_Color = buttonScheduleErase.style.backgroundColor
+        let Sucess = null
+        let eraseScheduleIs = null
+        if (currentButtonEraseScheduleBackground_Color === 'var(--colorRed)') {
+            eraseScheduleIs = true
+            const response = await axios.put('/template/set-erase-schedule', { eraseScheduleIs })
+            Sucess = response.data.sucess
+        } else {
+            eraseScheduleIs = false
+            const response = await axios.put('/template/set-erase-schedule', { eraseScheduleIs })
+            Sucess = response.data.sucess
+        }
+        if (Sucess) {
+            const abbrScheduleErase = document.querySelector(`#abbrScheduleErase`)
+            if (currentButtonEraseScheduleBackground_Color === 'var(--colorRed)') {
+                abbrScheduleErase.title = `Schedule Erase STATUS: on`
+                buttonScheduleErase.textContent = 'o'
+                buttonScheduleErase.style.cssText =
+                    `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
+            } else {
+                abbrScheduleErase.title = `Schedule Erase STATUS: off`
+                buttonScheduleErase.textContent = '-'
+                buttonScheduleErase.style.cssText =
+                    `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
+            }
+            status.innerHTML = `<stronge>Definido</stronge> (<strong>${eraseScheduleIs}</strong>) apagamento agendado do Template_ <strong>${Template_}</strong>`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <stronge>Definido</stronge> (<strong>${eraseScheduleIs}</strong>) apagamento agendado do Template_ <strong>${Template_}</strong>.`)
+            resetLoadingBar()
+        } else {
+            status.innerHTML = `<i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${eraseScheduleIs}</strong>) apagamendo agendado do Template_ <strong>${Template_}</strong>!`
+            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${eraseScheduleIs}</strong>) apagamendo agendado do Template_ <strong>${Template_}</strong>!`)
+            resetLoadingBar()
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR setEraseSchedule ${Template_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> setEraseSchedule <strong>${Template_}</strong>: ${error.message}`, setLogError)
         //Client_NotReady = false
         resetLoadingBar()
     }
@@ -5268,7 +5337,8 @@ async function allPrint(isFromButton, isallerase, Clientt_) {
         return
     }
     try {
-        if (!isallerase) {   
+        if (!isallerase) {  
+            console.log('coco') 
             if (Clientt_ !== null) {   
                 if (Client_ !== Clientt_) {
                     return

@@ -31,6 +31,8 @@ const {
     New_Template_,
     Insert_Exponecial_Position_Template_,
     Select_Template_,
+    Status_Erase_Schedule,
+    Set_Erase_Schedule,
     Erase_Template_,
     Send_To_Funil,
     Insert_Template_Front,
@@ -114,6 +116,34 @@ router.post('/template/select', async (req, res) => {
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`})
     }
 })
+
+router.get('/template/status-erase-schedule', async (req, res) => {
+    try {
+        const { Template_ } = req.body
+        
+        let eraseScheduleIs = await Status_Erase_Schedule(Template_)
+        
+        res.status(200).send({ sucess: true, message: `Status Erase_Schedule sent.`, erasescheduleis: eraseScheduleIs })
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/status-erase-schedule: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, erasescheduleis: eraseScheduleIs })
+    }
+})
+router.put('/template/set-erase-schedule', async (req, res) => {
+    try {
+        const { eraseScheduleIs } = req.body
+        const { Sucess } = await Set_Erase_Schedule(eraseScheduleIs)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully set ${eraseScheduleIs} Erase Schedule.` })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to set ${eraseScheduleIs} Erase Schedule.` })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/set-erase-schedule: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
+    }
+})
+
 router.get('/template/insert_exponecial_position_Template_', async (req, res) => {
     try {
         const arrayidnametemplates_ = req.query.arrayIdNameTemplates_
@@ -200,7 +230,6 @@ router.get('/funil/insert_exponecial_position_MSG', async (req, res) => {
 })
 router.delete('/funil/erase-position-MSG', async (req, res) => {
     try {
-        console.log('cu murcho')
         const idnumberposition = req.query.IdNumberPosition
         const Sucess = await Position_MSG_Erase(idnumberposition)
         

@@ -16,7 +16,6 @@ const { setupWebSocket } = require('./src/WebSocket')
 
 process.on('uncaughtException', (error) => {
     console.error(`> ❌ Uncaught Exception: ${error}`)
-    if (global.Log_Callback) global.Log_Callback(`> ❌ Uncaught Exception: ${error}`)
 })
 
 const app = express()

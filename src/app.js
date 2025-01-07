@@ -10,7 +10,7 @@ if (global.Log_Callback) global.Log_Callback(`>  ◌ <i><strong><span class="sob
 const dotenv = require('dotenv')
 dotenv.config()
 const { Client, LocalAuth, MessageMedia, Buttons } = require('whatsapp-web.js')
-const puppeteer = require('puppeteer')
+//const puppeteer = require('puppeteer')
 const qrcode = require('qrcode-terminal')
 const path = require('path')
 const fs = require('fs').promises
@@ -18,7 +18,6 @@ const fss = require('fs')
 const fse = require('fs-extra')
 const { v4: uuidv4 } = require('uuid')
 const readline = require('readline')
-
 const Root_Dir = path.resolve(__dirname, '..')
 
 const { name: Name_Software } = JSON.parse(fss.readFileSync(path.resolve(Root_Dir, 'package.json'), 'utf8'))
@@ -273,7 +272,7 @@ global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Dat
 let Clientts_ = {}
 
 //actual null
-global.Is_Schedule = false//true=On/false=Off - Schedule_Erase_Chat_Data
+global.Is_Schedule = null//true=On/false=Off - Schedule_Erase_Chat_Data
 let Is_Schedule = global.Is_Schedule
 const timer_Schedule = {}
 let Is_timer_On = false
@@ -872,6 +871,9 @@ async function Select_Template_(Templatet_) {
         global.Template_ = Templatet_
         global.File_Data_Templates_ = `Template=${Templatet_}.json`
         global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template=${Templatet_}.json`)
+        const fileContent = await fs.readFile(global.Data_File_Templates_, 'utf8')
+        const templateData = JSON.parse(fileContent)
+        global.Is_Schedule = templateData[0].EraseSchedule
 
         //global.File_Data_Chat_Data = `Chat_Data=${Funilt_}.json`
         //global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Funilt_}.json`)
@@ -888,6 +890,55 @@ async function Select_Template_(Templatet_) {
         //Client_Not_Ready = false
     }
 }
+async function Status_Erase_Schedule(Templatet_) {
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ ${Funilt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Funilt_}</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+
+        const fileContent = await fs.readFile(global.Data_File_Templates_, 'utf8')
+        const templateData = JSON.parse(fileContent)
+        const eraseScheduleIs = templateData[0]?.EraseSchedule;
+
+        //Client_Not_Ready = false
+        return eraseScheduleIs
+    } catch (error) {
+        console.error(`> ❌ Status_Erase_Schedule ${Templatet_}: ${error}`)
+        return eraseScheduleIs 
+        //Client_Not_Ready = false
+    }
+}
+async function Set_Erase_Schedule(eraseScheduleIs) {
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ ${Funilt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Funilt_}</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+
+        const fileContent = await fs.readFile(global.Data_File_Templates_, 'utf8')
+        const templateData = JSON.parse(fileContent)
+        templateData[0].EraseSchedule = eraseScheduleIs
+        const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
+        global.Is_Schedule = eraseScheduleIs
+
+        console.log(`>  ℹ️ Set (${eraseScheduleIs}) Erase Schedule off Template_ ${global.Template_}.`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><stronge>Definido</stronge> (<strong>${eraseScheduleIs}</strong>) apagamento agendado do Template_ <strong>${global.Template_}</strong>.`)
+
+        //Client_Not_Ready = false
+        return { Sucess: true }
+    } catch (error) {
+        console.error(`> ❌ Set_Erase_Schedule: ${error}`)
+        return { Sucess: false } 
+        //Client_Not_Ready = false
+    }
+}
+
 async function Insert_Exponecial_Position_Template_(arrayIdNameTemplates_) {
     try {
         let isFirstUndefined = false
@@ -1000,7 +1051,7 @@ async function New_Template_() {
         global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template=${Templatet_}.json`)
         //const filesDir = path.join(global.Directory_Dir_Funils_, 'files')
         
-        const New_Template_ = [{ Templatet_ }]
+        const New_Template_ = [{ Templatet_, EraseSchedule: false }]
         const jsonString = '[\n' + New_Template_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
         //await fs.mkdir(filesDir, { recursive: true })
@@ -1848,9 +1899,10 @@ async function Erase_Chat_Data_By_Query(query, Is_From_End) {
 
         const ChatData = JSON.parse(await fs.readFile(global.Data_File_Chat_Data, 'utf8'))
         
-        const Normalized_Query = query.trim().toLowerCase()
+        const Normalized_Query = typeof query ==! 'number' ? query.trim().toLowerCase() : query;
         const Query_Entries = ChatData.filter(({chatId, name}) => 
-            chatId.trim().toLowerCase() === (Normalized_Query) ||
+            //chatId.trim().toLowerCase() === (Normalized_Query) ||
+            chatId === (Normalized_Query) ||
             name.trim().toLowerCase() === (Normalized_Query)  
         )
     
@@ -1941,7 +1993,7 @@ async function Erase_Chat_Data_By_Query(query, Is_From_End) {
             console.log(`> ✅ ChatData for ${query} from ${global.File_Data_Chat_Data}: ERASED`)
             if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>ChatData for <strong>${query}</strong> from <strong>${global.File_Data_Chat_Data}: ERASED</strong>`)
             let Is_From_All_Erase = false
-            if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase)
+            if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase, null)
             
             ChatData_Not_Ready = false
         
@@ -2023,7 +2075,7 @@ async function Erase_All_Chat_Data(Is_From_End) {
             }
 
             let Is_From_All_Erase = true
-            if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase)
+            if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase, null)
 
             ChatData_Not_Ready = false
 
@@ -2168,9 +2220,12 @@ async function Schedule_Erase_Chat_Data(chatId, time, Clientt_) {
     
                 const ChatData = JSON.parse(await fs.readFile(global.Data_File_Chat_Data, 'utf8'))
         
-                const Normalized_chatId = chatId.trim().toLowerCase()
+                console.log('coisa doidaa', chatId, typeof chatId)
+                //const Normalized_chatId = chatId.trim().toLowerCase()
+                const Normalized_chatId = chatId
                 const chatId_Entries = ChatData.filter(({chatId, name}) => 
-                    chatId.trim().toLowerCase() === (Normalized_chatId) ||
+                    //chatId.trim().toLowerCase() === (Normalized_chatId) ||
+                    chatId === (Normalized_chatId) ||
                     name.trim().toLowerCase() === (Normalized_chatId)  
                 )
 
@@ -2186,8 +2241,10 @@ async function Schedule_Erase_Chat_Data(chatId, time, Clientt_) {
                 console.log(`> 🚮 Timer FINALIZED ChatData for ${chatId} ERASED after ${time / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule} from ${global.File_Data_Chat_Data}.`)
                 if (global.Log_Callback) global.Log_Callback(`> 🚮 <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>FINALIZED</strong> ChatData for <strong>${chatId}</strong> <strong>ERASED</strong> <strong>after ${time / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule}</strong> from <strong>${global.File_Data_Chat_Data}</strong>.`)
 
+                let Is_From_End = false
+                await Erase_Chat_Data_By_Query(chatId, Is_From_End)
                 let Is_From_All_Erase = false
-                if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase)
+                if (List_Auxiliar_Callback) List_Auxiliar_Callback(Is_From_All_Erase, null)
                 
                 delete timer_Schedule[chatId]
         }, time)
@@ -3183,6 +3240,8 @@ module.exports = {
     New_Template_,
     Insert_Exponecial_Position_Template_,
     Select_Template_,
+    Status_Erase_Schedule,
+    Set_Erase_Schedule,
     Erase_Template_,
     Send_To_Funil,
     Insert_Template_Front,

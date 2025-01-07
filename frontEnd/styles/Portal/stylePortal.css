@@ -10,7 +10,7 @@ main {
     color: var(--colorWhite);
     font-size: 3.5vw;
     font-family: var(--fontDisplay);
-    box-shadow: 2px 2px 10px var(--colorShadow);
+    text-shadow: 2px 2px 10px var(--colorShadow);
     pointer-events: none;
     transition: var(--configTrasition03s);
 }
