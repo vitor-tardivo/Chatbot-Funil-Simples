@@ -44,8 +44,22 @@ setupWebSocket(server)
 
 server.listen(port, () => {
     try  {
-        const iIp = Object.values(os.networkInterfaces()).flat().filter(details => details.family === 'IPv4' && !details.internal).map(details => details.address)
-        console.log(`>  ℹ️ Server running ON: http://${iIp}:${port}/ || http://localhost:${port}/`)
+        //const iIp = Object.values(os.networkInterfaces()).flat().filter(details => details.family === 'IPv4' && !details.internal).map(details => details.address)
+        //console.log(`>  ℹ️ Server running ON: http://${iIp}:${port}/ || http://localhost:${port}/`)
+        const networkInterfaces = os.networkInterfaces()
+        let deviceIp
+
+        for (const interfaceName of Object.keys(networkInterfaces)) {
+            const interfaceInfo = networkInterfaces[interfaceName]
+            for (const details of interfaceInfo) {
+                if (details.family === 'IPv4' && !details.internal) {
+                    deviceIp = details.address
+                    break
+                }
+            }
+            if (deviceIp) break
+        }
+        console.log(`>  ℹ️ Server running ON: http://${deviceIp}:${port}/ || http://localhost:${port}/`)
     } catch(error) {
         console.error(`> ❌ ERROR Listen server: ${error}`)
     }

@@ -31,9 +31,11 @@ const {
     New_Template_,
     Insert_Exponecial_Position_Template_,
     Select_Template_,
+    Erase_Template_,
     Status_Erase_Schedule,
     Set_Erase_Schedule,
-    Erase_Template_,
+    Delay_Info_Erase_Schedule,
+    Send_To_Template_Erase_Schedule,
     Send_To_Funil,
     Insert_Template_Front,
     Change_Position_MSG,
@@ -74,6 +76,17 @@ router.put('/funil/send-data', upload.single('fileData'), async (req, res) => {
         res.status(200).send({ sucess: true, message: `Sucessfully sent funil data.` })
     } catch (error) {
         console.error(`> ❌ ERROR /funil/send-data: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
+    }
+})
+router.put('/template/delay-update-erase-schedule', async (req, res) => {
+    try {
+        let { typeDelay, delayType, delayData } = req.body
+        
+        await Send_To_Template_Erase_Schedule(typeDelay, delayType, delayData)
+        res.status(200).send({ sucess: true, message: `Sucessfully sent delay erase schedule data.` })
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/delay-update-erase-schedule: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
@@ -141,6 +154,16 @@ router.put('/template/set-erase-schedule', async (req, res) => {
     } catch (error) {
         console.error(`> ❌ ERROR /template/set-erase-schedule: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
+    }
+})
+router.get('/template/delay-info-erase-schedule', async (req, res) => {
+    try {
+        let { delayType, delayData } = await Delay_Info_Erase_Schedule()
+        
+        res.status(200).send({ sucess: true, message: `Info Erase_Schedule sent.`, delaytype: delayType, delaydata: delayData })
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/delay-info-erase-schedule: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, delaytype: null, delaydata: null })
     }
 })
 

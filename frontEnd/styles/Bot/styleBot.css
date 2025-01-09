@@ -1487,6 +1487,87 @@ td {
     border: 2px solid var(--colorWhite);
 }
 
+#idivDelayEraseSchedule {
+    /*display: none;*/
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    /*outline: 0px solid rgba(0, 0, 0, 0);*/
+    outline: 2px solid rgba(0, 0, 0, 0);
+    /*border: 0px solid var(--colorBlack);*/
+    border: 2px solid var(--colorBlack);
+    /*padding: 0px 0px 0px 0px;*/
+    padding: 5px 5px 10px 10px;
+    box-shadow: 2px 2px 4px var(--colorShadow);
+    /*height: 0vh;*/
+    height: 6vh;
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: auto;
+    transition: var(--configTrasition03s);
+}
+#idelayEraseScheduleTitle {
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: default;
+    transition: var(--configTrasition03s);
+}
+#idelayEraseScheduleLabelTime {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: text;
+    transition: var(--configTrasition03s);
+}
+#idelayEraseScheduleLabelTime:hover {
+    color: var(--colorWhite);
+}
+#idelayEraseScheduleTime {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    padding-top: 1px;
+    padding-right: 0.8px;
+    width: 3.5em;
+    font-size: 1.3vw;
+    font-family: var(--fontConsole);
+    transition: var(--configTrasition03s);
+}
+#idelayEraseScheduleTime:hover {
+    border: 1px solid var(--colorWhite);
+}
+#idelayEraseScheduleTime:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
+#idelayEraseScheduleSelect {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+#idelayEraseScheduleSelect:hover {
+    border: 1px solid var(--colorWhite);
+}
+#idelayEraseScheduleSelect:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
+
 #divCreateFunctionFunil {
     display: flex;
     flex-direction: column;

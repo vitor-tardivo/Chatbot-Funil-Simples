@@ -119,7 +119,7 @@
                                 
                                 <div class="divs" id="sendInputList">
                                     <div id="divInputList">
-                                        <abbr title="Digite um nome ou numero de contato..."><input type="text" id="inputList" placeholder=">..."></abbr>       
+                                        <abbr title="Digite um nome ou numero de contato..."><input type="text" id="inputList" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" placeholder=">..."></abbr>       
                                     </div>
 
                                     <abbr title="Pesquisa um nome ou numero de contato"><div id="divSendList">
@@ -210,6 +210,18 @@
                                 <div id="divInnerTemplate">
                                     <div id="divFunilFunctions">
                                         <abbr title="Schedule Erase STATUS: null" id="abbrScheduleErase"><button class="functionsDivStart" id="OnOffScheduleErase" onclick="setEraseSchedule()">-O</button></abbr>
+                                    </div>
+
+                                    <div id="idivDelayEraseSchedule">
+                                        <abbr title="Determine um valor para o tempo de Delay do Pagamento agendado"><span id="idelayEraseScheduleTitle"><strong>ATRASO-EraseSchedule:</strong></span><label for="idelayEraseScheduleTime" id="idelayEraseScheduleLabelTime">Tempo-<input type="number" id="idelayEraseScheduleTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToTemplateEraseSchedule('input')" placeholder="00000"></label></abbr> 
+                                        
+                                        <select title="Selecione um tipo de duração" id="idelayEraseScheduleSelect" oninput="sendToTemplateEraseSchedule('select')">
+                                            <option value="none" Selected>Nenhum</option>
+                                            <option value="seconds">Segundos</option>
+                                            <option value="minutes">Minutos</option>
+                                            <option value="hours">Horas</option>
+                                            <option value="days">Dias</option>
+                                        </select>
                                     </div>
                                     
                                     <div id="divCreateFunctionFunil">

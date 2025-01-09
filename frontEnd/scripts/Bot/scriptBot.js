@@ -588,10 +588,10 @@ async function exit(exitInten) {
         const status = document.querySelector('#status')
         if (exitInten) {
             status.innerHTML = `<strong>Reset page</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Reset page</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Reset page</strong>!`)
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> Back End!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> Back End!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> Back End!`)
         }
 
         let buttonStart = document.querySelector('#start')
@@ -659,7 +659,7 @@ async function authsucess(Client_) {
 
         const status = document.querySelector('#status')
         status.innerHTML = `Client_ <strong>${Client_}</strong> Realizado com Sucesso <strong>Autenticação</strong> ao WhatsApp Web pelo <strong>Local_Auth</strong>!`
-        displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Client_}</strong> Realizado com Sucesso <strong>Autenticação</strong> ao WhatsApp Web pelo <strong>Local_Auth</strong>!`)
+        displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Client_}</strong> Realizado com Sucesso <strong>Autenticação</strong> ao WhatsApp Web pelo <strong>Local_Auth</strong>!`)
         
         document.querySelector('#qrCode').innerText = ''
         const codeQr = document.querySelector('#qrCode')
@@ -1373,7 +1373,7 @@ async function eraseTemplate_(Templatet_, Funilt_) {
             }
             if (Is_Empty) {
                 status.innerHTML = `Dados de <strong>${Templatet_}</strong> esta <strong>vazio</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Templatet_}</strong> esta <strong>vazio</strong>`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Templatet_}</strong> esta <strong>vazio</strong>`)
 
                 resetLoadingBar()
                 
@@ -1383,7 +1383,7 @@ async function eraseTemplate_(Templatet_, Funilt_) {
             }
             if (Is_Empty_Input) {
                 status.innerHTML = `Template_ <strong>${Templatet_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
 
                 resetLoadingBar()
                 
@@ -1396,7 +1396,7 @@ async function eraseTemplate_(Templatet_, Funilt_) {
                 divTemplatet_.remove()
                 
                 status.innerHTML = `Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`)
 
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
                 let divTemplateInner = document.querySelector('#divInnerTemplate')
@@ -1414,7 +1414,7 @@ async function eraseTemplate_(Templatet_, Funilt_) {
                     }, 300)
 
                     status.innerHTML = `<strong>Dir</strong> off Templates_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
-                    displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Templates_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
+                    displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Templates_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
                 } else {
                     const templateIdNumber = Number(Templatet_.match(/\d+/g))
 
@@ -1427,9 +1427,10 @@ async function eraseTemplate_(Templatet_, Funilt_) {
                         if (templateIdNumber === templateDirIdNumber) {
                             posArrayTemplateId = Counter_Templates_
 
-                            if (Directories[posArrayTemplateId+1] === undefined) {
-                                posArrayTemplateId--
-                                posArrayTemplateName = Directories[posArrayTemplateId--].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
+                            if (Directories[posArrayTemplateId+1] === undefined) {//esse erro arumando sla se arrumo mesmo ou se crio outro, se tiver esse mesmo pobema em outros sistemas iguais a esse so fazer isso sla... nhe
+                                //posArrayTemplateId--
+                                //posArrayTemplateName = Directories[posArrayTemplateId--].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
+                                posArrayTemplateName = Directories[posArrayTemplateId].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
                             } else {
                                 posArrayTemplateId++
                                 posArrayTemplateName = Directories[posArrayTemplateId++].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
@@ -1440,12 +1441,12 @@ async function eraseTemplate_(Templatet_, Funilt_) {
                             Counter_Templates_++
                         }
                     }
-
+                    displayOnConsole(`_${Number(posArrayTemplateId)}_${posArrayTemplateName}_`)
                     await selectTemplate_(`_${Number(posArrayTemplateId)}_${posArrayTemplateName}_`)
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Template_ <strong>${Templatet_}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Template_ <strong>${Templatet_}</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Template_ <strong>${Templatet_}</strong>!`)
             }
         } else {
             resetLoadingBar()
@@ -1486,7 +1487,7 @@ async function selectTemplate_(Templatet_) {
         }
         if (divTemplatet_ === null) {
             status.innerHTML = `Template_ <strong>${Templatet_}</strong> <strong>Não</strong> existe!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> <strong>Não</strong> existe!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> <strong>Não</strong> existe!`)
             resetLoadingBar()
 
             //Funil_NotReady = false
@@ -1506,7 +1507,7 @@ async function selectTemplate_(Templatet_) {
             Template_ = Templatet_
 
             status.innerHTML = `Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>.`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>.`)
 
             const titleTemplate = document.querySelector(`#SelectedTemplate`)
             titleTemplate.textContent = `${Templatet_}`
@@ -1515,16 +1516,82 @@ async function selectTemplate_(Templatet_) {
             const eraseScheduleIs = response1.data.erasescheduleis
             const abbrScheduleErase = document.querySelector(`#abbrScheduleErase`)
             const buttonScheduleErase = document.querySelector(`#OnOffScheduleErase`)
+
+            const divDelayEraseSchedule = document.querySelector(`#idivDelayEraseSchedule`)
+            const delayEraseScheduleSelect = document.querySelector(`#idelayEraseScheduleSelect`)
+            const delayEraseScheduleTime = document.querySelector(`#idelayEraseScheduleTime`)
             if (eraseScheduleIs) {
                 abbrScheduleErase.title = `Schedule Erase STATUS: on`
                 buttonScheduleErase.textContent = 'o'
                 buttonScheduleErase.style.cssText =
                     `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
+
+                const response = await axios.get('/template/delay-info-erase-schedule')
+                const delayType = response.data.delaytype
+                switch (delayType) {
+                    case 'none':
+                        delayEraseScheduleSelect.selectedIndex = 0
+                        break;
+                    case 'seconds':
+                        delayEraseScheduleSelect.selectedIndex = 1
+                        break;
+                    case 'minutes':
+                        delayEraseScheduleSelect.selectedIndex = 2
+                        break;
+                    case 'hours':
+                        delayEraseScheduleSelect.selectedIndex = 3
+                        break;
+                    case 'days':
+                        delayEraseScheduleSelect.selectedIndex = 4
+                        break;
+                }
+                const delayData = response.data.delaydata
+                delayEraseScheduleTime.value = delayData
+
+                divDelayEraseSchedule.style.cssText =
+                    'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+                setTimeout(function() {
+                    divDelayEraseSchedule.style.cssText =
+                        'display: flex; height: 0vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+                }, -1)
+                setTimeout(function() {
+                    divDelayEraseSchedule.style.cssText =
+                        'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+                }, 100)
             } else {
                 abbrScheduleErase.title = `Schedule Erase STATUS: off`
                 buttonScheduleErase.textContent = '-'
                 buttonScheduleErase.style.cssText =
                     `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
+
+                const response = await axios.get('/template/delay-info-erase-schedule')
+                const delayType = response.data.delaytype
+                switch (delayType) {
+                    case 'none':
+                        delayEraseScheduleSelect.selectedIndex = 0
+                        break;
+                    case 'seconds':
+                        delayEraseScheduleSelect.selectedIndex = 1
+                        break;
+                    case 'minutes':
+                        delayEraseScheduleSelect.selectedIndex = 2
+                        break;
+                    case 'hours':
+                        delayEraseScheduleSelect.selectedIndex = 3
+                        break;
+                    case 'days':
+                        delayEraseScheduleSelect.selectedIndex = 4
+                        break;
+                }
+                const delayData = response.data.delaydata
+                delayEraseScheduleTime.value = delayData
+
+                divDelayEraseSchedule.style.cssText =
+                    'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+                setTimeout(function() {
+                    divDelayEraseSchedule.style.cssText =
+                        'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+                }, 300)
             }
             
             const divsConteiner = document.querySelector('.conteinerFunilMSG')
@@ -1828,7 +1895,7 @@ async function selectTemplate_(Templatet_) {
             //resetLoadingBar()
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> <strong>selecionando</strong> Template_ <strong>${Templatet_}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Template_ <strong>${Templatet_}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Template_ <strong>${Templatet_}</strong>!`)
         }
 
         resetLoadingBar()
@@ -1867,23 +1934,43 @@ async function setEraseSchedule() {
         }
         if (Sucess) {
             const abbrScheduleErase = document.querySelector(`#abbrScheduleErase`)
+
+            const divDelayEraseSchedule = document.querySelector(`#idivDelayEraseSchedule`)
             if (currentButtonEraseScheduleBackground_Color === 'var(--colorRed)') {
                 abbrScheduleErase.title = `Schedule Erase STATUS: on`
                 buttonScheduleErase.textContent = 'o'
                 buttonScheduleErase.style.cssText =
                     `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
+                
+                divDelayEraseSchedule.style.cssText =
+                    'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+                setTimeout(function() {
+                    divDelayEraseSchedule.style.cssText =
+                        'display: flex; height: 0vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+                }, -1)
+                setTimeout(function() {
+                    divDelayEraseSchedule.style.cssText =
+                        'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
+                }, 100)
             } else {
                 abbrScheduleErase.title = `Schedule Erase STATUS: off`
                 buttonScheduleErase.textContent = '-'
                 buttonScheduleErase.style.cssText =
                     `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
+
+                divDelayEraseSchedule.style.cssText =
+                    'display: flex; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+                setTimeout(function() {
+                    divDelayEraseSchedule.style.cssText =
+                        'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
+                }, 300)
             }
             status.innerHTML = `<stronge>Definido</stronge> (<strong>${eraseScheduleIs}</strong>) apagamento agendado do Template_ <strong>${Template_}</strong>`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <stronge>Definido</stronge> (<strong>${eraseScheduleIs}</strong>) apagamento agendado do Template_ <strong>${Template_}</strong>.`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <stronge>Definido</stronge> (<strong>${eraseScheduleIs}</strong>) apagamento agendado do Template_ <strong>${Template_}</strong>.`)
             resetLoadingBar()
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${eraseScheduleIs}</strong>) apagamendo agendado do Template_ <strong>${Template_}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${eraseScheduleIs}</strong>) apagamendo agendado do Template_ <strong>${Template_}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${eraseScheduleIs}</strong>) apagamendo agendado do Template_ <strong>${Template_}</strong>!`)
             resetLoadingBar()
         }
     } catch (error) {
@@ -1893,6 +1980,76 @@ async function setEraseSchedule() {
         resetLoadingBar()
     }
 }
+async function sendToTemplateEraseSchedule(typeDelay) {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        const delayEraseScheduleSelect = document.querySelector(`#idelayEraseScheduleSelect`)
+        const delayEraseScheduleTime = document.querySelector(`#idelayEraseScheduleTime`)
+        let delayType = null
+        let delayData = null
+        switch (typeDelay) {
+            case 'input':
+                delayData = delayEraseScheduleTime.value
+                await axios.put('/template/delay-update-erase-schedule', { typeDelay, delayType, delayData })
+                if (delayEraseScheduleTime.value >= 1) {
+                    if (delayEraseScheduleSelect.selectedIndex === 0) {
+                        delayEraseScheduleSelect.selectedIndex = 1
+                        delayEraseScheduleSelect.dispatchEvent(new Event('input'))
+                    }
+                } else {
+                    if (delayEraseScheduleSelect.selectedIndex !== 0) {
+                        delayEraseScheduleSelect.selectedIndex = 0
+                        delayEraseScheduleSelect.dispatchEvent(new Event('input'))
+                    }
+                }       
+                break;
+            case 'select':
+                delayType = delayEraseScheduleSelect.selectedIndex
+                await axios.put('/template/delay-update-erase-schedule', { typeDelay, delayType, delayData })
+                switch (delayEraseScheduleSelect.selectedIndex) {
+                    case 1:
+                        if (!delayEraseScheduleTime.value || delayEraseScheduleTime.value === 0) {
+                            delayEraseScheduleTime.value = 1
+                            delayEraseScheduleTime.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                    case 2:
+                        if (!delayEraseScheduleTime.value || delayEraseScheduleTime.value === 0) {
+                            delayEraseScheduleTime.value = 1
+                            delayEraseScheduleTime.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                    case 3:
+                        if (!delayEraseScheduleTime.value || delayEraseScheduleTime.value === 0) {
+                            delayEraseScheduleTime.value = 1
+                            delayEraseScheduleTime.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                    case 4:
+                        if (!delayEraseScheduleTime.value || delayEraseScheduleTime.value === 0) {
+                            delayEraseScheduleTime.value = 1
+                            delayEraseScheduleTime.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                    case 0:
+                        if (delayEraseScheduleTime.value !== '') {
+                            delayEraseScheduleTime.value = ''
+                            delayEraseScheduleTime.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                }
+                break;
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR sendToTemplateEraseSchedule ${Template_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> sendToTemplateEraseSchedule <strong>${Template_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+    }
+}
+
 async function insertTemplate_Front(Templatet_, Funilt_) {
     /*if (!Client_NotReady) {
         displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
@@ -2031,7 +2188,7 @@ async function eraseFunil_(Funilt_) {
             }
             if (Is_Empty) {
                 status.innerHTML = `Dados de <strong>${Funilt_}</strong> esta <strong>vazio</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Funilt_}</strong> esta <strong>vazio</strong>`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Funilt_}</strong> esta <strong>vazio</strong>`)
 
                 resetLoadingBar()
                 
@@ -2041,7 +2198,7 @@ async function eraseFunil_(Funilt_) {
             }
             if (Is_Empty_Input) {
                 status.innerHTML = `Funil_ <strong>${Funilt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
 
                 resetLoadingBar()
                 
@@ -2054,7 +2211,7 @@ async function eraseFunil_(Funilt_) {
                 divFunilt_.remove()
                 
                 status.innerHTML = `Funil_ <strong>${Funilt_}</strong> foi <strong>Apagado</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> foi <strong>Apagado</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> foi <strong>Apagado</strong>!`)
 
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
                 let divTemplateFunctions = document.querySelector('#divNewTemplate')
@@ -2072,7 +2229,7 @@ async function eraseFunil_(Funilt_) {
                     }, 300)
 
                     status.innerHTML = `<strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
-                    displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
+                    displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
                 } else {
                     const funilIdNumber = Number(Funilt_.match(/\d+/g))
 
@@ -2105,7 +2262,7 @@ async function eraseFunil_(Funilt_) {
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Funil_ <strong>${Funilt_}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Funil_ <strong>${Funilt_}</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Funil_ <strong>${Funilt_}</strong>!`)
             }
         } else {
             resetLoadingBar()
@@ -2146,7 +2303,7 @@ async function selectFunil_(Funilt_, isFromButton) {
         }
         if (divFunilt_ === null) {
             status.innerHTML = `Funil_ <strong>${Funilt_}</strong> <strong>Não</strong> existe!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> <strong>Não</strong> existe!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> <strong>Não</strong> existe!`)
             resetLoadingBar()
 
             //Funil_NotReady = false
@@ -2166,7 +2323,7 @@ async function selectFunil_(Funilt_, isFromButton) {
             Funil_ = Funilt_
 
             status.innerHTML = `Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>.`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>.`)
 
             const titleFunil = document.querySelector(`#SelectedFunil`)
             titleFunil.textContent = `${Funilt_}`
@@ -2207,7 +2364,7 @@ async function selectFunil_(Funilt_, isFromButton) {
             }
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> <strong>selecionando</strong> Funil_ <strong>${Funilt_}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Funil_ <strong>${Funilt_}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Funil_ <strong>${Funilt_}</strong>!`)
         }
 
         resetLoadingBar()
@@ -4731,7 +4888,7 @@ async function eraseClient_(Clientt_) {
             }
             if (Is_Empty) {
                 status.innerHTML = `Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
 
                 resetLoadingBar()
                 
@@ -4741,7 +4898,7 @@ async function eraseClient_(Clientt_) {
             }
             if (Is_Empty_Input) {
                 status.innerHTML = `Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
 
                 resetLoadingBar()
                 
@@ -4754,7 +4911,7 @@ async function eraseClient_(Clientt_) {
                 divClientt_.remove()
 
                 status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`)
 
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
                 const dir_Path = 'Local_Auth'
@@ -4763,7 +4920,7 @@ async function eraseClient_(Clientt_) {
 
                 if (Directories.length === 0) {
                     status.innerHTML = `<strong>Dir</strong> off Clients_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
-                    displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Clients_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
+                    displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Clients_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
 
                     let exitInten = true
                     await exit(exitInten)
@@ -4798,7 +4955,7 @@ async function eraseClient_(Clientt_) {
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Client_ <strong>${Clientt_}</strong>!`)
             }
         } else {
             resetLoadingBar()
@@ -4848,7 +5005,7 @@ async function DestroyClient_(Clientt_) {
             }
             if (Is_Empty) {
                 status.innerHTML = `Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
 
                 resetLoadingBar()
                 
@@ -4858,7 +5015,7 @@ async function DestroyClient_(Clientt_) {
             }
             if (Is_Empty_Input) {
                 status.innerHTML = `Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
 
                 resetLoadingBar()
                 
@@ -4871,7 +5028,7 @@ async function DestroyClient_(Clientt_) {
                 document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLReinitialize
 
                 status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`)
     
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient, modelo REST e tals (se for preciso)
 
@@ -4894,7 +5051,7 @@ async function DestroyClient_(Clientt_) {
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`)
             }
         } else {
             resetLoadingBar()
@@ -4942,7 +5099,7 @@ async function ReinitializeClient_(Clientt_) {
         }
         if (Is_Empty) {
             status.innerHTML = `Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Dados de <strong>${Clientt_}</strong> esta <strong>vazio</strong>`)
 
             resetLoadingBar()
             
@@ -4952,7 +5109,7 @@ async function ReinitializeClient_(Clientt_) {
         }
         if (Is_Empty_Input) {
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> não foi encontrado em <strong>nenhum</strong> dado!`)
 
             resetLoadingBar()
             
@@ -4965,10 +5122,10 @@ async function ReinitializeClient_(Clientt_) {
             document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLDestroy
 
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`)
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`)
         }
 
         resetLoadingBar()
@@ -5004,7 +5161,7 @@ async function selectClient_(Clientt_) {
         }
         if (divClientt_ === null) {
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Não</strong> existe!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Não</strong> existe!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Não</strong> existe!`)
             resetLoadingBar()
 
             Client_NotReady = false
@@ -5025,10 +5182,10 @@ async function selectClient_(Clientt_) {
 
             document.title = `Selecionado ${Clientt_}`
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>.`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>.`)
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> <strong>selecionando</strong> Client_ <strong>${Clientt_}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Client_ <strong>${Clientt_}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>selecionando</strong> Client_ <strong>${Clientt_}</strong>!`)
         }
 
         resetLoadingBar()
@@ -5074,7 +5231,7 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             const Chat_Data_json = response.data.chatdatajson
             if (Is_Empty) {
                 status.innerHTML = `Lista de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> esta <strong>vazia</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Lista de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> esta <strong>vazia</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Lista de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> esta <strong>vazia</strong>!`)
 
                 resetLoadingBar()
                 if (isFromTerminal) isFromTerminal = false
@@ -5083,7 +5240,7 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             }
             if (Is_Empty_Input) {
                 status.innerHTML = `ChatData <strong>${queryList}</strong> <strong>não</strong> foi <strong>encontrado</strong> na lista de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData <strong>${queryList}</strong> <strong>não</strong> foi <strong>encontrado</strong> na lista de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData <strong>${queryList}</strong> <strong>não</strong> foi <strong>encontrado</strong> na lista de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong>!`)
 
                 resetLoadingBar()
                 if (isFromTerminal) isFromTerminal = false
@@ -5092,10 +5249,10 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
             } 
             if (Sucess) {
                 status.innerHTML = `<strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> foi <strong>Apagado</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> foi <strong>Apagado</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> foi <strong>Apagado</strong>!`)
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> ChatData <strong>${Client_}</strong> <strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> ChatData <strong>${Client_}</strong> <strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Apagar</strong> ChatData <strong>${Client_}</strong> <strong>${queryList}</strong> de <strong>${Chat_Data_json}</strong>!`)
             }
         } else {
             resetLoadingBar()
@@ -5158,7 +5315,7 @@ async function allErase() {
             const Chat_Data_json = response.data.chatdatajson
             if (Is_Empty) {
                 status.innerHTML = `ChatData de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> esta <strong>vazia</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> esta <strong>vazia</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData de <strong>${Chat_Data_json}</strong> <strong>${Client_}</strong> esta <strong>vazia</strong>!`)
 
                 resetLoadingBar()
 
@@ -5168,10 +5325,10 @@ async function allErase() {
             } 
             if (Sucess) {
                 status.innerHTML = `<strong>Todo</strong> o ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> foi <strong>Apagado</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Todo</strong> o ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> foi <strong>Apagado</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Todo</strong> o ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> foi <strong>Apagado</strong>!`)
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao Apagar <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao Apagar <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao Apagar <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>!`)
             } 
         } else {
             resetLoadingBar()
@@ -5241,7 +5398,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
 
         if (Is_Empty) {
             status.innerHTML = `Lista de <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Lista de <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Lista de <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`)
 
             list.innerHTML = ''
             
@@ -5264,7 +5421,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
         }
         if (Is_Empty_Input) {
             status.innerHTML = `ChatData <strong>${Search}</strong> não foi encontrado na lista de <strong>${Chat_Data_json}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData <strong>${Search}</strong> não foi encontrado na lista de <strong>${Chat_Data_json}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData <strong>${Search}</strong> não foi encontrado na lista de <strong>${Chat_Data_json}</strong>!`)
 
             list.innerHTML = ''
             
@@ -5287,7 +5444,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
         } 
         if (Sucess) {
             status.innerHTML = `Listando ChatData <strong>${Search}</strong> de <strong>${Chat_Data_json}</strong>...`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Listando ChatData <strong>${Search}</strong> de <strong>${Chat_Data_json}</strong>...`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Listando ChatData <strong>${Search}</strong> de <strong>${Chat_Data_json}</strong>...`)
             
             list.innerHTML = ''
             
@@ -5309,10 +5466,10 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
                 'opacity: 1 pointer-events: unset;'*/
 
             status.innerHTML = `Listado ChatData ${Search} de ${Chat_Data_json}!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Listado ChatData ${Search} de ${Chat_Data_json}!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Listado ChatData ${Search} de ${Chat_Data_json}!`)
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> ao pesquisar ChatData <strong>${Search}</strong> de <strong>${Chat_Data_json}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao pesquisar ChatData <strong>${Search}</strong> de <strong>${Chat_Data_json}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao pesquisar ChatData <strong>${Search}</strong> de <strong>${Chat_Data_json}</strong>!`)
         }
 
         //document.querySelector('#inputList').value = ''
@@ -5432,7 +5589,7 @@ async function allPrint(isFromButton, isallerase, Clientt_) {
 
         if (Is_Empty) {
             status.innerHTML = `ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> esta <strong>vazia</strong>!`)
 
             counter.textContent = `0`
             
@@ -5455,7 +5612,7 @@ async function allPrint(isFromButton, isallerase, Clientt_) {
         if (Sucess) {
             if (isFromButton) {
                 status.innerHTML = `Listando <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>...`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Listando <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>...`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Listando <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>...`)
             }
 
             list.innerHTML = ''
@@ -5477,11 +5634,11 @@ async function allPrint(isFromButton, isallerase, Clientt_) {
                 'opacity: 1 pointer-events: unset;'*/
             if (isFromButton) {
                 status.innerHTML = `<strong>Todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> Listado!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> Listado`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong> Listado`)
             }
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> ao listar <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao listar <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao listar <strong>todo</strong> ChatData de <strong>${Client_}</strong> <strong>${Chat_Data_json}</strong>!`)
         } 
 
         isFromButton = true
@@ -5493,6 +5650,19 @@ async function allPrint(isFromButton, isallerase, Clientt_) {
         isFromButton = true
         ChatDataNotReady = false
         resetLoadingBar()
+    }
+}
+
+async function inputSelectAll(input, is) {
+    try {
+        if (is === 1) {
+            input.select()
+        } else {
+            return
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR inputSelectAll: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> inputSelectAll: ${error.message}`, setLogError)
     }
 }
 
@@ -5514,7 +5684,7 @@ async function counterExceeds(QR_Counter_Exceeds) {
 
         const status = document.querySelector('#status')
         status.innerHTML = `Excedido <strong>todas</strong> as tentativas (<strong>${QR_Counter_Exceeds}</strong>) de conexão pelo <strong>QR_Code</strong> ao <strong>WhatsApp Web</strong>, <strong>Tente novamente</strong>!`
-        displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>Excedido <strong>todas</strong> as tentativas (<strong>${QR_Counter_Exceeds}</strong>) de conexão pelo <strong>QR_Code</strong> ao <strong>WhatsApp Web</strong>, <strong>Tente novamente</strong>!`)
+        displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Excedido <strong>todas</strong> as tentativas (<strong>${QR_Counter_Exceeds}</strong>) de conexão pelo <strong>QR_Code</strong> ao <strong>WhatsApp Web</strong>, <strong>Tente novamente</strong>!`)
         
         if (!isFromNew) {
             let buttonStart = document.querySelector('#start')
@@ -5581,14 +5751,14 @@ async function generateQrCode(QR_Counter, Clientt_) {
         const codeQr = document.querySelector('#qrCode')
 
         status.innerHTML = `<strong>${Clientt_}</strong> Gerando <strong>Qr-Code</strong>...`
-        displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${Clientt_}</strong> Gerando <strong>Qr-Code</strong>...`)
+        displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${Clientt_}</strong> Gerando <strong>Qr-Code</strong>...`)
         
         const response = await axios.get('/client/qr-code')
         const { qrString, Is_Conected } = response.data
         if (Is_Conected) {
             setTimeout(function() {
                 status.innerHTML = `<strong>${Clientt_}</strong> ja <strong>conectado</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${Clientt_}</strong> ja <strong>conectado</strong>!`)
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>${Clientt_}</strong> ja <strong>conectado</strong>!`)
             }, 100)
             
             document.querySelector('#qrCode').innerText = ''
@@ -5603,7 +5773,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
             resetLoadingBar()
         } else {
             status.innerHTML = `↓↓ <strong>${Clientt_}</strong> tente se <strong>Conectar</strong> pela <strong>${QR_Counter}</strong>º ao <strong>WhatsApp Web</strong> pelo <strong>QR-Code</strong> abaixo ↓↓`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i>↓↓ <strong>${Clientt_}</strong> tente se <strong>Conectar</strong> pela <strong>${QR_Counter}</strong>º ao <strong>WhatsApp Web</strong> pelo <strong>QR-Code</strong> abaixo ↓↓`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>↓↓ <strong>${Clientt_}</strong> tente se <strong>Conectar</strong> pela <strong>${QR_Counter}</strong>º ao <strong>WhatsApp Web</strong> pelo <strong>QR-Code</strong> abaixo ↓↓`)
             
             codeQr.style.cssText =
                 'display: inline-block; opacity: 0;'
@@ -5623,7 +5793,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> generateQrCode <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
         document.title = 'ERROR'
         status.innerHTML = `<i><strong>ERROR</strong></i> Gerando <strong>Qr-Code</strong> <strong>${Clientt_}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> Gerando <strong>Qr-Code</strong> <strong>${Clientt_}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> Gerando <strong>Qr-Code</strong> <strong>${Clientt_}</strong>!`)
         if (!isFromNew) {
             let buttonStart = document.querySelector('#start')
             buttonStart.style.cssText =
@@ -5782,7 +5952,7 @@ async function startBot() {
         
         const status = document.querySelector('#status')
         status.innerHTML = `<strong>Iniciando</strong>...`
-        displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciando</strong>...`)
+        displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciando</strong>...`)
         
         document.querySelector('#qrCode').innerText = ''
         const codeQr = document.querySelector('#qrCode')
@@ -5797,7 +5967,7 @@ async function startBot() {
         if (Sucess) {
             document.title = `Iniciou o ${nameApp || 'BOT'} Corretamente`
             status.innerHTML = `<strong>Iniciou</strong> o ${nameApp || 'BOT'} <strong>Corretamente</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciou</strong> o ${nameApp || 'BOT'} <strong>Corretamente</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Iniciou</strong> o ${nameApp || 'BOT'} <strong>Corretamente</strong>!`)
 
             resetLoadingBar()
         } else {
@@ -5810,7 +5980,7 @@ async function startBot() {
 
             document.title = 'ERROR'
             status.innerHTML = `<i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp || 'BOT'}</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp || 'BOT'}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao iniciar o <strong>${nameApp || 'BOT'}</strong>!`)
             
             isStarted = false
 
@@ -5822,7 +5992,7 @@ async function startBot() {
         displayOnConsole(`> ⚠️ ERROR startBot: ${error.message}`, setLogError)
         document.title = 'ERROR'
         status.innerHTML = `<i><strong>ERROR</strong></i> iniciando <strong>${nameApp || 'BOT'}</strong>!`
-        displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> iniciando <strong>${nameApp || 'BOT'}</strong>!`)
+        displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> iniciando <strong>${nameApp || 'BOT'}</strong>!`)
         let buttonStart = document.querySelector('#start')
         buttonStart.style.cssText =
             'display: inline-block; opacity: 0;'
