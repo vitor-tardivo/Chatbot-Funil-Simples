@@ -64,8 +64,8 @@
         <section id="content">
             <div id="divFunctions">
                 <abbr title="WebSocket STATUS: null" id="abbrReload"><button class="functionsDiv" id="reload" onclick="reconnectWebSocket()">WS</button></abbr>
-                <abbr title="Funil STATUS: escondido" id="abbrShowFunil"><button class="functionsDiv" id="showFunil" onclick="showFunil()">O</button></abbr>
                 <abbr title="Lista STATUS: null" id="abbrShowList"><button class="functionsDiv" id="showList" onclick="showTableList()">-O</button></abbr>
+                <abbr title="Funil STATUS: escondido" id="abbrShowFunil"><button class="functionsDiv" id="showFunil" onclick="showFunil()">O</button></abbr>
             </div>
             <abbr title="Status do Bot"><div class="divs" id="divStatus">
                 <p id="pStatus"><span id="status">...</span></p>
@@ -209,7 +209,8 @@
 
                                 <div id="divInnerTemplate">
                                     <div id="divFunilFunctions">
-                                        <abbr title="Schedule Erase STATUS: null" id="abbrScheduleErase"><button class="functionsDivStart" id="OnOffScheduleErase" onclick="setEraseSchedule()">-O</button></abbr>
+                                        <abbr title="Schedule Erase STATUS: null" id="iabbrScheduleErase"><button class="functionsDivStart" id="iOnOffScheduleErase" onclick="setEraseSchedule()">-O</button></abbr>
+                                        <abbr title="Test Mode STATUS: null" id="iabbrTestMode"><button class="functionsDivStart" id="iOnOffTestMode" onclick="setTestMode()">-O</button></abbr>
                                     </div>
 
                                     <div id="idivDelayEraseSchedule">
@@ -222,6 +223,14 @@
                                             <option value="hours">Horas</option>
                                             <option value="days">Dias</option>
                                         </select>
+                                    </div>
+                                    <div id="isendInputTestMode">
+                                        <div id="idivInputTestMode">
+                                            <abbr title="Digite um numero de contato..."><input type="text" id="iinputTestMode" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" oninput="sendToTemplateTestMode()" placeholder=">..."></abbr>       
+                                        </div>
+                                        <abbr title="Inicia o teste"><div id="idivSendTestMode">
+                                            <button id="isendSearchTestMode" onclick="initiateTestMode()">></button>
+                                        </div></abbr>
                                     </div>
                                     
                                     <div id="divCreateFunctionFunil">

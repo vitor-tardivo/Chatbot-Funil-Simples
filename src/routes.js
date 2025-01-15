@@ -36,6 +36,11 @@ const {
     Set_Erase_Schedule,
     Delay_Info_Erase_Schedule,
     Send_To_Template_Erase_Schedule,
+    Set_Test_Mode,
+    Status_Test_Mode,
+    Contact_Info_Test_Mode,
+    Send_To_Template_Test_Mode,
+    Initiate_Test_Mode,
     Send_To_Funil,
     Insert_Template_Front,
     Change_Position_MSG,
@@ -76,17 +81,6 @@ router.put('/funil/send-data', upload.single('fileData'), async (req, res) => {
         res.status(200).send({ sucess: true, message: `Sucessfully sent funil data.` })
     } catch (error) {
         console.error(`> ❌ ERROR /funil/send-data: ${error}`)
-        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
-    }
-})
-router.put('/template/delay-update-erase-schedule', async (req, res) => {
-    try {
-        let { typeDelay, delayType, delayData } = req.body
-        
-        await Send_To_Template_Erase_Schedule(typeDelay, delayType, delayData)
-        res.status(200).send({ sucess: true, message: `Sucessfully sent delay erase schedule data.` })
-    } catch (error) {
-        console.error(`> ❌ ERROR /template/delay-update-erase-schedule: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
@@ -164,6 +158,74 @@ router.get('/template/delay-info-erase-schedule', async (req, res) => {
     } catch (error) {
         console.error(`> ❌ ERROR /template/delay-info-erase-schedule: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, delaytype: null, delaydata: null })
+    }
+})
+router.put('/template/delay-update-erase-schedule', async (req, res) => {
+    try {
+        let { typeDelay, delayType, delayData } = req.body
+        
+        await Send_To_Template_Erase_Schedule(typeDelay, delayType, delayData)
+        res.status(200).send({ sucess: true, message: `Sucessfully sent delay erase schedule data.` })
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/delay-update-erase-schedule: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
+    }
+})
+
+router.get('/template/status-test-mode', async (req, res) => {
+    try {
+        const { Template_ } = req.body
+        
+        let testModeIs = await Status_Test_Mode(Template_)
+        
+        res.status(200).send({ sucess: true, message: `Status Test_Mode sent.`, testmodeis: testModeIs })
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/status-test-mode: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, testmodeis: testModeIs })
+    }
+})
+router.put('/template/set-test-mode', async (req, res) => {
+    try {
+        const { testModeIs } = req.body
+        const { Sucess } = await Set_Test_Mode(testModeIs)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully set ${testModeIs} Test Funil.` })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to set ${testModeIs} Test Funil.` })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/set-test-mode: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
+    }
+})
+router.get('/template/contact-info-test-mode', async (req, res) => {
+    try {
+        let { testContact } = await Contact_Info_Test_Mode()
+        
+        res.status(200).send({ sucess: true, message: `Info Test_Mode sent.`, testcontact: testContact })
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/contact-info-test-mode: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, testcontact: testContact })
+    }
+})
+router.put('/template/contact-update-test-mode', async (req, res) => {
+    try {
+        let { testContact } = req.body
+        
+        await Send_To_Template_Test_Mode(testContact)
+        res.status(200).send({ sucess: true, message: `Sucessfully sent test contact data.` })
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/contact-update-test-mode: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
+    }
+})
+router.post('/template/initiate-test-mode', async (req, res) => {
+    try {
+        await Initiate_Test_Mode()
+        res.status(200).send({ sucess: true, message: `Sucessfully initiated test mode.` })
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/initiate-test-mode: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
 

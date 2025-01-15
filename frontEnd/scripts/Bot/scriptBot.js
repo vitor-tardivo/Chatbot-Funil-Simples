@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         const Bot_Name = response.data.name
         const dataName = document.querySelector('#appName')
         nameApp = `${Bot_Name}`
-        document.title = `Inicie o ${nameApp.toUpperCase() || 'BOT'}`
+        document.title = `${nameApp.toUpperCase() || 'BOT'}`
         dataName.textContent = nameApp.toUpperCase() || 'BOT'
         const Version_ = response.data.version
         const dataVersion = document.querySelector('#appVersion')
@@ -744,7 +744,8 @@ async function ready(Client_) {
         tableReady = false
         await loadTableStyles()
         
-        document.title = `${nameApp || 'BOT'} ${Client_} pronto`
+        //document.title = `${nameApp || 'BOT'} ${Client_} pronto`
+        document.title = `${Client_} pronto`
 
         resetLoadingBar()
     } catch(error) {
@@ -1398,13 +1399,14 @@ async function eraseTemplate_(Templatet_, Funilt_) {
                 status.innerHTML = `Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`
                 displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`)
 
+                await sleep(100)
+
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
                 let divTemplateInner = document.querySelector('#divInnerTemplate')
 
                 const dir_Path = `Funil\\${Funil_}`
                 const response = await axios.get('/functions/dir', { params: { dir_Path } })
                 const Directories = response.data.dirs
-
                 if (Directories.length === 0) {
                     divTemplateInner.style.cssText =
                         'display: block; opacity: 0;'
@@ -1514,16 +1516,16 @@ async function selectTemplate_(Templatet_) {
 
             const response1 = await axios.get('/template/status-erase-schedule', { Template_: Templatet_ })
             const eraseScheduleIs = response1.data.erasescheduleis
-            const abbrScheduleErase = document.querySelector(`#abbrScheduleErase`)
-            const buttonScheduleErase = document.querySelector(`#OnOffScheduleErase`)
+            const iabbrEraseSchedule = document.querySelector(`#iabbrScheduleErase`)
+            const buttonEraseSchedule = document.querySelector(`#iOnOffScheduleErase`)
 
             const divDelayEraseSchedule = document.querySelector(`#idivDelayEraseSchedule`)
             const delayEraseScheduleSelect = document.querySelector(`#idelayEraseScheduleSelect`)
             const delayEraseScheduleTime = document.querySelector(`#idelayEraseScheduleTime`)
             if (eraseScheduleIs) {
-                abbrScheduleErase.title = `Schedule Erase STATUS: on`
-                buttonScheduleErase.textContent = 'o'
-                buttonScheduleErase.style.cssText =
+                iabbrEraseSchedule.title = `Schedule Erase STATUS: on`
+                buttonEraseSchedule.textContent = 'o'
+                buttonEraseSchedule.style.cssText =
                     `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
 
                 const response = await axios.get('/template/delay-info-erase-schedule')
@@ -1559,9 +1561,9 @@ async function selectTemplate_(Templatet_) {
                         'display: flex; height: 6vh; outline: 2px solid rgba(0, 0, 0, 0); border: 2px solid var(--colorBlack); padding: 5px 5px 10px 5px;'
                 }, 100)
             } else {
-                abbrScheduleErase.title = `Schedule Erase STATUS: off`
-                buttonScheduleErase.textContent = '-'
-                buttonScheduleErase.style.cssText =
+                iabbrEraseSchedule.title = `Schedule Erase STATUS: off`
+                buttonEraseSchedule.textContent = '-'
+                buttonEraseSchedule.style.cssText =
                     `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
 
                 const response = await axios.get('/template/delay-info-erase-schedule')
@@ -1592,6 +1594,74 @@ async function selectTemplate_(Templatet_) {
                     divDelayEraseSchedule.style.cssText =
                         'display: none; height: 0vh; outline: 0px solid rgba(0, 0, 0, 0); border: 0px solid var(--colorBlack); padding: 0px 0px 0px 0px;'
                 }, 300)
+            }
+
+            const response3 = await axios.get('/template/status-test-mode', { Template_: Templatet_ })
+            const testModeIs = response3.data.testmodeis
+            const iabbrTestMode = document.querySelector(`#iabbrTestMode`)
+            const buttonTestMode = document.querySelector(`#iOnOffTestMode`)
+
+            const divInputTestMode = document.querySelector(`#isendInputTestMode`)
+            const inputTestMode = document.querySelector(`#iinputTestMode`)
+            const sendTestMode = document.querySelector(`#isendSearchTestMode`)
+            if (testModeIs) {
+                iabbrTestMode.title = `Test Mode STATUS: on`
+                buttonTestMode.textContent = 'o'
+                buttonTestMode.style.cssText =
+                    `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
+
+                const response = await axios.get('/template/contact-info-test-mode')
+                const testContact = response.data.testcontact
+                if (testContact > 0) {
+                    inputTestMode.value = testContact
+                }
+                
+                divInputTestMode.style.cssText =
+                    'display: flex; height: 0; border-top: 3px solid var(--colorBlack);'
+                setTimeout(function() {
+                    divInputTestMode.style.cssText =
+                        'display: flex; height: 37px; border-top: 3px solid var(--colorBlack);'
+                }, -1)
+                setTimeout(function() {
+                    inputTestMode.style.cssText =
+                        'display: inline; opacity: 0;'
+                    sendTestMode.style.cssText =
+                        'display: flex; opacity: 0;'
+                        setTimeout(function() {
+                            inputTestMode.style.cssText =
+                                'display: inline; opacity: 1;'
+                            sendTestMode.style.cssText =
+                                'display: flex; opacity: 1;'
+                        }, 100)
+                }, 100)
+            } else {
+                iabbrTestMode.title = `Test Mode STATUS: off`
+                buttonTestMode.textContent = '-'
+                buttonTestMode.style.cssText =
+                    `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
+
+                const response = await axios.get('/template/contact-info-test-mode')
+                const testContact = response.data.testcontact
+                if (testContact > 0) {
+                    inputTestMode.value = testContact
+                }
+
+                inputTestMode.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendTestMode.style.cssText =
+                    'display: flex; opacity: 0;'
+                setTimeout(function() {
+                    inputTestMode.style.cssText =
+                        'display: none; opacity: 0;'
+                    sendTestMode.style.cssText =
+                        'display: none; opacity: 0;'
+                    divInputTestMode.style.cssText =
+                        'display: flex; height: 0; border-top: 0px solid var(--colorBlack);'
+                        setTimeout(function() {
+                            divInputTestMode.style.cssText =
+                                'display: none; height: 0; border-top: 0px solid var(--colorBlack);'
+                        }, 300)
+                }, 100)
             }
             
             const divsConteiner = document.querySelector('.conteinerFunilMSG')
@@ -1907,6 +1977,7 @@ async function selectTemplate_(Templatet_) {
         resetLoadingBar()
     }
 }
+
 async function setEraseSchedule() {
     /*if (Client_NotReady = false) {
         displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
@@ -1919,7 +1990,7 @@ async function setEraseSchedule() {
 
         const status = document.querySelector('#status')
 
-        const buttonScheduleErase = document.querySelector(`#OnOffScheduleErase`)
+        const buttonScheduleErase = document.querySelector(`#iOnOffScheduleErase`)
         const currentButtonEraseScheduleBackground_Color = buttonScheduleErase.style.backgroundColor
         let Sucess = null
         let eraseScheduleIs = null
@@ -1933,7 +2004,7 @@ async function setEraseSchedule() {
             Sucess = response.data.sucess
         }
         if (Sucess) {
-            const abbrScheduleErase = document.querySelector(`#abbrScheduleErase`)
+            const abbrScheduleErase = document.querySelector(`#iabbrScheduleErase`)
 
             const divDelayEraseSchedule = document.querySelector(`#idivDelayEraseSchedule`)
             if (currentButtonEraseScheduleBackground_Color === 'var(--colorRed)') {
@@ -2046,6 +2117,128 @@ async function sendToTemplateEraseSchedule(typeDelay) {
     } catch (error) {
         console.error(`> ⚠️ ERROR sendToTemplateEraseSchedule ${Template_}: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> sendToTemplateEraseSchedule <strong>${Template_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+    }
+}
+
+async function setTestMode() {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const buttonTestMode = document.querySelector(`#iOnOffTestMode`)
+        const currentButtonTestModeBackground_Color = buttonTestMode.style.backgroundColor
+        let Sucess = null
+        let testModeIs = null
+        if (currentButtonTestModeBackground_Color === 'var(--colorRed)') {
+            testModeIs = true
+            const response = await axios.put('/template/set-test-mode', { testModeIs })
+            Sucess = response.data.sucess
+        } else {
+            testModeIs = false
+            const response = await axios.put('/template/set-test-mode', { testModeIs })
+            Sucess = response.data.sucess
+        }
+        if (Sucess) {
+            const abbrTestMode = document.querySelector(`#iabbrTestMode`)
+
+            const divInputTestMode = document.querySelector(`#isendInputTestMode`)
+            const inputTestMode = document.querySelector(`#iinputTestMode`)
+            const sendTestMode = document.querySelector(`#isendSearchTestMode`)
+            if (currentButtonTestModeBackground_Color === 'var(--colorRed)') {
+                abbrTestMode.title = `Test Mode STATUS: on`
+                buttonTestMode.textContent = 'o'
+                buttonTestMode.style.cssText =
+                    `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
+                
+                divInputTestMode.style.cssText =
+                    'display: flex; height: 0; border-top: 3px solid var(--colorBlack);'
+                setTimeout(function() {
+                    divInputTestMode.style.cssText =
+                        'display: flex; height: 37px; border-top: 3px solid var(--colorBlack);'
+                }, -1)
+                setTimeout(function() {
+                    inputTestMode.style.cssText =
+                        'display: inline; opacity: 0;'
+                    sendTestMode.style.cssText =
+                        'display: flex; opacity: 0;'
+                        setTimeout(function() {
+                            inputTestMode.style.cssText =
+                                'display: inline; opacity: 1;'
+                            sendTestMode.style.cssText =
+                                'display: flex; opacity: 1;'
+                        }, 100)
+                }, 100)
+            } else {
+                abbrTestMode.title = `Test Mode STATUS: off`
+                buttonTestMode.textContent = '-'
+                buttonTestMode.style.cssText =
+                    `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
+
+                inputTestMode.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendTestMode.style.cssText =
+                    'display: flex; opacity: 0;'
+                setTimeout(function() {
+                    inputTestMode.style.cssText =
+                        'display: none; opacity: 0;'
+                    sendTestMode.style.cssText =
+                        'display: none; opacity: 0;'
+                    divInputTestMode.style.cssText =
+                        'display: flex; height: 0; border-top: 0px solid var(--colorBlack);'
+                        setTimeout(function() {
+                            divInputTestMode.style.cssText =
+                                'display: none; height: 0; border-top: 0px solid var(--colorBlack);'
+                        }, 300)
+                }, 100)
+            }
+            status.innerHTML = `<stronge>Definido</stronge> (<strong>${testModeIs}</strong>) teste mode do Template_ <strong>${Template_}</strong>`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <stronge>Definido</stronge> (<strong>${testModeIs}</strong>) apagamento agendado do Template_ <strong>${Template_}</strong>.`)
+            resetLoadingBar()
+        } else {
+            status.innerHTML = `<i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${testModeIs}</strong>) teste mode do Template_ <strong>${Template_}</strong>!`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${testModeIs}</strong>) apagamendo agendado do Template_ <strong>${Template_}</strong>!`)
+            resetLoadingBar()
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR setTestMode ${Template_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> setTestMode <strong>${Template_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
+async function sendToTemplateTestMode() {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        const inputTestMode = document.querySelector(`#iinputTestMode`)
+        testContact = inputTestMode.value
+        await axios.put('/template/contact-update-test-mode', { testContact })
+    } catch (error) {
+        console.error(`> ⚠️ ERROR sendToTemplateTestMode ${Template_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> sendToTemplateTestMode <strong>${Template_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+    }
+}
+async function initiateTestMode() {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        await axios.post('/template/initiate-test-mode')
+    } catch (error) {
+        console.error(`> ⚠️ ERROR initiateTestMode ${Template_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> sendToTemplateTestMode <strong>${Template_}</strong>: ${error.message}`, setLogError)
         //Client_NotReady = false
     }
 }
@@ -2602,10 +2795,10 @@ async function selectionPositionMSG(checkElement, typeMSG) {
             const idNumberPositionSelected = Number(idNumberPositionMSG)
             const typeMSGSelected = typeMSG
             positionSelectedMSG = { idNumberPositionSelected, typeMSGSelected }
-            checkElement.parentElement.title = `Selecionado esta posição (${idNumberPositionMSG})`
+            checkElement.parentElement.title = `Selecionado (${idNumberPositionMSG})`
         } else {
             positionSelectedMSG = null
-            checkElement.parentElement.title = `Selecione esta posição (${idNumberPositionMSG})`
+            checkElement.parentElement.title = `Selecione (${idNumberPositionMSG})`
         }
     } catch (error) {
         console.error(`> ⚠️ ERROR selectedPositionMSG: ${error}`)
@@ -5180,7 +5373,7 @@ async function selectClient_(Clientt_) {
             Clientt_Temp = Clientt_
             Client_ = Clientt_
 
-            document.title = `Selecionado ${Clientt_}`
+            document.title = `${Clientt_}`
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>`
             displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>.`)
         } else {
@@ -5936,7 +6129,7 @@ async function startBot() {
             reconnectWebSocket()
         }
 
-        document.title = `Iniciando ${nameApp}`
+        document.title = `Iniciando ${nameApp}...`
 
         const mainContent = document.querySelector('#innerContent')
         mainContent.style.cssText =

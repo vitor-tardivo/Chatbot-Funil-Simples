@@ -225,7 +225,7 @@ main {
     color: var(--colorWhite);
     border: 1px solid rgba(0, 0, 0, 0);
     outline: 1px solid rgba(0, 0, 0, 0);
-    padding: 5px 10px 5px 10px;
+    padding: 5px 10px 4px 10px;
     width: 100%;
     box-sizing: border-box;
     font-size: 1vw;
@@ -894,7 +894,7 @@ main {
     box-sizing: border-box;
     border: 1px solid rgba(0, 0, 0, 0);
     outline: 1px solid rgba(0, 0, 0, 0);
-    padding: 5px 10px 5px 10px;
+    padding: 5px 10px 4px 10px;
     width: 100%;
     box-sizing: border-box;
     font-size: 1vw;
@@ -1452,13 +1452,14 @@ td {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    box-shadow: 0px 6px 6px var(--colorShadow);
+    /*box-shadow: 0px 6px 6px var(--colorShadow);*/
     white-space: nowrap;
     overflow-y: hidden;
     overflow-x: auto;
     transition: var(--configTrasition03s);
 }
-#OnOffScheduleErase {
+
+#iOnOffScheduleErase {
     background-color: var(--colorContrast);
     /*background-color: var(--colorGreen);*/
     /*background-color: var(--colorRed);*/
@@ -1475,15 +1476,15 @@ td {
     opacity: 1;
     transition: var(--configTrasition03s);
 }
-#OnOffScheduleErase:hover {
+#iOnOffScheduleErase:hover {
     border: 2px solid var(--colorWhite);
 }
-#OnOffScheduleErase:active {
+#iOnOffScheduleErase:active {
     border-radius: 0px 0px 0px 0px;
     outline: 2px solid var(--colorWhite);
     transition: 0s;
 }
-#OnOffScheduleErase:focus {
+#iOnOffScheduleErase:focus {
     border: 2px solid var(--colorWhite);
 }
 
@@ -1566,6 +1567,105 @@ td {
     color: var(--colorWhite);
     border: 1px solid var(--colorWhite);
     outline: 1px solid var(--colorWhite);
+}
+
+#iOnOffTestMode {
+    background-color: var(--colorContrast);
+    /*background-color: var(--colorGreen);*/
+    /*background-color: var(--colorRed);*/
+    color: var(--colorInteractionElements);
+    /*color: var(--colorBlack);*/
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: help;
+    /*cursor: pointer;*/
+    pointer-events: unset;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+#iOnOffTestMode:hover {
+    border: 2px solid var(--colorWhite);
+}
+#iOnOffTestMode:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+#iOnOffTestMode:focus {
+    border: 2px solid var(--colorWhite);
+}
+#isendInputTestMode {
+    display: none;
+    flex-direction: row;
+    border-top: 0px solid var(--colorBlack);
+    /*border-right: 2px solid var(--colorBlack);
+    border-left: 2px solid var(--colorBlack);*/
+    box-sizing: border-box;
+    height: 0;
+    transition: var(--configTrasition03s);
+}
+#idivInputTestMode {
+    flex: 1 1 auto;
+    box-sizing: border-box;
+}
+#iinputTestMode {
+    display: none;
+    background-color: var(--colorContrast);
+    color: var(--colorWhite);
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    padding: 5px 10px 4px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1vw;
+    font-family: var(--fontConsole);
+    height: 34px;
+    opacity: 0;
+    transition: var(--configTrasition03s);
+}
+#iinputTestMode:focus-within {
+    outline: 1px solid rgba(255, 255, 255, 0);
+    border: 1px solid var(--colorWhite);
+}
+#idivSendTestMode {
+    flex: 0 1 auto;
+    box-sizing: border-box;
+    transition: var(--configTrasition03s);
+}
+#isendSearchTestMode {
+    display: none;
+    align-items: center;
+    background-color: var(--colorInteractionElements);
+    color: var(--colorBlack);
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0);
+    /*border-right: 0.5px solid var(--colorBlack);*/
+    outline: 1px solid rgba(0, 0, 0, 0);
+    padding: 5px 10px 5px 10px;
+    font-size: 1vw;
+    font-family: var(--fontMonoSerif);
+    height: 34px;
+    cursor: pointer;
+    opacity: 0;
+    transition: var(--configTrasition03s);
+}
+#isendSearchTestMode:hover {
+    background-color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+}
+#isendSearchTestMode:active {
+    background-color: #2b2b2b;
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    transition: var(--configTrasition01s);
+}
+#isendSearchTestMode:focus {
+    outline: 1px solid rgba(255, 255, 255, 0);
+    border: 1px solid var(--colorWhite);
 }
 
 #divCreateFunctionFunil {
