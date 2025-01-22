@@ -20,6 +20,8 @@ const {
     Reinitialize_Client_,
     Select_Client_,
     New_Client_,
+    Set_Client_Name,
+    Rename_Client_,
     initialize,
     Generate_MSG_Position_Id,
     Position_MSG_Erase,
@@ -527,13 +529,29 @@ router.get('/client/qr-code', (req, res) => {
 })
 router.post('/client/new', async (req, res) => {
     try {
+        const Client_Name = await Set_Client_Name(true)
+        global.Namet_ = null
         global.Is_From_New = true
-        await New_Client_()
+        await New_Client_(Client_Name)
 
         res.status(200).send({ sucess: true, message: `New Client_ ${global.Client_} initialized.` })
     } catch (error) {
         console.error(`> ❌ ERROR /client/new: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
+    }
+})
+router.put('/client/rename-client-name', async (req, res) => {
+    try {
+        const { Clientt_ } = req.body
+        const { Sucess, clientt_ } = await Rename_Client_(Clientt_)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully renamed ${Clientt_}.`, Clientt_: clientt_ })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to rename ${Clientt_}.`, Clientt_: clientt_ })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /client/rename-client-name: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, Clientt_: null })
     }
 })
 

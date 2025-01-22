@@ -18,6 +18,7 @@ const fss = require('fs')
 const fse = require('fs-extra')
 const { v4: uuidv4 } = require('uuid')
 const readline = require('readline')
+const _ = require('lodash')
 const Root_Dir = path.resolve(__dirname, '..')
 
 function Reload_Front() {
@@ -145,6 +146,10 @@ let Auth_Failure_Callback = null
 function Set_Auth_Failure_Callback(callback) {
     Auth_Failure_Callback = callback
 }
+let Set_Client_Name_Callback = null
+async function Set_Set_Client_Name_Callback(callback) {
+    Set_Client_Name_Callback = callback
+}
 let Clients_Callback = null
 function Set_Clients_Callback(callback) {
     Clients_Callback = callback
@@ -158,11 +163,11 @@ function Set_Erase_Client_Callback(callback) {
     Erase_Client_Callback = callback
 }
 let Destroy_Client_Callback = null
-function Set_Destroy_Client_Callback(callback) {
+async function Set_Destroy_Client_Callback(callback) {
     Destroy_Client_Callback = callback
 }
 let Reinitialize_Client_Callback = null
-function Set_Reinitialize_Client_Callback(callback) {
+async function Set_Reinitialize_Client_Callback(callback) {
     Reinitialize_Client_Callback = callback
 }
 let New_Client_Callback = null
@@ -240,8 +245,8 @@ global.Is_Conected = true
 global.Stage_ = 0
 global.Is_From_New = false
 global.Client_ = null
-global.Client_Name = 'Client'
 global.MAX_Clients_ = 3//actual null, vai ser atrubuido o valor na funcao de pegar o quantos o usuario tem direito
+global.Namet_ = null
 
 global.Funil_Name = 'Funil'
 global.Funil_ = null
@@ -451,7 +456,7 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
                     console.log(`> ⚠️  Specify a Client_ name to destroy from ${global.Data_File_Clients_}, EXEMPLE:\ndestroy "client"`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>destroy</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\ndestroy "client"</strong>`)
                 } else {
-                    if (Destroy_Client_Callback) Destroy_Client_Callback(Clientt_)
+                    if (Destroy_Client_Callback) await Destroy_Client_Callback(Clientt_, true)
                 }
             } else if (command.startsWith('reinitialize ')) {
                 const Clientt_ = command.substring(13).trim()
@@ -459,7 +464,7 @@ async function commands(command, Is_Front_Back) {//muda pra na funcao de comando
                     console.log(`> ⚠️  Specify a Client_ name to reinitialize from ${global.Data_File_Clients_}, EXEMPLE:\nreinitialize "client"`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Specify</strong> a <strong>Client_ name</strong> to <strong>reinitialize</strong> ChatData from <strong>${global.Data_File_Clients_}</strong>, <strong>EXEMPLE:\nreinitialize "client"</strong>`)
                 } else {
-                    if (Reinitialize_Client_Callback) Reinitialize_Client_Callback(Clientt_)
+                    if (Reinitialize_Client_Callback) await Reinitialize_Client_Callback(Clientt_)
                 }
             } else if (command.startsWith('select ')) {
                 const Clientt_ = command.substring(7).trim()
@@ -1769,7 +1774,7 @@ async function Save_Client_(id, Clientt_) {
         if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Saving Client_ <strong>${Clientt_}</strong> to <strong>${global.File_Data_Clients_}</strong>...`)
 
         const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))
-        const New_Client_ = [{ id, Clientt_ }, ...Clients_.filter(item => item.Clientt_ !== Clientt_)]
+        const New_Client_ = Clients_.map(item => item.Clientt_ === Clientt_ ? { ...item, Clientt_: `_${Client_Id_}_${Client_Name}_` } : item )
         const jsonString = '[\n' + New_Client_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         
         await fs.writeFile(global.Data_File_Clients_, jsonString, 'utf8')
@@ -1928,7 +1933,9 @@ async function Destroy_Client_(Is_From_End, Clientt_) { // quando for adicionar 
                 if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Destroing Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
                 
                 Clientts_[Clientt_].instance.destroy()
-                delete Clientts_[Clientt_]
+                Clientts_[Clientt_] = {
+                    instance: null,
+                }
                 
                 Destroyed_ = true
             } else if (answer.toLowerCase() === 'n') {
@@ -1952,12 +1959,13 @@ async function Destroy_Client_(Is_From_End, Clientt_) { // quando for adicionar 
             if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Destroing Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
             
             Clientts_[Clientt_].instance.destroy()
-            delete Clientts_[Clientt_]
+            Clientts_[Clientt_] = {
+                instance: null,
+            }
             
             Destroyed_ = true
         }
         
-
         if (Destroyed_) {
             console.log(`> ✅ Client_ ${Clientt_} from ${global.File_Data_Clients_}: DESTROYED`)
             if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}: DESTROYED</strong>`)
@@ -2012,8 +2020,8 @@ async function Reinitialize_Client_(Clientt_) { // quando for adicionar pra apag
 
         let Destroyed_ = false
 
-        console.log(`>  ◌ Destroing Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
-        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Destroing Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
+        console.log(`>  ◌ Reinitializing Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
+        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Reinitializing Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
         
         initialize_Client_Not_Ready = false
         let Is_New_Client_ = false
@@ -2078,7 +2086,6 @@ async function Select_Client_(Clientt_) {
     }
     try {
         Client_Not_Ready = true
-
         global.Client_ = Clientt_
 
         global.File_Data_Chat_Data = `Chat_Data=${Clientt_}.json`
@@ -2096,7 +2103,7 @@ async function Select_Client_(Clientt_) {
         Client_Not_Ready = false
     }
 }
-async function New_Client_() {
+async function New_Client_(Client_Name) {
     //console.log(Client_Not_Ready)
     if (Client_Not_Ready || Client_Not_Ready === null) {
         console.log(`>  ℹ️ New_Client_ not Ready.`)
@@ -2106,17 +2113,125 @@ async function New_Client_() {
     try {
         Client_Not_Ready = true
 
-        const NameClient_ = global.Client_Name
+        const NameClient_ = Client_Name
         Generate_Id_Not_Ready = false
         const Id_Client_ = await Generate_Client_Id()
-        //console.log(Id_Client_)
         initialize_Client_Not_Ready = false
         let Is_New_Client_ = true
         let Is_Initialize_Clients_ = false
+        console.log(`>  ℹ️ Initializing Client_ ${`_${Id_Client_}_${NameClient_}_`}...`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Iniciando</strong> Client_ <strong>${`_${Id_Client_}_${NameClient_}_`}</strong>...`)
         await Initialize_Client_(`_${Id_Client_}_${NameClient_}_`, Is_New_Client_, Is_Initialize_Clients_)
     } catch (error) {
         console.error(`> ❌ New_Client_: ${error}`)
         Client_Not_Ready = false
+    }
+}
+async function Set_Client_Name(isNew) {
+    //console.log(Client_Not_Ready)
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ New_Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>New_Client_</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+        if (Set_Client_Name_Callback) await Set_Client_Name_Callback(isNew)
+
+        return global.Namet_
+    } catch (error) {
+        console.error(`> ❌ New_Client_: ${error}`)
+        //Client_Not_Ready = false
+    }
+}
+async function Rename_Client_(Clientt_) {
+    //console.log(Client_Not_Ready)
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ New_Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>New_Client_</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+
+        //console.log(Clientt_)
+
+        const Client_Id_ = Clientt_.split('_')[1]
+        //console.log(Client_Id_)
+        
+        const Client_Name = await Set_Client_Name(false)
+        //console.log(Client_Name)
+       
+        //console.log(Clientts_)
+        //console.log(Clientts_[Clientt_])
+        if (Destroy_Client_Callback) await Destroy_Client_Callback(Clientt_, false)
+        await sleep(1 * 1000)
+        //console.log(Clientts_)
+
+        if (Clientts_[Clientt_]) {
+            let entries = Object.entries(Clientts_)
+
+            entries = entries.map(([key, value]) => {
+                if (key === Clientt_) {
+                    key = `_${Client_Id_}_${Client_Name}_`
+                }
+                return [key, value]
+            })
+
+            Clientts_ = Object.fromEntries(entries)
+
+            //Clientts_[`_${Client_Id_}_${Client_Name}_`] = Clientts_[Clientt_]
+            //delete Clientts_[Clientt_]
+            
+            //Clientts_[Clientt_] = Clientts_[`_${Client_Id_}_${Client_Name}_`]
+            /*Clientts_[`_${Client_Id_}_${Client_Name}_`] = {
+                instance: null,
+            }*/
+
+            //Clientts_[Clientt_].instance.authStrategy.dataPath = Clientts_[Clientt_].instance.authStrategy.dataPath.replace(Clientt_, `_${Client_Id_}_${Client_Name}_`)
+            //Clientts_[Clientt_].instance.authStrategy.userDataDir = Clientts_[Clientt_].instance.authStrategy.userDataDir.replace(Clientt_, `_${Client_Id_}_${Client_Name}_`)
+        }
+
+        const Local_Auth = path.join(Root_Dir, `Local_Auth\\${Clientt_}`)
+        await fse.rename(Local_Auth, path.join(Root_Dir, `Local_Auth\\_${Client_Id_}_${Client_Name}_`))
+        
+        //if (Reinitialize_Client_Callback) await Reinitialize_Client_Callback(`${Client_Id_}_${Client_Name}_`)
+
+        //console.log(Clientts_[Clientt_])
+        //console.log(Clientts_)
+
+        /*console.log(global.Directory_Dir_Clients_)
+        console.log(global.Directory_Dir_Chat_Data)
+
+        console.log(global.File_Data_Chat_Data)
+        console.log(global.Data_File_Chat_Data)
+        
+        console.log(global.File_Data_Clients_)
+        console.log(global.Data_File_Clients_)*/
+
+        const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))
+        //console.log(Clients_)
+        const New_Client_ = Clients_.map(item => item.Clientt_ === Clientt_ ? { ...item, Clientt_: `_${Client_Id_}_${Client_Name}_` } : item )
+        const jsonString = '[\n' + New_Client_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        await fs.writeFile(global.Data_File_Clients_, jsonString, 'utf8')
+        await fse.rename(global.Data_File_Clients_, path.join(global.Directory_Dir_Clients_, `Client=_${Client_Id_}_${Client_Name}_.json`))
+
+        await fse.rename(global.Data_File_Chat_Data, path.join(global.Directory_Dir_Chat_Data, `Chat_Data=_${Client_Id_}_${Client_Name}_.json`))
+        
+        //await Select_Client_(`_${Client_Id_}_${Client_Name}_`)
+
+        /*console.log(global.File_Data_Chat_Data)
+        console.log(global.Data_File_Chat_Data)
+        
+        console.log(global.File_Data_Clients_)
+        console.log(global.Data_File_Clients_)*/
+
+
+        return { Sucess: true, clientt_: `_${Client_Id_}_${Client_Name}_` }
+        //return { Sucess: true, clientt_: Client_Name }
+    } catch (error) {
+        console.error(`> ❌ Rename_Client_: ${error}`)
+        //Client_Not_Ready = false
     }
 }
 
@@ -2522,19 +2637,27 @@ async function Print_All_Chat_Data(isallerase) {
     }
 }
 
-async function List_Active_Clients_() {
+async function List_Active_Clients_() { 
     try {
-        Actives_ = Clientts_
+        let Actives_ = _.cloneDeep(Clientts_)
+        //console.log(Actives_)
+        //console.log(Clientts_)
         
-        let Counter_Clients_ = 1
-        for (let i = 1; i <= Object.keys(Actives_).length; i++) {
-            Actives_[`_${Counter_Clients_}_${global.Client_Name}_`] = {
-                instance: {},
+        for (let i = 0; i < Object.keys(Clientts_).length; i++) {
+            //console.log(Actives_[Object.keys(Actives_)[i]])
+            if (Actives_[Object.keys(Actives_)[i]].instance === null) {
+                Actives_[Object.keys(Actives_)[i]] = {
+                    instance: true,
+                }
+            } else {
+                Actives_[Object.keys(Actives_)[i]] = {
+                    instance: false,
+                }
             }
-
-            Counter_Clients_++
         }
         
+        //console.log(Actives_)
+        //console.log(Clientts_)
         return Actives_
     } catch (error) {
         console.error(`> ❌ ERROR List_Active_Clients_: ${error}`)
@@ -3189,9 +3312,13 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
         })
         Client_.on('ready', async () => {
             try {
+                //console.log(Clientt_)
+                //console.log(Clientts_, 'antenio')
                 Clientts_[Clientt_] = {
                     instance: Client_,
                 }
+                //console.log(Clientts_, 'deupus')
+                Counter_Id_Clients_.push(Number(Clientt_.split('_')[1]))
 
                 const id = generateUniqueId()
                 Client_Not_Ready = true
@@ -3457,18 +3584,23 @@ async function initialize() {
             
             let Counter_Clients_ = 0
             if (Directories_.length-1 === -1) {
+                const Client_Name = await Set_Client_Name(true)
+                global.Namet_ = null
                 Client_Not_Ready = false
-                await New_Client_()
+                await New_Client_(Client_Name)
 
                 initialize_Not_Ready = true
                 
                 return { Sucess: true }
             } else {
-                for (let i = -1; i < Directories_.length-1; i++) {
+                for (let i = 0; i < Directories_.length; i++) {
                     initialize_Client_Not_Ready = false
                     let Is_New_Client_ = false
                     let Is_Initialize_Clients_ = true
+                    console.log(`>  ℹ️ Initializing Client_ ${Directories_[Counter_Clients_]}...`)
+                    if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Iniciando</strong> Client_ <strong>${Directories_[Counter_Clients_]}</strong>...`)
                     await Initialize_Client_(Directories_[Counter_Clients_], Is_New_Client_, Is_Initialize_Clients_)
+
                     Counter_Clients_++
                 }
 
@@ -3521,7 +3653,10 @@ module.exports = {
     Select_Client_,
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
+    Set_Set_Client_Name_Callback,
     New_Client_,
+    Set_Client_Name,
+    Rename_Client_,
     initialize,
     Set_Clients_Callback,
     Generate_MSG_Position_Id,

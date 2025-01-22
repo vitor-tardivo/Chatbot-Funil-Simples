@@ -431,11 +431,20 @@ async function handleWebSocketData(dataWebSocket) {
             break
         case 'WS=/client/destroy':
             const Client_______ = dataWebSocket.client
-            await DestroyClient_(Client_______)
+            const isRename = dataWebSocket.isRename
+            await DestroyClient_(Client_______, isRename)
+            
+            wss.send(JSON.stringify({
+                type: 'WS=/client/return-destroy',
+            }))
             break
         case 'WS=/client/reinitialize':
             const Client________ = dataWebSocket.client
             await ReinitializeClient_(Client________)
+
+            wss.send(JSON.stringify({
+                type: 'WS=/client/return-reinitialize',
+            }))
             break
         case 'WS=/client/select':
             const Client_________ = dataWebSocket.client
@@ -443,6 +452,29 @@ async function handleWebSocketData(dataWebSocket) {
             break
         case 'WS=/client/new':
             await newClients()
+            break
+        case 'WS=/client/set-client-name':
+            const isNew = dataWebSocket.isnew
+
+            const Namet_ = await setClientName(true)
+
+            wss.send(JSON.stringify({
+                type: 'WS=/client/return-set-client-name',
+                name: Namet_
+            }))
+            resetLoadingBar()
+            const status = document.querySelector('#status')
+            if (isNew) {   
+                status.innerHTML = `Iniciando <strong>QR-Code</strong>...`
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Iniciando <strong>QR-Code</strong>...`)
+
+                let barL = document.querySelector('#barLoading')
+                barL.style.cssText =
+                    'width: 100vw; visibility: visible;'
+            } else {
+                status.innerHTML = `<strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`)
+            }
             break
         case 'WS=/clients/insert':
             const Client__ = dataWebSocket.client
@@ -718,11 +750,11 @@ async function ready(Client_) {
                 const Actives_ = response.data.actives
 
                 let Counter_Clients_ = 1
-                const key = `_${Counter_Clients_}_Client_`
                 for (let i = 1; i <= Directories_.length; i++) {
+                    const key = Actives_[Object.keys(Actives_)[Counter_Clients_-1]].instance
                     let isActive = null
-                    if (Actives_[key] === null || Actives_[key] === undefined) {
-                        isActive = false                   
+                    if (key) {
+                        isActive = false
                     } else {
                         isActive = true
                     }
@@ -859,6 +891,39 @@ function displayOnConsole(message, setLogError) {
     } catch(error) {
         console.error(`> ⚠️ ERROR displayOnConsole: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> displayOnConsole: ${error.message}`, setLogError)
+    }
+}
+
+async function inputSelectAll(input, is) {
+    try {
+        if (is === 1) {
+            input.select()
+        } else {
+            return
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR inputSelectAll: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> inputSelectAll: ${error.message}`, setLogError)
+    }
+}
+
+async function triggerOnKey(event, id, key, functioN,  ...params) {
+    try {
+        switch (id) {
+            case 1:
+                switch (event.key.toLowerCase()) {
+                    case key.toLowerCase():
+                        event.preventDefault()
+                        const sendClientName = document.querySelector(`#isendSearchClientName`)
+                        sendClientName.dispatchEvent(new Event('click'))
+                        functioN.apply(null, params)
+                        break
+                }       
+                break
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR triggerOnKey: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> triggerOnKey: ${error.message}`, setLogError)
     }
 }
 
@@ -1503,7 +1568,7 @@ async function selectTemplate_(Templatet_) {
             divTemplatet_.style.cssText =
                 'border-top: 5px solid var(--colorBlue); border-bottom: 5px solid var(--colorBlue); transition: var(--configTrasition03s);'
 
-            capList.innerHTML = `<stronger>${Templatet_}</stronger>`
+            //capList.innerHTML = `<stronger>${Templatet_}</stronger>`
 
             Templatet_Temp = Templatet_
             Template_ = Templatet_
@@ -1524,7 +1589,7 @@ async function selectTemplate_(Templatet_) {
             const delayEraseScheduleTime = document.querySelector(`#idelayEraseScheduleTime`)
             if (eraseScheduleIs) {
                 iabbrEraseSchedule.title = `Schedule Erase STATUS: on`
-                buttonEraseSchedule.textContent = 'o'
+                buttonEraseSchedule.textContent = '-'
                 buttonEraseSchedule.style.cssText =
                     `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
 
@@ -1562,7 +1627,7 @@ async function selectTemplate_(Templatet_) {
                 }, 100)
             } else {
                 iabbrEraseSchedule.title = `Schedule Erase STATUS: off`
-                buttonEraseSchedule.textContent = '-'
+                buttonEraseSchedule.textContent = 'o'
                 buttonEraseSchedule.style.cssText =
                     `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
 
@@ -1606,7 +1671,7 @@ async function selectTemplate_(Templatet_) {
             const sendTestMode = document.querySelector(`#isendSearchTestMode`)
             if (testModeIs) {
                 iabbrTestMode.title = `Test Mode STATUS: on`
-                buttonTestMode.textContent = 'o'
+                buttonTestMode.textContent = '-'
                 buttonTestMode.style.cssText =
                     `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
 
@@ -1636,7 +1701,7 @@ async function selectTemplate_(Templatet_) {
                 }, 100)
             } else {
                 iabbrTestMode.title = `Test Mode STATUS: off`
-                buttonTestMode.textContent = '-'
+                buttonTestMode.textContent = 'o'
                 buttonTestMode.style.cssText =
                     `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
 
@@ -2009,7 +2074,7 @@ async function setEraseSchedule() {
             const divDelayEraseSchedule = document.querySelector(`#idivDelayEraseSchedule`)
             if (currentButtonEraseScheduleBackground_Color === 'var(--colorRed)') {
                 abbrScheduleErase.title = `Schedule Erase STATUS: on`
-                buttonScheduleErase.textContent = 'o'
+                buttonScheduleErase.textContent = '-'
                 buttonScheduleErase.style.cssText =
                     `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
                 
@@ -2025,7 +2090,7 @@ async function setEraseSchedule() {
                 }, 100)
             } else {
                 abbrScheduleErase.title = `Schedule Erase STATUS: off`
-                buttonScheduleErase.textContent = '-'
+                buttonScheduleErase.textContent = 'o'
                 buttonScheduleErase.style.cssText =
                     `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
 
@@ -2154,12 +2219,12 @@ async function setTestMode() {
             const sendTestMode = document.querySelector(`#isendSearchTestMode`)
             if (currentButtonTestModeBackground_Color === 'var(--colorRed)') {
                 abbrTestMode.title = `Test Mode STATUS: on`
-                buttonTestMode.textContent = 'o'
+                buttonTestMode.textContent = '-'
                 buttonTestMode.style.cssText =
                     `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
                 
                 divInputTestMode.style.cssText =
-                    'display: flex; height: 0; border-top: 3px solid var(--colorBlack);'
+                    'display: flex; height: 0px; border-top: 3px solid var(--colorBlack);'
                 setTimeout(function() {
                     divInputTestMode.style.cssText =
                         'display: flex; height: 37px; border-top: 3px solid var(--colorBlack);'
@@ -2178,7 +2243,7 @@ async function setTestMode() {
                 }, 100)
             } else {
                 abbrTestMode.title = `Test Mode STATUS: off`
-                buttonTestMode.textContent = '-'
+                buttonTestMode.textContent = 'o'
                 buttonTestMode.style.cssText =
                     `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
 
@@ -2192,10 +2257,10 @@ async function setTestMode() {
                     sendTestMode.style.cssText =
                         'display: none; opacity: 0;'
                     divInputTestMode.style.cssText =
-                        'display: flex; height: 0; border-top: 0px solid var(--colorBlack);'
+                        'display: flex; height: 0px; border-top: 0px solid var(--colorBlack);'
                         setTimeout(function() {
                             divInputTestMode.style.cssText =
-                                'display: none; height: 0; border-top: 0px solid var(--colorBlack);'
+                                'display: none; height: 0px; border-top: 0px solid var(--colorBlack);'
                         }, 300)
                 }, 100)
             }
@@ -2510,8 +2575,8 @@ async function selectFunil_(Funilt_, isFromButton) {
             divFunilt_.style.cssText =
                 'border-top: 5px solid var(--colorBlue); border-bottom: 5px solid var(--colorBlue); transition: var(--configTrasition03s);'
 
-            capList.innerHTML = `<stronger>${Funilt_}</stronger>`
-
+            //capList.innerHTML = `<stronger>${Funilt_}</stronger>`
+            
             Funilt_Temp = Funilt_
             Funil_ = Funilt_
 
@@ -5165,19 +5230,22 @@ async function eraseClient_(Clientt_) {
         resetLoadingBar()
     }
 }
-async function DestroyClient_(Clientt_) {
-    if (Client_NotReady) {
+async function DestroyClient_(Clientt_, isButton) {
+    /*if (Client_NotReady) {
         displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
         return
-    }
+    }*/
     try {
-        Client_NotReady = true
+        //Client_NotReady = true
 
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
-        let userConfirmation = confirm(`Tem certeza de que deseja desligar o Client_ ${Clientt_}?`)
+        let userConfirmation = true
+        if (isButton) {   
+            userConfirmation = confirm(`Tem certeza de que deseja desligar o Client_ ${Clientt_}?`)
+        }
         if (userConfirmation) {
             const status = document.querySelector('#status')
 
@@ -5192,7 +5260,7 @@ async function DestroyClient_(Clientt_) {
                 
                 resetLoadingBar()
                 
-                Client_NotReady = false
+                //Client_NotReady = false
 
                 return
             }
@@ -5202,7 +5270,7 @@ async function DestroyClient_(Clientt_) {
 
                 resetLoadingBar()
                 
-                Client_NotReady = false
+                //Client_NotReady = false
                 
                 return
             }
@@ -5212,12 +5280,12 @@ async function DestroyClient_(Clientt_) {
 
                 resetLoadingBar()
                 
-                Client_NotReady = false
+                //Client_NotReady = false
                 
                 return  
             } 
             if (Sucess) {
-                const clientHTMLReinitialize = `\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n`
+                const clientHTMLReinitialize = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
                 document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLReinitialize
 
                 status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`
@@ -5225,11 +5293,12 @@ async function DestroyClient_(Clientt_) {
     
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient, modelo REST e tals (se for preciso)
 
-                const dir_Path = 'Local_Auth'
+                /*const dir_Path = 'Local_Auth'
                 const response = await axios.get('/functions/dir', { params: { dir_Path } })
                 const Directories_ = response.data.dirs
+                displayOnConsole(Directories_)*/
 
-                if (Directories_.length-1 > 0) {
+                /*if (Directories_.length-1 > 0) {
                     const clientIdNumber = Clientt_.match(/\d+/g) 
 
                     if (Directories_[clientIdNumber++] !== null) {
@@ -5241,33 +5310,33 @@ async function DestroyClient_(Clientt_) {
 
                         await selectClient_(`Client_${posArrayClient}`)
                     }
-                }
+                }*/
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`
                 displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`)
             }
         } else {
             resetLoadingBar()
-            Client_NotReady = false
+            //Client_NotReady = false
             return
         }
 
         resetLoadingBar()
-        Client_NotReady = false
+        //Client_NotReady = false
     } catch (error) {
         console.error(`> ⚠️ ERROR DestroyClient_ ${Clientt_}: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> DestroyClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
-        Client_NotReady = false
+        //Client_NotReady = false
         resetLoadingBar()
     }
 } 
 async function ReinitializeClient_(Clientt_) {
-    if (Client_NotReady) {
+    /*if (Client_NotReady) {
         displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
         return
-    }
+    }*/
     try {
-        Client_NotReady = true
+        //Client_NotReady = true
 
         let barL = document.querySelector('#barLoading')
         barL.style.cssText =
@@ -5286,7 +5355,7 @@ async function ReinitializeClient_(Clientt_) {
             
             resetLoadingBar()
             
-            Client_NotReady = false
+            //Client_NotReady = false
 
             return
         }
@@ -5296,7 +5365,7 @@ async function ReinitializeClient_(Clientt_) {
 
             resetLoadingBar()
             
-            Client_NotReady = false
+           //Client_NotReady = false
             
             return
         }
@@ -5306,30 +5375,30 @@ async function ReinitializeClient_(Clientt_) {
 
             resetLoadingBar()
             
-            Client_NotReady = false
+            //Client_NotReady = false
             
             return  
         } 
         if (Sucess) {
-            const clientHTMLDestroy = `\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abb<abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abb<abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n`
+            const clientHTMLDestroy = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}', true)"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
             document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLDestroy
 
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`
             displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`)
         } else {
-            status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`
-            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Desligar</strong> Client_ <strong>${Clientt_}</strong>!`)
+            status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Ligar</strong> Client_ <strong>${Clientt_}</strong>!`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> ao <strong>Ligar</strong> Client_ <strong>${Clientt_}</strong>!`)
         }
 
         resetLoadingBar()
-        Client_NotReady = false
+        //Client_NotReady = false
     } catch (error) {
         console.error(`> ⚠️ ERROR ReinitializeClient_ ${Clientt_}: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> ReinitializeClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
-        Client_NotReady = false
+        //Client_NotReady = false
         resetLoadingBar()
     }
-} 
+}
 async function selectClient_(Clientt_) {
     if (Client_NotReady = false) {
         displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
@@ -5369,7 +5438,7 @@ async function selectClient_(Clientt_) {
                 'border-top: 5px solid var(--colorBlue); border-bottom: 5px solid var(--colorBlue); transition: var(--configTrasition03s);'
 
             capList.innerHTML = `<stronger>${Clientt_}</stronger>`
-
+            
             Clientt_Temp = Clientt_
             Client_ = Clientt_
 
@@ -5846,19 +5915,6 @@ async function allPrint(isFromButton, isallerase, Clientt_) {
     }
 }
 
-async function inputSelectAll(input, is) {
-    try {
-        if (is === 1) {
-            input.select()
-        } else {
-            return
-        }
-    } catch (error) {
-        console.error(`> ⚠️ ERROR inputSelectAll: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> inputSelectAll: ${error.message}`, setLogError)
-    }
-}
-
 async function counterExceeds(QR_Counter_Exceeds) {
     if (isExceeds) {
         displayOnConsole('>  ℹ️  <strong>Client_</strong> not Ready.', setLogError)
@@ -6040,7 +6096,7 @@ async function insertClient_Front(Clientt_, isActive) {
     
         const divAdjacent = document.querySelector(`#${idNumberClient_DivAdjacent}`)
         if (isActive) {
-            const clientHTMlDestroy = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
+            const clientHTMlDestroy = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}', true)"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
             if (divAdjacent) {
                 if (isFirstUndefined) {
                     divAdjacent.insertAdjacentHTML('beforebegin', clientHTMlDestroy)
@@ -6051,17 +6107,14 @@ async function insertClient_Front(Clientt_, isActive) {
                 ClientsDiv.innerHTML += clientHTMlDestroy
             }
         } else {
-            const clientHTMLReinitialize = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
+            const clientHTMLReinitialize = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
             if (divAdjacent) {
                 if (isFirstUndefined) {
-                    console.log('toto2')
                     divAdjacent.insertAdjacentHTML('beforebegin', clientHTMLReinitialize)
                 } else {
-                    console.log('toto22')
                     divAdjacent.insertAdjacentHTML('afterend', clientHTMLReinitialize)
                 }
             } else {
-                console.log('toto33')
                 ClientsDiv.innerHTML += clientHTMLReinitialize
             }
         }
@@ -6113,6 +6166,190 @@ async function newClients() {
     }
 }
 
+let externalPromiseResolve
+let Namet_ = null
+async function setClientName(isInitiated) {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const divInputClientName = document.querySelector(`#isendInputClientName`)
+        const inputClientName = document.querySelector(`#iinputClientName`)
+        const sendClientName = document.querySelector(`#isendSearchClientName`)
+        if (isInitiated) {
+            divInputClientName.style.cssText =
+                'display: flex; height: 0px; border-top: 3px solid var(--colorBlack);'
+            setTimeout(function() {
+                divInputClientName.style.cssText =
+                    'display: flex; height: 37px; border-top: 3px solid var(--colorBlack);'
+            }, -1)
+            setTimeout(function() {
+                inputClientName.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendClientName.style.cssText =
+                    'display: flex; opacity: 0;'
+                    setTimeout(function() {
+                        inputClientName.style.cssText =
+                            'display: inline; opacity: 1;'
+                        sendClientName.style.cssText =
+                            'display: flex; opacity: 1;'
+                    }, 100)
+            }, 100)
+            const promise = new Promise((resolve, reject) => {
+                externalPromiseResolve = resolve
+            })
+            status.innerHTML = `Digite um <strong>nome</strong> para a <strong>instancia</strong>`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Digite um <strong>nome</strong> para a <strong>instancia</strong>.`)
+            document.title = `Digite um nome...`
+            resetLoadingBar()
+            await promise
+            let barL = document.querySelector('#barLoading')
+            barL.style.cssText =
+                'width: 100vw; visibility: visible;'
+            status.innerHTML = `Nome <strong>${Namet_}</strong> <strong>aceito</strong>!`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Nome <strong>${Namet_}</strong> <strong>aceito</strong>!`)
+            inputClientName.value = ''
+            return Namet_
+        } else {
+            if (inputClientName.value.includes('_') || /\d/.test(inputClientName.value)) {
+                status.innerHTML = `<i><strong>ERROR</strong></i> Caracteres <strong>'_'</strong> ou numeros <strong>não</strong> são aceitos!`
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> Caracteres <strong>'_'</strong> ou numeros <strong>não</strong> são aceitos!`)
+                resetLoadingBar()
+                return
+            } else if (inputClientName.value.length === 0) {
+                Namet_ = 'Client'
+                inputClientName.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendClientName.style.cssText =
+                    'display: flex; opacity: 0;'
+                setTimeout(function() {
+                    inputClientName.style.cssText =
+                        'display: none; opacity: 0;'
+                    sendClientName.style.cssText =
+                        'display: none; opacity: 0;'
+                    divInputClientName.style.cssText =
+                        'display: flex; height: 0px; border-top: 0px solid var(--colorBlack);'
+                        setTimeout(function() {
+                            divInputClientName.style.cssText =
+                                'display: none; height: 0px; border-top: 0px solid var(--colorBlack);'
+                        }, 300)
+                }, 100)
+                if (externalPromiseResolve) {
+                    externalPromiseResolve()
+                }
+                resetLoadingBar()
+            } else {
+                Namet_ = inputClientName.value
+                inputClientName.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendClientName.style.cssText =
+                    'display: flex; opacity: 0;'
+                setTimeout(function() {
+                    inputClientName.style.cssText =
+                        'display: none; opacity: 0;'
+                    sendClientName.style.cssText =
+                        'display: none; opacity: 0;'
+                    divInputClientName.style.cssText =
+                        'display: flex; height: 0px; border-top: 0px solid var(--colorBlack);'
+                        setTimeout(function() {
+                            divInputClientName.style.cssText =
+                                'display: none; height: 0px; border-top: 0px solid var(--colorBlack);'
+                        }, 300)
+                }, 100)
+                if (externalPromiseResolve) {
+                    externalPromiseResolve()
+                }
+                resetLoadingBar()
+            }
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR setClientName: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> setClientName: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
+async function RenameClient_(Clientt_) {
+    /*if (Client_NotReady) {
+        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        //Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const response = await axios.put('/client/rename-client-name', { Clientt_ })
+        const Sucess = response.data.sucess
+        const clientt_ = response.data.Clientt_
+
+        if (Sucess) {
+            const divClients_ = document.querySelector('#Clients_')
+            divClients_.innerHTML = ''
+
+            const newClientDiv = document.querySelector('#divNewClient')
+            newClientDiv.style.cssText = 'display: flex; opacity: 0;' 
+            setTimeout(() => newClientDiv.style.cssText = 'display: flex; opacity: 1;', 100)
+            //o codigo abaixo e possivel botar tudo numa rota e devolver e fazer oq fas aqui que nsei como explica certinho, modelo REST e tals (se for preciso)
+
+            const dir_Path = 'Local_Auth'
+            const response = await axios.get('/functions/dir', { params: { dir_Path } })
+            const Directories_ = response.data.dirs
+            
+            if (Directories_.length-1 === -1) {
+                displayOnConsole(`> ⚠️ <strong>Dir</strong> Clients_ (<strong>${Directories_.length}</strong>) is <strong>empty</strong>.`)
+                
+                let exitInten = true
+                await exit(exitInten)
+            } else {
+                displayOnConsole(`>  ℹ️  <strong>Dir</strong> Clients_ has (<strong>${Directories_.length}</strong>) loading <strong>ALL</strong>...`)
+                
+                const response = await axios.get('/clients/active')
+                const Actives_ = response.data.actives
+
+                let Counter_Clients_ = 1
+                for (let i = 1; i <= Directories_.length; i++) {
+                const key = Actives_[Object.keys(Actives_)[Counter_Clients_-1]].instance
+                    let isActive = null
+                    if (key) {
+                        isActive = false
+                    } else {
+                        isActive = true
+                    }
+
+                    Client_NotReady = true
+                    await insertClient_Front(Directories_[Counter_Clients_-1], isActive)
+                    await selectClient_(Directories_[Counter_Clients_-1])
+                    
+                    Counter_Clients_++
+                }
+                displayOnConsole(`> ✅ <strong>Dir</strong> Clients_ loaded <strong>ALL</strong> (<strong>${Directories_.length}</strong>).`)
+            }
+            await selectClient_(clientt_)
+            await ReinitializeClient_(clientt_)
+            resetLoadingBar()
+        } else {
+            
+            resetLoadingBar()
+        }
+
+        //Client_NotReady = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR RenameClient_ ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> DestroyClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
 async function startBot() {
     if (isStarted) {
         displayOnConsole(`> ⚠️ <strong>${nameApp}</strong> ja esta <strong>Iniciado</strong>.`, setLogError)

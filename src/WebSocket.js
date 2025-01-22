@@ -22,12 +22,13 @@ const {
     Set_Reinitialize_Client_Callback,
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
+    Set_Set_Client_Name_Callback,
     Set_Clients_Callback,
 } = require('./app')
 
 const wss_Connections = new Map()
 
-function setupWebSocket(server) {
+async function setupWebSocket(server) {
     const wss_Server = new WebSocket.Server({ server })
 
     wss_Server.on('connection', async  function connection(wss) {
@@ -268,11 +269,22 @@ function setupWebSocket(server) {
                     console.error(`> ⚠️  WebSocket connection Set_Erase_Client_Callback (${wss_Connection_Id}) not found.`)
                 }
             })
-            Set_Destroy_Client_Callback(function(Clientt_) {
+            await Set_Destroy_Client_Callback( async function(Clientt_, isrename) {
                 const wss_Connection = wss_Connections.get(wss_Connection_Id) 
                 if (wss_Connection) {
                     try {
-                        wss_Connection.wss.send(JSON.stringify({ type: 'WS=/client/destroy', client: Clientt_ }))
+                        wss_Connection.wss.send(JSON.stringify({ type: 'WS=/client/destroy', client: Clientt_, isRename: isrename }))
+
+                        await new Promise((resolve, reject) => {
+                            wss_Connection.wss.once('message', (message) => {
+                                const data = JSON.parse(message);
+                                if (data.type === 'WS=/client/return-destroy') {
+                                    resolve()
+                                } else {
+                                    reject(new Error('Falha'))
+                                }
+                            })
+                        })
                     } catch (error) {
                         console.error(`> ❌ ERROR destroing Client_ ${Clientt_} (${wss_Connection_Id}): ${error}`)
                     }
@@ -280,11 +292,22 @@ function setupWebSocket(server) {
                     console.error(`> ⚠️  WebSocket connection Set_Erase_Client_Callback (${wss_Connection_Id}) not found.`)
                 }
             })
-            Set_Reinitialize_Client_Callback(function(Clientt_) {
+            await Set_Reinitialize_Client_Callback( async function(Clientt_) {
                 const wss_Connection = wss_Connections.get(wss_Connection_Id) 
                 if (wss_Connection) {
                     try {
                         wss_Connection.wss.send(JSON.stringify({ type: 'WS=/client/reinitialize', client: Clientt_ }))
+
+                        await new Promise((resolve, reject) => {
+                            wss_Connection.wss.once('message', (message) => {
+                                const data = JSON.parse(message);
+                                if (data.type === 'WS=/client/return-reinitialize') {
+                                    resolve()
+                                } else {
+                                    reject(new Error('Falha'))
+                                }
+                            })
+                        })
                     } catch (error) {
                         console.error(`> ❌ ERROR reinitializing Client_ ${Clientt_} (${wss_Connection_Id}): ${error}`)
                     }
@@ -343,6 +366,30 @@ function setupWebSocket(server) {
                     }
                 } else {
                     console.error(`> ⚠️  WebSocket connection Set_New_Client_Callback (${wss_Connection_Id}) not found.`)
+                }
+            })
+            await Set_Set_Client_Name_Callback(async function(isNew) {
+                const wss_Connection = wss_Connections.get(wss_Connection_Id)
+                if (wss_Connection) {
+                    try {
+                        wss_Connection.wss.send(JSON.stringify({ type: 'WS=/client/set-client-name', isnew: isNew }))
+
+                        await new Promise((resolve, reject) => {
+                            wss_Connection.wss.once('message', (message) => {
+                                const data = JSON.parse(message);
+                                if (data.type === 'WS=/client/return-set-client-name') {
+                                    resolve()
+                                    global.Namet_ = data.name
+                                } else {
+                                    reject(new Error('Falha'))
+                                }
+                            })
+                        })
+                    } catch (error) {
+                        console.error(`> ❌ ERROR sending auth_failure to WebSocket (${wss_Connection_Id}): ${error}`)
+                    }
+                } else {
+                    console.error(`> ⚠️  WebSocket connection Set_Set_Client_Name_Callback (${wss_Connection_Id}) not found.`)
                 }
             })
             Set_Start_Callback(function() {

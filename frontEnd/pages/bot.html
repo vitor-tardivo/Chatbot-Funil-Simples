@@ -76,13 +76,21 @@
                     
                 
                     <!--<div class="divClients_" id="_2_Client_">
-                        <abbr title="Client_ _2_Client_" id="abbrselect-_2_Client_"><button class="Clients_" id="select-_2_Client_" onclick="selectClient_('_2_Client_')">_2_Client_</button></abbr><abbr title="Desligar _2_Client_" id="abbrDestroy-_2_Client_"><button class="Clients_Destroy" id="Destroy-_2_Client_" onclick="DestroyClient_('_2_Client_')"><</button></abbr><abbr title="Apagar _2_Client_" id="abbrerase-_2_Client_"><button class="Clients_Erase" id="erase-_2_Client_" onclick="eraseClient_('_2_Client_')"><</button></abbr>
+                        <abbr title="Client_ _2_Client_" id="abbrselect-_2_Client_"><button class="Clients_" id="select-_2_Client_" onclick="selectClient_('_2_Client_')">_2_Client_</button></abbr><abbr title="Renomear _2_Client_" id="abbrRename-_2_Client_"><button class="Clients_Rename" id="Rename-_2_Client_" onclick="RenameClient_('_2_Client_')"><</button></abbr><abbr title="Desligar _2_Client_" id="abbrDestroy-_2_Client_"><button class="Clients_Destroy" id="Destroy-_2_Client_" onclick="DestroyClient_('_2_Client_', true)"><</button></abbr><abbr title="Apagar _2_Client_" id="abbrerase-_2_Client_"><button class="Clients_Erase" id="erase-_2_Client_" onclick="eraseClient_('_2_Client_')"><</button></abbr>
                     </div>-->
 
 
                 </div>
 
                 <abbr title="+ Cria um novo Client_"><button id="newClient" onclick="newClients()" ><stronger>+</stronger></button></abbr>
+            </div>
+            <div id="isendInputClientName">
+                <div id="idivInputClientName">
+                    <abbr title="Digite um nome para a instancia..."><input type="text" id="iinputClientName" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" onkeydown="triggerOnKey(event, 1, 'enter', setClientName, false)" placeholder=">..."></abbr>       
+                </div>
+                <abbr title="Confimar nome"><div id="idivSendClientName">
+                    <button id="isendSearchClientName" onclick="setClientName(false)">></button>
+                </div></abbr>
             </div>
             <div id="innerContent">
                 <div class="divs" id="divStart">
