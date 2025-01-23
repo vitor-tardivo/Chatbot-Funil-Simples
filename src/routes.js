@@ -39,6 +39,7 @@ const {
     Delay_Info_Erase_Schedule,
     Send_To_Template_Erase_Schedule,
     Set_Test_Mode,
+    Set_Receive_MSG,
     Status_Test_Mode,
     Contact_Info_Test_Mode,
     Send_To_Template_Test_Mode,
@@ -178,9 +179,9 @@ router.get('/template/status-test-mode', async (req, res) => {
     try {
         const { Template_ } = req.body
         
-        let testModeIs = await Status_Test_Mode(Template_)
+        let { testModeIs, ReceiveMSG } = await Status_Test_Mode(Template_)
         
-        res.status(200).send({ sucess: true, message: `Status Test_Mode sent.`, testmodeis: testModeIs })
+        res.status(200).send({ sucess: true, message: `Status Test_Mode sent.`, testmodeis: testModeIs, receivemsg: ReceiveMSG })
     } catch (error) {
         console.error(`> ❌ ERROR /template/status-test-mode: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, testmodeis: testModeIs })
@@ -197,6 +198,20 @@ router.put('/template/set-test-mode', async (req, res) => {
         }
     } catch (error) {
         console.error(`> ❌ ERROR /template/set-test-mode: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
+    }
+})
+router.put('/template/set-test-mode-receivemsg', async (req, res) => {
+    try {
+        const { ReceiveMSG } = req.body
+        const { Sucess } = await Set_Receive_MSG(ReceiveMSG)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully set ${ReceiveMSG} Receive MSG.` })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to set ${ReceiveMSG} Receive MSG.` })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/set-test-mode-receivemsg: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })

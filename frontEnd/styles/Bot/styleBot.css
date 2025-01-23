@@ -1715,6 +1715,35 @@ td {
 #iOnOffTestMode:focus {
     border: 2px solid var(--colorWhite);
 }
+#iOnOffTestModeRMSG {
+    display: none;
+    background-color: var(--colorContrast);
+    /*background-color: var(--colorGreen);*/
+    /*background-color: var(--colorRed);*/
+    color: var(--colorInteractionElements);
+    /*color: var(--colorBlack);*/
+    border: 2px solid var(--colorBlack);
+    border-radius: 0px 0px 50px 50px;
+    outline: 2px solid rgba(0, 0, 0, 0);
+    box-sizing: border-box;
+    word-break: break-word;
+    cursor: help;
+    /*cursor: pointer;*/
+    pointer-events: unset;
+    opacity: 0;
+    transition: var(--configTrasition03s);
+}
+#iOnOffTestModeRMSG:hover {
+    border: 2px solid var(--colorWhite);
+}
+#iOnOffTestModeRMSG:active {
+    border-radius: 0px 0px 0px 0px;
+    outline: 2px solid var(--colorWhite);
+    transition: 0s;
+}
+#iOnOffTestModeRMSG:focus {
+    border: 2px solid var(--colorWhite);
+}
 #isendInputTestMode {
     display: none;
     flex-direction: row;

@@ -284,6 +284,8 @@ let timer_Duration_Schedule = Previous_Math_Delay_Time_Erase_Schedule * timer_Du
 // Test_Mode
 global.Is_Test = null
 let Is_Test = global.Is_Test
+global.Is_Mode_Test = null
+let Is_Mode_Test = global.Is_Mode_Test
 let TestContact = null
 
 let Counter_Id_Clients_ = []
@@ -909,6 +911,8 @@ async function Select_Template_(Templatet_) {
 
         global.Is_Test = templateData[0].TestMode
         Is_Test = global.Is_Test
+        global.Is_Mode_Test = templateData[0].ReceiveMSG
+        Is_Mode_Test = global.Is_Mode_Test
 
         TestContact = templateData[0].TestContact
 
@@ -1107,10 +1111,11 @@ async function Status_Test_Mode(Templatet_) {
 
         const fileContent = await fs.readFile(global.Data_File_Templates_, 'utf8')
         const templateData = JSON.parse(fileContent)
-        const testModeIs = templateData[0]?.TestMode;
+        const testModeIs = templateData[0]?.TestMode
+        const ReceiveMSG = templateData[0]?.ReceiveMSG
 
         //Client_Not_Ready = false
-        return testModeIs
+        return { testModeIs, ReceiveMSG }
     } catch (error) {
         console.error(`> ❌ Status_Test_Mode ${Templatet_}: ${error}`)
         return eraseScheduleIs 
@@ -1142,6 +1147,35 @@ async function Set_Test_Mode(testModeIs) {
         return { Sucess: true }
     } catch (error) {
         console.error(`> ❌ Set_Test_Mode: ${error}`)
+        return { Sucess: false } 
+        //Client_Not_Ready = false
+    }
+}
+async function Set_Receive_MSG(ReceiveMSG) {
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ ${Funilt_} not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Funilt_}</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+
+        const fileContent = await fs.readFile(global.Data_File_Templates_, 'utf8')
+        const templateData = JSON.parse(fileContent)
+        templateData[0].ReceiveMSG = ReceiveMSG
+        const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
+        
+        global.Is_Mode_Test = ReceiveMSG
+        Is_Mode_Test = global.Is_Mode_Test
+
+        console.log(`>  ℹ️ Set (${ReceiveMSG}) Receive MSG off Template_ ${global.Template_}.`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><stronge>Definido</stronge> (<strong>${ReceiveMSG}</strong>) receber MSG do Template_ <strong>${global.Template_}</strong>.`)
+
+        //Client_Not_Ready = false
+        return { Sucess: true }
+    } catch (error) {
+        console.error(`> ❌ Set_Receive_MSG: ${error}`)
         return { Sucess: false } 
         //Client_Not_Ready = false
     }
@@ -1371,7 +1405,7 @@ async function New_Template_() {
         global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template=${Templatet_}.json`)
         //const filesDir = path.join(global.Directory_Dir_Funils_, 'files')
         
-        const New_Template_ = [{ Templatet_, EraseSchedule: false, delayType: 'days', delayData: '7', TestMode: false, TestContact: null }]
+        const New_Template_ = [{ Templatet_, EraseSchedule: false, delayType: 'days', delayData: '7', TestMode: false, ReceiveMSG: true, TestContact: null }]
         const jsonString = '[\n' + New_Template_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
         //await fs.mkdir(filesDir, { recursive: true })
@@ -1772,9 +1806,20 @@ async function Save_Client_(id, Clientt_) {
 
         console.log(`>  ◌ Saving Client_ ${Clientt_} to ${global.File_Data_Clients_}...`)
         if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Saving Client_ <strong>${Clientt_}</strong> to <strong>${global.File_Data_Clients_}</strong>...`)
+        
+        global.File_Data_Chat_Data = `Chat_Data=${Clientt_}.json`
+        global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`)
 
+        global.File_Data_Clients_ = `Client=${Clientt_}.json`
+        global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
+        
         const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))
-        const New_Client_ = Clients_.map(item => item.Clientt_ === Clientt_ ? { ...item, Clientt_: `_${Client_Id_}_${Client_Name}_` } : item )
+        let New_Client_
+        if (Clients_.length === 0) {
+            New_Client_ = [{ id, Clientt_ }]
+        } else {
+            New_Client_ = Clients_.map(item => ({ id, Clientt_ }))
+        }
         const jsonString = '[\n' + New_Client_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         
         await fs.writeFile(global.Data_File_Clients_, jsonString, 'utf8')
@@ -1829,13 +1874,13 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
             if (answer.toLowerCase() === 'y') {
                 console.log(`>  ◌ Erasing Client_ ${Clientt_} from ${global.File_Data_Clients_}...`)
                 if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Erasing Client_ <strong>${Clientt_}</strong> from <strong>${global.File_Data_Clients_}</strong>...`)
-                
+            
                 fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                 Clientts_[Clientt_].instance.destroy()
                 delete Clientts_[Clientt_]
-                await sleep(1 * 1000)
-                fse.remove(`Local_Auth\\${Clientt_}`)
-                const clientIdNumber = Clientt_.match(/\d+/g)
+                await sleep(2 * 1000)
+                fse.remove(path.join(Root_Dir, `Local_Auth\\${Clientt_}`))
+                const clientIdNumber = Clientt_.split('_')[1]
                 Counter_Id_Clients_.splice(clientIdNumber-1, 1)
                 
                 Erased_ = true
@@ -1862,9 +1907,9 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
             fse.remove(`Clients_\\${global.File_Data_Clients_}`)
             Clientts_[Clientt_].instance.destroy()
             delete Clientts_[Clientt_]
-            await sleep(1 * 1000)
-            fse.remove(`Local_Auth\\${Clientt_}`)
-            const clientIdNumber = Clientt_.match(/\d+/g)
+            await sleep(2 * 1000)
+            fse.remove(path.join(Root_Dir, `Local_Auth\\${Clientt_}`))
+            const clientIdNumber = Clientt_.split('_')[1]
             Counter_Id_Clients_.splice(clientIdNumber-1, 1)
             
             Erased_ = true
@@ -3312,13 +3357,13 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
         })
         Client_.on('ready', async () => {
             try {
-                //console.log(Clientt_)
-                //console.log(Clientts_, 'antenio')
                 Clientts_[Clientt_] = {
                     instance: Client_,
                 }
-                //console.log(Clientts_, 'deupus')
-                Counter_Id_Clients_.push(Number(Clientt_.split('_')[1]))
+
+                if (!Counter_Id_Clients_.includes((Number(Clientt_.split('_')[1])))) {
+                    Counter_Id_Clients_.push(Number(Clientt_.split('_')[1]))
+                }
 
                 const id = generateUniqueId()
                 Client_Not_Ready = true
@@ -3332,7 +3377,6 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
 
                 
                 global.Is_QrCode_On = false
-                global.QR_Counter = 1
 
                 let Is_Reinitialize = null
                 if (Is_New_Client_ || Is_Initialize_Clients_) {
@@ -3389,11 +3433,11 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
         //message_create //debug
         Client_.on('message_create', async msg => {
             try {
-                if (Is_Test) {
+                if (Is_Mode_Test & Is_Test) {
                     console.log(`Test Mode is ON.`)
                     if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Test Mode is <strong>ON</strong>.`)
 
-                    //return
+                    return
                 }
         
                 const chat = await msg.getChat()
@@ -3675,6 +3719,7 @@ module.exports = {
     Delay_Info_Erase_Schedule,
     Send_To_Template_Erase_Schedule,
     Set_Test_Mode,
+    Set_Receive_MSG,
     Status_Test_Mode,
     Contact_Info_Test_Mode,
     Send_To_Template_Test_Mode,

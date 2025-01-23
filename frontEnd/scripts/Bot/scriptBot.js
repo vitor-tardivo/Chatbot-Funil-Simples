@@ -1663,8 +1663,11 @@ async function selectTemplate_(Templatet_) {
 
             const response3 = await axios.get('/template/status-test-mode', { Template_: Templatet_ })
             const testModeIs = response3.data.testmodeis
+            const ReceiveMSG = response3.data.receivemsg
             const iabbrTestMode = document.querySelector(`#iabbrTestMode`)
             const buttonTestMode = document.querySelector(`#iOnOffTestMode`)
+            const iabbrTestModeRMSG = document.querySelector(`#iabbrTestModeRMSG`)
+            const buttonTestModeRMSG = document.querySelector(`#iOnOffTestModeRMSG`)
 
             const divInputTestMode = document.querySelector(`#isendInputTestMode`)
             const inputTestMode = document.querySelector(`#iinputTestMode`)
@@ -1699,6 +1702,19 @@ async function selectTemplate_(Templatet_) {
                                 'display: flex; opacity: 1;'
                         }, 100)
                 }, 100)
+
+                /*buttonTestModeRMSG.style.cssText =
+                    'display: inline; opacity: 0;'
+                setTimeout(function() {
+                    buttonTestModeRMSG.style.cssText =
+                        'display: inline; opacity: 1;'
+                }, 100)*/
+                buttonTestModeRMSG.style.display = 'inline'
+                buttonTestModeRMSG.style.opacity = '0'
+                setTimeout(function() {
+                    buttonTestModeRMSG.style.display = 'inline'
+                    buttonTestModeRMSG.style.opacity = '1'
+                }, 100)
             } else {
                 iabbrTestMode.title = `Test Mode STATUS: off`
                 buttonTestMode.textContent = 'o'
@@ -1727,6 +1743,31 @@ async function selectTemplate_(Templatet_) {
                                 'display: none; height: 0; border-top: 0px solid var(--colorBlack);'
                         }, 300)
                 }, 100)
+
+                /*buttonTestModeRMSG.style.cssText =
+                    'display: inline; opacity: 0;'
+                setTimeout(function() {
+                    buttonTestModeRMSG.style.cssText =
+                        'display: none; opacity: 0;'
+                }, 300)*/
+                buttonTestModeRMSG.style.display = 'inline'
+                buttonTestModeRMSG.style.opacity = '0'
+                setTimeout(function() {
+                    buttonTestModeRMSG.style.display = 'none'
+                    buttonTestModeRMSG.style.opacity = '0'
+                }, 300)
+            }
+
+            if (ReceiveMSG) {
+                iabbrTestModeRMSG.title = `(TM) Receive STATUS: on`
+                buttonTestModeRMSG.textContent = '-'
+                buttonTestModeRMSG.style.cssText =
+                    `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
+            } else {
+                iabbrTestModeRMSG.title = `(TM) Receive MSG STATUS: off`
+                buttonTestModeRMSG.textContent = 'o'
+                buttonTestModeRMSG.style.cssText =
+                    `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
             }
             
             const divsConteiner = document.querySelector('.conteinerFunilMSG')
@@ -2213,6 +2254,7 @@ async function setTestMode() {
         }
         if (Sucess) {
             const abbrTestMode = document.querySelector(`#iabbrTestMode`)
+            const buttonTestModeRMSG = document.querySelector(`#iOnOffTestModeRMSG`)
 
             const divInputTestMode = document.querySelector(`#isendInputTestMode`)
             const inputTestMode = document.querySelector(`#iinputTestMode`)
@@ -2241,6 +2283,19 @@ async function setTestMode() {
                                 'display: flex; opacity: 1;'
                         }, 100)
                 }, 100)
+
+                /*buttonTestModeRMSG.style.cssText =
+                    'display: inline; opacity: 0;'
+                setTimeout(function() {
+                    buttonTestModeRMSG.style.cssText =
+                        'display: inline; opacity: 1;'
+                }, 100)*/
+                buttonTestModeRMSG.style.display = 'inline'
+                buttonTestModeRMSG.style.opacity = '0'
+                setTimeout(function() {
+                    buttonTestModeRMSG.style.display = 'inline'
+                    buttonTestModeRMSG.style.opacity = '1'
+                }, 100)
             } else {
                 abbrTestMode.title = `Test Mode STATUS: off`
                 buttonTestMode.textContent = 'o'
@@ -2263,18 +2318,84 @@ async function setTestMode() {
                                 'display: none; height: 0px; border-top: 0px solid var(--colorBlack);'
                         }, 300)
                 }, 100)
+
+                /*buttonTestModeRMSG.style.cssText =
+                    'display: inline; opacity: 0;'
+                setTimeout(function() {
+                    buttonTestModeRMSG.style.cssText =
+                        'display: none; opacity: 0;'
+                }, 300)*/
+                buttonTestModeRMSG.style.display = 'inline'
+                buttonTestModeRMSG.style.opacity = '0'
+                setTimeout(function() {
+                    buttonTestModeRMSG.style.display = 'none'
+                    buttonTestModeRMSG.style.opacity = '0'
+                }, 300)
             }
             status.innerHTML = `<stronge>Definido</stronge> (<strong>${testModeIs}</strong>) teste mode do Template_ <strong>${Template_}</strong>`
-            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <stronge>Definido</stronge> (<strong>${testModeIs}</strong>) apagamento agendado do Template_ <strong>${Template_}</strong>.`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <stronge>Definido</stronge> (<strong>${testModeIs}</strong>) teste mode do Template_ <strong>${Template_}</strong>.`)
             resetLoadingBar()
         } else {
             status.innerHTML = `<i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${testModeIs}</strong>) teste mode do Template_ <strong>${Template_}</strong>!`
-            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${testModeIs}</strong>) apagamendo agendado do Template_ <strong>${Template_}</strong>!`)
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${testModeIs}</strong>) teste mode do Template_ <strong>${Template_}</strong>!`)
             resetLoadingBar()
         }
     } catch (error) {
         console.error(`> ⚠️ ERROR setTestMode ${Template_}: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> setTestMode <strong>${Template_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
+async function setReceiveMSG() {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const buttonTestModeRMSG = document.querySelector(`#iOnOffTestModeRMSG`)
+        const currentButtonTestModeRMSGBackground_Color = buttonTestModeRMSG.style.backgroundColor
+        let Sucess = null
+        let ReceiveMSG = null
+        if (currentButtonTestModeRMSGBackground_Color === 'var(--colorRed)') {
+            ReceiveMSG = true
+            const response = await axios.put('/template/set-test-mode-receivemsg', { ReceiveMSG })
+            Sucess = response.data.sucess
+        } else {
+            ReceiveMSG = false
+            const response = await axios.put('/template/set-test-mode-receivemsg', { ReceiveMSG })
+            Sucess = response.data.sucess
+        }
+        if (Sucess) {
+            const iabbrTestModeRMSG = document.querySelector(`#iabbrTestModeRMSG`)
+            if (currentButtonTestModeRMSGBackground_Color === 'var(--colorRed)') {
+                iabbrTestModeRMSG.title = `(TM) Receive STATUS: on`
+                buttonTestModeRMSG.textContent = '-'
+                buttonTestModeRMSG.style.cssText =
+                    `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer; display: inline; opacity: 1;`
+            } else {
+                iabbrTestModeRMSG.title = `(TM) Receive MSG STATUS: off`
+                buttonTestModeRMSG.textContent = 'o'
+                buttonTestModeRMSG.style.cssText =
+                    `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer; display: inline; opacity: 1;`
+            }
+            status.innerHTML = `<stronge>Definido</stronge> (<strong>${ReceiveMSG}</strong>) receber MSG do Template_ <strong>${Template_}</strong>`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <stronge>Definido</stronge> (<strong>${ReceiveMSG}</strong>) receber MSG do Template_ <strong>${Template_}</strong>.`)
+            resetLoadingBar()
+        } else {
+            status.innerHTML = `<i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${ReceiveMSG}</strong>) receber MSG do Template_ <strong>${Template_}</strong>!`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> <strong>definindo</strong> (<strong>${ReceiveMSG}</strong>) receber MSG do Template_ <strong>${Template_}</strong>!`)
+            resetLoadingBar()
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR setReceiveMSG ${Template_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> setReceiveMSG <strong>${Template_}</strong>: ${error.message}`, setLogError)
         //Client_NotReady = false
         resetLoadingBar()
     }
@@ -5129,11 +5250,15 @@ async function eraseClient_(Clientt_) {
         if (userConfirmation) {
             const status = document.querySelector('#status')
 
-            const response = await axios.delete('/client/erase', { params: { Clientt_ } })
-            const Sucess = response.data.sucess
-            const Is_Empty = response.data.empty
-            const Is_Empty_Input = response.data.empty_input
-            const Not_Selected = response.nselected
+            const dir_Path = 'Local_Auth'
+            const response = await axios.get('/functions/dir', { params: { dir_Path } })
+            const Directories = response.data.dirs
+
+            const response1 = await axios.delete('/client/erase', { params: { Clientt_ } })
+            const Sucess = response1.data.sucess
+            const Is_Empty = response1.data.empty
+            const Is_Empty_Input = response1.data.empty_input
+            const Not_Selected = response1.nselected
             if (Not_Selected) {
                 status.innerHTML = `O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`)
@@ -5172,9 +5297,6 @@ async function eraseClient_(Clientt_) {
                 displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Client_ <strong>${Clientt_}</strong> foi <strong>Apagado</strong>!`)
 
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
-                const dir_Path = 'Local_Auth'
-                const response = await axios.get('/functions/dir', { params: { dir_Path } })
-                const Directories = response.data.dirs
 
                 if (Directories.length === 0) {
                     status.innerHTML = `<strong>Dir</strong> off Clients_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
@@ -5183,29 +5305,29 @@ async function eraseClient_(Clientt_) {
                     let exitInten = true
                     await exit(exitInten)
                     await axios.put('/back/reset')
-                } else {
-                    const clientIdNumber = Number(Clientt_.match(/\d+/g))
+                } else {//esse sistemas de seleciona outro apos apagar ou algo do tipo esse aqui pode ser o melhor de todos pq pelo jeito tem uns 3 4 diferentes alguns com o mesmo codigo pra jeito diferetne e isso aconteceu pq n foi planejado mas quando resfase tudo ent fazer certinho
+                    const clientIdNumber = Number(Clientt_.split('_')[1])
 
                     let Counter_Clients_ = 0
                     let posArrayClientId = null
                     let posArrayClientName = null
                     for (let i = 0; i < Directories.length; i++) {
-                        const clientDirIdNumber = Number(Directories[Counter_Clients_].match(/_.*?_.*?_/)[0].match(/\d+/g))
+                        const clientDirIdNumber = Number(Directories[Counter_Clients_].split('_')[1])
 
                         if (clientIdNumber === clientDirIdNumber) {
-                            posArrayClientId = Counter_Clients_
+                            posArrayClientId = Counter_Clients_+1
 
-                            if (Directories[posArrayClientId+1] === undefined) {
-                                posArrayClientId--
-                                posArrayClientName = Directories[posArrayClientId--].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
+                            if (Directories[posArrayClientId] === undefined) {
+                                posArrayClientId-1
+                                posArrayClientName = Directories[posArrayClientId-1].split('_')[2]
                             } else {
-                                posArrayClientId++
-                                posArrayClientName = Directories[posArrayClientId++].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
+                                posArrayClientId+1
+                                posArrayClientName = Directories[posArrayClientId+1].split('_')[2]
                             }
                         } else {
-                            posArrayClientId = Number(Directories[Counter_Clients_].match(/_.*?_.*?_/)[0].match(/\d+/g))
-                            posArrayClientName = Directories[Counter_Clients_].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
-                            Counter_Clients_++
+                            posArrayClientId = Directories[Counter_Clients_].split('_')[1]
+                            posArrayClientName = Directories[Counter_Clients_].split('_')[2]
+                            Counter_Clients_+1
                         }
                     }
                     
