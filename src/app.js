@@ -211,7 +211,7 @@ async function askForConfirmation(Clientt_) {
     }
 }
 
-async function List_Directories(dir_Path) {
+async function List_Directories(dir_Path) {//
     try {
         //await fs.mkdir(path.join(Root_Dir, dir_Path), { recursive: true } )
         let Files_ = null
@@ -1813,7 +1813,7 @@ async function Save_Client_(id, Clientt_) {
         global.File_Data_Clients_ = `Client=${Clientt_}.json`
         global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
         
-        const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))
+        const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))//
         let New_Client_
         if (Clients_.length === 0) {
             New_Client_ = [{ id, Clientt_ }]
@@ -2287,22 +2287,58 @@ async function Load_Chat_Data(ChatData_Not_Ready_Aux, Clientt_) {
         return //[]
     }
     try {
-        global.File_Data_Chat_Data = `Chat_Data=${Clientt_}.json`
-        global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`)
+        let Files_ = await fs.readdir('Chat_Datas')//ok essa mudanca pra resolver de reatribuir um chatdata a um client novo apos apagar o tal parece que n vai ter problemas mas se tiver so da uma olhada na logica acredito que ta bem feita ent se tiver um problema e facil de achar pq ta bem pensando eu imagino so seguir...
+        //console.log(Files_)
 
-        console.log(`>  ◌ Loading ChatData ${Clientt_} from ${global.File_Data_Chat_Data}...`)
-        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Loading</strong> ChatData <strong>${Clientt_}</strong> from <strong>${global.File_Data_Chat_Data}</strong>...`)
+        const match_ChatData_Id = /Chat_Data=_([0-9]+)/
+        //console.log(match_ChatData_Id)
+        const match_ChatData_Name = /Chat_Data=_[0-9]+_([^_]+)_/
+        //console.log(match_ChatData_Name)
         
-        const ChatData = await fs.readFile(global.Data_File_Chat_Data, 'utf8')
+        const Id_Clientt_ = Clientt_.split('_')[1]
+        //console.log(Id_Clientt_)
+        const Name_Clientt_ = Clientt_.split('_')[2]
+        //console.log(Name_Clientt_)
 
-        if (ChatData.length === 0) {
-            console.log(`> ⚠️  ${global.File_Data_Chat_Data} off ${Clientt_} is empty.`)
-            if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.File_Data_Chat_Data}</strong> off <strong>${Clientt_}</strong> is <strong>empty</strong>.`)
-            await fs.writeFile(global.Data_File_Chat_Data, '[\n\n]', 'utf8')
-            return //[]
+        const Dir_ChatData_Clientt_Position = Files_.map(file => file.match(match_ChatData_Id)?.[1]).filter(Boolean).map(Number).indexOf(Number(Id_Clientt_))
+        //console.log(Dir_ChatData_Clientt_Position)
+        let Dir_ChatData_Clientt_ = null
+        let Dir_ChatData_Clientt_Id = null
+        let Dir_ChatData_Clientt_Name = null
+        if (Dir_ChatData_Clientt_Position !== -1) {
+            Dir_ChatData_Clientt_ = Files_[Dir_ChatData_Clientt_Position]
+            Dir_ChatData_Clientt_Id = Dir_ChatData_Clientt_.match(match_ChatData_Id)?.[1]
+            Dir_ChatData_Clientt_Name = Dir_ChatData_Clientt_.match(match_ChatData_Name)?.[1]
+        }
+        //console.log(Dir_ChatData_Clientt_)
+        //console.log(Dir_ChatData_Clientt_Id)
+        //console.log(Dir_ChatData_Clientt_Name)
+
+        if (Dir_ChatData_Clientt_Name !== Name_Clientt_ && Dir_ChatData_Clientt_Name) {
+            global.File_Data_Chat_Data = `Chat_Data=_${Dir_ChatData_Clientt_Id}_${Dir_ChatData_Clientt_Name}_.json`
+            global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=_${Dir_ChatData_Clientt_Id}_${Dir_ChatData_Clientt_Name}_.json`)
+
+            console.log(`>  ◌ Loading ChatData ${Clientt_} from ${global.File_Data_Chat_Data}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Loading</strong> ChatData <strong>${Clientt_}</strong> from <strong>${global.File_Data_Chat_Data}</strong>...`)
+
+            await fse.rename(global.Data_File_Chat_Data, path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`))
+        } else {
+            global.File_Data_Chat_Data = `Chat_Data=${Clientt_}.json`
+            global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`)
+
+            console.log(`>  ◌ Loading ChatData ${Clientt_} from ${global.File_Data_Chat_Data}...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Loading</strong> ChatData <strong>${Clientt_}</strong> from <strong>${global.File_Data_Chat_Data}</strong>...`)
+
+            const ChatData = await fs.readFile(global.Data_File_Chat_Data, 'utf8')
+            
+            if (ChatData.length === 0) {
+                console.log(`> ⚠️  ${global.File_Data_Chat_Data} off ${Clientt_} is empty.`)
+                if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.File_Data_Chat_Data}</strong> off <strong>${Clientt_}</strong> is <strong>empty</strong>.`)
+                    await fs.writeFile(global.Data_File_Chat_Data, '[\n\n]', 'utf8')
+                return //[]
+            }
         }
 
-        
         console.log(`> ✅ ChatData ${Clientt_} loaded from ${global.File_Data_Chat_Data}.`)
         if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>ChatData <strong>${Clientt_}</strong> <strong>loaded</strong> from <strong>${global.File_Data_Chat_Data}</strong>.`)
             
@@ -2346,7 +2382,18 @@ async function Save_Chat_Data(chatId, name, Clientt_, isallerase) {
         
         const Data_File_Chat_Data = `Chat_Data=${Clientt_}.json`
         const ChatData = JSON.parse(await fs.readFile(path.join(global.Directory_Dir_Chat_Data, Data_File_Chat_Data), 'utf8'))
-        const New_ChatData = [{ chatId, name }, ...ChatData.filter(item => item.chatId !== chatId)]
+        let New_ChatData
+        //const Directories_ = await List_Directories('Local_Auth')
+        New_ChatData = [{ chatId, name }, ...ChatData.filter(item => item.chatId !== chatId)]
+        /*if (ChatData.) {
+            New_ChatData = [{ chatId, name }, ...ChatData.filter(item => item.chatId !== chatId)]
+        } else {
+            if (ChatData.) {
+                New_ChatData = [{ chatId, name }, ...ChatData.filter(item => item.chatId !== chatId)]
+            } else {
+                New_ChatData = [{ chatId, name }, ...ChatData.filter(item => item.chatId !== chatId)]
+            }
+        }*/
         const jsonString = '[\n' + New_ChatData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         
         await fs.writeFile(path.join(global.Directory_Dir_Chat_Data, Data_File_Chat_Data), jsonString, 'utf8')
