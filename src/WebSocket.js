@@ -23,6 +23,7 @@ const {
     Set_Select_Client_Callback,
     Set_New_Client_Callback,
     Set_Set_Client_Name_Callback,
+    Set_Set_Funil_Name_Callback,
     Set_Clients_Callback,
 } = require('./app')
 
@@ -379,17 +380,41 @@ async function setupWebSocket(server) {
                                 const data = JSON.parse(message);
                                 if (data.type === 'WS=/client/return-set-client-name') {
                                     resolve()
-                                    global.Namet_ = data.name
+                                    global.Namet_Client_ = data.name
                                 } else {
                                     reject(new Error('Falha'))
                                 }
                             })
                         })
                     } catch (error) {
-                        console.error(`> ❌ ERROR sending auth_failure to WebSocket (${wss_Connection_Id}): ${error}`)
+                        console.error(`> ❌ ERROR sending Set_Set_Client_Name_Callback to WebSocket (${wss_Connection_Id}): ${error}`)
                     }
                 } else {
                     console.error(`> ⚠️  WebSocket connection Set_Set_Client_Name_Callback (${wss_Connection_Id}) not found.`)
+                }
+            })
+            await Set_Set_Funil_Name_Callback(async function(isNew) {
+                const wss_Connection = wss_Connections.get(wss_Connection_Id)
+                if (wss_Connection) {
+                    try {
+                        wss_Connection.wss.send(JSON.stringify({ type: 'WS=/funil/set-funil-name', isnew: isNew }))
+
+                        await new Promise((resolve, reject) => {
+                            wss_Connection.wss.once('message', (message) => {
+                                const data = JSON.parse(message);
+                                if (data.type === 'WS=/funil/return-set-funil-name') {
+                                    resolve()
+                                    global.Namet_Funil_ = data.name
+                                } else {
+                                    reject(new Error('Falha'))
+                                }
+                            })
+                        })
+                    } catch (error) {
+                        console.error(`> ❌ ERROR sending Set_Set_Funil_Name_Callback to WebSocket (${wss_Connection_Id}): ${error}`)
+                    }
+                } else {
+                    console.error(`> ⚠️  WebSocket connection Set_Set_Funil_Name_Callback (${wss_Connection_Id}) not found.`)
                 }
             })
             Set_Start_Callback(function() {

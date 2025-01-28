@@ -299,7 +299,17 @@ router.post('/funil/select', async (req, res) => {
 router.get('/funil/insert_exponecial_position_Funil_', async (req, res) => {
     try {
         const arrayidnamefunils_ = req.query.arrayIdNameFunils_
-        const { idNumberFunil_DivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_Funil_(arrayidnamefunils_)
+        const isnew = req.query.isNew
+
+        let isNew = null//esse bagui e preguicoso tbm e so pega por body muda ai e tals esse req pra body e deve ja n modificar as var
+        if (isnew === 'true') {
+            isNew = true
+        } 
+        if (isnew === 'false') {
+            isNew = false
+        }
+
+        const { idNumberFunil_DivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_Funil_(arrayidnamefunils_, isNew)
         
         res.status(200).send({ sucess: true, message: `Sucessfully sent the insert info exponecial position Funil_.`, idnumberfunil_divadjacent: idNumberFunil_DivAdjacent, isfirstundefined: isFirstUndefined })
     } catch (error) {
@@ -545,7 +555,7 @@ router.get('/client/qr-code', (req, res) => {
 router.post('/client/new', async (req, res) => {
     try {
         const Client_Name = await Set_Client_Name(true)
-        global.Namet_ = null
+        global.Namet_Client_ = null
         global.Is_From_New = true
         await New_Client_(Client_Name)
 

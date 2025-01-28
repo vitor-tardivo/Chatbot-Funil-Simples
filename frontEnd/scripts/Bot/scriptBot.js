@@ -198,6 +198,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         dir_Path = 'Funil'
         const response3 = await axios.get('/functions/dir', { params: { dir_Path } })
         Directories_ = response3.data.dirs
+        displayOnConsole(Directories_)
         if (Directories_.length-1 === -1) {
             
             
@@ -206,7 +207,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
 
             let Counter_Clients_ = 1
             for (let i = 1; i <= Directories_.length; i++) {
-                await insertFunil_Front(Directories_[Counter_Clients_-1])
+                await insertFunil_Front(Directories_[Counter_Clients_-1], false)
                 await selectFunil_(Directories_[Counter_Clients_-1], false)
 
                 divTemplateFunctions.style.cssText =
@@ -224,7 +225,6 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         const response4 = await axios.get('/functions/dir', { params: { dir_Path } })
         Directories_ = response4.data.dirs
         if (Directories_.length-1 === -1) {
-            
             
         } else {
             let divTemplateInner = document.querySelector('#divInnerTemplate')
@@ -467,6 +467,29 @@ async function handleWebSocketData(dataWebSocket) {
             if (isNew) {   
                 status.innerHTML = `Iniciando <strong>QR-Code</strong>...`
                 displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Iniciando <strong>QR-Code</strong>...`)
+
+                let barL = document.querySelector('#barLoading')
+                barL.style.cssText =
+                    'width: 100vw; visibility: visible;'
+            } else {
+                status.innerHTML = `<strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`)
+            }
+            break
+        case 'WS=/funil/set-funil-name':
+            const isNew2 = dataWebSocket.isnew
+
+            const Namet_2 = await setFunilName(true)
+
+            wss.send(JSON.stringify({
+                type: 'WS=/funil/return-set-funil-name',
+                name: Namet_2
+            }))
+            resetLoadingBar()
+            const status2 = document.querySelector('#status')
+            if (isNew2) {   
+                //status2.innerHTML = `Iniciando <strong>QR-Code</strong>...`
+                //displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Iniciando <strong>QR-Code</strong>...`)
 
                 let barL = document.querySelector('#barLoading')
                 barL.style.cssText =
@@ -2550,11 +2573,15 @@ async function eraseFunil_(Funilt_) {
         if (userConfirmation) {
             const status = document.querySelector('#status')
 
-            const response = await axios.delete('/funil/erase', { params: { Funilt_ } })
-            const Sucess = response.data.sucess
-            const Is_Empty = response.data.empty
-            const Is_Empty_Input = response.data.empty_input
-            const Not_Selected = response.nselected
+            const dir_Path = 'Funil'
+            const response = await axios.get('/functions/dir', { params: { dir_Path } })
+            const Directories = response.data.dirs
+
+            const response1 = await axios.delete('/funil/erase', { params: { Funilt_ } })
+            const Sucess = response1.data.sucess
+            const Is_Empty = response1.data.empty
+            const Is_Empty_Input = response1.data.empty_input
+            const Not_Selected = response1.nselected
             if (Not_Selected) {
                 status.innerHTML = `O Funil_ <strong>${Funilt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Funil_ <strong>selecionado</strong> é <strong>${Funil_}</strong> então <strong>selecione</strong> <strong>${Funilt_}</strong> para poder <strong>apaga-lo</strong>!`
                 displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Funil_ <strong>${Funilt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Funil_ <strong>selecionado</strong> é <strong>${Funil_}</strong> então <strong>selecione</strong> <strong>${Funilt_}</strong> para poder <strong>apaga-lo</strong>!`)
@@ -2592,14 +2619,14 @@ async function eraseFunil_(Funilt_) {
                 status.innerHTML = `Funil_ <strong>${Funilt_}</strong> foi <strong>Apagado</strong>!`
                 displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> foi <strong>Apagado</strong>!`)
 
+                const dir_Path = 'Funil'
+                const response = await axios.get('/functions/dir', { params: { dir_Path } })
+                const Directories2 = response.data.dirs
+
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
                 let divTemplateFunctions = document.querySelector('#divNewTemplate')
 
-                const dir_Path = 'Funil'
-                const response = await axios.get('/functions/dir', { params: { dir_Path } })
-                const Directories = response.data.dirs
-
-                if (Directories.length === 0) {
+                if (Directories2.length === 0) {
                     divTemplateFunctions.style.cssText =
                         'display: flex; opacity: 0;'
                     setTimeout(function() {
@@ -2609,35 +2636,49 @@ async function eraseFunil_(Funilt_) {
 
                     status.innerHTML = `<strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
                     displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
-                } else {
-                    const funilIdNumber = Number(Funilt_.match(/\d+/g))
-
+                } else {//esse sistemas de seleciona outro apos apagar ou algo do tipo esse aqui pode ser o melhor de todos pq pelo jeito tem uns 3 4 diferentes alguns com o mesmo codigo pra jeito diferetne e isso aconteceu pq n foi planejado mas quando resfase tudo ent fazer certinho//
+                    displayOnConsole(Directories)
+                    const funilIdNumber = Number(Funilt_.split('_')[1])
+                    displayOnConsole(funilIdNumber)
+                    
                     let Counter_Funils_ = 0
                     let posArrayFunilId = null
                     let posArrayFunilName = null
-                    for (let i = 0; i < Directories.length; i++) {
-                        const funilDirIdNumber = Number(Directories[Counter_Funils_].match(/_.*?_.*?_/)[0].match(/\d+/g))
-
-                        if (funilIdNumber === funilDirIdNumber) {
-                            posArrayFunilId = Counter_Funils_
-
-                            if (Directories[posArrayFunilId+1] === undefined) {
-                                posArrayFunilId--
-                                posArrayFunilName = Directories[posArrayFunilId--].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
-                            } else {
-                                posArrayFunilId++
-                                posArrayFunilName = Directories[posArrayFunilId++].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
-                            }
-                        } else {
-                            //aqui pega o numero e o nome inves do nome so e manda...
-                            posArrayFunilId = Number(Directories[Counter_Funils_].match(/_.*?_.*?_/)[0].match(/\d+/g))
-                            posArrayFunilName = Directories[Counter_Funils_].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
-                            Counter_Funils_++
-                        }
+                    
+                    displayOnConsole(funilIdNumber-2)
+                    displayOnConsole(Directories[funilIdNumber-2])
+                    if (Directories[funilIdNumber-2] === undefined) {
+                        displayOnConsole('hoho')
+                        posArrayFunilId = Directories[funilIdNumber].split('_')[1]
+                        posArrayFunilName = Directories[funilIdNumber].split('_')[2]
+                    } else {
+                        displayOnConsole('hihi')
+                        posArrayFunilId = Directories[funilIdNumber-2].split('_')[1]
+                        posArrayFunilName = Directories[funilIdNumber-2].split('_')[2]
                     }
 
-                    //aqui
-                    await selectFunil_(`_${Number(posArrayFunilId)}_${posArrayFunilName}_`, true)
+                    /*for (let i = 0; i < Directories.length; i++) {
+                        const funilDirIdNumber = Number(Directories[Counter_Funils_].split('_')[1])
+
+                        if (funilIdNumber === funilDirIdNumber) {
+                            posArrayFunilId = Counter_Funils_+1
+
+                            if (Directories[posArrayFunilId] === undefined) {
+                                posArrayFunilId-1
+                                posArrayFunilName = Directories[posArrayFunilId-1].split('_')[2]
+                            } else {
+                                posArrayFunilId+1
+                                posArrayFunilName = Directories[posArrayFunilId+1].split('_')[2]
+                            }
+                        } else {
+                            posArrayFunilId = Directories[Counter_Funils_].split('_')[1]
+                            posArrayFunilName = Directories[Counter_Funils_].split('_')[2]
+                            Counter_Funils_+1
+                        }
+                    }*/
+
+                    displayOnConsole(`_${posArrayFunilId}_${posArrayFunilName}_`)
+                    await selectFunil_(`_${posArrayFunilId}_${posArrayFunilName}_`, true)
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Funil_ <strong>${Funilt_}</strong>!`
@@ -2755,7 +2796,7 @@ async function selectFunil_(Funilt_, isFromButton) {
         resetLoadingBar()
     }
 }
-async function insertFunil_Front(Funilt_) {
+async function insertFunil_Front(Funilt_, isNew) {// ta tendo alguma coisa que se n tem a primeira posicao numero 1 ele ta revertendo de crecente pra decrecente ent inves de ficar 2 3 4 ele fica 4 3 2, ent resolver isso
     /*if (!Client_NotReady) {
         displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
@@ -2771,14 +2812,14 @@ async function insertFunil_Front(Funilt_) {
         const allConteinerFunils_ = FunilsDiv.querySelectorAll('.divFunils_')
         let arrayIdNameFunils_ = []
         allConteinerFunils_.forEach((divElement) => {
-            const Funil_Id = Number(divElement.id.match(/\d+/g))
-            const Funil_Name = divElement.id.split('_').slice(2, -1).join('_')
+            const Funil_Id = divElement.id.split('_')[1]
+            const Funil_Name = divElement.id.split('_')[2]
             arrayIdNameFunils_.push({ Funil_Id, Funil_Name })
         })
         let idNumberFunil_DivAdjacent = null
         let isFirstUndefined = null
         if (arrayIdNameFunils_.length > 0) {
-            const response = await axios.get('/funil/insert_exponecial_position_Funil_', { params: { arrayIdNameFunils_ } })
+            const response = await axios.get('/funil/insert_exponecial_position_Funil_', { params: { arrayIdNameFunils_, isNew } })
             idNumberFunil_DivAdjacent = response.data.idnumberfunil_divadjacent
             isFirstUndefined = response.data.isfirstundefined
         }
@@ -2836,7 +2877,7 @@ async function newFunils() {
         const Sucess = response.data.sucess
         const Funil_ = response.data.Funilt_
         if (Sucess) {
-            await insertFunil_Front(Funil_)
+            await insertFunil_Front(Funil_, true)
             await selectFunil_(Funil_, true)
 
             divTemplateFunctions.style.cssText =
@@ -2856,6 +2897,116 @@ async function newFunils() {
     } catch (error) {
         console.error(`> ⚠️ ERROR newFunils: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> newFunils: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+let externalPromiseResolve2
+let Namet_2 = null
+async function setFunilName(isInitiated) {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const divInputFunilName = document.querySelector(`#isendInputFunilName`)
+        const inputFunilName = document.querySelector(`#iinputFunilName`)
+        const sendFunilName = document.querySelector(`#isendSearchFunilName`)
+        if (isInitiated) {
+            divInputFunilName.style.cssText =
+                'display: flex; height: 0px; solid var(--colorBlack);'
+            setTimeout(function() {
+                divInputFunilName.style.cssText =
+                    'display: flex; height: 37px; solid var(--colorBlack);'
+            }, -1)
+            setTimeout(function() {
+                inputFunilName.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendFunilName.style.cssText =
+                    'display: flex; opacity: 0;'
+                    setTimeout(function() {
+                        inputFunilName.style.cssText =
+                            'display: inline; opacity: 1;'
+                        sendFunilName.style.cssText =
+                            'display: flex; opacity: 1;'
+                    }, 100)
+            }, 100)
+            const promise = new Promise((resolve, reject) => {
+                externalPromiseResolve2 = resolve
+            })
+            status.innerHTML = `Digite um <strong>nome</strong> para a <strong>instancia</strong> Funil_`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Digite um <strong>nome</strong> para a <strong>instancia</strong> Funil_.`)
+            document.title = `Digite um nome...`
+            resetLoadingBar()
+            await promise
+            let barL = document.querySelector('#barLoading')
+            barL.style.cssText =
+                'width: 100vw; visibility: visible;'
+            status.innerHTML = `Nome <strong>${Namet_2}</strong> <strong>aceito</strong>!`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Nome <strong>${Namet_2}</strong> <strong>aceito</strong>!`)
+            inputFunilName.value = ''
+            return Namet_2
+        } else {
+            if (inputFunilName.value.includes('_') || /\d/.test(inputFunilName.value)) {
+                status.innerHTML = `<i><strong>ERROR</strong></i> Caracteres <strong>'_'</strong> ou numeros <strong>não</strong> são aceitos!`
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> Caracteres <strong>'_'</strong> ou numeros <strong>não</strong> são aceitos!`)
+                resetLoadingBar()
+                return
+            } else if (inputFunilName.value.length === 0) {
+                Namet_2 = 'Funil'
+                inputFunilName.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendFunilName.style.cssText =
+                    'display: flex; opacity: 0;'
+                setTimeout(function() {
+                    inputFunilName.style.cssText =
+                        'display: none; opacity: 0;'
+                    sendFunilName.style.cssText =
+                        'display: none; opacity: 0;'
+                    divInputFunilName.style.cssText =
+                        'display: flex; height: 0px; solid var(--colorBlack);'
+                        setTimeout(function() {
+                            divInputFunilName.style.cssText =
+                                'display: none; height: 0px; solid var(--colorBlack);'
+                        }, 300)
+                }, 100)
+                if (externalPromiseResolve2) {
+                    externalPromiseResolve2()
+                }
+                resetLoadingBar()
+            } else {
+                Namet_2 = inputFunilName.value
+                inputFunilName.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendFunilName.style.cssText =
+                    'display: flex; opacity: 0;'
+                setTimeout(function() {
+                    inputFunilName.style.cssText =
+                        'display: none; opacity: 0;'
+                    sendFunilName.style.cssText =
+                        'display: none; opacity: 0;'
+                    divInputFunilName.style.cssText =
+                        'display: flex; height: 0px; solid var(--colorBlack);'
+                        setTimeout(function() {
+                            divInputFunilName.style.cssText =
+                                'display: none; height: 0px; solid var(--colorBlack);'
+                        }, 300)
+                }, 100)
+                if (externalPromiseResolve2) {
+                    externalPromiseResolve2()
+                }
+                resetLoadingBar()
+            }
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR setFunilName: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> setFunilName: ${error.message}`, setLogError)
+        //Client_NotReady = false
         resetLoadingBar()
     }
 }
@@ -5298,14 +5449,18 @@ async function eraseClient_(Clientt_) {
 
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
 
-                if (Directories.length === 0) {
+                const dir_Path = 'Local_Auth'
+                const response = await axios.get('/functions/dir', { params: { dir_Path } })
+                const Directories2 = response.data.dirs
+
+                if (Directories2.length === 0) {
                     status.innerHTML = `<strong>Dir</strong> off Clients_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
                     displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Clients_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
 
                     let exitInten = true
                     await exit(exitInten)
                     await axios.put('/back/reset')
-                } else {//esse sistemas de seleciona outro apos apagar ou algo do tipo esse aqui pode ser o melhor de todos pq pelo jeito tem uns 3 4 diferentes alguns com o mesmo codigo pra jeito diferetne e isso aconteceu pq n foi planejado mas quando resfase tudo ent fazer certinho
+                } else {
                     const clientIdNumber = Number(Clientt_.split('_')[1])
 
                     let Counter_Clients_ = 0
@@ -6327,8 +6482,8 @@ async function setClientName(isInitiated) {
             const promise = new Promise((resolve, reject) => {
                 externalPromiseResolve = resolve
             })
-            status.innerHTML = `Digite um <strong>nome</strong> para a <strong>instancia</strong>`
-            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Digite um <strong>nome</strong> para a <strong>instancia</strong>.`)
+            status.innerHTML = `Digite um <strong>nome</strong> para a <strong>instancia</strong> Client_`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Digite um <strong>nome</strong> para a <strong>instancia</strong> Client_.`)
             document.title = `Digite um nome...`
             resetLoadingBar()
             await promise

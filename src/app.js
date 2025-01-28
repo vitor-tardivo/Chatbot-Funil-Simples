@@ -150,6 +150,10 @@ let Set_Client_Name_Callback = null
 async function Set_Set_Client_Name_Callback(callback) {
     Set_Client_Name_Callback = callback
 }
+let Set_Funil_Name_Callback = null
+async function Set_Set_Funil_Name_Callback(callback) {
+    Set_Funil_Name_Callback = callback
+}
 let Clients_Callback = null
 function Set_Clients_Callback(callback) {
     Clients_Callback = callback
@@ -211,7 +215,7 @@ async function askForConfirmation(Clientt_) {
     }
 }
 
-async function List_Directories(dir_Path) {//
+async function List_Directories(dir_Path) {
     try {
         //await fs.mkdir(path.join(Root_Dir, dir_Path), { recursive: true } )
         let Files_ = null
@@ -246,10 +250,10 @@ global.Stage_ = 0
 global.Is_From_New = false
 global.Client_ = null
 global.MAX_Clients_ = 3//actual null, vai ser atrubuido o valor na funcao de pegar o quantos o usuario tem direito
-global.Namet_ = null
+global.Namet_Client_ = null
 
-global.Funil_Name = 'Funil'
 global.Funil_ = null
+global.Namet_Funil_ = null
 
 global.Template_Name = 'Template'
 global.Template_ = null
@@ -1463,7 +1467,8 @@ async function Erase_Funil_(Is_From_End, Funilt_) { // quando for adicionar pra 
                 console.log(`>  ◌ Erasing Funil_ ${Funilt_} from ${global.File_Data_Funils_}...`)
                 if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Erasing Funil_ <strong>${Funilt_}</strong> from <strong>${global.File_Data_Funils_}</strong>...`)
                 
-                fse.remove(`Funil\\${Funilt_}`)
+                fse.remove(`Funil\\${global.File_Data_Funils_}`)
+                await sleep(100)
                 
                 Erased_ = true
             } else if (answer.toLowerCase() === 'n') {
@@ -1486,7 +1491,8 @@ async function Erase_Funil_(Is_From_End, Funilt_) { // quando for adicionar pra 
             console.log(`>  ◌ Erasing Funil_ ${Funilt_} from ${global.File_Data_Funils_}...`)
             if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> Funil_ <strong>${Funilt_}</strong> from <strong>${global.File_Data_Funils_}</strong>...`)
             
-            fse.remove(`Funil\\${Funilt_}`)
+            fse.remove(`Funil\\${global.File_Data_Funils_}`)
+            await sleep(100)
             
             Erased_ = true
         }
@@ -1536,7 +1542,7 @@ async function Select_Funil_(Funilt_) {
         //Client_Not_Ready = false
     }
 }
-async function Insert_Exponecial_Position_Funil_(arrayIdNameFunils_) {
+async function Insert_Exponecial_Position_Funil_(arrayIdNameFunils_, isNew) {
     try {
         let isFirstUndefined = false
         let idNumberFunil_DivAdjacent = null
@@ -1553,12 +1559,16 @@ async function Insert_Exponecial_Position_Funil_(arrayIdNameFunils_) {
             } else {
                 nextNumber = undefined
             }
-            if (nextNumber !== undefined) {
-                if (currentNumber !== nextNumber-1) {
-                    idNumberFunil_DivAdjacent = `_${Number(arrayIdNameFunils_[currentNumber-1].Funil_Id)}_${arrayIdNameFunils_[currentNumber-1].Funil_Name}_`
-                    break
+
+            if (isNew) {//essa solucao pode ser preguicosa sla mas funciona
+                if (nextNumber !== undefined) {
+                    if (currentNumber !== nextNumber-1) {
+                        idNumberFunil_DivAdjacent = `_${Number(arrayIdNameFunils_[currentNumber-1].Funil_Id)}_${arrayIdNameFunils_[currentNumber-1].Funil_Name}_`
+                        break
+                    }
                 }
-            } 
+            }
+
             idNumberFunil_DivAdjacent = `_${currentNumber}_${arrayIdNameFunils_[i].Funil_Name}_`
         }
 
@@ -1575,7 +1585,7 @@ async function Dir_Funils_() {
 
         jsons.forEach(item => {
             if (item) {
-                const match = Number(item.match(/\d+/g))
+                const match = Number(item.split('_')[1])
                 if (match) {
                     Counter_Id_Funils_.push(Number(match))
                 }
@@ -1632,16 +1642,64 @@ async function New_Funil_() {
     try {
         //Client_Not_Ready = true
 
-        const NameFunil_ = global.Funil_Name
+        const Funil_Name = await Set_Funil_Name(true)
         const Id_Funil_ = await Generate_Funil_Id()
-        const Funilt_ = `_${Id_Funil_}_${NameFunil_}_`
+        const Funilt_ = `_${Id_Funil_}_${Funil_Name}_`
 
         global.Directory_Dir_Funils_ = path.join(global.Directory_Dir_Funil, `${Funilt_}`)
         
         global.File_Data_Funils_ = `${Funilt_}`
 
+        //console.log(path.join(global.Directory_Dir_Funil, `${Funilt_}`), 'pica')
+
         await fs.mkdir(global.Directory_Dir_Funils_, { recursive: true } )
-        //await fs.mkdir(global.Directory_Dir_Funils_, { recursive: true } )
+        
+        const Directories_ = await List_Directories('Funil')
+
+        const Sorted_Directories_ = [...Directories_].sort((a, b) => {
+            const numA = parseInt(a.split('_')[1], 10)
+            const numB = parseInt(b.split('_')[1], 10)
+            return numA - numB
+        })
+
+        const isEqual = JSON.stringify(Directories_) === JSON.stringify(Sorted_Directories_)
+        if (!isEqual) {
+            let Temp_Directories_ = []
+
+            for (let i = 0; i < Sorted_Directories_.length; i++) {
+                const sortedPath = path.join(global.Directory_Dir_Funil, `_${Sorted_Directories_[i].split('_')[1]}_${Sorted_Directories_[i].split('_')[2]}_temp_`)
+            
+                await fse.mkdir(sortedPath)
+                Temp_Directories_.push(`_${Directories_[i].split('_')[1]}_${Directories_[i].split('_')[2]}_temp_`)
+            }
+
+            for (let i = 0; i < Directories_.length; i++) {
+                const originalPath = path.join(global.Directory_Dir_Funil, Directories_[i])
+                const tempPath = path.join(global.Directory_Dir_Funil, Temp_Directories_[i])
+            
+                const files = await fse.readdir(originalPath)
+        
+                for (const file of files) {
+                    const originalFilePath = path.join(originalPath, file)
+                    const tempFilePath = path.join(tempPath, file)
+        
+                    await fse.move(originalFilePath, tempFilePath)
+                }
+            }
+
+            for (let i = 0; i < Directories_.length; i++) {
+                const originalPath = path.join(global.Directory_Dir_Funil, Directories_[i])
+            
+                await fse.rm(originalPath, { recursive: true, force: true })
+            }
+
+            for (let i = 0; i < Temp_Directories_.length; i++) {
+                const tempPath = path.join(global.Directory_Dir_Funil, Temp_Directories_[i])
+                const newPath = path.join(global.Directory_Dir_Funil, `_${Temp_Directories_[i].split('_')[1]}_${Temp_Directories_[i].split('_')[2]}_`)
+            
+                await fse.rename(tempPath, newPath)
+            }
+        }
 
         return { Sucess: true, Funil_: Funilt_ }
     } catch (error) {
@@ -1650,6 +1708,24 @@ async function New_Funil_() {
         //Client_Not_Ready = false
     }
 }
+async function Set_Funil_Name(isNew) {
+    //console.log(Client_Not_Ready)
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ New_Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>New_Client_</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+        if (Set_Funil_Name_Callback) await Set_Funil_Name_Callback(isNew)
+
+        return global.Namet_Funil_
+    } catch (error) {
+        console.error(`> ❌ Set_Funil_Name: ${error}`)
+        //Client_Not_Ready = false
+    }
+}
+
 
 async function Insert_Exponecial_Position_MSG(arrayIdNumberPosition) {
     try {
@@ -2183,9 +2259,9 @@ async function Set_Client_Name(isNew) {
         //Client_Not_Ready = true
         if (Set_Client_Name_Callback) await Set_Client_Name_Callback(isNew)
 
-        return global.Namet_
+        return global.Namet_Client_
     } catch (error) {
-        console.error(`> ❌ New_Client_: ${error}`)
+        console.error(`> ❌ Set_Client_Name: ${error}`)
         //Client_Not_Ready = false
     }
 }
@@ -2756,7 +2832,7 @@ async function List_Active_Clients_() {
         return []
     }
 }
-async function Generate_Client_Id() {
+async function Generate_Client_Id() {//talves esse sistemas dos ids do client ter so quando ta ativo ent se n tiver ativo ele vai da um id errado, sla tem que ver isso se e isso mesmo mas se for ent muda pro jeito que e o funil e template pelo menos so essa parte ne o resto essa logica e necessario de so ativos e tals
     if (Generate_Id_Not_Ready) {
         console.log('>  ℹ️ Generate_Client_Id not Ready.')
         if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Generate_Client_Id</strong> not Ready.`)
@@ -3676,7 +3752,7 @@ async function initialize() {
             let Counter_Clients_ = 0
             if (Directories_.length-1 === -1) {
                 const Client_Name = await Set_Client_Name(true)
-                global.Namet_ = null
+                global.Namet_Client_ = null
                 Client_Not_Ready = false
                 await New_Client_(Client_Name)
 
@@ -3754,6 +3830,7 @@ module.exports = {
     Position_MSG_Erase,
     Insert_Exponecial_Position_MSG,
     New_Funil_,
+    Set_Set_Funil_Name_Callback,
     Insert_Exponecial_Position_Funil_,
     Select_Funil_,
     Erase_Funil_,

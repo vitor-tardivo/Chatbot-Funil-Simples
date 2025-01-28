@@ -1269,6 +1269,80 @@ td {
 /*#divNewClient:hover {
     border: 2px solid var(--colorInteractionElements);
 }*/
+
+#isendInputFunilName {
+    display: none;
+    flex-direction: row;
+    /*border-top: 2px solid var(--colorBlack);*/
+    border-bottom: 3px solid var(--colorBlack); 
+    /*border-right: 2px solid var(--colorBlack);
+    border-left: 2px solid var(--colorBlack);*/
+    box-sizing: border-box;
+    height: 0px;
+    transition: var(--configTrasition03s);
+}
+#idivInputFunilName {
+    flex: 1 1 auto;
+    box-sizing: border-box;
+}
+#iinputFunilName {
+    display: none;
+    background-color: var(--colorContrast);
+    color: var(--colorWhite);
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    padding: 5px 10px 4px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1vw;
+    font-family: var(--fontConsole);
+    height: 34px;
+    opacity: 0;
+    z-index: 8000;
+    transition: var(--configTrasition03s);
+}
+#iinputFunilName:focus-within {
+    outline: 1px solid rgba(255, 255, 255, 0);
+    border: 1px solid var(--colorWhite);
+}
+#idivSendFunilName {
+    flex: 0 1 auto;
+    box-sizing: border-box;
+    transition: var(--configTrasition03s);
+}
+#isendSearchFunilName {
+    display: none;
+    align-items: center;
+    background-color: var(--colorInteractionElements);
+    color: var(--colorBlack);
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0);
+    /*border-right: 0.5px solid var(--colorBlack);*/
+    outline: 1px solid rgba(0, 0, 0, 0);
+    padding: 5px 10px 5px 10px;
+    font-size: 1vw;
+    font-family: var(--fontMonoSerif);
+    height: 34px;
+    cursor: pointer;
+    opacity: 0;
+    transition: var(--configTrasition03s);
+}
+#isendSearchFunilName:hover {
+    background-color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+}
+#isendSearchFunilName:active {
+    background-color: #2b2b2b;
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    transition: var(--configTrasition01s);
+}
+#isendSearchFunilName:focus {
+    outline: 1px solid rgba(255, 255, 255, 0);
+    border: 1px solid var(--colorWhite);
+}
+
 #Funils_ {
     display: flex;
     flex-direction: row;
