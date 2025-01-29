@@ -1725,7 +1725,32 @@ async function Set_Funil_Name(isNew) {
         //Client_Not_Ready = false
     }
 }
+async function Rename_Funil_(Funilt_) {
+    //console.log(Client_Not_Ready)
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ New_Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>New_Client_</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
 
+        const Funil_Id_ = Funilt_.split('_')[1]
+        
+        const Funil_Name = await Set_Funil_Name(false)
+
+        global.Funil_ = Funilt_
+        global.Directory_Dir_Funils_ = path.join(global.Directory_Dir_Funil, `${Funilt_}`)
+        global.File_Data_Funils_ = `${Funilt_}`
+
+        await fse.rename(global.Directory_Dir_Funils_, path.join(global.Directory_Dir_Funil, `_${Funil_Id_}_${Funil_Name}_`))
+
+        return { Sucess: true, funilt_: `_${Funil_Id_}_${Funil_Name}_` }
+    } catch (error) {
+        console.error(`> ❌ Rename_Funil_: ${error}`)
+        //Client_Not_Ready = false
+    }
+}
 
 async function Insert_Exponecial_Position_MSG(arrayIdNumberPosition) {
     try {
@@ -3831,6 +3856,7 @@ module.exports = {
     Insert_Exponecial_Position_MSG,
     New_Funil_,
     Set_Set_Funil_Name_Callback,
+    Rename_Funil_,
     Insert_Exponecial_Position_Funil_,
     Select_Funil_,
     Erase_Funil_,

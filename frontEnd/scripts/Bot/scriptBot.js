@@ -198,9 +198,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         dir_Path = 'Funil'
         const response3 = await axios.get('/functions/dir', { params: { dir_Path } })
         Directories_ = response3.data.dirs
-        displayOnConsole(Directories_)
         if (Directories_.length-1 === -1) {
-            
             
         } else {
             let divTemplateFunctions = document.querySelector('#divNewTemplate')
@@ -767,7 +765,7 @@ async function ready(Client_) {
                 let exitInten = true
                 await exit(exitInten)
             } else {
-                displayOnConsole(`>  ℹ️  <strong>Dir</strong> Clients_ has (<strong>${Directories_.length}</strong>) loading <strong>ALL</strong>...`)
+                displayOnConsole(`> ℹ️  <strong>Dir</strong> Clients_ has (<strong>${Directories_.length}</strong>) loading <strong>ALL</strong>...`)
                 
                 const response = await axios.get('/clients/active')
                 const Actives_ = response.data.actives
@@ -974,7 +972,7 @@ async function loadTableStyles() {
 }
 async function showTableList() {
     if (tableReady) {
-        displayOnConsole('>  ℹ️ <strong>showTableList</strong> not Ready.', setLogError)
+        displayOnConsole('> ℹ️ <strong>showTableList</strong> not Ready.', setLogError)
         return
     }
     try {
@@ -1059,7 +1057,7 @@ async function loadFunilStyles() {
 }
 async function showFunil() {
     /*if (funilReady) {
-        displayOnConsole('>  ℹ️ <strong>showFunil</strong> not Ready.', setLogError)
+        displayOnConsole('> ℹ️ <strong>showFunil</strong> not Ready.', setLogError)
         return
     }*/
     try {
@@ -1431,7 +1429,7 @@ async function sendCommand() {
 
 async function eraseTemplate_(Templatet_, Funilt_) {
     /*if (Client_NotReady) {
-        displayOnConsole(`>  ℹ️  ${Funilt_} not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  ${Funilt_} not Ready.`, setLogError)
         return
     }*/
     try {
@@ -1452,7 +1450,7 @@ async function eraseTemplate_(Templatet_, Funilt_) {
             const Not_Selected = response.nselected
             if (Not_Selected) {
                 status.innerHTML = `O Template_ <strong>${Templatet_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Template_ <strong>selecionado</strong> é <strong>${Template_}</strong> então <strong>selecione</strong> <strong>${Templatet_}</strong> para poder <strong>apaga-lo</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Template_ <strong>${Templatet_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Template_ <strong>selecionado</strong> é <strong>${Template_}</strong> então <strong>selecione</strong> <strong>${Templatet_}</strong> para poder <strong>apaga-lo</strong>!`)
+                displayOnConsole(`> ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Template_ <strong>${Templatet_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Template_ <strong>selecionado</strong> é <strong>${Template_}</strong> então <strong>selecione</strong> <strong>${Templatet_}</strong> para poder <strong>apaga-lo</strong>!`)
                 
                 resetLoadingBar()
                 
@@ -1555,7 +1553,7 @@ async function eraseTemplate_(Templatet_, Funilt_) {
 }
 async function selectTemplate_(Templatet_) {
     /*if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2109,7 +2107,7 @@ async function selectTemplate_(Templatet_) {
 
 async function setEraseSchedule() {
     /*if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2182,7 +2180,7 @@ async function setEraseSchedule() {
 }
 async function sendToTemplateEraseSchedule(typeDelay) {
     /*if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2252,7 +2250,7 @@ async function sendToTemplateEraseSchedule(typeDelay) {
 
 async function setTestMode() {
     /*if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2372,7 +2370,7 @@ async function setTestMode() {
 }
 async function setReceiveMSG() {
     /*if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2425,7 +2423,7 @@ async function setReceiveMSG() {
 }
 async function sendToTemplateTestMode() {
     /*if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2440,7 +2438,7 @@ async function sendToTemplateTestMode() {
 }
 async function initiateTestMode() {
     /*if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2454,7 +2452,7 @@ async function initiateTestMode() {
 
 async function insertTemplate_Front(Templatet_, Funilt_) {
     /*if (!Client_NotReady) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2507,7 +2505,7 @@ async function insertTemplate_Front(Templatet_, Funilt_) {
 }
 async function newTemplates() {
     /*if (isStartedNew) {
-        displayOnConsole('>  ℹ️ <strong>newClients</strong> not Ready.', setLogError)
+        displayOnConsole('> ℹ️ <strong>newClients</strong> not Ready.', setLogError)
         return
     }*/
     try {
@@ -2559,7 +2557,7 @@ async function newTemplates() {
 
 async function eraseFunil_(Funilt_) {
     /*if (Client_NotReady) {
-        displayOnConsole(`>  ℹ️  ${Funilt_} not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  ${Funilt_} not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2584,7 +2582,7 @@ async function eraseFunil_(Funilt_) {
             const Not_Selected = response1.nselected
             if (Not_Selected) {
                 status.innerHTML = `O Funil_ <strong>${Funilt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Funil_ <strong>selecionado</strong> é <strong>${Funil_}</strong> então <strong>selecione</strong> <strong>${Funilt_}</strong> para poder <strong>apaga-lo</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Funil_ <strong>${Funilt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Funil_ <strong>selecionado</strong> é <strong>${Funil_}</strong> então <strong>selecione</strong> <strong>${Funilt_}</strong> para poder <strong>apaga-lo</strong>!`)
+                displayOnConsole(`> ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Funil_ <strong>${Funilt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Funil_ <strong>selecionado</strong> é <strong>${Funil_}</strong> então <strong>selecione</strong> <strong>${Funilt_}</strong> para poder <strong>apaga-lo</strong>!`)
                 
                 resetLoadingBar()
                 
@@ -2701,7 +2699,7 @@ async function eraseFunil_(Funilt_) {
 }
 async function selectFunil_(Funilt_, isFromButton) {
     /*if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2798,7 +2796,7 @@ async function selectFunil_(Funilt_, isFromButton) {
 }
 async function insertFunil_Front(Funilt_, isNew) {// ta tendo alguma coisa que se n tem a primeira posicao numero 1 ele ta revertendo de crecente pra decrecente ent inves de ficar 2 3 4 ele fica 4 3 2, ent resolver isso
     /*if (!Client_NotReady) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -2826,7 +2824,7 @@ async function insertFunil_Front(Funilt_, isNew) {// ta tendo alguma coisa que s
     
         const divAdjacent = document.querySelector(`#${idNumberFunil_DivAdjacent}`)
 
-        const funilHTMlDestroy = `\n<div class="divFunils_" id="${Funilt_}">\n<abbr title="Funil_ ${Funilt_}" id="abbrselect-${Funilt_}"><button class="Funils_" id="select-${Funilt_}" onclick="selectFunil_('${Funilt_}', true)">${Funilt_}</button></abbr><abbr title="Apagar ${Funilt_}" id="abbrerase-${Funilt_}"><button class="Funils_Erase" id="erase-${Funilt_}" onclick="eraseFunil_('${Funilt_}')"><</button></abbr>\n</div>\n`
+        const funilHTMlDestroy = `\n<div class="divFunils_" id="${Funilt_}">\n<abbr title="Funil_ ${Funilt_}" id="abbrselect-${Funilt_}"><button class="Funils_" id="select-${Funilt_}" onclick="selectFunil_('${Funilt_}', true)">${Funilt_}</button></abbr><abbr title="Renomear ${Funilt_}" id="abbrRename-${Funilt_}"><button class="Funils_Rename" id="Rename-${Funilt_}" onclick="RenameFunil_('${Funilt_}')"><</button></abbr><abbr title="Apagar ${Funilt_}" id="abbrerase-${Funilt_}"><button class="Funils_Erase" id="erase-${Funilt_}" onclick="eraseFunil_('${Funilt_}')"><</button></abbr>\n</div>\n`
         if (divAdjacent) {
             if (isFirstUndefined) {
                 divAdjacent.insertAdjacentHTML('beforebegin', funilHTMlDestroy)
@@ -2851,7 +2849,7 @@ async function insertFunil_Front(Funilt_, isNew) {// ta tendo alguma coisa que s
 }
 async function newFunils() {
     /*if (isStartedNew) {
-        displayOnConsole('>  ℹ️ <strong>newClients</strong> not Ready.', setLogError)
+        displayOnConsole('> ℹ️ <strong>newClients</strong> not Ready.', setLogError)
         return
     }*/
     try {
@@ -2904,7 +2902,7 @@ let externalPromiseResolve2
 let Namet_2 = null
 async function setFunilName(isInitiated) {
     /*if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -3006,6 +3004,73 @@ async function setFunilName(isInitiated) {
     } catch (error) {
         console.error(`> ⚠️ ERROR setFunilName: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> setFunilName: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
+async function RenameFunil_(Funilt_) {
+    /*if (Client_NotReady) {
+        displayOnConsole(`> ℹ️  ${Clientt_} not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        //Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const response = await axios.put('/Funil/rename-Funil-name', { Funilt_ })
+        const Sucess = response.data.sucess
+        const funilt_ = response.data.Funilt_
+
+        if (Sucess) {
+            const divFunils_ = document.querySelector('#Funils_')
+            divFunils_.innerHTML = ''
+
+            const newFunilDiv = document.querySelector('#divNewFunil')
+            newFunilDiv.style.cssText = 'display: flex; opacity: 0;' 
+            setTimeout(() => newFunilDiv.style.cssText = 'display: flex; opacity: 1;', 100)
+            //o codigo abaixo e possivel botar tudo numa rota e devolver e fazer oq fas aqui que nsei como explica certinho, modelo REST e tals (se for preciso)
+
+            const dir_Path = 'Funil'
+            const response = await axios.get('/functions/dir', { params: { dir_Path } })
+            const Directories_ = response.data.dirs
+            
+            if (Directories_.length-1 === -1) {
+                displayOnConsole(`> ⚠️ <strong>Dir</strong> Funils_ (<strong>${Directories_.length}</strong>) is <strong>empty</strong>.`)
+            } else {
+                displayOnConsole(`> ℹ️  <strong>Dir</strong> Funils_ has (<strong>${Directories_.length}</strong>) loading <strong>ALL</strong>...`)
+                
+                let divTemplateFunctions = document.querySelector('#divNewTemplate')
+
+                let Counter_Clients_ = 1
+                for (let i = 1; i <= Directories_.length; i++) {
+                    await insertFunil_Front(Directories_[Counter_Clients_-1], false)
+                    await selectFunil_(Directories_[Counter_Clients_-1], false)
+
+                    divTemplateFunctions.style.cssText =
+                        'display: flex; opacity: 0;'
+                    setTimeout(function() {
+                        divTemplateFunctions.style.cssText =
+                            'display: flex; opacity: 1;'
+                    }, 100)
+                    
+                    Counter_Clients_++
+                }
+                displayOnConsole(`> ✅ <strong>Dir</strong> Funils_ loaded <strong>ALL</strong> (<strong>${Directories_.length}</strong>).`)
+            }
+            await selectFunil_(funilt_)
+            resetLoadingBar()
+        } else {
+            
+            resetLoadingBar()
+        }
+
+        //Client_NotReady = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR RenameFunil_ ${Clientt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> RenameFunil_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
         //Client_NotReady = false
         resetLoadingBar()
     }
@@ -5387,7 +5452,7 @@ async function newTypeMSGShown() {
 
 async function eraseClient_(Clientt_) {
     if (Client_NotReady) {
-        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  ${Clientt_} not Ready.`, setLogError)
         return
     }
     try {
@@ -5412,7 +5477,7 @@ async function eraseClient_(Clientt_) {
             const Not_Selected = response1.nselected
             if (Not_Selected) {
                 status.innerHTML = `O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`)
+                displayOnConsole(`> ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>apaga-lo</strong>!`)
                 
                 resetLoadingBar()
                 
@@ -5509,7 +5574,7 @@ async function eraseClient_(Clientt_) {
 }
 async function DestroyClient_(Clientt_, isButton) {
     /*if (Client_NotReady) {
-        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  ${Clientt_} not Ready.`, setLogError)
         return
     }*/
     try {
@@ -5533,7 +5598,7 @@ async function DestroyClient_(Clientt_, isButton) {
             const Not_Selected = response.nselected
             if (Not_Selected) {
                 status.innerHTML = `O Client_ <strong>${Clientt_}</strong> esta para ser <strong>desligado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>desliga-lo</strong>!`
-                displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>desligado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>desliga-lo</strong>!`)
+                displayOnConsole(`> ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>desligado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>desliga-lo</strong>!`)
                 
                 resetLoadingBar()
                 
@@ -5609,7 +5674,7 @@ async function DestroyClient_(Clientt_, isButton) {
 } 
 async function ReinitializeClient_(Clientt_) {
     /*if (Client_NotReady) {
-        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  ${Clientt_} not Ready.`, setLogError)
         return
     }*/
     try {
@@ -5628,7 +5693,7 @@ async function ReinitializeClient_(Clientt_) {
         const Not_Selected = response.nselected
         if (Not_Selected) {
             status.innerHTML = `O Client_ <strong>${Clientt_}</strong> esta para ser <strong>ligado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>liga-lo</strong>!`
-            displayOnConsole(`>  ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>ligado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>liga-lo</strong>!`)
+            displayOnConsole(`> ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Client_ <strong>${Clientt_}</strong> esta para ser <strong>ligado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Client_ <strong>selecionado</strong> é <strong>${Client_}</strong> então <strong>selecione</strong> <strong>${Clientt_}</strong> para poder <strong>liga-lo</strong>!`)
             
             resetLoadingBar()
             
@@ -5678,7 +5743,7 @@ async function ReinitializeClient_(Clientt_) {
 }
 async function selectClient_(Clientt_) {
     if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
         return
     }
     try {
@@ -5739,7 +5804,7 @@ async function selectClient_(Clientt_) {
 
 async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
     if (ChatDataNotReady) {
-        displayOnConsole(`>  ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
         return
     }
     if (isHideAP) {
@@ -5819,7 +5884,7 @@ async function eraseChatDataByQuery(isFromTerminal, queryFromTerminal) {
 //async function allErase(sucess, empty, isFromTerminal) {
 async function allErase() {
     if (ChatDataNotReady) {
-        displayOnConsole(`>  ℹ️  <strong>${Client_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Client_}</strong> not Ready.`, setLogError)
         return
     }
     if (isHideAP) {
@@ -5889,7 +5954,7 @@ async function allErase() {
 //async function searchChatDataBySearch(isFromTerminal, dataFromTerminal, searchFromTerminal) {
 async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
     if (ChatDataNotReady) {
-        displayOnConsole(`>  ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
         return
     }
     if (isHideAP) {
@@ -6026,7 +6091,7 @@ async function searchChatDataBySearch(isFromTerminal, searchFromTerminal) {
 //async function allPrint(Sucess, Is_Empty, ChatData, isFromButton, isallerase) {
 async function allPrint(isFromButton, isallerase, Clientt_) {
     if (ChatDataNotReady) {
-        displayOnConsole(`>  ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️ <strong>${Client_}</strong> not Ready.`, setLogError)
         return
     }
     if (isHideAP) {
@@ -6194,7 +6259,7 @@ async function allPrint(isFromButton, isallerase, Clientt_) {
 
 async function counterExceeds(QR_Counter_Exceeds) {
     if (isExceeds) {
-        displayOnConsole('>  ℹ️  <strong>Client_</strong> not Ready.', setLogError)
+        displayOnConsole('> ℹ️  <strong>Client_</strong> not Ready.', setLogError)
         return
     }
     try {
@@ -6247,7 +6312,7 @@ async function counterExceeds(QR_Counter_Exceeds) {
 
 async function generateQrCode(QR_Counter, Clientt_) {
     if (isQrOff) {
-        displayOnConsole(`>  ℹ️ <strong>${Clientt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️ <strong>${Clientt_}</strong> not Ready.`, setLogError)
         return
     }
     try {
@@ -6344,7 +6409,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
 
 async function insertClient_Front(Clientt_, isActive) {
     if (!Client_NotReady) {
-        displayOnConsole(`>  ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
         return
     }
     try {
@@ -6409,7 +6474,7 @@ async function insertClient_Front(Clientt_, isActive) {
 }
 async function newClients() {
     if (isStartedNew) {
-        displayOnConsole('>  ℹ️ <strong>newClients</strong> not Ready.', setLogError)
+        displayOnConsole('> ℹ️ <strong>newClients</strong> not Ready.', setLogError)
         return
     }
     try {
@@ -6447,7 +6512,7 @@ let externalPromiseResolve
 let Namet_ = null
 async function setClientName(isInitiated) {
     /*if (Client_NotReady = false) {
-        displayOnConsole(`>  ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
     }*/
     try {
@@ -6555,7 +6620,7 @@ async function setClientName(isInitiated) {
 }
 async function RenameClient_(Clientt_) {
     /*if (Client_NotReady) {
-        displayOnConsole(`>  ℹ️  ${Clientt_} not Ready.`, setLogError)
+        displayOnConsole(`> ℹ️  ${Clientt_} not Ready.`, setLogError)
         return
     }*/
     try {
@@ -6588,7 +6653,7 @@ async function RenameClient_(Clientt_) {
                 let exitInten = true
                 await exit(exitInten)
             } else {
-                displayOnConsole(`>  ℹ️  <strong>Dir</strong> Clients_ has (<strong>${Directories_.length}</strong>) loading <strong>ALL</strong>...`)
+                displayOnConsole(`> ℹ️  <strong>Dir</strong> Clients_ has (<strong>${Directories_.length}</strong>) loading <strong>ALL</strong>...`)
                 
                 const response = await axios.get('/clients/active')
                 const Actives_ = response.data.actives
@@ -6622,7 +6687,7 @@ async function RenameClient_(Clientt_) {
         //Client_NotReady = false
     } catch (error) {
         console.error(`> ⚠️ ERROR RenameClient_ ${Clientt_}: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> DestroyClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> RenameClient_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
         //Client_NotReady = false
         resetLoadingBar()
     }

@@ -27,6 +27,7 @@ const {
     Position_MSG_Erase,
     Insert_Exponecial_Position_MSG,
     New_Funil_,
+    Rename_Funil_,
     Insert_Exponecial_Position_Funil_,
     Select_Funil_,
     Erase_Funil_,
@@ -325,6 +326,20 @@ router.post('/funil/new', async (req, res) => {
         res.status(200).send({ sucess: Sucess, message: `New Funil_ created.`, Funilt_: Funil_ })
     } catch (error) {
         console.error(`> ❌ ERROR /funil/new: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, Funilt_: null })
+    }
+})
+router.put('/Funil/rename-Funil-name', async (req, res) => {
+    try {
+        const { Funilt_ } = req.body
+        const { Sucess, funilt_ } = await Rename_Funil_(Funilt_)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully renamed ${Funilt_}.`, Funilt_: funilt_ })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to rename ${Funilt_}.`, Funilt_: funilt_ })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /Funil/rename-Funil-name: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, Funilt_: null })
     }
 })
