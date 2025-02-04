@@ -88,7 +88,7 @@
                 <div id="idivInputClientName">
                     <abbr title="Digite um nome para a instancia Client_..."><input type="text" id="iinputClientName" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" onkeydown="triggerOnKey(event, 1, 'enter', setClientName, false)" placeholder=">..."></abbr>       
                 </div>
-                <abbr title="Confimar nome"><div id="idivSendClientName">
+                <abbr title="Confirmar nome"><div id="idivSendClientName">
                     <button id="isendSearchClientName" onclick="setClientName(false)">></button>
                 </div></abbr>
             </div>
@@ -202,9 +202,9 @@
                                 </div>
                                 <div id="isendInputFunilName">
                                     <div id="idivInputFunilName">
-                                        <abbr title="Digite um nome para a instancia Funil_..."><input type="text" id="iinputFunilName" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" onkeydown="triggerOnKey(event, 1, 'enter', setFunilName, false)" placeholder=">..."></abbr>       
+                                        <abbr title="Digite um nome para a instancia Funil_..."><input type="text" id="iinputFunilName" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" onkeydown="triggerOnKey(event, 2, 'enter', setFunilName, false)" placeholder=">..."></abbr>       
                                     </div>
-                                    <abbr title="Confimar nome"><div id="idivSendFunilName">
+                                    <abbr title="Confirmar nome"><div id="idivSendFunilName">
                                         <button id="isendSearchFunilName" onclick="setFunilName(false)">></button>
                                     </div></abbr>
                                 </div>
@@ -214,7 +214,7 @@
                                         
                                     
                                         <!--<div class="divTemplates_" id="_2_Template_">
-                                            <abbr title="Template_ _2_Template_" id="abbrselect-_2_Template_"><button class="Templates_" id="select-_2_Template_" onclick="selectTemplate_('_2_Template_')">_2_Template__</button></abbr><abbr title="Apagar _2_Template_" id="abbrerase-_2_Template_"><button class="Templates_Erase" id="erase-_2_Template_" onclick="eraseTemplate_('_2_Template_')"><</button></abbr>
+                                            <abbr title="Template_ _2_Template_" id="abbrselect-_2_Template_"><button class="Templates_" id="select-_2_Template_" onclick="selectTemplate_('_2_Template_')">_2_Template__</button></abbr><abbr title="Renomear _2_Template_" id="abbrRename-_2_Template_"><button class="Templates_Rename" id="Rename-_2_Template_" onclick="RenameTemplate_('_2_Template_')"><</button></abbr><abbr title="Apagar _2_Template_" id="abbrerase-_2_Template_"><button class="Templates_Erase" id="erase-_2_Template_" onclick="eraseTemplate_('_2_Template_')"><</button></abbr>
                                         </div>-->
                     
                     
@@ -222,7 +222,14 @@
                     
                                     <abbr title="+ Cria um novo Template"><button id="newTemplate" onclick="newTemplates()" ><stronger>+</stronger></button></abbr>
                                 </div>
-
+                                <div id="isendInputTemplateName">
+                                    <div id="idivInputTemplateName">
+                                        <abbr title="Digite um nome para a instancia Funil_..."><input type="text" id="iinputTemplateName" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" onkeydown="triggerOnKey(event, 3, 'enter', setTemplateName, false)" placeholder=">..."></abbr>       
+                                    </div>
+                                    <abbr title="Confirmar nome"><div id="idivSendTemplateName">
+                                        <button id="isendSearchTemplateName" onclick="setTemplateName(false)">></button>
+                                    </div></abbr>
+                                </div>
                                 <div id="divInnerTemplate">
                                     <div id="divFunilFunctions">
                                         <abbr title="Schedule Erase STATUS: null" id="iabbrScheduleErase"><button class="functionsDivStart" id="iOnOffScheduleErase" onclick="setEraseSchedule()">-O</button></abbr>

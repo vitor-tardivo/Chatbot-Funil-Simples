@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
             for (let i = 1; i <= Directories_.length; i++) {
                 const match = Directories_[Counter_Templates_-1].match(/=(.+)\.json/)
                 const Templatet_ = match ? match[1] : null
-                await insertTemplate_Front(Templatet_, Funil_)
+                await insertTemplate_Front(Templatet_, Funil_, false)
                 await selectTemplate_(Templatet_)
 
                 divTemplateInner.style.cssText =
@@ -493,7 +493,30 @@ async function handleWebSocketData(dataWebSocket) {
                 barL.style.cssText =
                     'width: 100vw; visibility: visible;'
             } else {
-                status.innerHTML = `<strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
+                status2.innerHTML = `<strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`)
+            }
+            break
+        case 'WS=/template/set-template-name':
+            const isNew3 = dataWebSocket.isnew
+
+            const Namet_3 = await setTemplateName(true)
+
+            wss.send(JSON.stringify({
+                type: 'WS=/template/return-set-template-name',
+                name: Namet_3
+            }))
+            resetLoadingBar()
+            const status3 = document.querySelector('#status')
+            if (isNew3) {   
+                //status2.innerHTML = `Iniciando <strong>QR-Code</strong>...`
+                //displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Iniciando <strong>QR-Code</strong>...`)
+
+                let barL = document.querySelector('#barLoading')
+                barL.style.cssText =
+                    'width: 100vw; visibility: visible;'
+            } else {
+                status3.innerHTML = `<strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
                 displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`)
             }
             break
@@ -937,6 +960,26 @@ async function triggerOnKey(event, id, key, functioN,  ...params) {
                         event.preventDefault()
                         const sendClientName = document.querySelector(`#isendSearchClientName`)
                         sendClientName.dispatchEvent(new Event('click'))
+                        functioN.apply(null, params)
+                        break
+                }       
+                break
+            case 2:
+                switch (event.key.toLowerCase()) {
+                    case key.toLowerCase():
+                        event.preventDefault()
+                        const sendFunilName = document.querySelector(`#isendSearchFunilName`)
+                        sendFunilName.dispatchEvent(new Event('click'))
+                        functioN.apply(null, params)
+                        break
+                }       
+                break
+            case 3:
+                switch (event.key.toLowerCase()) {
+                    case key.toLowerCase():
+                        event.preventDefault()
+                        const sendTemplateName = document.querySelector(`#isendSearchTemplateName`)
+                        sendTemplateName.dispatchEvent(new Event('click'))
                         functioN.apply(null, params)
                         break
                 }       
@@ -1443,11 +1486,15 @@ async function eraseTemplate_(Templatet_, Funilt_) {
         if (userConfirmation) {
             const status = document.querySelector('#status')
 
-            const response = await axios.delete('/template/erase', { params: { Templatet_, Funilt_ } })
-            const Sucess = response.data.sucess
-            const Is_Empty = response.data.empty
-            const Is_Empty_Input = response.data.empty_input
-            const Not_Selected = response.nselected
+            const dir_Path = `Funil\\${Funil_}`
+            const response = await axios.get('/functions/dir', { params: { dir_Path } })
+            const Directories = response.data.dirs
+
+            const response1 = await axios.delete('/template/erase', { params: { Templatet_, Funilt_ } })
+            const Sucess = response1.data.sucess
+            const Is_Empty = response1.data.empty
+            const Is_Empty_Input = response1.data.empty_input
+            const Not_Selected = response1.nselected
             if (Not_Selected) {
                 status.innerHTML = `O Template_ <strong>${Templatet_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Template_ <strong>selecionado</strong> é <strong>${Template_}</strong> então <strong>selecione</strong> <strong>${Templatet_}</strong> para poder <strong>apaga-lo</strong>!`
                 displayOnConsole(`> ℹ️  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>O Template_ <strong>${Templatet_}</strong> esta para ser <strong>apagado</strong> mas <strong>não</strong> esta <strong>selecionado</strong>, o Template_ <strong>selecionado</strong> é <strong>${Template_}</strong> então <strong>selecione</strong> <strong>${Templatet_}</strong> para poder <strong>apaga-lo</strong>!`)
@@ -1486,14 +1533,15 @@ async function eraseTemplate_(Templatet_, Funilt_) {
                 displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`)
 
                 await sleep(100)
-
+                
+                const dir_Path = `Funil\\${Funil_}`
+                const response = await axios.get('/functions/dir', { params: { dir_Path } })
+                const Directories2 = response.data.dirs
+                
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
                 let divTemplateInner = document.querySelector('#divInnerTemplate')
 
-                const dir_Path = `Funil\\${Funil_}`
-                const response = await axios.get('/functions/dir', { params: { dir_Path } })
-                const Directories = response.data.dirs
-                if (Directories.length === 0) {
+                if (Directories2.length === 0) {
                     divTemplateInner.style.cssText =
                         'display: block; opacity: 0;'
                     setTimeout(function() {
@@ -1504,12 +1552,21 @@ async function eraseTemplate_(Templatet_, Funilt_) {
                     status.innerHTML = `<strong>Dir</strong> off Templates_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
                     displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Templates_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
                 } else {
-                    const templateIdNumber = Number(Templatet_.match(/\d+/g))
+                    const templateIdNumber = Number(Templatet_.split('_')[1])
 
                     let Counter_Templates_ = 0
                     let posArrayTemplateId = null
                     let posArrayTemplateName = null
-                    for (let i = 0; i < Directories.length; i++) {
+
+                    if (Directories[templateIdNumber-2] === undefined) {
+                        posArrayTemplateId = Directories[templateIdNumber].split('_')[1]
+                        posArrayTemplateName = Directories[templateIdNumber].split('_')[2]
+                    } else {
+                        posArrayTemplateId = Directories[templateIdNumber-2].split('_')[1]
+                        posArrayTemplateName = Directories[templateIdNumber-2].split('_')[2]
+                    }
+
+                    /*for (let i = 0; i < Directories.length; i++) {//deprecated not funil's same
                         const templateDirIdNumber = Number(Directories[Counter_Templates_].match(/_.*?_.*?_/)[0].match(/\d+/g))
 
                         if (templateIdNumber === templateDirIdNumber) {
@@ -1528,9 +1585,10 @@ async function eraseTemplate_(Templatet_, Funilt_) {
                             posArrayTemplateName = Directories[Counter_Templates_].match(/_.*?_.*?_/)[0].split('_').slice(2, -1).join('_')
                             Counter_Templates_++
                         }
-                    }
-                    displayOnConsole(`_${Number(posArrayTemplateId)}_${posArrayTemplateName}_`)
-                    await selectTemplate_(`_${Number(posArrayTemplateId)}_${posArrayTemplateName}_`)
+                    }*/
+
+                    //displayOnConsole(`_${posArrayTemplateId}_${posArrayTemplateName}_`)
+                    await selectTemplate_(`_${posArrayTemplateId}_${posArrayTemplateName}_`)
                 }
             } else {
                 status.innerHTML = `<i><strong>ERROR</strong></i> ao <strong>Apagar</strong> Template_ <strong>${Templatet_}</strong>!`
@@ -2450,7 +2508,7 @@ async function initiateTestMode() {
     }
 }
 
-async function insertTemplate_Front(Templatet_, Funilt_) {
+async function insertTemplate_Front(Templatet_, Funilt_, isNew) {
     /*if (!Client_NotReady) {
         displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
         return
@@ -2466,21 +2524,21 @@ async function insertTemplate_Front(Templatet_, Funilt_) {
         const allConteinerTemplates_ = TemplatesDiv.querySelectorAll('.divTemplates_')
         let arrayIdNameTemplates_ = []
         allConteinerTemplates_.forEach((divElement) => {
-            const Template_Id = Number(divElement.id.match(/\d+/g))
-            const Template_Name = divElement.id.split('_').slice(2, -1).join('_')
+            const Template_Id = divElement.id.split('_')[1]
+            const Template_Name = divElement.id.split('_')[2]
             arrayIdNameTemplates_.push({ Template_Id, Template_Name })
         })
         let idNumberTemplate_DivAdjacent = null
         let isFirstUndefined = null
         if (arrayIdNameTemplates_.length > 0) {
-            const response = await axios.get('/template/insert_exponecial_position_Template_', { params: { arrayIdNameTemplates_ } })
+            const response = await axios.get('/template/insert_exponecial_position_Template_', { params: { arrayIdNameTemplates_, isNew } })
             idNumberTemplate_DivAdjacent = response.data.idnumbertemplate_divadjacent
             isFirstUndefined = response.data.isfirstundefined
         }
     
         const divAdjacent = document.querySelector(`#${idNumberTemplate_DivAdjacent}`)
 
-        const templateHTMlDestroy = `\n<div class="divTemplates_" id="${Templatet_}">\n<abbr title="Template_ ${Templatet_}" id="abbrselect-${Templatet_}"><button class="Templates_" id="select-${Templatet_}" onclick="selectTemplate_('${Templatet_}')">${Templatet_}</button></abbr><abbr title="Apagar ${Templatet_}" id="abbrerase-${Templatet_}"><button class="Templates_Erase" id="erase-${Templatet_}" onclick="eraseTemplate_('${Templatet_}', '${Funilt_}')"><</button></abbr>\n</div>\n`
+        const templateHTMlDestroy = `\n<div class="divTemplates_" id="${Templatet_}">\n<abbr title="Template_ ${Templatet_}" id="abbrselect-${Templatet_}"><button class="Templates_" id="select-${Templatet_}" onclick="selectTemplate_('${Templatet_}')">${Templatet_}</button></abbr><abbr title="Renomear ${Templatet_}" id="abbrRename-${Templatet_}"><button class="Templates_Rename" id="Rename-${Templatet_}" onclick="RenameTemplate_('${Templatet_}')"><</button></abbr><abbr title="Apagar ${Templatet_}" id="abbrerase-${Templatet_}"><button class="Templates_Erase" id="erase-${Templatet_}" onclick="eraseTemplate_('${Templatet_}', '${Funilt_}')"><</button></abbr>\n</div>\n`
         if (divAdjacent) {
             if (isFirstUndefined) {
                 divAdjacent.insertAdjacentHTML('beforebegin', templateHTMlDestroy)
@@ -2530,9 +2588,10 @@ async function newTemplates() {
         const response = await axios.post('/template/new')
         const Sucess = response.data.sucess
         const Template_ = response.data.Templatet_
+        displayOnConsole(Template_)
         if (Sucess) {
-            await insertTemplate_Front(Template_, Funil_)
-            await selectTemplate_(Template_, Funil_)
+            await insertTemplate_Front(Template_, Funil_, true)
+            await selectTemplate_(Template_)
 
             divTemplateInner.style.cssText =
                 'display: block; opacity: 0;'
@@ -2551,6 +2610,185 @@ async function newTemplates() {
     } catch (error) {
         console.error(`> ⚠️ ERROR newTemplates: ${error}`)
         displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> newTemplates: ${error.message}`, setLogError)
+        resetLoadingBar()
+    }
+}
+let externalPromiseResolve3
+let Namet_3 = null
+async function setTemplateName(isInitiated) {
+    /*if (Client_NotReady = false) {
+        displayOnConsole(`> ℹ️  <strong>${Funilt_}</strong> not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const status = document.querySelector('#status')
+
+        const divInputTemplateName = document.querySelector(`#isendInputTemplateName`)
+        const inputTemplateName = document.querySelector(`#iinputTemplateName`)
+        const sendTemplateName = document.querySelector(`#isendSearchTemplateName`)
+        if (isInitiated) {
+            divInputTemplateName.style.cssText =
+                'display: flex; height: 0px; solid var(--colorBlack);'
+            setTimeout(function() {
+                divInputTemplateName.style.cssText =
+                    'display: flex; height: 37px; solid var(--colorBlack);'
+            }, -1)
+            setTimeout(function() {
+                inputTemplateName.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendTemplateName.style.cssText =
+                    'display: flex; opacity: 0;'
+                    setTimeout(function() {
+                        inputTemplateName.style.cssText =
+                            'display: inline; opacity: 1;'
+                        sendTemplateName.style.cssText =
+                            'display: flex; opacity: 1;'
+                    }, 100)
+            }, 100)
+            const promise = new Promise((resolve, reject) => {
+                externalPromiseResolve3 = resolve
+            })
+            status.innerHTML = `Digite um <strong>nome</strong> para a <strong>instancia</strong> Template_`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Digite um <strong>nome</strong> para a <strong>instancia</strong> Template_.`)
+            document.title = `Digite um nome...`
+            resetLoadingBar()
+            await promise
+            let barL = document.querySelector('#barLoading')
+            barL.style.cssText =
+                'width: 100vw; visibility: visible;'
+            status.innerHTML = `Nome <strong>${Namet_3}</strong> <strong>aceito</strong>!`
+            displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Nome <strong>${Namet_3}</strong> <strong>aceito</strong>!`)
+            inputTemplateName.value = ''
+            return Namet_3
+        } else {
+            if (inputTemplateName.value.includes('_') || /\d/.test(inputTemplateName.value)) {
+                status.innerHTML = `<i><strong>ERROR</strong></i> Caracteres <strong>'_'</strong> ou numeros <strong>não</strong> são aceitos!`
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><i><strong>ERROR</strong></i> Caracteres <strong>'_'</strong> ou numeros <strong>não</strong> são aceitos!`)
+                resetLoadingBar()
+                return
+            } else if (inputTemplateName.value.length === 0) {
+                Namet_3 = 'Template'
+                inputTemplateName.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendTemplateName.style.cssText =
+                    'display: flex; opacity: 0;'
+                setTimeout(function() {
+                    inputTemplateName.style.cssText =
+                        'display: none; opacity: 0;'
+                    sendTemplateName.style.cssText =
+                        'display: none; opacity: 0;'
+                    divInputTemplateName.style.cssText =
+                        'display: flex; height: 0px; solid var(--colorBlack);'
+                        setTimeout(function() {
+                            divInputTemplateName.style.cssText =
+                                'display: none; height: 0px; solid var(--colorBlack);'
+                        }, 300)
+                }, 100)
+                if (externalPromiseResolve3) {
+                    externalPromiseResolve3()
+                }
+                resetLoadingBar()
+            } else {
+                Namet_3 = inputTemplateName.value
+                inputTemplateName.style.cssText =
+                    'display: inline; opacity: 0;'
+                sendTemplateName.style.cssText =
+                    'display: flex; opacity: 0;'
+                setTimeout(function() {
+                    inputTemplateName.style.cssText =
+                        'display: none; opacity: 0;'
+                    sendTemplateName.style.cssText =
+                        'display: none; opacity: 0;'
+                    divInputTemplateName.style.cssText =
+                        'display: flex; height: 0px; solid var(--colorBlack);'
+                        setTimeout(function() {
+                            divInputTemplateName.style.cssText =
+                                'display: none; height: 0px; solid var(--colorBlack);'
+                        }, 300)
+                }, 100)
+                if (externalPromiseResolve3) {
+                    externalPromiseResolve3()
+                }
+                resetLoadingBar()
+            }
+        }
+    } catch (error) {
+        console.error(`> ⚠️ ERROR setTemplateName: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> setTemplateName: ${error.message}`, setLogError)
+        //Client_NotReady = false
+        resetLoadingBar()
+    }
+}
+async function RenameTemplate_(Templatet_) {
+    /*if (Client_NotReady) {
+        displayOnConsole(`> ℹ️  ${Clientt_} not Ready.`, setLogError)
+        return
+    }*/
+    try {
+        //Client_NotReady = true
+
+        let barL = document.querySelector('#barLoading')
+        barL.style.cssText =
+            'width: 100vw; visibility: visible;'
+
+        const response = await axios.put('/template/rename-template-name', { Templatet_ })
+        const Sucess = response.data.sucess
+        const templatet_ = response.data.Templatet_
+
+        if (Sucess) {
+            const divTemplates_ = document.querySelector('#Templates_')
+            divTemplates_.innerHTML = ''
+
+            const newTemplateDiv = document.querySelector('#divNewTemplate')
+            newTemplateDiv.style.cssText = 'display: flex; opacity: 0;' 
+            setTimeout(() => newTemplateDiv.style.cssText = 'display: flex; opacity: 1;', 100)
+            //o codigo abaixo e possivel botar tudo numa rota e devolver e fazer oq fas aqui que nsei como explica certinho, modelo REST e tals (se for preciso)
+
+            const dir_Path = `Funil\\${Funil_}`
+            const response = await axios.get('/functions/dir', { params: { dir_Path } })
+            const Directories_ = response.data.dirs
+            
+            if (Directories_.length-1 === -1) {
+                displayOnConsole(`> ⚠️ <strong>Dir</strong> Templates_ (<strong>${Directories_.length}</strong>) is <strong>empty</strong>.`)
+            } else {
+                displayOnConsole(`> ℹ️  <strong>Dir</strong> Templates_ has (<strong>${Directories_.length}</strong>) loading <strong>ALL</strong>...`)
+                
+                let divTemplateInner = document.querySelector('#divInnerTemplate')
+
+                let Counter_ = 1
+                for (let i = 1; i <= Directories_.length; i++) {
+                    const match = Directories_[Counter_-1].match(/=(.+)\.json/)
+                    const Templatet_ = match ? match[1] : null
+                    await insertTemplate_Front(Templatet_, Funil_, false)
+                    await selectTemplate_(Templatet_)
+
+                    divTemplateInner.style.cssText =
+                        'display: block; opacity: 0;'
+                    setTimeout(function() {
+                        divTemplateInner.style.cssText =
+                            'display: block; opacity: 1;'
+                    }, 100)
+                    
+                    Counter_++
+                }
+                displayOnConsole(`> ✅ <strong>Dir</strong> Templates_ loaded <strong>ALL</strong> (<strong>${Directories_.length}</strong>).`)
+            }
+            await selectTemplate_(templatet_)
+            resetLoadingBar()
+        } else {
+            
+            resetLoadingBar()
+        }
+
+        //Client_NotReady = false
+    } catch (error) {
+        console.error(`> ⚠️ ERROR RenameTemplate_ ${Templatet_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> RenameTemplate_ <strong>${Templatet_}</strong>: ${error.message}`, setLogError)
+        //Client_NotReady = false
         resetLoadingBar()
     }
 }
@@ -2635,22 +2873,16 @@ async function eraseFunil_(Funilt_) {
                     status.innerHTML = `<strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
                     displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Funils_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
                 } else {//esse sistemas de seleciona outro apos apagar ou algo do tipo esse aqui pode ser o melhor de todos pq pelo jeito tem uns 3 4 diferentes alguns com o mesmo codigo pra jeito diferetne e isso aconteceu pq n foi planejado mas quando resfase tudo ent fazer certinho//
-                    displayOnConsole(Directories)
                     const funilIdNumber = Number(Funilt_.split('_')[1])
-                    displayOnConsole(funilIdNumber)
                     
                     let Counter_Funils_ = 0
                     let posArrayFunilId = null
                     let posArrayFunilName = null
                     
-                    displayOnConsole(funilIdNumber-2)
-                    displayOnConsole(Directories[funilIdNumber-2])
                     if (Directories[funilIdNumber-2] === undefined) {
-                        displayOnConsole('hoho')
                         posArrayFunilId = Directories[funilIdNumber].split('_')[1]
                         posArrayFunilName = Directories[funilIdNumber].split('_')[2]
                     } else {
-                        displayOnConsole('hihi')
                         posArrayFunilId = Directories[funilIdNumber-2].split('_')[1]
                         posArrayFunilName = Directories[funilIdNumber-2].split('_')[2]
                     }
@@ -2675,7 +2907,7 @@ async function eraseFunil_(Funilt_) {
                         }
                     }*/
 
-                    displayOnConsole(`_${posArrayFunilId}_${posArrayFunilName}_`)
+                    //displayOnConsole(`_${posArrayFunilId}_${posArrayFunilName}_`)
                     await selectFunil_(`_${posArrayFunilId}_${posArrayFunilName}_`, true)
                 }
             } else {
@@ -3020,7 +3252,7 @@ async function RenameFunil_(Funilt_) {
         barL.style.cssText =
             'width: 100vw; visibility: visible;'
 
-        const response = await axios.put('/Funil/rename-Funil-name', { Funilt_ })
+        const response = await axios.put('/funil/rename-funil-name', { Funilt_ })
         const Sucess = response.data.sucess
         const funilt_ = response.data.Funilt_
 
@@ -3044,10 +3276,10 @@ async function RenameFunil_(Funilt_) {
                 
                 let divTemplateFunctions = document.querySelector('#divNewTemplate')
 
-                let Counter_Clients_ = 1
+                let Counter_ = 1
                 for (let i = 1; i <= Directories_.length; i++) {
-                    await insertFunil_Front(Directories_[Counter_Clients_-1], false)
-                    await selectFunil_(Directories_[Counter_Clients_-1], false)
+                    await insertFunil_Front(Directories_[Counter_-1], false)
+                    await selectFunil_(Directories_[Counter_-1], false)
 
                     divTemplateFunctions.style.cssText =
                         'display: flex; opacity: 0;'
@@ -3056,7 +3288,7 @@ async function RenameFunil_(Funilt_) {
                             'display: flex; opacity: 1;'
                     }, 100)
                     
-                    Counter_Clients_++
+                    Counter_++
                 }
                 displayOnConsole(`> ✅ <strong>Dir</strong> Funils_ loaded <strong>ALL</strong> (<strong>${Directories_.length}</strong>).`)
             }
@@ -3069,8 +3301,8 @@ async function RenameFunil_(Funilt_) {
 
         //Client_NotReady = false
     } catch (error) {
-        console.error(`> ⚠️ ERROR RenameFunil_ ${Clientt_}: ${error}`)
-        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> RenameFunil_ <strong>${Clientt_}</strong>: ${error.message}`, setLogError)
+        console.error(`> ⚠️ ERROR RenameFunil_ ${Funilt_}: ${error}`)
+        displayOnConsole(`> ⚠️ <i><strong>ERROR</strong></i> RenameFunil_ <strong>${Funilt_}</strong>: ${error.message}`, setLogError)
         //Client_NotReady = false
         resetLoadingBar()
     }

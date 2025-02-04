@@ -32,6 +32,7 @@ const {
     Select_Funil_,
     Erase_Funil_,
     New_Template_,
+    Rename_Template_,
     Insert_Exponecial_Position_Template_,
     Select_Template_,
     Erase_Template_,
@@ -250,7 +251,17 @@ router.post('/template/initiate-test-mode', async (req, res) => {
 router.get('/template/insert_exponecial_position_Template_', async (req, res) => {
     try {
         const arrayidnametemplates_ = req.query.arrayIdNameTemplates_
-        const { idNumberTemplate_DivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_Template_(arrayidnametemplates_)
+        const isnew = req.query.isNew
+        
+        let isNew = null//esse bagui e preguicoso tbm e so pega por body muda ai e tals esse req pra body e deve ja n modificar as var
+        if (isnew === 'true') {
+            isNew = true
+        } 
+        if (isnew === 'false') {
+            isNew = false
+        }
+
+        const { idNumberTemplate_DivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_Template_(arrayidnametemplates_, isNew)
         
         res.status(200).send({ sucess: true, message: `Sucessfully sent the insert info exponecial position Template_.`, idnumbertemplate_divadjacent: idNumberTemplate_DivAdjacent, isfirstundefined: isFirstUndefined })
     } catch (error) {
@@ -263,10 +274,24 @@ router.post('/template/new', async (req, res) => {
         //global.Is_From_New = true
         const { Sucess, Template_ } = await New_Template_()
 
-        res.status(200).send({ sucess: Sucess, message: `New Funil_ created.`, Templatet_: Template_ })
+        res.status(200).send({ sucess: Sucess, message: `New Template_ created.`, Templatet_: Template_ })
     } catch (error) {
         console.error(`> ❌ ERROR /template/new: ${error}`)
-        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, Funilt_: null })
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, Templatet_: null })
+    }
+})
+router.put('/template/rename-template-name', async (req, res) => {
+    try {
+        const { Templatet_ } = req.body
+        const { Sucess, templatet_ } = await Rename_Template_(Templatet_)
+        if (Sucess) {
+            res.status(200).send({ sucess: Sucess, message: `Sucessfully renamed ${Templatet_}.`, Templatet_: templatet_ })
+        } else {
+            res.status(200).send({ sucess: Sucess, message: `ERROR to rename ${Templatet_}.`, Templatet_: templatet_ })
+        }
+    } catch (error) {
+        console.error(`> ❌ ERROR /template/rename-template-name: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, Templatet_: null })
     }
 })
 
@@ -329,7 +354,7 @@ router.post('/funil/new', async (req, res) => {
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, Funilt_: null })
     }
 })
-router.put('/Funil/rename-Funil-name', async (req, res) => {
+router.put('/funil/rename-funil-name', async (req, res) => {
     try {
         const { Funilt_ } = req.body
         const { Sucess, funilt_ } = await Rename_Funil_(Funilt_)
@@ -339,7 +364,7 @@ router.put('/Funil/rename-Funil-name', async (req, res) => {
             res.status(200).send({ sucess: Sucess, message: `ERROR to rename ${Funilt_}.`, Funilt_: funilt_ })
         }
     } catch (error) {
-        console.error(`> ❌ ERROR /Funil/rename-Funil-name: ${error}`)
+        console.error(`> ❌ ERROR /funil/rename-funil-name: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, Funilt_: null })
     }
 })

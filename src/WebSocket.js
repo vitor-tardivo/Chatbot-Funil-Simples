@@ -24,6 +24,7 @@ const {
     Set_New_Client_Callback,
     Set_Set_Client_Name_Callback,
     Set_Set_Funil_Name_Callback,
+    Set_Set_Template_Name_Callback,
     Set_Clients_Callback,
 } = require('./app')
 
@@ -415,6 +416,30 @@ async function setupWebSocket(server) {
                     }
                 } else {
                     console.error(`> ⚠️  WebSocket connection Set_Set_Funil_Name_Callback (${wss_Connection_Id}) not found.`)
+                }
+            })
+            await Set_Set_Template_Name_Callback(async function(isNew) {
+                const wss_Connection = wss_Connections.get(wss_Connection_Id)
+                if (wss_Connection) {
+                    try {
+                        wss_Connection.wss.send(JSON.stringify({ type: 'WS=/template/set-template-name', isnew: isNew }))
+
+                        await new Promise((resolve, reject) => {
+                            wss_Connection.wss.once('message', (message) => {
+                                const data = JSON.parse(message);
+                                if (data.type === 'WS=/template/return-set-template-name') {
+                                    resolve()
+                                    global.Namet_Template_ = data.name
+                                } else {
+                                    reject(new Error('Falha'))
+                                }
+                            })
+                        })
+                    } catch (error) {
+                        console.error(`> ❌ ERROR sending Set_Set_Template_Name_Callback to WebSocket (${wss_Connection_Id}): ${error}`)
+                    }
+                } else {
+                    console.error(`> ⚠️  WebSocket connection Set_Set_Template_Name_Callback (${wss_Connection_Id}) not found.`)
                 }
             })
             Set_Start_Callback(function() {

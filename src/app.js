@@ -154,6 +154,10 @@ let Set_Funil_Name_Callback = null
 async function Set_Set_Funil_Name_Callback(callback) {
     Set_Funil_Name_Callback = callback
 }
+let Set_Template_Name_Callback = null
+async function Set_Set_Template_Name_Callback(callback) {
+    Set_Template_Name_Callback = callback
+}
 let Clients_Callback = null
 function Set_Clients_Callback(callback) {
     Clients_Callback = callback
@@ -218,12 +222,18 @@ async function askForConfirmation(Clientt_) {
 async function List_Directories(dir_Path) {
     try {
         //await fs.mkdir(path.join(Root_Dir, dir_Path), { recursive: true } )
+
         let Files_ = null
         let Directories_ = null
         if (dir_Path === 'Funil') {
             Files_ = await fs.readdir(dir_Path)
             Directories_ = Files_
         } else if (dir_Path.startsWith('Funil') && dir_Path.length > 'Funil'.length) {
+            if (dir_Path.split('\\')[1] === 'null') {
+                console.log('teta')
+                return []
+            }
+
             Files_ = await fs.readdir(dir_Path)
             Directories_ = Files_.filter(file => file.endsWith('.json'))
         } else if (dir_Path === 'Local_Auth') {
@@ -255,8 +265,8 @@ global.Namet_Client_ = null
 global.Funil_ = null
 global.Namet_Funil_ = null
 
-global.Template_Name = 'Template'
 global.Template_ = null
+global.Namet_Template_ = null
 
 let Client_Not_Ready = null
 const Client_Not_Ready_Aux = false
@@ -825,8 +835,9 @@ async function Erase_Template_(Is_From_End, Templatet_, Funilt_) { // quando for
                 console.log(`>  ◌ Erasing Funil_ ${Templatet_} from ${global.File_Data_Templates_}...`)
                 if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i>Erasing Funil_ <strong>${Templatet_}</strong> from <strong>${global.File_Data_Templates_}</strong>...`)
                 
-                    fse.remove(`Funil\\${Funilt_}\\${global.File_Data_Templates_}`)
-                
+                fse.remove(`Funil\\${global.File_Data_Funils_}\\${global.File_Data_Templates_}`)
+                await sleep(100)
+            
                 Erased_ = true
             } else if (answer.toLowerCase() === 'n') {
                 console.log(`> ⚠️  Template_ ${Templatet_} from ${global.File_Data_Templates_}: DECLINED`)
@@ -848,7 +859,8 @@ async function Erase_Template_(Is_From_End, Templatet_, Funilt_) { // quando for
             console.log(`>  ◌ Erasing Template_ ${Templatet_} from ${global.File_Data_Templates_}...`)
             if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Erasing</strong> Template_ <strong>${Templatet_}</strong> from <strong>${global.File_Data_Templates_}</strong>...`)
             
-            fse.remove(`Funil\\${Funilt_}\\${global.File_Data_Templates_}`)
+            fse.remove(`Funil\\${global.File_Data_Funils_}\\${global.File_Data_Templates_}`)
+            await sleep(100)
             
             Erased_ = true
         }
@@ -1297,7 +1309,7 @@ async function Initiate_Test_Mode() {
     }
 }
 
-async function Insert_Exponecial_Position_Template_(arrayIdNameTemplates_) {
+async function Insert_Exponecial_Position_Template_(arrayIdNameTemplates_, isNew) {
     try {
         let isFirstUndefined = false
         let idNumberTemplate_DivAdjacent = null
@@ -1314,12 +1326,14 @@ async function Insert_Exponecial_Position_Template_(arrayIdNameTemplates_) {
             } else {
                 nextNumber = undefined
             }
-            if (nextNumber !== undefined) {
-                if (currentNumber !== nextNumber-1) {
-                    idNumberTemplate_DivAdjacent = `_${Number(arrayIdNameTemplates_[currentNumber-1].Template_Id)}_${arrayIdNameTemplates_[currentNumber-1].Template_Name}_`
-                    break
-                }
-            } 
+            if (isNew) {//essa solucao pode ser preguicosa sla mas funciona
+                if (nextNumber !== undefined) {
+                    if (currentNumber !== nextNumber-1) {
+                        idNumberTemplate_DivAdjacent = `_${Number(arrayIdNameTemplates_[currentNumber-1].Template_Id)}_${arrayIdNameTemplates_[currentNumber-1].Template_Name}_`
+                        break
+                    }
+                } 
+            }
             idNumberFunil_DivAdjacent = `_${currentNumber}_${arrayIdNameTemplates_[i].Template_Name}_`
         }
 
@@ -1342,7 +1356,7 @@ async function Dir_Templates_() {
 
                 json.forEach(item => {
                     if (item.Templatet_) {
-                        const match = Number(item.Templatet_.match(/\d+/g))
+                        const match = Number(item.Templatet_.split('_')[1])
                         if (match) {
                             Counter_Id_Templates_.push(Number(match))
                         }
@@ -1401,9 +1415,9 @@ async function New_Template_() {
     try {
         //Client_Not_Ready = true
 
-        const NameTemplate_ = global.Template_Name
+        const Template_Name = await Set_Template_Name(true)
         const Id_Template_ = await Generate_Template_Id()
-        const Templatet_ = `_${Id_Template_}_${NameTemplate_}_`
+        const Templatet_ = `_${Id_Template_}_${Template_Name}_`
 
         global.File_Data_Templates_ = `Template=${Templatet_}.json`
         global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template=${Templatet_}.json`)
@@ -1414,10 +1428,100 @@ async function New_Template_() {
         await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
         //await fs.mkdir(filesDir, { recursive: true })
 
+        const Directories_ = await List_Directories(`Funil\\${global.Funil_}`)
+
+        const Sorted_Directories_ = [...Directories_].sort((a, b) => {
+            const numA = parseInt(a.split('_')[1], 10)
+            const numB = parseInt(b.split('_')[1], 10)
+            return numA - numB
+        })
+
+        const isEqual = JSON.stringify(Directories_) === JSON.stringify(Sorted_Directories_)
+        if (!isEqual) {
+            let Temp_Directories_ = []
+
+            for (let i = 0; i < Sorted_Directories_.length; i++) {
+                const sortedPath = path.join(global.Directory_Dir_Funils_, `Template=_${Sorted_Directories_[i].split('_')[1]}_${Sorted_Directories_[i].split('_')[2]}_temp_.json`)
+            
+                await fs.writeFile(sortedPath, '[\n\n]')
+                Temp_Directories_.push(`Template=_${Directories_[i].split('_')[1]}_${Directories_[i].split('_')[2]}_temp_.json`)
+            }
+
+            for (let i = 0; i < Directories_.length; i++) {
+                const originalPath = path.join(global.Directory_Dir_Funils_, Directories_[i])
+                const tempPath = path.join(global.Directory_Dir_Funils_, Temp_Directories_[i])
+            
+                const fileContent = await fs.readFile(originalPath, 'utf8')
+                const templateData = JSON.parse(fileContent)
+
+                const New_Template_ = templateData
+                const jsonString = '[\n' + New_Template_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                await fs.writeFile(tempPath, jsonString, 'utf8')
+            }
+            
+            for (let i = 0; i < Directories_.length; i++) {
+                const originalPath = path.join(global.Directory_Dir_Funils_, Directories_[i])
+            
+                await fse.rm(originalPath, { recursive: true, force: true })
+            }
+            
+            for (let i = 0; i < Temp_Directories_.length; i++) {
+                const tempPath = path.join(global.Directory_Dir_Funils_, Temp_Directories_[i])
+                const newPath = path.join(global.Directory_Dir_Funils_, `Template=_${Temp_Directories_[i].split('_')[1]}_${Temp_Directories_[i].split('_')[2]}_.json`)
+            
+                await fse.rename(tempPath, newPath)
+            }
+        }
+
+        const Directories_2 = await List_Directories(`Funil\\${global.Funil_}`)
+
         return { Sucess: true, Template_: Templatet_ }
     } catch (error) {
         console.error(`> ❌ New_Template_: ${error}`)
         return { Sucess: false, Template_: Templatet_ }
+        //Client_Not_Ready = false
+    }
+}
+async function Set_Template_Name(isNew) {
+    //console.log(Client_Not_Ready)
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ New_Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>New_Client_</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+        if (Set_Template_Name_Callback) await Set_Template_Name_Callback(isNew)
+
+        return global.Namet_Template_
+    } catch (error) {
+        console.error(`> ❌ Set_Template_Name: ${error}`)
+        //Client_Not_Ready = false
+    }
+}
+async function Rename_Template_(Templatet_) {
+    //console.log(Client_Not_Ready)
+    /*if (Client_Not_Ready || Client_Not_Ready === null) {
+        console.log(`>  ℹ️ New_Client_ not Ready.`)
+        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>New_Client_</strong> not Ready.`)
+        return 
+    }*/
+    try {
+        //Client_Not_Ready = true
+
+        const Template_Id_ = Templatet_.split('_')[1]
+        
+        const Template_Name = await Set_Template_Name(false)
+
+        global.Template_ = Templatet_
+        global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template=${Templatet_}.json`)
+        global.File_Data_Templates_ = `Template=${Templatet_}.json`
+
+        await fse.rename(global.Data_File_Templates_, path.join(global.Directory_Dir_Funils_, `Template=_${Template_Id_}_${Template_Name}_.json`))
+
+        return { Sucess: true, templatet_: `_${Template_Id_}_${Template_Name}_` }
+    } catch (error) {
+        console.error(`> ❌ Rename_Template_: ${error}`)
         //Client_Not_Ready = false
     }
 }
@@ -3861,6 +3965,8 @@ module.exports = {
     Select_Funil_,
     Erase_Funil_,
     New_Template_,
+    Set_Set_Template_Name_Callback,
+    Rename_Template_,
     Insert_Exponecial_Position_Template_,
     Select_Template_,
     Erase_Template_,
