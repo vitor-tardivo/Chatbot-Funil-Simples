@@ -221,7 +221,7 @@ async function askForConfirmation(Clientt_) {
 
 async function List_Directories(dir_Path) {
     try {
-        console.log(dir_Path)
+        //console.log(dir_Path)
         //await fs.mkdir(path.join(Root_Dir, dir_Path), { recursive: true } )
 
         let Files_ = null
@@ -240,7 +240,7 @@ async function List_Directories(dir_Path) {
             Files_ = await fs.readdir(dir_Path, { withFileTypes: true })
             Directories_ = Files_.filter(file => file.isDirectory()).map(dir => dir.name)
         }
-        console.log(Directories_)
+        //console.log(Directories_)
         return Directories_
     } catch (error) {
         console.error(`> ❌ ERROR List_Directories: ${error}`)
