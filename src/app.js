@@ -221,6 +221,7 @@ async function askForConfirmation(Clientt_) {
 
 async function List_Directories(dir_Path) {
     try {
+        console.log(dir_Path)
         //await fs.mkdir(path.join(Root_Dir, dir_Path), { recursive: true } )
 
         let Files_ = null
@@ -230,17 +231,16 @@ async function List_Directories(dir_Path) {
             Directories_ = Files_
         } else if (dir_Path.startsWith('Funil') && dir_Path.length > 'Funil'.length) {
             if (dir_Path.split('\\')[1] === 'null') {
-                console.log('teta')
                 return []
             }
 
             Files_ = await fs.readdir(dir_Path)
             Directories_ = Files_.filter(file => file.endsWith('.json'))
         } else if (dir_Path === 'Local_Auth') {
-
             Files_ = await fs.readdir(dir_Path, { withFileTypes: true })
             Directories_ = Files_.filter(file => file.isDirectory()).map(dir => dir.name)
         }
+        console.log(Directories_)
         return Directories_
     } catch (error) {
         console.error(`> ❌ ERROR List_Directories: ${error}`)
@@ -1428,7 +1428,7 @@ async function New_Template_() {
         await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
         //await fs.mkdir(filesDir, { recursive: true })
 
-        const Directories_ = await List_Directories(`Funil\\${global.Funil_}`)
+        const Directories_ = await List_Directories(`Funil\\${global.Funil_}`)//adiciona essa logica de organizar a ordem das dir pro dir do client e chat data tbm e tals nhe
 
         const Sorted_Directories_ = [...Directories_].sort((a, b) => {
             const numA = parseInt(a.split('_')[1], 10)
@@ -2296,7 +2296,7 @@ async function Reinitialize_Client_(Clientt_) { // quando for adicionar pra apag
         return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
     }
 }
-async function Insert_Exponecial_Position_Client_(arrayIdNameClients_) {
+async function Insert_Exponecial_Position_Client_(arrayIdNameClients_) {//adicionar a correcao que tem no do funil e template tbm
     try {
         let isFirstUndefined = false
         let idNumberClient_DivAdjacent = null
@@ -2353,7 +2353,7 @@ async function Select_Client_(Clientt_) {
         Client_Not_Ready = false
     }
 }
-async function New_Client_(Client_Name) {
+async function New_Client_(Client_Name) {//adiciona aqui a logica de organiza os dir que tem no funil e template
     //console.log(Client_Not_Ready)
     if (Client_Not_Ready || Client_Not_Ready === null) {
         console.log(`>  ℹ️ New_Client_ not Ready.`)
