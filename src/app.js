@@ -195,7 +195,7 @@ async function sleep(time) {
     }
 }
 
-function generateUniqueId() {
+async function generateUniqueId() {
     return uuidv4()
 }
 
@@ -226,6 +226,7 @@ async function List_Directories(dir_Path) {
 
         let Files_ = null
         let Directories_ = null
+        let Usorted_Directories_ = null
         if (dir_Path === 'Funil') {
             Files_ = await fs.readdir(dir_Path)
             Directories_ = Files_
@@ -238,7 +239,17 @@ async function List_Directories(dir_Path) {
             Directories_ = Files_.filter(file => file.endsWith('.json'))
         } else if (dir_Path === 'Local_Auth') {
             Files_ = await fs.readdir(dir_Path, { withFileTypes: true })
-            Directories_ = Files_.filter(file => file.isDirectory()).map(dir => dir.name)
+            Usorted_Directories_ = Files_.filter(file => file.isDirectory()).map(dir => dir.name)
+            Directories_ = [...Usorted_Directories_].sort((a, b) => {//mt trabalho e possivel mas mt trabalho ent fz isso mesmo que e a mesma coisa ne, so lembra se for mexe com algo aver
+                const numA = parseInt(a.split('_')[1], 10)
+                const numB = parseInt(b.split('_')[1], 10)
+                return numA - numB
+            })
+        } else if (dir_Path === 'Clients_') {
+            Files_ = await fs.readdir('Clients_', { withFileTypes: true })
+            //console.log(Files_)
+            Directories_ = Files_.map(file => file.name)
+            //console.log(Directories_)
         }
         //console.log(Directories_)
         return Directories_
@@ -1473,7 +1484,7 @@ async function New_Template_() {
             }
         }
 
-        const Directories_2 = await List_Directories(`Funil\\${global.Funil_}`)
+        //const Directories_2 = await List_Directories(`Funil\\${global.Funil_}`)
 
         return { Sucess: true, Template_: Templatet_ }
     } catch (error) {
@@ -2296,7 +2307,7 @@ async function Reinitialize_Client_(Clientt_) { // quando for adicionar pra apag
         return { Sucess: false, Is_Empty: null, Is_Empty_Input: null, Not_Selected: null }
     }
 }
-async function Insert_Exponecial_Position_Client_(arrayIdNameClients_) {//adicionar a correcao que tem no do funil e template tbm
+async function Insert_Exponecial_Position_Client_(arrayIdNameClients_, isNew) {
     try {
         let isFirstUndefined = false
         let idNumberClient_DivAdjacent = null
@@ -2313,12 +2324,14 @@ async function Insert_Exponecial_Position_Client_(arrayIdNameClients_) {//adicio
             } else {
                 nextNumber = undefined
             }
-            if (nextNumber !== undefined) {
-                if (currentNumber !== nextNumber-1) {
-                    idNumberClient_DivAdjacent = `_${Number(arrayIdNameClients_[currentNumber-1].Client_Id)}_${arrayIdNameClients_[currentNumber-1].Client_Name}_`
-                    break
-                }
-            } 
+            if (isNew) {//essa solucao pode ser preguicosa sla mas funciona
+                if (nextNumber !== undefined) {
+                    if (currentNumber !== nextNumber-1) {
+                        idNumberClient_DivAdjacent = `_${Number(arrayIdNameClients_[currentNumber-1].Client_Id)}_${arrayIdNameClients_[currentNumber-1].Client_Name}_`
+                        break
+                    }
+                } 
+            }
             idNumberClient_DivAdjacent = `_${currentNumber}_${arrayIdNameClients_[i].Client_Name}_`
         }
 
@@ -2353,7 +2366,7 @@ async function Select_Client_(Clientt_) {
         Client_Not_Ready = false
     }
 }
-async function New_Client_(Client_Name) {//adiciona aqui a logica de organiza os dir que tem no funil e template
+async function New_Client_(Client_Name) {
     //console.log(Client_Not_Ready)
     if (Client_Not_Ready || Client_Not_Ready === null) {
         console.log(`>  ℹ️ New_Client_ not Ready.`)
@@ -2372,6 +2385,56 @@ async function New_Client_(Client_Name) {//adiciona aqui a logica de organiza os
         console.log(`>  ℹ️ Initializing Client_ ${`_${Id_Client_}_${NameClient_}_`}...`)
         if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Iniciando</strong> Client_ <strong>${`_${Id_Client_}_${NameClient_}_`}</strong>...`)
         await Initialize_Client_(`_${Id_Client_}_${NameClient_}_`, Is_New_Client_, Is_Initialize_Clients_)
+
+        /*const Directories_ = await List_Directories(`Clients_`)
+        console.log(Directories_)
+
+        const Sorted_Directories_ = [...Directories_].sort((a, b) => {
+            const numA = parseInt(a.split('_')[1], 10)
+            const numB = parseInt(b.split('_')[1], 10)
+            return numA - numB
+        })
+        console.log(Sorted_Directories_)
+
+        const isEqual = JSON.stringify(Directories_) === JSON.stringify(Sorted_Directories_)
+        if (!isEqual) {
+            let Temp_Directories_ = []
+
+            for (let i = 0; i < Sorted_Directories_.length; i++) {
+                const sortedPath = path.join(global.Directory_Dir_Clients_, `Client=_${Sorted_Directories_[i].split('_')[1]}_${Sorted_Directories_[i].split('_')[2]}_temp_.json`)
+            
+                await fs.writeFile(sortedPath, '[\n\n]')
+                Temp_Directories_.push(`Client=_${Directories_[i].split('_')[1]}_${Directories_[i].split('_')[2]}_temp_.json`)
+            }
+            
+            for (let i = 0; i < Directories_.length; i++) {
+                const originalPath = path.join(global.Directory_Dir_Clients_, Directories_[i])
+                const tempPath = path.join(global.Directory_Dir_Clients_, Temp_Directories_[i])
+            
+                const fileContent = await fs.readFile(originalPath, 'utf8')
+                const templateData = JSON.parse(fileContent)
+
+                const New_Template_ = templateData
+                const jsonString = '[\n' + New_Template_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                await fs.writeFile(tempPath, jsonString, 'utf8')
+            }
+            
+            for (let i = 0; i < Directories_.length; i++) {
+                const originalPath = path.join(global.Directory_Dir_Clients_, Directories_[i])
+            
+                await fse.rm(originalPath, { recursive: true, force: true })
+            }
+            
+            for (let i = 0; i < Temp_Directories_.length; i++) {
+                const tempPath = path.join(global.Directory_Dir_Clients_, Temp_Directories_[i])
+                const newPath = path.join(global.Directory_Dir_Clients_, `Client=_${Temp_Directories_[i].split('_')[1]}_${Temp_Directories_[i].split('_')[2]}_.json`)
+            
+                await fse.rename(tempPath, newPath)
+            }
+        }
+
+        const Directories_2 = await List_Directories(`Clients_`)
+        console.log(Directories_2, 'saco')*/
     } catch (error) {
         console.error(`> ❌ New_Client_: ${error}`)
         Client_Not_Ready = false
@@ -3617,9 +3680,69 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                     Counter_Id_Clients_.push(Number(Clientt_.split('_')[1]))
                 }
 
-                const id = generateUniqueId()
+                const id = await generateUniqueId()
                 Client_Not_Ready = true
                 await Save_Client_(id, Clientt_)
+                if (Is_New_Client_) {//esta aqui mas acho que n e necessario, o list directories deve ta retornando na ordem errada real ent me bugo tudo
+                    const Directories_ = await List_Directories(`Clients_`)
+                    console.log(Directories_)
+        
+                    const Sorted_Directories_ = [...Directories_].sort((a, b) => {
+                        const numA = parseInt(a.split('_')[1], 10)
+                        const numB = parseInt(b.split('_')[1], 10)
+                        return numA - numB
+                    })
+                    console.log(Sorted_Directories_)
+        
+                    const isEqual = JSON.stringify(Directories_) === JSON.stringify(Sorted_Directories_)
+                    if (!isEqual) {
+                        let Temp_Directories_ = []
+        
+                        for (let i = 0; i < Sorted_Directories_.length; i++) {
+                            //console.log(Temp_Directories_, 'porra de errado')
+                            //console.log(`Client=_${Directories_[i].split('_')[1]}_${Directories_[i].split('_')[2]}_temp_.json`, 'hehe')
+                            //await sleep(1 * 1000)
+                            const sortedPath = path.join(global.Directory_Dir_Clients_, `Client=_${Sorted_Directories_[i].split('_')[1]}_${Sorted_Directories_[i].split('_')[2]}_temp_.json`)
+                        
+                            await fs.writeFile(sortedPath, '[\n\n]')
+                            Temp_Directories_.push(`Client=_${Sorted_Directories_[i].split('_')[1]}_${Sorted_Directories_[i].split('_')[2]}_temp_.json`)//diferente do template so muda aqui mas talves n seja necessario, o list directories deve ta retornando na ordem errada real ent me bugo tudo
+                        }
+                        //console.log(Temp_Directories_, 'final')
+                        
+                        for (let i = 0; i < Directories_.length; i++) {
+                            const originalPath = path.join(global.Directory_Dir_Clients_, Directories_[i])
+                            const tempPath = path.join(global.Directory_Dir_Clients_, Temp_Directories_[i])
+                        
+                            const fileContent = await fs.readFile(originalPath, 'utf8')
+                            const templateData = JSON.parse(fileContent)
+        
+                            const New_Template_ = templateData
+                            const jsonString = '[\n' + New_Template_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                            await fs.writeFile(tempPath, jsonString, 'utf8')
+                        }
+                        
+                        for (let i = 0; i < Directories_.length; i++) {
+                            const originalPath = path.join(global.Directory_Dir_Clients_, Directories_[i])
+                        
+                            await fse.rm(originalPath, { recursive: true, force: true })
+                        }
+                        
+                        for (let i = 0; i < Temp_Directories_.length; i++) {
+                            //const Directories_ = await List_Directories(`Clients_`)
+                            //console.log(Directories_, 'f')
+                            //await sleep(1 * 1000)
+                            const tempPath = path.join(global.Directory_Dir_Clients_, Temp_Directories_[i])
+                            const newPath = path.join(global.Directory_Dir_Clients_, `Client=_${Temp_Directories_[i].split('_')[1]}_${Temp_Directories_[i].split('_')[2]}_.json`)
+                            
+                            await fse.rename(tempPath, newPath)
+                            //const Directories_2 = await List_Directories(`Clients_`)
+                            //console.log(Directories_2, 'b')
+                        }
+                    }
+        
+                    //const Directories_2 = await List_Directories(`Clients_`)
+                    //console.log(Directories_2, 'saco')
+                }
                 Client_Not_Ready = false
 
                 global.Qr_String = ''
@@ -3876,6 +3999,8 @@ async function initialize() {
         return { Sucess: false }
     } else {
         try {
+            const Directories_2 = await List_Directories('Clients_')
+            //console.log(Directories_2)
             const Directories_ = await List_Directories('Local_Auth')
             
             let Counter_Clients_ = 0

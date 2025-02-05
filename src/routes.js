@@ -515,7 +515,17 @@ router.post('/features/command', express.json(), (req, res) => {
 router.get('/client/insert_exponecial_position_Client_', async (req, res) => {
     try {
         const arrayidnameclients_ = req.query.arrayIdNameClients_
-        const { idNumberClient_DivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_Client_(arrayidnameclients_)
+        const isnew = req.query.isNew
+
+        let isNew = null//esse bagui e preguicoso tbm e so pega por body muda ai e tals esse req pra body e deve ja n modificar as var
+        if (isnew === 'true') {
+            isNew = true
+        } 
+        if (isnew === 'false') {
+            isNew = false
+        }
+
+        const { idNumberClient_DivAdjacent, isFirstUndefined } = await Insert_Exponecial_Position_Client_(arrayidnameclients_, isNew)
         
         res.status(200).send({ sucess: true, message: `Sucessfully sent the insert info exponecial position Client_.`, idnumberclient_divadjacent: idNumberClient_DivAdjacent, isfirstundefined: isFirstUndefined })
     } catch (error) {

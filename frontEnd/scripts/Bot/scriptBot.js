@@ -525,7 +525,7 @@ async function handleWebSocketData(dataWebSocket) {
             isAlreadyDir = true
             Client_NotReady = true
             let isActive = true
-            await insertClient_Front(Client__, isActive)
+            await insertClient_Front(Client__, isActive, true)
             break
         case 'WS=/client/qr-code':
             const QR_Counter = dataWebSocket.data
@@ -804,7 +804,7 @@ async function ready(Client_) {
                     }
 
                     Client_NotReady = true
-                    await insertClient_Front(Directories_[Counter_Clients_-1], isActive)
+                    await insertClient_Front(Directories_[Counter_Clients_-1], isActive, false)
                     await selectClient_(Directories_[Counter_Clients_-1])
                     
                     Counter_Clients_++
@@ -2998,7 +2998,7 @@ async function selectFunil_(Funilt_, isFromButton) {
                     for (let i = 1; i <= Directories_.length; i++) {
                         const match = Directories_[Counter_Templates_-1].match(/=(.+)\.json/)
                         const Templatet_ = match ? match[1] : null
-                        await insertTemplate_Front(Templatet_, Funil_)
+                        await insertTemplate_Front(Templatet_, Funil_, false)
                         await selectTemplate_(Templatet_)
 
                         divTemplateInner.style.cssText =
@@ -6639,7 +6639,7 @@ async function generateQrCode(QR_Counter, Clientt_) {
     }
 }
 
-async function insertClient_Front(Clientt_, isActive) {
+async function insertClient_Front(Clientt_, isActive, isNew) {
     if (!Client_NotReady) {
         displayOnConsole(`> ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
         return
@@ -6656,14 +6656,14 @@ async function insertClient_Front(Clientt_, isActive) {
         const allConteinerClients_ = ClientsDiv.querySelectorAll('.divClients_')
         let arrayIdNameClients_ = []
         allConteinerClients_.forEach((divElement) => {
-            const Client_Id = Number(divElement.id.match(/\d+/g))
-            const Client_Name = divElement.id.split('_').slice(2, -1).join('_')
+            const Client_Id = divElement.id.split('_')[1]
+            const Client_Name = divElement.id.split('_')[2]
             arrayIdNameClients_.push({ Client_Id, Client_Name })
         })
         let idNumberClient_DivAdjacent = null
         let isFirstUndefined = null
         if (arrayIdNameClients_.length > 0) {
-            const response = await axios.get('/client/insert_exponecial_position_Client_', { params: { arrayIdNameClients_ } })
+            const response = await axios.get('/client/insert_exponecial_position_Client_', { params: { arrayIdNameClients_, isNew } })
             idNumberClient_DivAdjacent = response.data.idnumberclient_divadjacent
             isFirstUndefined = response.data.isfirstundefined
         }
@@ -6901,7 +6901,7 @@ async function RenameClient_(Clientt_) {
                     }
 
                     Client_NotReady = true
-                    await insertClient_Front(Directories_[Counter_Clients_-1], isActive)
+                    await insertClient_Front(Directories_[Counter_Clients_-1], isActive, false)
                     await selectClient_(Directories_[Counter_Clients_-1])
                     
                     Counter_Clients_++
