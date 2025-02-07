@@ -6780,8 +6780,8 @@ async function setClientName(isInitiated) {
                             'display: flex; opacity: 1;'
                     }, 100)
             }, 100)
-            await sleep(100)//pega pra testa isso ainda, n testei do client
-            sendClientName.focus()
+            await sleep(100)
+            inputClientName.focus()
             const promise = new Promise((resolve, reject) => {
                 externalPromiseResolve = resolve
             })
