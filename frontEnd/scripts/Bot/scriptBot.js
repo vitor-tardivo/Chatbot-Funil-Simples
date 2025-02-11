@@ -2132,16 +2132,68 @@ async function selectTemplate_(Templatet_) {
                                 }
                             }
                             break;
+                        case 4:
+                            const MSGHTMlRebate = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${item.positionId}">
+
+                                        <div class="divInfoPositionMSG" id="idivInfoPositionMSG${item.positionId}">
+                                            <label title="Selecione esta posição (${item.positionId})" class="divSelectionPositionMSG">
+                                                <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG${item.positionId}" onchange="selectionPositionMSG(this, 4)">
+                                                <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                            </label>
+                                            <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                            <p class="positionMSG" id="ipositionMSG">(${item.positionId})</p>
+
+                                            <button title="Deletar posição MSG (${item.positionId})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 4)">D</button>
+                                        </div>
+
+                                        <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                            <div class="rebateTypeMSG" id="irebateTypeMSG">
+                                                
+                                            </div>
+                                            
+                                        </div>
+
+                                    </div>`
+
+                            divFunil.insertAdjacentHTML('beforeend', MSGHTMlRebate)
+
+                            /*const selectDelayRebate = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayMSGSelect`)
+                            switch (item.delayType) {
+                                case 'none':
+                                    selectDelayRebate.selectedIndex = 0
+                                    break;
+                                case 'seconds':
+                                    selectDelayRebate.selectedIndex = 1
+                                    break;
+                                case 'minutes':
+                                    selectDelayRebate.selectedIndex = 2
+                                    break;
+                                case 'hours':
+                                    selectDelayRebate.selectedIndex = 3
+                                    break;
+                                case 'days':
+                                    selectDelayRebate.selectedIndex = 4
+                                    break;
+                            }
+
+                            const inputDelayRebate = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayMSGTime`)
+                            inputDelayRebate.value = item.delayData*/
+
+
+                            break;
                     }
 
                     if (document.querySelector(`#conteinerFunilMSG${item.positionId}`)) {
                         document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
                             `display: flex; opacity: 0;`
-                        await sleep(300)
+                        /*await sleep(300)
                         document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
-                            `display: flex; opacity: 1;`
-                        /*setTimeout(function() {
-                        }, 300)*/
+                            `display: flex; opacity: 1;`*/
+                        setTimeout(function() {
+                            document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
+                                `display: flex; opacity: 1;`
+                        }, 300)
                     }
                 }
             } else {
@@ -3457,6 +3509,7 @@ async function erasePosition(divPosition, typeMSG) {
         switch (typeMSG) {
             case 1:
             case 2:
+            case 4:
                 userConfirmation = confirm(`Tem certeza de que deseja deletar o template da posição (${IdNumberPosition})?\nsera apagado tudo para sempre.`)
                 break;
             case 3:
@@ -3546,6 +3599,29 @@ async function erasePosition(divPosition, typeMSG) {
                     } else {
                         fileInput.value = ''
                         fileInput.dispatchEvent(new Event('change'))
+                    }
+                    break;
+                case 4:
+                    response = await axios.delete('/funil/erase-position-MSG', { params: { IdNumberPosition } })
+                    Sucess = response.data.sucess
+                    if (Sucess) {
+                        /*const inputDelayMSG = divPosition.querySelector(`#idelayMSGTime`)
+                        if (inputDelayMSG.value !== '') {
+                            inputDelayMSG.value = ''
+                            inputDelayMSG.dispatchEvent(new Event('input'))
+                        }*/
+
+                        const conteinerMSG = document.querySelector(`#${IdDivPosition}`)
+                        conteinerMSG.style.cssText =
+                            `display: flex; opacity: 0;`
+                        setTimeout(async function() {
+                            conteinerMSG.style.cssText =
+                                `display: none; opacity: 0;`
+                            
+                            divPosition.remove()
+                        }, 100)
+                    } else {
+
                     }
                     break;
             }
@@ -5362,6 +5438,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
         let textareaData = null
         let fileType = null
         let fileData = null
+        let templatetRebate = null
 
         await newTypeMSGShown()
         
@@ -5431,7 +5508,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                 positionId = Id_Position_MSG
                 delayType = 'none'
                 delayData = ''
-                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
 
                 conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
@@ -5506,7 +5583,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                 delayType = 'none'
                 delayData = ''
                 textareaData = ''
-                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
                 
                 conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
@@ -5596,7 +5673,58 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                 textareaData = ''
                 fileType = ''
                 fileData = ''
-                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData })
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+
+                conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
+                conteinerMSG.style.cssText =
+                    `display: flex; opacity: 0;`
+                setTimeout(function() {
+                    conteinerMSG.style.cssText =
+                        `display: flex; opacity: 1;`
+                }, 300)
+
+                resetLoadingBar()
+                break
+            case 4:
+                const MSGHTMlRebate = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${Id_Position_MSG}">
+
+                                        <div class="divInfoPositionMSG" id="idivInfoPositionMSG${Id_Position_MSG}">
+                                            <label title="Selecione esta posição (${Id_Position_MSG})" class="divSelectionPositionMSG">
+                                                <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG${Id_Position_MSG}" onchange="selectionPositionMSG(this, 4)">
+                                                <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                            </label>
+                                            <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                            <p class="positionMSG" id="ipositionMSG">(${Id_Position_MSG})</p>
+
+                                            <button title="Deletar posição MSG (${Id_Position_MSG})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 4)">D</button>
+                                        </div>
+
+                                        <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                            <div class="rebateTypeMSG" id="irebateTypeMSG">
+                                                //
+                                            </div>
+                                            
+                                        </div>
+
+                                    </div>`
+                if (divAdjacent) {
+                    if (isFirstUndefined) {
+                        divAdjacent.insertAdjacentHTML('beforebegin', MSGHTMlRebate)
+                    } else {
+                        divAdjacent.insertAdjacentHTML('afterend', MSGHTMlRebate)
+                    }
+                } else {
+                    divFunil.innerHTML += MSGHTMlRebate
+                }
+
+                typeMSG = type
+                MSGType = 'rebate'
+                positionId = Id_Position_MSG
+                delayType = 'seconds'
+                delayData = '10'
+                templatetRebate = ''
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
 
                 conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
@@ -5622,6 +5750,7 @@ async function newTypeMSGShown() {
         const typeDelay = document.querySelector('#typeDelayMSG')
         const typeText = document.querySelector('#typeTextMSG')
         const typeFile = document.querySelector('#typeFileMSG')
+        const typeRebate = document.querySelector('#typeRebateMSG')
         const isShown_typeSelect = window.getComputedStyle(typeSelect).display
 
         if (isShown_typeSelect === 'block') {
@@ -5631,6 +5760,8 @@ async function newTypeMSGShown() {
                 'display: block; opacity: 0;'
             typeFile.style.cssText =
                 'display: block; opacity: 0;'
+                typeRebate.style.cssText =
+                'display: block; opacity: 0;'
 
             setTimeout(function() {
                 typeDelay.style.cssText =
@@ -5638,6 +5769,8 @@ async function newTypeMSGShown() {
                 typeText.style.cssText =
                     'display: none; opacity: 0;'
                 typeFile.style.cssText =
+                    'display: none; opacity: 0;'
+                typeRebate.style.cssText =
                     'display: none; opacity: 0;'
 
                 typeSelect.style.cssText =
@@ -5659,7 +5792,7 @@ async function newTypeMSGShown() {
                     'display: block; height: 0vh; padding: 0px 10px 0px 10px;'
                 setTimeout(function() {
                     typeSelect.style.cssText =
-                        'display: block; height: 30vh; padding: 7px 10px 0px 10px;'
+                        'display: block; height: 35vh; padding: 7px 10px 0px 10px;'
                 }, 100)
 
                 setTimeout(function() {
@@ -5669,12 +5802,16 @@ async function newTypeMSGShown() {
                         'display: block; opacity: 0;'
                     typeFile.style.cssText =
                         'display: block; opacity: 0;'
+                    typeRebate.style.cssText =
+                        'display: block; opacity: 0;'
                     setTimeout(function() {
                         typeDelay.style.cssText =
                             'display: block; opacity: 1;'
                         typeText.style.cssText =
                             'display: block; opacity: 1;'
                         typeFile.style.cssText =
+                            'display: block; opacity: 1;'
+                        typeRebate.style.cssText =
                             'display: block; opacity: 1;'
                     }, 100)
                 }, 300)

@@ -76,13 +76,13 @@ router.put('/funil/position-change', async (req, res) => {
 
 router.put('/funil/send-data', upload.single('fileData'), async (req, res) => {
     try {
-        let { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType } = req.body
+        let { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType } = req.body
         positionId = parseInt(positionId)
         typeMSG = parseInt(typeMSG)
         //console.log('na rota: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
         const fileData = req.file
         //console.log('arquivo na rota: ', fileData)
-        await Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData)
+        await Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData)
         res.status(200).send({ sucess: true, message: `Sucessfully sent funil data.` })
     } catch (error) {
         console.error(`> ❌ ERROR /funil/send-data: ${error}`)

@@ -563,9 +563,9 @@ async function Insert_Template_Front() {
     }
 }
 
-async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType, fileData) {
+async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData) {
     try {
-        //console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
+        //console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType })
         //console.log('arquivo na funcao: ', fileData)
 
         //let Data_ = [{  }]
@@ -701,6 +701,30 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                             break;
                     }
                     break;
+                case 4:
+                    switch (MSGType) {
+                        case 'delay':
+                            if (delayType === 'input') {
+                                if (existingItem.delayData !== delayData) {
+                                    existingItem.typeMSG = typeMSG
+                                    existingItem.delayData = delayData
+                                    isDifferent = true
+                                }
+                            } else {
+                                if (existingItem.delayType !== delayType) {
+                                    existingItem.typeMSG = typeMSG
+                                    existingItem.delayType = delayType
+                                    isDifferent = true
+                                }
+                            }       
+                            break;
+                        case 'rebate':
+                            existingItem.typeMSG = typeMSG
+                            existingItem.templatetRebate = templatetRebate
+                            isDifferent = true
+                            break;
+                    }
+                    break;
             }
         } else {
             let newItem = { positionId }
@@ -775,6 +799,27 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                                 buffer: '',
                                 size: ''
                             }
+                            break;
+                    }
+                    break;
+                case 4:
+                    switch (MSGType) {
+                        case 'delay':
+                            if (delayType === 'input') {
+                                newItem.typeMSG = typeMSG
+                                newItem.delayType = delayType
+                                newItem.delayData = delayData
+                            } else {
+                                newItem.typeMSG = typeMSG
+                                newItem.delayType = delayType
+                                newItem.delayData = delayData
+                            }       
+                            break;
+                        case 'rebate':
+                            newItem.typeMSG = typeMSG
+                            newItem.delayType = delayType
+                            newItem.delayData = delayData
+                            newItem.templatetRebate = templatetRebate
                             break;
                     }
                     break;
