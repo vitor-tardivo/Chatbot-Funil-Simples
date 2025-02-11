@@ -428,6 +428,23 @@
 
                                                         <div class="rebateTypeMSG" id="irebateTypeMSG">
                                                            
+                                                            <div class="divDelayRebate" id="idivDelayRebate">
+                                                                <abbr title="Determine um valor para o tempo de Delay do Timer"><span class="delayRebateTitle"><strong>TIMER-Rebate:</strong></span><label for="idelayRebateTime" class="delayRebateLabelTime">Tempo-<input type="number" class="delayRebateTime" id="idelayRebateTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 4, 'input', null)" placeholder="00000" value="10"></label></abbr> 
+                                                            
+                                                                <select title="Selecione um tipo de duração do Timer" class="delayRebateSelect" id="idelayRebateSelect" oninput="sendToFunil(this, 4, this, null)">
+                                                                    <option value="none">Nenhum</option>
+                                                                    <option value="seconds" selected>Segundos</option>
+                                                                    <option value="minutes">Minutos</option>
+                                                                    <option value="hours">Horas</option>
+                                                                    <option value="days">Dias</option>
+                                                                </select>
+
+                                                                <select title="Selecione um Template para o Rebate" class="templateRebateSelect" id="itemplateRebateSelect" oninput="sendToFunil(this, 4, this, null)">
+                                                                    <option value="none" selected>Nenhum</option>
+
+                                                                </select>
+                                                            </div>
+
                                                         </div>
                                                         
                                                     </div>

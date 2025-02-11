@@ -3036,6 +3036,104 @@ td {
     opacity: 1;
     width: 100%;
     transition: var(--configTrasition03s);
+}/**/
+.divDelayRebate {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    outline: 2px solid rgba(0, 0, 0, 0);
+    border: 2px solid var(--colorBlack);
+    padding: 5px 5px 10px 5px;
+    border-radius: 50px 50px 50px 50px;
+    box-shadow: 2px 2px 4px var(--colorShadow);
+    width: 100%;
+    height: 3.13vw;
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: auto;
+    opacity: 1;
+    transition: var(--configTrasition03s);
+}
+.delayRebateTitle {
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: default;
+    transition: var(--configTrasition03s);
+}
+.delayRebateLabelTime {
+    color: var(--colorInteractionElements);
+    margin-right: 10px;
+    margin-bottom: 5px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: text;
+    transition: var(--configTrasition03s);
+}
+.delayRebateLabelTime:hover {
+    color: var(--colorWhite);
+}
+.delayRebateTime {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    padding-top: 1px;
+    padding-right: 0.8px;
+    width: 3.5em;
+    font-size: 1.3vw;
+    font-family: var(--fontConsole);
+    transition: var(--configTrasition03s);
+}
+.delayRebateTime:hover {
+    border: 1px solid var(--colorWhite);
+}
+.delayRebateTime:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
+.delayRebateSelect {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    border-radius: 7px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.delayRebateSelect:hover {
+    border: 1px solid var(--colorWhite);
+}
+.delayRebateSelect:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
+.templateRebateSelect {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    border-radius: 7px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.templateRebateSelect:hover {
+    border: 1px solid var(--colorWhite);
+}
+.templateRebateSelect:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
 }
 
 #plusTypeMSG {
