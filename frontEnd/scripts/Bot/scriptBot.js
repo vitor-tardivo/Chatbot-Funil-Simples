@@ -2224,14 +2224,15 @@ async function selectTemplate_(Templatet_) {
                             break;
                     }
 
-                    if (document.querySelector(`#conteinerFunilMSG${item.positionId}`)) {
-                        document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
+                    const divConteinerFunilMSG = document.querySelector(`#conteinerFunilMSG${item.positionId}`)
+                    if (divConteinerFunilMSG) {
+                        divConteinerFunilMSG.style.cssText =
                             `display: flex; opacity: 0;`
                         /*await sleep(300)
-                        document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
+                        divConteinerFunilMSG.style.cssText =
                             `display: flex; opacity: 1;`*/
                         setTimeout(function() {
-                            document.querySelector(`#conteinerFunilMSG${item.positionId}`).style.cssText =
+                            divConteinerFunilMSG.style.cssText =
                                 `display: flex; opacity: 1;`
                         }, 300)
                     }

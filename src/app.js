@@ -1304,8 +1304,8 @@ async function Initiate_Test_Mode() {
         const contact = await chat.getContact()
         const chatId = templateData[0].TestContact
         const name = chat.name || contact.pushname || contact.verifiedName || 'Unknown'
-        const Chat_Type = '(TM)'
-        const Chat_Action = '(AN)'
+        const Chat_Type = '(AN)'
+        const Chat_Action = '(TM)'
         const Content_ = '💬❓ ' + '(AN)'
         /*console.log(msg)
         console.log(chat)
@@ -1316,15 +1316,15 @@ async function Initiate_Test_Mode() {
         console.log(Chat_Action)
         console.log(Content_)*/
 
+        //console.log(Chat_States)
         if (!Chat_States[chatId]) {
             Chat_States[chatId] = {
                 Is_MSG_Initiate: true,
                 Is_MSG_Started: false,
-                Cancel_Promise: false, 
-                Promise_: null,
-                Timer_Sleep: null,
+                Is_MSG_Rebate: false,
             }
         }
+        //console.log(Chat_States)
 
         const jsonString = await fs.readFile(global.Data_File_Chat_Data, 'utf8')
         let ChatData = JSON.parse(jsonString)
@@ -1335,30 +1335,32 @@ async function Initiate_Test_Mode() {
                 let isallerase = false
                 await Save_Chat_Data(chatId, name, global.Client_, isallerase)
 
-                delete Chat_States[chatId]
-                return
+                if (Chat_States[chatId].Is_MSG_Started) {
+                    if (Chat_States[chatId].Is_MSG_Rebate) {
+                        isTimerOn = false
+                    }
+                }
+                //return
             } else {
                 if (Chat_States[chatId].Is_MSG_Started) {
-                    clearTimeout(Chat_States[chatId].Timer_Sleep)
-                    Chat_States[chatId].Cancel_Promise = true
+                    if (Chat_States[chatId].Is_MSG_Rebate) {
+                        isTimerOn = false
+                    }
                 }
-                
-                if (Chat_States[chatId].Is_MSG_Initiate) {   
-                    delete Chat_States[chatId]
-                }
-                return
+                //return
             }
         }
 
         if (Chat_States[chatId].Is_MSG_Initiate) {
-            let isallerase = false
-            await Save_Chat_Data(chatId, name, global.Client_, isallerase)
-        
             Chat_States[chatId].Is_MSG_Initiate = false
-            let Mode_ = 1
-            await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_)
-        }
 
+            let isallerase = false
+            await Save_Chat_Data(chatId, name, global.Client_, isallerase)//ver isso, se vai salva no testmode
+        
+            let Mode_ = 1
+            let IsRebate = false
+            await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, null, Client_)
+        }
     } catch (error) {
         console.error(`> ❌ Initiate_Test_Mode: ${error}`) 
         //Client_Not_Ready = false
@@ -2167,7 +2169,6 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
             
             fse.remove(`Clients_\\${global.File_Data_Clients_}`)
             Clientts_[Clientt_].instance.destroy()
-            delete Clientts_[Clientt_]
             await sleep(2 * 1000)
             fse.remove(path.join(Root_Dir, `Local_Auth\\${Clientt_}`))
             const clientIdNumber = Clientt_.split('_')[1]
@@ -3134,58 +3135,33 @@ function Actual_Time() {
     }
 }
 
-async function Sleep_Timer(time, Cancel_Sleep, chatId) {
+let isTimerOn = null//essa porra qui pode dar pobema de multi instance
+async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, templatetRebate, Client__) {
     if (ChatData_Not_Ready) {
         console.log(`>  ℹ️ ${global.Client_} not Ready.`)
         if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Client_}</strong> not Ready.`)
         return 
     } else {
         try {
-            //promise = new Promise((resolve) => timer_sleep = setTimeout(resolve, time))
-            
-            let i = 0
-            while (i <= time / 1000) {
-                if (Cancel_Sleep) {
-                    clearTimeout(Chat_States[chatId].Timer_Sleep)
-                    Cancel_Sleep = null
-                    Chat_States[chatId].Cancel_Promise = false
-                    Chat_States[chatId].Promise_ = null
-                    Chat_States[chatId].Timer_Sleep = null
-                    Chat_States[chatId].Is_MSG_Started = false
-                    return true
-                }
-                Chat_States[chatId].Is_MSG_Started = true
+            Chat_States[chatId].Is_MSG_Started = true
 
-                Chat_States[chatId].Promise_ = new Promise((resolve) => Chat_States[chatId].Timer_Sleep = setTimeout(resolve, 1000))
-                
-                //console.log(Cancel_Sleep)
-                //console.log(i)
-                Cancel_Sleep = Chat_States[chatId].Cancel_Promise
-                i++
-                
-                await sleep(1000)
-                
-                //return new Promise((resolve) => timer_sleep = setTimeout(resolve, 1000))
-            }
-            Cancel_Sleep = null
-            Chat_States[chatId].Cancel_Promise = false
-            Chat_States[chatId].Promise_ = null
-            Chat_States[chatId].Timer_Sleep = null
-            Chat_States[chatId].Is_MSG_Started = false
-            return false
-        } catch (error) {
-            console.error(`> ❌ ERROR Sleep_Timer ${global.Client_}: ${error}`)
-        }
-    }
-}
-async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_) {
-    if (ChatData_Not_Ready) {
-        console.log(`>  ℹ️ ${global.Client_} not Ready.`)
-        if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Client_}</strong> not Ready.`)
-        return 
-    } else {
-        try {
-            const Client_ = Clientts_[global.Client_]?.instance
+            //const Client_ = Clientts_[global.Client_]?.instance
+            let Client_ = null
+            Client_ = Client__
+            //Client_ = Clientts_[global.Client_]?.instance
+            /*if (IsRebate) {
+                Client_ = Client__
+            } else {
+                Client_ = Clientts_[global.Client_]?.instance
+            }*/
+
+            /*console.log(msg, 'tutaaaaaaaaaaaaaaaaaaaaaaao')
+            console.log(chat)
+            console.log(chatId)
+            console.log(name)
+            console.log(Chat_Type)
+            console.log(Chat_Action)
+            console.log(Content_)*/
 
             switch (Mode_) {
                 case 1:
@@ -3198,27 +3174,13 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
             
             await sleep(1 * 1000)
 
-            let MSG = true
-            let timer = null
-            let Is_Ended_By_MSG = null
-
-            //Patterns for Miliseconds times:
-            // Formated= 1 \ * 24 * 60 * 60 * 1000 = 1-Day
-            // Formated= 1 \ * 60 * 60 * 1000 = 1-Hour
-            // Formated= 1 \ * 60 * 1000 = 1-Minute
-            // Formated= 1 \ * 1000 = 1-Second
-
-            let timer_Duration_Type_MSG_debug = 'Seconds' 
-            let timer_Duration_MSG_Type_debug = 1000 
-            let timer_Duration_debug = 10 * timer_Duration_MSG_Type_debug
-
             Chat_Action = '(NEW)'
             if (Mode_ === 2) {
                 console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
                 if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:</strong>\n${Content_}`)
             }
-            console.log(`>  ◌ Sending ALL Messages...`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>ALL</strong> Messages...`)
+            console.log(`>  ◌ Initating ALL MSGs...`)
+            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Initiating</strong> <strong>ALL</strong> MSGs...`)
 
             
 
@@ -3239,7 +3201,11 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
 
 
             let data = null
-            data = fss.readFileSync(global.Data_File_Templates_, 'utf8')//pega pra pegar o json do template selecionado do funil selecionado, talves mudar a forma das pastas pros template dos funil e tals
+            if (IsRebate) {
+                data = fss.readFileSync(path.join(global.Directory_Dir_Funils_, `Template=${templatetRebate}.json`), 'utf8')
+            } else {
+                data = fss.readFileSync(global.Data_File_Templates_, 'utf8')//pega pra pegar o json do template selecionado do funil selecionado, talves mudar a forma das pastas pros template dos funil e tals
+            }
             //console.log(data)
             let templateData = null
             templateData = JSON.parse(data)
@@ -3252,11 +3218,12 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
             //console.log(positions.length)
             for (let i = 0; i < positions.length; i++) {
                 const item = positions[i]
+                //console.log(item)
 
                 switch (item.typeMSG) {
                     case 1:
-                        console.log(`>  ◌ Sending Message_${i+1}_...`)
-                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>Message_${i+1}_</strong>...`)
+                        console.log(`>  ◌ Initiating MSG_${i+1}_...`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Initiating</strong> <strong>MSG_${i+1}_</strong>...`)
 
                         TimeType = null
                         switch (item.delayType) {
@@ -3275,12 +3242,12 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
                         }
                         await sleep(item.delayData * TimeType)
 
-                        console.log(`> ✅ Message_${i+1}_ Sent.`)
-                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Message_${i+1}_</strong> <strong>Sent</strong>.`)
+                        console.log(`> ✅ MSG_${i+1}_ Finished.`)
+                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>MSG_${i+1}_</strong> <strong>Finished</strong>.`)
                         break;
                     case 2:
-                        console.log(`>  ◌ Sending Message_${i+1}_...`)
-                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>Message_${i+1}_</strong>...`)
+                        console.log(`>  ◌ Initiating MSG_${i+1}_...`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Initiating</strong> <strong>MSG_${i+1}_</strong>...`)
 
                         if (item.delayType !== 'none' && item.delayData > 0 || item.delayData !== '') {
                             chat.sendStateTyping()
@@ -3303,12 +3270,12 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
                         }
                         Client_.sendMessage(msg, item.textareaData, 'utf8')
 
-                        console.log(`> ✅ Message_${i+1}_ Sent.`)
-                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Message_${i+1}_</strong> <strong>Sent</strong>.`)
+                        console.log(`> ✅ MSG_${i+1}_ Finished.`)
+                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>MSG_${i+1}_</strong> <strong>Finished</strong>.`)
                         break;
                     case 3://mudar os fromFilePath e readFile pra pega os arquivo do json salvo nele e tals
-                        console.log(`>  ◌ Sending Message_${i+1}_...`)
-                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>Message_${i+1}_</strong>...`)
+                        console.log(`>  ◌ Initiating MSG_${i+1}_...`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Initiating</strong> <strong>SGe_${i+1}_</strong>...`)
 
                         switch (item.fileType) {
                             case 'video':
@@ -3385,8 +3352,64 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
                                 break;
                         }
 
-                        console.log(`> ✅ Message_${i+1}_ Sent.`)
-                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Message_${i+1}_</strong> <strong>Sent</strong>.`)
+                        console.log(`> ✅ MSG_${i+1}_ Finished.`)
+                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>MSG_${i+1}_</strong> <strong>Finished</strong>.`)
+                        break;
+                    case 4:
+                        //console.log(item)
+                        console.log(`>  ◌ Initiating MSG_${i+1}_...`)
+                        if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Initiating</strong> <strong>MSG_${i+1}_</strong>...`)
+                            
+                        Chat_States[chatId].Is_MSG_Rebate = true
+
+                        //const actualTime = Actual_Time()
+                        const actualTime = Date.now()
+                        //console.log(actualTime)
+                        TimeType = null
+                        switch (item.delayType) {
+                            case 'seconds':
+                                TimeType = 1000
+                                break;
+                            case 'minutes':
+                                TimeType = 60 * 1000
+                                break;
+                            case 'hours':
+                                TimeType = 60 * 60 * 1000
+                                break;
+                            case 'days':
+                                TimeType = 24 * 60 * 60 * 1000
+                                break;
+                        }
+                        const delayTime = item.delayData * TimeType
+                        //console.log(delayTime)
+                        
+                        const targetTime = actualTime + delayTime
+                        //console.log(targetTime)
+                        isTimerOn = true
+                        //let izao = 1
+                        while (Date.now() < targetTime & isTimerOn === true) {//ver se e possivel mudar pra setimeout e cleartimeout
+                            //console.log(izao)
+                            //console.log(Date.now())
+                            await sleep(1 * 1000)
+                            //izao++
+                        }
+
+                        if (isTimerOn) {
+                            isTimerOn = null
+
+                            const Chat_Action = '(RB)'
+
+                            let Mode_ = 1
+                            let IsRebate = true
+                            await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, item.templatetRebate, Client_)
+                            Chat_States[chatId].Is_MSG_Rebate = false
+                        } else {
+                            isTimerOn = null
+                            Chat_States[chatId].Is_MSG_Rebate = false
+                        }
+
+                        console.log(`> ✅ MSG_${i+1}_ Finished.`)
+                        if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>MSG_${i+1}_</strong> <strong>Finished</strong>.`)
                         break;
                 }
             }
@@ -3396,190 +3419,9 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
 
             TimeType = null
 
+            console.log(`> ✅ ALL MSGs Finished.`)
+            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>ALL</strong> MSGs <strong>Finished</strong>.`)
 
-
-            /*console.log(`>  ◌ Sending .Message_debug1.1....`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
-
-            await sleep(1.5 * 1000)
-            chat.sendStateTyping()
-            await sleep(1 * 1000)
-            Client_.sendMessage(msg, 'debug1.1', 'utf8')
-
-            console.log(`> ✅ .Message_debug1.1. Sent.`)
-            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)*/
-
-            
-            /*console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
-            if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message...`)
-            timer = setTimeout (async () => {
-                clearTimeout(timer)
-                timer = null
-                console.log(`> ⏰ Timer FINALIZED ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⏰ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>FINALIZED</strong> <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
-                    
-                    
-                console.log(`>  ◌ Sending .Message_debug1.2....`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
-    
-                await sleep(1.5 * 1000)
-                chat.sendStateTyping()
-                await sleep(1 * 1000)
-                Client_.sendMessage(msg, 'debug1.2', 'utf8')
-    
-                console.log(`> ✅ .Message_debug2. Sent.`)
-                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
-
-                
-                timer = setTimeout (async () => {
-                    MSG = false
-                    clearTimeout(timer)
-                    timer = null
-                    console.log(`> ⏰ Timer FINALIZED ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⏰ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>FINALIZED</strong> <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
-                        
-                        
-                    console.log(`>  ◌ Sending .Message_debug1.2-2....`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
-        
-                    await sleep(1.5 * 1000)
-                    chat.sendStateTyping()
-                    await sleep(1 * 1000)
-                    Client_.sendMessage(msg, 'debug1.2-2', 'utf8')
-        
-                    console.log(`> ✅ .Message_debug1.2-2. Sent.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
-                }, timer_Duration_debug)
-                console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
-                if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message...`)
-                await Sleep_Timer(13 * 1000, Chat_States[chatId].Cancel_Promise, chatId)
-                await Chat_States[chatId].Promise_
-                
-
-                console.log('primeiro', MSG)
-                if (MSG) {
-                    MSG = false
-                    clearTimeout(timer)
-                    timer = null
-                    console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>ended</strong> <strong>BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
-                    
-
-                    console.log(`>  ◌ Sending .Message_debug1.2-22....`)
-                    if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
-        
-                    await sleep(1.5 * 1000)
-                    chat.sendStateTyping()
-                    await sleep(1 * 1000)
-                    Client_.sendMessage(msg, 'debug1.2-22', 'utf8')
-        
-                    console.log(`> ✅ .Message_debug1.2-22. Sent.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
-                }
-            }, timer_Duration_debug)
-            Is_Ended_By_MSG = await Sleep_Timer(13 * 1000, Chat_States[chatId].Cancel_Promise, chatId)
-            await Chat_States[chatId].Promise_
-
-            if (!Is_Ended_By_MSG) {   
-                await Sleep_Timer(13 * 1000, Chat_States[chatId].Cancel_Promise, chatId)
-                await Chat_States[chatId].Promise_
-            }
-
-            console.log('segundo', MSG)
-            if (MSG) {
-                clearTimeout(timer)
-                timer = null
-                console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
-                if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>ended</strong> <strong>BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
-                
-
-                console.log(`>  ◌ Sending .Message_debug1.22....`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
-    
-                await sleep(1.5 * 1000)
-                chat.sendStateTyping()
-                await sleep(1 * 1000)
-                Client_.sendMessage(msg, 'debug1.22', 'utf8')
-    
-                console.log(`> ✅ .Message_debug1.22. Sent.`)
-                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
-            } else {
-                MSG = true 
-            }
-
-
-            if (Is_Ended_By_MSG) {   
-                await sleep(4 * 1000)
-            }
-            console.log(`>  ◌ Sending .Message_debug2.1....`)
-            if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
-
-            await sleep(1.5 * 1000)
-            chat.sendStateTyping()
-            await sleep(1 * 1000)
-            Client_.sendMessage(msg, 'debug2.1', 'utf8')
-
-            console.log(`> ✅ .Message_debug2.1. Sent.`)
-            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
-
-            
-            console.log(`> ⏲️  Timer STARTING for ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message...`)
-            if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message...`)
-            timer = setTimeout (async () => {
-                clearTimeout(timer)
-                timer = null
-                console.log(`> ⏰ Timer FINALIZED ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
-                if (global.Log_Callback) global.Log_Callback(`> ⏰ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>FINALIZED</strong> <strong>${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
-            
-            
-                console.log(`>  ◌ Sending .Message_debug2.2....`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
-    
-                await sleep(1.5 * 1000)
-                chat.sendStateTyping()
-                await sleep(1 * 1000)
-                Client_.sendMessage(msg, 'debug2.2', 'utf8')
-    
-                console.log(`> ✅ .Message_debug2.2. Sent.`)
-                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
-
-
-                MSG = false
-            }, timer_Duration_debug)
-            Is_Ended_By_MSG = await Sleep_Timer(13 * 1000, Chat_States[chatId].Cancel_Promise, chatId)
-            await Chat_States[chatId].Promise_
-            
-            //if (Is_Ended_By_MSG) {
-                //await sleep(0.5 * 1000)
-            //}
-            if (MSG) {
-                clearTimeout(timer)
-                timer = null
-                console.log(`>  ℹ️ Timer ended BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug} to send NEXT message.`)
-                if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>ended</strong> <strong>BEFORE ${timer_Duration_debug / timer_Duration_MSG_Type_debug} ${timer_Duration_Type_MSG_debug}</strong> to <strong>send</strong> <strong>NEXT</strong> message.`)
-                
-
-                console.log(`>  ◌ Sending .Message_debug2.22....`)
-                if (global.Log_Callback) global.Log_Callback(`>  ◌  <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Sending</strong> <strong>.Message_debug.</strong>...`)
-    
-                await sleep(1.5 * 1000)
-                chat.sendStateTyping()
-                await sleep(1 * 1000)
-                Client_.sendMessage(msg, 'debug2.22', 'utf8')
-    
-                console.log(`> ✅ .Message_debug22. Sent.`)
-                if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>.Message_debug.</strong> <strong>Sent</strong>.`)
-            } else {
-                MSG = true 
-            }*/
-
-            
-
-            console.log(`> ✅ ALL Messages Sent.`)
-            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>ALL</strong> Messages <strong>Sent</strong>.`)
-
-           
-            Chat_States[chatId].Is_MSG_Initiate = true
             
             if (Is_Schedule) { //&& Is_New) {
                 //Is_New = false  
@@ -3589,7 +3431,14 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
                 await Schedule_Erase_Chat_Data(chatId, timer_Duration_Schedule, global.Client_)
             }
 
-            delete Chat_States[chatId]
+            if (!Chat_States[chatId].Is_MSG_Rebate) {
+                //console.log(Chat_States)
+                Chat_States[chatId].Is_MSG_Initiate = true
+                Chat_States[chatId].Is_MSG_Started = false
+                //console.log(Chat_States)
+                delete Chat_States[chatId]
+                //console.log(Chat_States)
+            }
         } catch (error) {
             console.error(`> ❌ ERROR Funil_ ${global.Client_}: ${error}`)
         }
@@ -3854,8 +3703,8 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
         Client_.on('message_create', async msg => {
             try {
                 if (Is_Mode_Test & Is_Test) {
-                    console.log(`Test Mode is ON.`)
-                    if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Test Mode is <strong>ON</strong>.`)
+                    //console.log(`Test Mode is ON.`)
+                    //if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Test Mode is <strong>ON</strong>.`)
 
                     return
                 }
@@ -3872,15 +3721,15 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                 //msg.body === '.' //debug
                 //msg.body !== null //actual
                 if (msg.body === '.') {
+                    //console.log(Chat_States)
                     if (!Chat_States[chatId]) {
                         Chat_States[chatId] = {
                             Is_MSG_Initiate: true,
                             Is_MSG_Started: false,
-                            Cancel_Promise: false, 
-                            Promise_: null,
-                            Timer_Sleep: null,
+                            Is_MSG_Rebate: false,
                         }
                     }
+                    //console.log(Chat_States)
                 } else {
                     //console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
                     //if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
@@ -3978,33 +3827,35 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                         let isallerase = false
                         await Save_Chat_Data(chatId, name, Clientt_, isallerase)
 
-                        /*if (Chat_States[chatId].Is_MSG_Initiate) {   
-                            delete Chat_States[chatId]
-                        }*/
-                        delete Chat_States[chatId]
+                        if (Chat_States[chatId].Is_MSG_Started) {
+                            if (Chat_States[chatId].Is_MSG_Rebate) {
+                                isTimerOn = false
+                            }
+                        }
                         return
                     } else {
                         //console.log(`>  ℹ️ ${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
                         //if (global.Log_Callback) global.Log_Callback(`>  ℹ️  ${Actual_Time()} - ${chatId} - ${name} - ${Chat_Type}${Chat_Action}:\n${Content_}`)
+
                         if (Chat_States[chatId].Is_MSG_Started) {
-                            clearTimeout(Chat_States[chatId].Timer_Sleep)
-                            Chat_States[chatId].Cancel_Promise = true
+                            if (Chat_States[chatId].Is_MSG_Rebate) {
+                                isTimerOn = false
+                            }
                         }
-                        
-                        if (Chat_States[chatId].Is_MSG_Initiate) {   
-                            delete Chat_States[chatId]
-                        }
+
                         return
                     }
                 }
 
                 if (Chat_States[chatId].Is_MSG_Initiate) {
+                    Chat_States[chatId].Is_MSG_Initiate = false
+                    
                     let isallerase = false
                     await Save_Chat_Data(chatId, name, Clientt_, isallerase)
                 
-                    Chat_States[chatId].Is_MSG_Initiate = false
                     let Mode_ = 2
-                    await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_)
+                    let IsRebate = false
+                    await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, null, Client_)
                 }
             } catch (error) {
                 console.error(`> ❌ ERROR sending messages ${Clientt_}: ${error}`)
