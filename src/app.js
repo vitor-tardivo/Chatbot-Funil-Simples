@@ -43,7 +43,6 @@ async function Reset_() {
         global.Is_Conected = true
         global.Stage_ = 0
         global.Is_From_New = false
-        global.Client_ = null
 
         global.Is_Schedule = null
 
@@ -74,8 +73,8 @@ async function Reset_() {
 }
 process.on('exit', (code) => {
     console.error(`> ⚠️  Process exited with code(${code})`)
-    global.Is_Reset = false
-    Reset_()
+    //global.Is_Reset = false
+    //Reset_()
 })
 process.on('uncaughtException', (error) => {
     console.error(`> ❌ Uncaught Exception: ${error}`)
@@ -187,6 +186,123 @@ function Set_Ready_Callback(callback) {
     Ready_Callback = callback
 }
 
+global.Directory_Dir_Selecteds_ = path.join(Root_Dir, `Selecteds.json`)
+
+global.Client_ = Get_Selecteds(1)
+//console.log(global.Client_)
+global.Funil_ = Get_Selecteds(2)
+//console.log(global.Funil_)
+global.Template_ = Get_Selecteds(3)
+//console.log(global.Template_)
+
+MKFile_Selecteds()
+async function MKFile_Selecteds() {
+    if (!fss.existsSync(global.Directory_Dir_Selecteds_)) {
+        let data = null
+        let New_Selecteds_ = null
+        let jsonString = null
+
+        fss.writeFileSync(global.Directory_Dir_Selecteds_, '[\n\n]', 'utf8')
+
+        data = JSON.parse(fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8') || '[\n\n]')
+        New_Selecteds_ = { S_Client_: '', S_Funil_: '', S_Template_: '' }
+        //console.log(New_Selecteds_, 'oia')
+
+        const Directories_ = await List_Directories('Local_Auth')
+        //console.log(Directories_)
+        if (Directories_.length-1 === -1) {
+
+        } else {
+            New_Selecteds_.S_Client_ = Directories_[0]
+        }
+        const Directories_2 = await List_Directories('Funil')
+        //console.log(Directories_2)
+        if (Directories_2.length-1 === -1) {
+
+        } else {
+            New_Selecteds_.S_Funil_ = Directories_2[0]
+        }
+        const Directories_3 = await List_Directories(`Funil\\${Directories_2[0]}`)
+        //console.log(Directories_3)
+        if (Directories_3.length-1 === -1) {
+
+        } else {
+            const match = Directories_3[0].match(/=(.+)\.json/)
+            const Templatet_ = match ? match[1] : null
+            New_Selecteds_.S_Template_ = Templatet_
+        }
+        
+        //console.log(New_Selecteds_,'ioa')
+        data.push(New_Selecteds_)
+        jsonString = '[\n' + data.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+        data = null
+        New_Selecteds_ = null
+        jsonString = null
+
+        global.Client_ = Get_Selecteds(1)
+        //console.log(global.Client_)
+        global.Funil_ = Get_Selecteds(2)
+        //console.log(global.Funil_)
+        global.Template_ = Get_Selecteds(3)
+        //console.log(global.Template_)
+
+        /*const Directories_ = await List_Directories('Local_Auth')//ver isso de cada cliente vai pegar o funil ultimo selecionando selecionado o client atual e manda o funil para ele
+        //console.log(Directories_)
+        for (let i = 0; i < Directories_.length; i++) {
+            data = JSON.parse(fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8') || '[\n\n]')
+            New_Selecteds_ = { Clientt_: `${Directories_[0]}`, F_Client_: '', T_Client_: '' }
+            data.push(New_Selecteds_)
+            jsonString = '[\n' + data.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+            fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+            data = null
+            New_Selecteds_ = null
+            jsonString = null
+        }*/
+    }
+}
+async function Get_Selecteds(Type_Selected) { 
+    try {
+        const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+        const templateData = JSON.parse(data)
+        let Selectedt = ''
+
+        switch (Number(Type_Selected)) {
+            case 1:
+                Selectedt = templateData[0].S_Client_
+                break;
+            case 2:
+                Selectedt = templateData[0].S_Funil_
+                break;
+            case 3:
+                Selectedt = templateData[0].S_Template_
+                break;
+            /*case 4:
+
+                switch () {
+                    case :
+                        
+                        break;
+                    case :
+                        
+                        break;
+                    case :
+                        
+                        break;
+                }
+                break;*/
+        }
+
+        return Selectedt
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return ''
+        } else {
+            console.error(`> ❌ Get_Selecteds: ${error}`)
+        }
+    }
+}
+
 async function sleep(time) {
     try {
         return new Promise((resolve) => setTimeout(resolve, time))
@@ -269,14 +385,11 @@ global.Qr_String = ''
 global.Is_Conected = true
 global.Stage_ = 0
 global.Is_From_New = false
-global.Client_ = null
 global.MAX_Clients_ = 3//actual null, vai ser atrubuido o valor na funcao de pegar o quantos o usuario tem direito
 global.Namet_Client_ = null
 
-global.Funil_ = null
 global.Namet_Funil_ = null
 
-global.Template_ = null
 global.Namet_Template_ = null
 
 let Client_Not_Ready = null
@@ -293,6 +406,13 @@ global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client= .j
 global.Directory_Dir_Chat_Data = path.join(Root_Dir, `Chat_Datas`)
 global.File_Data_Chat_Data = `Chat_Data= .json`
 global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data= .json`)
+
+global.Directory_Dir_Funil = path.join(Root_Dir, `Funil`)
+global.Directory_Dir_Funils_ = path.join(global.Directory_Dir_Funil, ``)
+global.File_Data_Funils_ = ``
+
+global.File_Data_Templates_ = `Template= .json`
+global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template= .json`)
 
 let Clientts_ = {}
 
@@ -839,13 +959,6 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
     }
 }
 
-global.Directory_Dir_Funil = path.join(Root_Dir, `Funil`)
-global.Directory_Dir_Funils_ = path.join(global.Directory_Dir_Funil, ``)
-global.File_Data_Funils_ = ``
-
-global.File_Data_Templates_ = `Template= .json`
-global.Data_File_Templates_ = path.join(global.Directory_Dir_Funils_, `Template= .json`)
-
 async function Erase_Template_(Is_From_End, Templatet_, Funilt_) { // quando for adicionar pra apagar o localauth, tem q apagar do objeto Clients_ tbm, tem que iniciar o client criar no caso ou se n mas estiver la que iniciou ent iniciar pra apagar ou n vai dar, sistema de apagar do json memo ja existe so pegar
     /*if (Client_Not_Ready || Client_Not_Ready === null) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
@@ -987,6 +1100,12 @@ async function Select_Template_(Templatet_) {
         Is_Mode_Test = global.Is_Mode_Test
 
         TestContact = templateData[0].TestContact
+
+        const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+        const templateData2 = JSON.parse(data)
+        templateData2[0].S_Template_ = Templatet_
+        const jsonString = '[\n' + templateData2.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
 
         //global.File_Data_Chat_Data = `Chat_Data=${Funilt_}.json`
         //global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Funilt_}.json`)
@@ -1689,6 +1808,12 @@ async function Select_Funil_(Funilt_) {
         global.Directory_Dir_Funils_ = path.join(global.Directory_Dir_Funil, `${Funilt_}`)
         global.File_Data_Funils_ = `${Funilt_}`
 
+        const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+        const templateData = JSON.parse(data)
+        templateData[0].S_Funil_ = Funilt_
+        const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+
         //global.File_Data_Chat_Data = `Chat_Data=${Funilt_}.json`
         //global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Funilt_}.json`)
 
@@ -2075,6 +2200,12 @@ async function Save_Client_(id, Clientt_) {
 
         global.File_Data_Clients_ = `Client=${Clientt_}.json`
         global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
+
+        /*const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+        const templateData = JSON.parse(data)
+        templateData[0].S_Client_ = Clientt_
+        const jsonString2 = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString2, 'utf8')*/
         
         const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))//
         let New_Client_
@@ -2395,13 +2526,19 @@ async function Select_Client_(Clientt_) {
     }
     try {
         Client_Not_Ready = true
-        global.Client_ = Clientt_
-
+        
         global.File_Data_Chat_Data = `Chat_Data=${Clientt_}.json`
         global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Clientt_}.json`)
 
         global.File_Data_Clients_ = `Client=${Clientt_}.json`
         global.Data_File_Clients_ = path.join(global.Directory_Dir_Clients_, `Client=${Clientt_}.json`)
+        
+        const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+        const templateData = JSON.parse(data)
+        templateData[0].S_Client_ = Clientt_
+        global.Client_ = templateData[0].S_Client_ 
+        const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+        fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
 
         console.log(`>  ℹ️ Client_ ${Clientt_} selected.`)
         if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Client_ <strong>${Clientt_}</strong> <strong>selected</strong>.`)
@@ -2657,7 +2794,7 @@ async function Load_Chat_Data(ChatData_Not_Ready_Aux, Clientt_) {
         if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i>ChatData <strong>${Clientt_}</strong> <strong>loaded</strong> from <strong>${global.File_Data_Chat_Data}</strong>.`)
             
         //global.Client_ = Clientt_
-        if (Select_Client_Callback) Select_Client_Callback(Clientt_)
+        //if (Select_Client_Callback) Select_Client_Callback(Clientt_)
                 
         //const Parse_Data = JSON.parse(ChatData)
         //return Parse_Data
@@ -3488,7 +3625,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
         Client_.on('qr', async qr => {
             try {
                 global.QR_Counter++
-                global.Client_ = Clientt_
+                //global.Client_ = Clientt_//nusei talves de pobema isso
                 if (global.Is_From_New) {
                     global.Stage_ = 3
                 } else {
@@ -3579,14 +3716,14 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                 await Save_Client_(id, Clientt_)
                 if (Is_New_Client_) {//esta aqui mas acho que n e necessario, o list directories deve ta retornando na ordem errada real ent me bugo tudo
                     const Directories_ = await List_Directories(`Clients_`)
-                    console.log(Directories_)
+                    //console.log(Directories_)
         
                     const Sorted_Directories_ = [...Directories_].sort((a, b) => {
                         const numA = parseInt(a.split('_')[1], 10)
                         const numB = parseInt(b.split('_')[1], 10)
                         return numA - numB
                     })
-                    console.log(Sorted_Directories_)
+                    //console.log(Sorted_Directories_)
         
                     const isEqual = JSON.stringify(Directories_) === JSON.stringify(Sorted_Directories_)
                     if (!isEqual) {
@@ -3937,6 +4074,7 @@ async function initialize() {
 module.exports = {
     sleep,
     generateUniqueId,
+    Get_Selecteds,
     Set_Statuses_WS_Callback,
     Set_Log_Callback,
     Set_Exit_Callback,

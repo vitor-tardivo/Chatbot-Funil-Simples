@@ -6,6 +6,7 @@ const multer = require('multer')
 const {
     sleep,
     Reset_,
+    Get_Selecteds,
     Print_All_Chat_Data,
     Search_Chat_Data_By_Search,
     List_Directories,
@@ -413,6 +414,7 @@ router.get('/api/data', async (req, res) => {
 
 router.get('/back/what-stage', async (req, res) => {
     try {
+        console.log(global.Client_)
         res.status(200).send({ sucess: true, message: `sucessfully get stage.`, data: global.Stage_, data2: global.QR_Counter, data3: global.Client_, data4: global.Funil_, data5: global.Template_ })
     } catch (error) {
         console.error(`> ❌ ERROR /back/what-stage: ${error}`)
@@ -509,6 +511,17 @@ router.post('/features/command', express.json(), (req, res) => {
     } catch (error) {
         console.error(`> ❌ ERROR /features/command: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
+    }
+})
+router.get('/features/selecteds', async (req, res) => {
+    try {
+        const Type_Selected = req.query.Type_Selected
+        const Selectedt = await Get_Selecteds(Type_Selected)
+        
+        res.status(200).send({ sucess: true, message: `Sent ${Selectedt}.`, Selectedt: Selectedt })
+    } catch (error) {
+        console.error(`> ❌ ERROR /features/selecteds: ${error}`)
+        res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`})
     }
 })
 

@@ -22,8 +22,6 @@ let isQrOff = true
 
 let isAlreadyDir = false
 
-let Clientt_Temp = null
-
 let isFromNew = false
 
 let Client_ = null
@@ -38,10 +36,8 @@ let isHideAP = true
 
 let isStarted = false
 
-let Funilt_Temp = null
 let Funil_ = null
 
-let Templatet_Temp = null
 let Template_ = null
 
 let nameApp = null
@@ -206,17 +202,32 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
             let Counter_Clients_ = 1
             for (let i = 1; i <= Directories_.length; i++) {
                 await insertFunil_Front(Directories_[Counter_Clients_-1], false)
-                await selectFunil_(Directories_[Counter_Clients_-1], false)
+                //await selectFunil_(Directories_[Counter_Clients_-1], false)
 
-                divTemplateFunctions.style.cssText =
+                /*divTemplateFunctions.style.cssText =
                     'display: flex; opacity: 0;'
                 setTimeout(function() {
                     divTemplateFunctions.style.cssText =
                         'display: flex; opacity: 1;'
-                }, 100)
+                }, 100)*/
                 
                 Counter_Clients_++
             }
+            const Type_Selected = 2
+            const response2 = await axios.get('/features/selecteds', { params: { Type_Selected } })
+            const Selectedt = response2.data.Selectedt
+            if (Selectedt === '') {
+                await selectFunil_(Directories_[0], false)
+            } else {
+                await selectFunil_(Selectedt, false)
+            }
+
+            divTemplateFunctions.style.cssText =
+                'display: flex; opacity: 0;'
+            setTimeout(function() {
+                divTemplateFunctions.style.cssText =
+                    'display: flex; opacity: 1;'
+            }, 100)
         }
 
         dir_Path = `Funil\\${Funil_}`
@@ -232,17 +243,34 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
                 const match = Directories_[Counter_Templates_-1].match(/=(.+)\.json/)
                 const Templatet_ = match ? match[1] : null
                 await insertTemplate_Front(Templatet_, Funil_, false)
-                await selectTemplate_(Templatet_)
+                //await selectTemplate_(Templatet_)
 
-                divTemplateInner.style.cssText =
+                /*divTemplateInner.style.cssText =
                     'display: block; opacity: 0;'
                 setTimeout(function() {
                     divTemplateInner.style.cssText =
                         'display: block; opacity: 1;'
-                }, 100)
+                }, 100)*/
                 
                 Counter_Templates_++
             }
+            const Type_Selected = 3
+            const response2 = await axios.get('/features/selecteds', { params: { Type_Selected } })
+            const Selectedt = response2.data.Selectedt
+            if (Selectedt === '') {
+                const match = Directories_[0].match(/=(.+)\.json/)
+                const Templatet_ = match ? match[1] : null
+                await selectTemplate_(Templatet_)
+            } else {
+                await selectTemplate_(Selectedt)
+            }
+
+            divTemplateInner.style.cssText =
+                'display: block; opacity: 0;'
+            setTimeout(function() {
+                divTemplateInner.style.cssText =
+                    'display: block; opacity: 1;'
+            }, 100)
         }
         //await loadSectionsHtml()
     } catch (error) {
@@ -470,8 +498,8 @@ async function handleWebSocketData(dataWebSocket) {
                 barL.style.cssText =
                     'width: 100vw; visibility: visible;'
             } else {
-                status.innerHTML = `<strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
-                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`)
+                status.innerHTML = `<strong>Renomeando</strong> Client <strong>${Client_.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Renomeando</strong> Client <strong>${Client_.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`)
             }
             break
         case 'WS=/funil/set-funil-name':
@@ -493,8 +521,8 @@ async function handleWebSocketData(dataWebSocket) {
                 barL.style.cssText =
                     'width: 100vw; visibility: visible;'
             } else {
-                status2.innerHTML = `<strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
-                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`)
+                status2.innerHTML = `<strong>Renomeando</strong> Client <strong>${Client_.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Renomeando</strong> Client <strong>${Client_.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`)
             }
             break
         case 'WS=/template/set-template-name':
@@ -516,8 +544,8 @@ async function handleWebSocketData(dataWebSocket) {
                 barL.style.cssText =
                     'width: 100vw; visibility: visible;'
             } else {
-                status3.innerHTML = `<strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
-                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Renomeando</strong> Client <strong>${Clientt_Temp.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`)
+                status3.innerHTML = `<strong>Renomeando</strong> Client <strong>${Client_.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`
+                displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Renomeando</strong> Client <strong>${Client_.split('_')[2]}</strong> para <strong>${Namet_}</strong>...`)
             }
             break
         case 'WS=/clients/insert':
@@ -805,7 +833,7 @@ async function ready(Client_) {
 
                     Client_NotReady = true
                     await insertClient_Front(Directories_[Counter_Clients_-1], isActive, false)
-                    await selectClient_(Directories_[Counter_Clients_-1])
+                    //await selectClient_(Directories_[Counter_Clients_-1])
                     
                     Counter_Clients_++
                 }
@@ -813,6 +841,22 @@ async function ready(Client_) {
             }
         } else {
             isAlreadyDir = false
+        }
+        const dir_Path = 'Local_Auth'
+        const response = await axios.get('/functions/dir', { params: { dir_Path } })
+        const Directories_ = response.data.dirs
+
+        if (Directories_.length-1 === -1) {
+
+        } else {
+            const Type_Selected = 1
+            const response2 = await axios.get('/features/selecteds', { params: { Type_Selected } })
+            const Selectedt = response2.data.Selectedt
+            if (Selectedt === '') {
+                await selectClient_(Directories_[0])
+            } else {
+                await selectClient_(Selectedt)
+            }
         }
 
         isFromNew = false 
@@ -1626,7 +1670,7 @@ async function selectTemplate_(Templatet_) {
         const divTemplatet_ = document.querySelector(`#${Templatet_}`)
         const capList = document.querySelector(`caption`)
 
-        const divTemplatet_Temp = document.querySelector(`#${Templatet_Temp}`)
+        const divTemplatet_Temp = document.querySelector(`#${Template_}`)
         if (divTemplatet_Temp !== null) {
             divTemplatet_Temp.style.cssText =
                 'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
@@ -1649,7 +1693,6 @@ async function selectTemplate_(Templatet_) {
 
             //capList.innerHTML = `<stronger>${Templatet_}</stronger>`
 
-            Templatet_Temp = Templatet_
             Template_ = Templatet_
 
             status.innerHTML = `Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>`
@@ -2683,7 +2726,7 @@ async function newTemplates() {
         const Template_ = response.data.Templatet_
         if (Sucess) {
             await insertTemplate_Front(Template_, Funil_, true)
-            await selectTemplate_(Template_)
+            //await selectTemplate_(Template_)
 
             divTemplateInner.style.cssText =
                 'display: block; opacity: 0;'
@@ -2858,7 +2901,7 @@ async function RenameTemplate_(Templatet_) {
                     const match = Directories_[Counter_-1].match(/=(.+)\.json/)
                     const Templatet_ = match ? match[1] : null
                     await insertTemplate_Front(Templatet_, Funil_, false)
-                    await selectTemplate_(Templatet_)
+                    //await selectTemplate_(Templatet_)
 
                     divTemplateInner.style.cssText =
                         'display: block; opacity: 0;'
@@ -2871,6 +2914,7 @@ async function RenameTemplate_(Templatet_) {
                 }
                 displayOnConsole(`> ✅ <strong>Dir</strong> Templates_ loaded <strong>ALL</strong> (<strong>${Directories_.length}</strong>).`)
             }
+
             await selectTemplate_(templatet_)
             resetLoadingBar()
         } else {
@@ -3040,7 +3084,7 @@ async function selectFunil_(Funilt_, isFromButton) {
         const divFunilt_ = document.querySelector(`#${Funilt_}`)
         const capList = document.querySelector(`caption`)
 
-        const divFunilt_Temp = document.querySelector(`#${Funilt_Temp}`)
+        const divFunilt_Temp = document.querySelector(`#${Funil_}`)
         if (divFunilt_Temp !== null) {
             divFunilt_Temp.style.cssText =
                 'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
@@ -3063,7 +3107,6 @@ async function selectFunil_(Funilt_, isFromButton) {
 
             //capList.innerHTML = `<stronger>${Funilt_}</stronger>`
             
-            Funilt_Temp = Funilt_
             Funil_ = Funilt_
 
             status.innerHTML = `Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>`
@@ -3093,7 +3136,7 @@ async function selectFunil_(Funilt_, isFromButton) {
                         const match = Directories_[Counter_Templates_-1].match(/=(.+)\.json/)
                         const Templatet_ = match ? match[1] : null
                         await insertTemplate_Front(Templatet_, Funil_, false)
-                        await selectTemplate_(Templatet_)
+                        //await selectTemplate_(Templatet_)
 
                         divTemplateInner.style.cssText =
                             'display: block; opacity: 0;'
@@ -3202,7 +3245,7 @@ async function newFunils() {
         const Funil_ = response.data.Funilt_
         if (Sucess) {
             await insertFunil_Front(Funil_, true)
-            await selectFunil_(Funil_, true)
+            //await selectFunil_(Funil_, true)
 
             divTemplateFunctions.style.cssText =
                 'display: flex; opacity: 0;'
@@ -3375,7 +3418,7 @@ async function RenameFunil_(Funilt_) {
                 let Counter_ = 1
                 for (let i = 1; i <= Directories_.length; i++) {
                     await insertFunil_Front(Directories_[Counter_-1], false)
-                    await selectFunil_(Directories_[Counter_-1], false)
+                    //await selectFunil_(Directories_[Counter_-1], false)
 
                     divTemplateFunctions.style.cssText =
                         'display: flex; opacity: 0;'
@@ -3426,7 +3469,7 @@ async function selectionPositionMSG(checkElement, typeMSG) {
                     document.querySelector(`#iinputCheckboxSelectionMSG${positionSelectedMSG.idNumberPositionSelected}`).dispatchEvent(new Event('change'))
 
                     document.querySelector(`#funilArea`).innerHTML = ''
-                    await selectTemplate_(Template_)
+                    await selectTemplate_(Template_)//
 
                     resetLoadingBar()
 
@@ -6281,7 +6324,7 @@ async function ReinitializeClient_(Clientt_) {
         resetLoadingBar()
     }
 }
-async function selectClient_(Clientt_) {
+async function selectClient_(Clientt_) {//
     if (Client_NotReady = false) {
         displayOnConsole(`> ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
         return
@@ -6298,7 +6341,7 @@ async function selectClient_(Clientt_) {
         const divClientt_ = document.querySelector(`#${Clientt_}`)
         const capList = document.querySelector(`caption`)
 
-        const divClientt_Temp = document.querySelector(`#${Clientt_Temp}`)
+        const divClientt_Temp = document.querySelector(`#${Client_}`)
         if (divClientt_Temp !== null) {
             divClientt_Temp.style.cssText =
                 'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
@@ -6321,7 +6364,6 @@ async function selectClient_(Clientt_) {
 
             capList.innerHTML = `<stronger>${Clientt_}</stronger>`
             
-            Clientt_Temp = Clientt_
             Client_ = Clientt_
 
             document.title = `${Clientt_}`
@@ -7212,7 +7254,7 @@ async function RenameClient_(Clientt_) {
 
                     Client_NotReady = true
                     await insertClient_Front(Directories_[Counter_Clients_-1], isActive, false)
-                    await selectClient_(Directories_[Counter_Clients_-1])
+                    //await selectClient_(Directories_[Counter_Clients_-1])
                     
                     Counter_Clients_++
                 }
