@@ -3116,6 +3116,25 @@ td {
     border: 1px solid var(--colorWhite);
     outline: 1px solid var(--colorWhite);
 }
+.funilRebateSelect {
+    background-color: var(--colorBlack);
+    color: var(--colorInteractionElements);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border: 1px solid var(--colorBlack);
+    border-radius: 7px;
+    font-size: 1.5vw;
+    font-family: var(--fontDisplay);
+    cursor: pointer;
+    transition: var(--configTrasition03s);
+}
+.funilRebateSelect:hover {
+    border: 1px solid var(--colorWhite);
+}
+.funilRebateSelect:focus-within {
+    color: var(--colorWhite);
+    border: 1px solid var(--colorWhite);
+    outline: 1px solid var(--colorWhite);
+}
 .templateRebateSelect {
     background-color: var(--colorBlack);
     color: var(--colorInteractionElements);

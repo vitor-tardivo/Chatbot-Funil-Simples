@@ -77,13 +77,13 @@ router.put('/funil/position-change', async (req, res) => {
 
 router.put('/funil/send-data', upload.single('fileData'), async (req, res) => {
     try {
-        let { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType } = req.body
+        let { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType } = req.body
         positionId = parseInt(positionId)
         typeMSG = parseInt(typeMSG)
         //console.log('na rota: ', { typeMSG, MSGType, positionId, delayType, delayData, textareaData, fileType })
         const fileData = req.file
         //console.log('arquivo na rota: ', fileData)
-        await Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData)
+        await Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData)
         res.status(200).send({ sucess: true, message: `Sucessfully sent funil data.` })
     } catch (error) {
         console.error(`> ❌ ERROR /funil/send-data: ${error}`)
@@ -414,7 +414,6 @@ router.get('/api/data', async (req, res) => {
 
 router.get('/back/what-stage', async (req, res) => {
     try {
-        console.log(global.Client_)
         res.status(200).send({ sucess: true, message: `sucessfully get stage.`, data: global.Stage_, data2: global.QR_Counter, data3: global.Client_, data4: global.Funil_, data5: global.Template_ })
     } catch (error) {
         console.error(`> ❌ ERROR /back/what-stage: ${error}`)
@@ -516,9 +515,10 @@ router.post('/features/command', express.json(), (req, res) => {
 router.get('/features/selecteds', async (req, res) => {
     try {
         const Type_Selected = req.query.Type_Selected
-        const Selectedt = await Get_Selecteds(Type_Selected)
+
+        const { Selectedt, F_Client_, T_Client_ } = Get_Selecteds(Type_Selected)
         
-        res.status(200).send({ sucess: true, message: `Sent ${Selectedt}.`, Selectedt: Selectedt })
+        res.status(200).send({ sucess: true, message: `Sent ${Selectedt}.`, Selectedt: Selectedt, F_Client_: F_Client_, T_Client_: T_Client_, })
     } catch (error) {
         console.error(`> ❌ ERROR /features/selecteds: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`})

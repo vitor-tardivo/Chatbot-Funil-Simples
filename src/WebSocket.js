@@ -35,7 +35,7 @@ async function setupWebSocket(server) {
 
     wss_Server.on('connection', async  function connection(wss) {
         try {
-            const wss_Connection_Id = generateUniqueId()
+            const wss_Connection_Id = await generateUniqueId()
             wss_Connections.set(wss_Connection_Id, {
                 wss,
                 reason: null

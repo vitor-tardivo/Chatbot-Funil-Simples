@@ -121,6 +121,13 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
         Client_ = response2.data.data3
         Funil_ = response2.data.data4
         Template_ = response2.data.data5
+        /*displayOnConsole(Client_)
+        displayOnConsole(Funil_)
+        displayOnConsole(Template_)
+        console.log(Client_)
+        console.log(Funil_)
+        console.log(Template_)*/
+
         
         if (stage === 0) {
             
@@ -852,6 +859,8 @@ async function ready(Client_) {
             const Type_Selected = 1
             const response2 = await axios.get('/features/selecteds', { params: { Type_Selected } })
             const Selectedt = response2.data.Selectedt
+            const F_Client_ = response2.data.F_Client_
+            const T_Client_ = response2.data.T_Client_
             if (Selectedt === '') {
                 await selectClient_(Directories_[0])
             } else {
@@ -2204,8 +2213,13 @@ async function selectTemplate_(Templatet_) {
                                                         <option value="days">Dias</option>
                                                     </select>
 
-                                                    <select title="Selecione um Template para o Rebate" class="templateRebateSelect" id="itemplateRebateSelect" oninput="sendToFunil(this, 4, 'rebate', this)">
-                                                        <option value="none">Nenhum</option>
+                                                    <select title="Selecione um Funil para o Rebate" class="funilRebateSelect" id="ifunilRebateSelect" oninput="sendToFunil(this, 4, 'rebateFunil', this)">
+                                                        <option value="none" selected>Nenhum</option>
+
+                                                    </select>
+
+                                                    <select title="Selecione um Template para o Rebate" class="templateRebateSelect" id="itemplateRebateSelect" oninput="sendToFunil(this, 4, 'rebateTemplate', this)">
+                                                        <option value="none" selected>Nenhum</option>
 
                                                     </select>
                                                 </div>
@@ -2240,30 +2254,54 @@ async function selectTemplate_(Templatet_) {
                             const inputDelayRebate = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayRebateTime`)
                             inputDelayRebate.value = item.delayData
 
-                            const dir_Path = `Funil\\${Funil_}`
+                            const dir_Path = `Funil`
                             const response = await axios.get('/functions/dir', { params: { dir_Path } })
                             const Directories = response.data.dirs
                             //displayOnConsole(Directories)
-                            let Templatets_ = []
+                            let Funilts_ = []
                             for (let i = 0; i < Directories.length; i++) {
-                                const match = Directories[i].match(/_(\d+_[^_]+)_/)
-                                Templatets_.push(match[0])
+                                Funilts_.push(Directories[i])
                             }
-                            //displayOnConsole(Templatets_)
+                            //displayOnConsole(Funilts_)
 
-                            const templateDelayRebate = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itemplateRebateSelect`)
+                            const funilDelayRebate = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#ifunilRebateSelect`)
 
                             //templateDelayRebate.innerHTML = `<option value="none" selected>Nenhum</option>`;
                             
-                            Templatets_.forEach(template => {
+                            Funilts_.forEach(template => {
                                 let option = document.createElement("option")
                                 option.value = template 
                                 option.textContent = template
-                                templateDelayRebate.appendChild(option)
+                                funilDelayRebate.appendChild(option)
                             })
 
-                            //displayOnConsole(item.templatetRebate)
-                            templateDelayRebate.value = item.templatetRebate//assim e melhor que a porra do index ali em zima
+                            //displayOnConsole(item.funiltRebate)
+                            funilDelayRebate.value = item.funiltRebate//
+
+                            if (item.funiltRebate !== 'none') {
+                                const dir_Path = `Funil\\${item.funiltRebate}`
+                                //displayOnConsole(dir_Path)
+                                const response = await axios.get('/functions/dir', { params: { dir_Path } })
+                                const Directories = response.data.dirs
+                                //displayOnConsole(Directories)
+                                let Templatets_ = []
+                                for (let i = 0; i < Directories.length; i++) {
+                                    const match = Directories[i].match(/_(\d+_[^_]+)_/)
+                                    Templatets_.push(match[0])
+                                }
+                                const templateDelayRebate = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itemplateRebateSelect`)
+                                //displayOnConsole(Templatets_)
+                                Templatets_.forEach(template => {
+                                    let option = document.createElement("option")
+                                    option.value = template 
+                                    option.textContent = template
+                                    templateDelayRebate.appendChild(option)
+                                })
+                                //displayOnConsole(item.templatetRebate)
+                                templateDelayRebate.value = item.templatetRebate//assim e melhor que a porra do index ali em zima
+                            } else {
+                                templateDelayRebate.value = item.templatetRebate
+                            }
                             break;
                     }
 
@@ -3728,6 +3766,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
         let positionId = null
         let delayType = null
         let delayData = null
+        let funiltRebate = null
         let templatetRebate = null
         let textareaData = null
         let fileType = null
@@ -3748,7 +3787,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         MSGType = 'delay'
                         delayType = typeTypeMSG
                         delayData = inputDelayMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         const selectDelayMSG = divElement.querySelector(`#idelayMSGSelect`)
                         if (inputDelayMSG.value >= 1) {
@@ -3767,7 +3806,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -3778,7 +3817,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -3789,7 +3828,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -3800,7 +3839,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -3811,7 +3850,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (inputDelayMSG.value !== '') {
                             inputDelayMSG.value = ''
@@ -3835,7 +3874,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             MSGType = 'delay'
                             delayType = typeTypeMSG
                             delayData = inputDelayText.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             const selectDelayText = divElement.querySelector(`#idelayTextSelect`)
                             if (inputDelayText.value >= 1) {
@@ -3854,7 +3893,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -3865,7 +3904,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -3876,7 +3915,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -3889,7 +3928,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -3900,7 +3939,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             if (inputDelayText.value !== '') {
                                 inputDelayText.value = ''
@@ -3914,7 +3953,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                                     //displayOnConsole(data.value)
                                     MSGType = 'textarea'
                                     textareaData = data.value
-                                    await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                                    await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                                 }
                             break;
                     }
@@ -3934,7 +3973,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         MSGType = 'delay'
                         delayType = typeTypeMSG
                         delayData = inputDelayTextAudio.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         const selectDelayTextAudio = divElement.querySelector(`#idelayTextAudioSelect`)
                         if (inputDelayTextAudio.value >= 1) {
@@ -3953,7 +3992,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`3=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                             inputDelayTextAudio.value = 1
@@ -3964,7 +4003,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`3=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                             inputDelayTextAudio.value = 1
@@ -3975,7 +4014,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`3=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                             inputDelayTextAudio.value = 1
@@ -3986,7 +4025,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`3=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                             inputDelayTextAudio.value = 1
@@ -3997,7 +4036,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`3=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (inputDelayTextAudio.value !== '') {
                             inputDelayTextAudio.value = ''
@@ -4011,7 +4050,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(data.value || '')
                             MSGType = 'textarea'
                             textareaData = data.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         }
                         break;
                     default:
@@ -4057,7 +4096,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         MSGType = 'delay'
                         delayType = typeTypeMSG
                         delayData = inputRebateMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         const selectDelayRebateMSG = divElement.querySelector(`#idelayRebateSelect`)
                         if (inputRebateMSG.value >= 1) {
@@ -4076,7 +4115,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputRebateMSG.value || inputRebateMSG.value === 0) {
                             inputRebateMSG.value = 1
@@ -4087,7 +4126,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputRebateMSG.value || inputRebateMSG.value === 0) {
                             inputRebateMSG.value = 1
@@ -4098,7 +4137,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputRebateMSG.value || inputRebateMSG.value === 0) {
                             inputRebateMSG.value = 1
@@ -4109,7 +4148,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputRebateMSG.value || inputRebateMSG.value === 0) {
                             inputRebateMSG.value = 1
@@ -4120,18 +4159,55 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (inputRebateMSG.value !== '') {
                             inputRebateMSG.value = ''
                             inputRebateMSG.dispatchEvent(new Event('input'))
                         }
                         break;
-                    case 'rebate':
+                    case 'rebateFunil':
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
-                        MSGType = 'rebate'
+                        MSGType = 'rebateFunil'
+                        funiltRebate = data.value
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+
+                        const templateDelayRebate = divElement.querySelector(`#itemplateRebateSelect`)
+                        if (data.value !== 'none') {
+                            const dir_Path = `Funil\\${data.value}`
+                            const response = await axios.get('/functions/dir', { params: { dir_Path } })
+                            const Directories = response.data.dirs
+                            //displayOnConsole(Directories)
+                            let Templatets_ = []
+                            for (let i = 0; i < Directories.length; i++) {
+                                const match = Directories[i].match(/_(\d+_[^_]+)_/)
+                                Templatets_.push(match[0])
+                            }
+                            //displayOnConsole(Templatets_)
+                            Templatets_.forEach(template => {
+                                let option = document.createElement("option")
+                                option.value = template 
+                                option.textContent = template
+                                templateDelayRebate.appendChild(option)
+                            })
+                            //displayOnConsole(data.value)
+                            //templateDelayRebate.value = data.value
+                        } else {
+                            templateDelayRebate.innerHTML = ''
+                            let option = document.createElement("option")
+                            option.value = 'none' 
+                            option.textContent = 'Nenhum'
+                            templateDelayRebate.appendChild(option)
+
+                            templateDelayRebate.value = 'none'
+                            templateDelayRebate.dispatchEvent(new Event('input'))
+                        }
+                        break;
+                    case 'rebateTemplate':
+                        //displayOnConsole(`1=${typeTypeMSG.value}`)
+                        MSGType = 'rebateTemplate'
                         templatetRebate = data.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         break;
                 }
                 break;
@@ -5891,7 +5967,12 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                                         <option value="days">Dias</option>
                                                     </select>
 
-                                                    <select title="Selecione um Template para o Rebate" class="templateRebateSelect" id="itemplateRebateSelect" oninput="sendToFunil(this, 4, 'rebate', this)">
+                                                    <select title="Selecione um Funil para o Rebate" class="funilRebateSelect" id="ifunilRebateSelect" oninput="sendToFunil(this, 4, 'rebateFunil', this)">
+                                                        <option value="none" selected>Nenhum</option>
+
+                                                    </select>
+
+                                                    <select title="Selecione um Template para o Rebate" class="templateRebateSelect" id="itemplateRebateSelect" oninput="sendToFunil(this, 4, 'rebateTemplate', this)">
                                                         <option value="none" selected>Nenhum</option>
 
                                                     </select>
@@ -5912,7 +5993,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                     divFunil.innerHTML += MSGHTMlRebate
                 }
 
-                const dir_Path = `Funil\\${Funil_}`
+                /*const dir_Path = `Funil\\${Funil_}`
                 const response = await axios.get('/functions/dir', { params: { dir_Path } })
                 const Directories = response.data.dirs
                 let Templatets_ = []
@@ -5926,10 +6007,25 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                     option.value = template 
                     option.textContent = template
                     templateDelayRebate.appendChild(option)
+                })*/
+
+                const dir_Path = `Funil`
+                const response = await axios.get('/functions/dir', { params: { dir_Path } })
+                const Directories = response.data.dirs
+                let Funilts_ = []
+                for (let i = 0; i < Directories.length; i++) {
+                    Funilts_.push(Directories[i])
+                }
+                const funilDelayRebate = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`).querySelector(`#ifunilRebateSelect`)
+                Funilts_.forEach(template => {
+                    let option = document.createElement("option")
+                    option.value = template 
+                    option.textContent = template
+                    funilDelayRebate.appendChild(option)
                 })
 
                 typeMSG = type
-                MSGType = 'rebate'
+                MSGType = 'rebateFunil'
                 positionId = Id_Position_MSG
                 delayType = 'seconds'
                 delayData = '10'
@@ -6097,15 +6193,18 @@ async function eraseClient_(Clientt_) {
 
                 //o codigo abaixo e possivel botar tudo numa rota e devolver o porArrayClient e se tiver vazio nada e reset e tals, modelo REST e tals (se for preciso)
 
+                await sleep(5 * 1000)
                 const dir_Path = 'Local_Auth'
                 const response = await axios.get('/functions/dir', { params: { dir_Path } })
                 const Directories2 = response.data.dirs
+                console.log(Directories2)
 
                 if (Directories2.length === 0) {
                     status.innerHTML = `<strong>Dir</strong> off Clients_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`
                     displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i><strong>Dir</strong> off Clients_ (<strong>${Directories.length}</strong>) is <strong>empty</strong>!`)
 
                     let exitInten = true
+                    stage = 0
                     await exit(exitInten)
                     await axios.put('/back/reset')
                 } else {
@@ -6324,7 +6423,7 @@ async function ReinitializeClient_(Clientt_) {
         resetLoadingBar()
     }
 }
-async function selectClient_(Clientt_) {//
+async function selectClient_(Clientt_) {
     if (Client_NotReady = false) {
         displayOnConsole(`> ℹ️  <strong>${Clientt_}</strong> not Ready.`, setLogError)
         return
@@ -6341,10 +6440,12 @@ async function selectClient_(Clientt_) {//
         const divClientt_ = document.querySelector(`#${Clientt_}`)
         const capList = document.querySelector(`caption`)
 
-        const divClientt_Temp = document.querySelector(`#${Client_}`)
-        if (divClientt_Temp !== null) {
-            divClientt_Temp.style.cssText =
+        if (Client_ !== '') {   
+            const divClientt_Temp = document.querySelector(`#${Client_}`)
+            if (divClientt_Temp !== null) {
+                divClientt_Temp.style.cssText =
                 'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+            }
         }
         if (divClientt_ === null) {
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Não</strong> existe!`
@@ -6365,6 +6466,24 @@ async function selectClient_(Clientt_) {//
             capList.innerHTML = `<stronger>${Clientt_}</stronger>`
             
             Client_ = Clientt_
+
+            const Type_Selected = 4
+            const response2 = await axios.get('/features/selecteds', { params: { Type_Selected } })
+            const Selectedt = response2.data.Selectedt 
+            const F_Client_ = response2.data.F_Client_
+            const T_Client_ = response2.data.T_Client_
+
+            if (F_Client_ === '') {
+                await selectFunil_(Funil_, false)
+            } else {
+                await selectFunil_(F_Client_, false)
+            }
+
+            if (T_Client_ === '') {
+                await selectTemplate_(Template_)
+            } else {
+                await selectTemplate_(T_Client_)
+            }
 
             document.title = `${Clientt_}`
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> <strong>Selecionado</strong>`
@@ -6681,7 +6800,6 @@ async function allPrint(isFromButton, isallerase, Clientt_) {
     }
     try {
         if (!isallerase) {  
-            console.log('coco') 
             if (Clientt_ !== null) {   
                 if (Client_ !== Clientt_) {
                     return

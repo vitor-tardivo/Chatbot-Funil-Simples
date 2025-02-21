@@ -439,10 +439,16 @@
                                                                     <option value="days">Dias</option>
                                                                 </select>
 
-                                                                <select title="Selecione um Template para o Rebate" class="templateRebateSelect" id="itemplateRebateSelect" oninput="sendToFunil(this, 4, this, null)">
+                                                                <select title="Selecione um Funil para o Rebate" class="funilRebateSelect" id="ifunilRebateSelect" oninput="sendToFunil(this, 4, 'rebateFunil', this)">
                                                                     <option value="none" selected>Nenhum</option>
 
                                                                 </select>
+
+                                                                <select title="Selecione um Template para o Rebate" class="templateRebateSelect" id="itemplateRebateSelect" oninput="sendToFunil(this, 4, 'rebateTemplate', this)">
+                                                                    <option value="none" selected>Nenhum</option>
+
+                                                                </select>
+
                                                             </div>
 
                                                         </div>

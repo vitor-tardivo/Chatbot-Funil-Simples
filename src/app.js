@@ -188,12 +188,17 @@ function Set_Ready_Callback(callback) {
 
 global.Directory_Dir_Selecteds_ = path.join(Root_Dir, `Selecteds.json`)
 
-global.Client_ = Get_Selecteds(1)
+let Selectedt = ''
+Selectedt = Get_Selecteds(1).Selectedt
+global.Client_ = Selectedt
 //console.log(global.Client_)
-global.Funil_ = Get_Selecteds(2)
+Selectedt  = Get_Selecteds(2).Selectedt
+global.Funil_ = Selectedt
 //console.log(global.Funil_)
-global.Template_ = Get_Selecteds(3)
+Selectedt = Get_Selecteds(3).Selectedt
+global.Template_ = Selectedt
 //console.log(global.Template_)
+Selectedt = ''
 
 MKFile_Selecteds()
 async function MKFile_Selecteds() {
@@ -240,32 +245,44 @@ async function MKFile_Selecteds() {
         New_Selecteds_ = null
         jsonString = null
 
-        global.Client_ = Get_Selecteds(1)
+        let Selectedt = ''
+        Selectedt = Get_Selecteds(1).Selectedt
+        global.Client_ = Selectedt
         //console.log(global.Client_)
-        global.Funil_ = Get_Selecteds(2)
+        Selectedt  = Get_Selecteds(2).Selectedt
+        global.Funil_ = Selectedt
         //console.log(global.Funil_)
-        global.Template_ = Get_Selecteds(3)
+        Selectedt = Get_Selecteds(3).Selectedt
+        global.Template_ = Selectedt
         //console.log(global.Template_)
+        Selectedt = ''
 
-        /*const Directories_ = await List_Directories('Local_Auth')//ver isso de cada cliente vai pegar o funil ultimo selecionando selecionado o client atual e manda o funil para ele
-        //console.log(Directories_)
-        for (let i = 0; i < Directories_.length; i++) {
-            data = JSON.parse(fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8') || '[\n\n]')
-            New_Selecteds_ = { Clientt_: `${Directories_[0]}`, F_Client_: '', T_Client_: '' }
+        const Directories_4 = await List_Directories('Local_Auth')//ver isso de cada cliente vai pegar o funil ultimo selecionando selecionado o client atual e manda o funil para ele
+        //console.log(Directories_4)
+        for (let i = 0; i < Directories_4.length; i++) {
+            data = JSON.parse(fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8'))
+            New_Selecteds_ = { Clientt_: `${Directories_4[0]}`, F_Client_: '', T_Client_: '' }
             data.push(New_Selecteds_)
             jsonString = '[\n' + data.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
             fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
             data = null
             New_Selecteds_ = null
             jsonString = null
-        }*/
+        }
+
+
     }
 }
-async function Get_Selecteds(Type_Selected) { 
+function Get_Selecteds(Type_Selected, Clientt_) { 
     try {
         const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
         const templateData = JSON.parse(data)
         let Selectedt = ''
+        let F_Client_ = ''
+        let T_Client_ = ''
+        let SClientt_ = ''
+
+        //console.log(templateData)
 
         switch (Number(Type_Selected)) {
             case 1:
@@ -277,26 +294,25 @@ async function Get_Selecteds(Type_Selected) {
             case 3:
                 Selectedt = templateData[0].S_Template_
                 break;
-            /*case 4:
-
-                switch () {
-                    case :
-                        
-                        break;
-                    case :
-                        
-                        break;
-                    case :
-                        
-                        break;
+            case 4:
+                if (Clientt_) {
+                    SClientt_ = Clientt_
+                } else {
+                    SClientt_ = global.Client_
                 }
-                break;*/
+                const Query_Line = templateData.find(item => item.Clientt_ === SClientt_)
+                //console.log(Query_Line)
+                
+                F_Client_ = Query_Line.F_Client_
+                T_Client_ = Query_Line.T_Client_
+                break;
         }
 
-        return Selectedt
+        //console.log(Selectedt, F_Client_, T_Client_)
+        return { Selectedt, F_Client_, T_Client_ }
     } catch (error) {
         if (error.code === 'ENOENT') {
-            return ''
+            return { Selectedt: '', F_Client_: '', T_Client_: '' }
         } else {
             console.error(`> ❌ Get_Selecteds: ${error}`)
         }
@@ -367,6 +383,7 @@ async function List_Directories(dir_Path) {
             Directories_ = Files_.map(file => file.name)
             //console.log(Directories_)
         }
+        //console.log(Files_)
         //console.log(Directories_)
         return Directories_
     } catch (error) {
@@ -427,10 +444,6 @@ let Previous_Math_Delay_Time_Erase_Schedule = 0
 let timer_Duration_Schedule = Previous_Math_Delay_Time_Erase_Schedule * timer_Duration_Schedule_Type
 
 // Test_Mode
-global.Is_Test = null
-let Is_Test = global.Is_Test
-global.Is_Mode_Test = null
-let Is_Mode_Test = global.Is_Mode_Test
 let TestContact = null
 
 let Counter_Id_Clients_ = []
@@ -683,9 +696,9 @@ async function Insert_Template_Front() {
     }
 }
 
-async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData) {
+async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData) {
     try {
-        //console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType })
+        //console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType })
         //console.log('arquivo na funcao: ', fileData)
 
         //let Data_ = [{  }]
@@ -838,7 +851,12 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                                 }
                             }       
                             break;
-                        case 'rebate':
+                        case 'rebateFunil':
+                            existingItem.typeMSG = typeMSG
+                            existingItem.funiltRebate = funiltRebate
+                            isDifferent = true
+                            break;
+                        case 'rebateTemplate':
                             existingItem.typeMSG = typeMSG
                             existingItem.templatetRebate = templatetRebate
                             isDifferent = true
@@ -935,10 +953,18 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                                 newItem.delayData = delayData
                             }       
                             break;
-                        case 'rebate':
+                        case 'rebateFunil':
                             newItem.typeMSG = typeMSG
                             newItem.delayType = delayType
                             newItem.delayData = delayData
+                            newItem.funiltRebate = funiltRebate
+                            newItem.templatetRebate = templatetRebate
+                            break;
+                        case 'rebateTemplate':
+                            newItem.typeMSG = typeMSG
+                            newItem.delayType = delayType
+                            newItem.delayData = delayData
+                            newItem.funiltRebate = funiltRebate
                             newItem.templatetRebate = templatetRebate
                             break;
                     }
@@ -1094,11 +1120,6 @@ async function Select_Template_(Templatet_) {
         timer_Duration_Schedule_Type = formatedDelayTypeDurarationEraseSchedule
         timer_Duration_Schedule = Number(templateData[0].delayData) * timer_Duration_Schedule_Type
 
-        global.Is_Test = templateData[0].TestMode
-        Is_Test = global.Is_Test
-        global.Is_Mode_Test = templateData[0].ReceiveMSG
-        Is_Mode_Test = global.Is_Mode_Test
-
         TestContact = templateData[0].TestContact
 
         const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
@@ -1106,6 +1127,18 @@ async function Select_Template_(Templatet_) {
         templateData2[0].S_Template_ = Templatet_
         const jsonString = '[\n' + templateData2.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+
+        if (Clientts_.hasOwnProperty(global.Client_)) {
+            if (Clientts_[global.Client_].instance !== null) {
+                //console.log('ta ons t')
+                const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+                const templateData = JSON.parse(data)
+                const Query_Line = templateData.find(item => item.Clientt_ === global.Client_)
+                Query_Line.T_Client_ = Templatet_
+                const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+            }
+        }
 
         //global.File_Data_Chat_Data = `Chat_Data=${Funilt_}.json`
         //global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Funilt_}.json`)
@@ -1327,9 +1360,6 @@ async function Set_Test_Mode(testModeIs) {
         templateData[0].TestMode = testModeIs
         const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
-        
-        global.Is_Test = testModeIs
-        Is_Test = global.Is_Test
 
         console.log(`>  ℹ️ Set (${testModeIs}) Test mode off Template_ ${global.Template_}.`)
         if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><stronge>Definido</stronge> (<strong>${testModeIs}</strong>) modo teste do Template_ <strong>${global.Template_}</strong>.`)
@@ -1356,9 +1386,6 @@ async function Set_Receive_MSG(ReceiveMSG) {
         templateData[0].ReceiveMSG = ReceiveMSG
         const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         await fs.writeFile(global.Data_File_Templates_, jsonString, 'utf8')
-        
-        global.Is_Mode_Test = ReceiveMSG
-        Is_Mode_Test = global.Is_Mode_Test
 
         console.log(`>  ℹ️ Set (${ReceiveMSG}) Receive MSG off Template_ ${global.Template_}.`)
         if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><stronge>Definido</stronge> (<strong>${ReceiveMSG}</strong>) receber MSG do Template_ <strong>${global.Template_}</strong>.`)
@@ -1478,7 +1505,7 @@ async function Initiate_Test_Mode() {
         
             let Mode_ = 1
             let IsRebate = false
-            await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, null, Client_)
+            await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, null, null, Client_, global.Client_)
         }
     } catch (error) {
         console.error(`> ❌ Initiate_Test_Mode: ${error}`) 
@@ -1813,6 +1840,18 @@ async function Select_Funil_(Funilt_) {
         templateData[0].S_Funil_ = Funilt_
         const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+
+        if (Clientts_.hasOwnProperty(global.Client_)) {
+            if (Clientts_[global.Client_].instance !== null) { 
+                //console.log('ta ons f')
+                const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+                const templateData = JSON.parse(data)
+                const Query_Line = templateData.find(item => item.Clientt_ === global.Client_)
+                Query_Line.F_Client_ = Funilt_
+                const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+            }
+        }
 
         //global.File_Data_Chat_Data = `Chat_Data=${Funilt_}.json`
         //global.Data_File_Chat_Data = path.join(global.Directory_Dir_Chat_Data, `Chat_Data=${Funilt_}.json`)
@@ -2183,7 +2222,8 @@ async function Load_Client_(Client_Not_Ready_Aux, Clientt_) {
         }
     }
 }
-async function Save_Client_(id, Clientt_) {
+//async function Save_Client_(id, Clientt_) {
+async function Save_Client_(Clientt_) {
     if (!Client_Not_Ready || Client_Not_Ready === null) {
         console.log(`>  ℹ️ ${Clientt_} not Ready.`)
         if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${Clientt_}</strong> not Ready.`)
@@ -2210,9 +2250,11 @@ async function Save_Client_(id, Clientt_) {
         const Clients_ = JSON.parse(await fs.readFile(global.Data_File_Clients_, 'utf8'))//
         let New_Client_
         if (Clients_.length === 0) {
-            New_Client_ = [{ id, Clientt_ }]
+            //New_Client_ = [{ id, Clientt_ }]
+            New_Client_ = [{ Clientt_ }]
         } else {
-            New_Client_ = Clients_.map(item => ({ id, Clientt_ }))
+            //New_Client_ = Clients_.map(item => ({ id, Clientt_ }))
+            New_Client_ = Clients_.map(item => ({ Clientt_ }))
         }
         const jsonString = '[\n' + New_Client_.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         
@@ -2271,11 +2313,17 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
             
                 fse.remove(`Clients_\\${global.File_Data_Clients_}`)
                 Clientts_[Clientt_].instance.destroy()
+                await sleep(3 * 1000)
                 delete Clientts_[Clientt_]
-                await sleep(2 * 1000)
                 fse.remove(path.join(Root_Dir, `Local_Auth\\${Clientt_}`))
                 const clientIdNumber = Clientt_.split('_')[1]
                 Counter_Id_Clients_.splice(clientIdNumber-1, 1)
+
+                let data = JSON.parse(fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8'))
+                data[0].S_Client_ = ''
+                data = data.filter(item => item.Clientt_ !== Clientt_)
+                const jsonString = '[\n' + data.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
                 
                 Erased_ = true
             } else if (answer.toLowerCase() === 'n') {
@@ -2300,10 +2348,17 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
             
             fse.remove(`Clients_\\${global.File_Data_Clients_}`)
             Clientts_[Clientt_].instance.destroy()
-            await sleep(2 * 1000)
+            await sleep(3 * 1000)
+            delete Clientts_[Clientt_]
             fse.remove(path.join(Root_Dir, `Local_Auth\\${Clientt_}`))
             const clientIdNumber = Clientt_.split('_')[1]
             Counter_Id_Clients_.splice(clientIdNumber-1, 1)
+
+            let data = JSON.parse(fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8'))
+            data[0].S_Client_ = ''
+            data = data.filter(item => item.Clientt_ !== Clientt_)
+            const jsonString = '[\n' + data.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+            fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
             
             Erased_ = true
         }
@@ -2536,7 +2591,7 @@ async function Select_Client_(Clientt_) {
         const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
         const templateData = JSON.parse(data)
         templateData[0].S_Client_ = Clientt_
-        global.Client_ = templateData[0].S_Client_ 
+        global.Client_ = templateData[0].S_Client_
         const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
         fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
 
@@ -3273,7 +3328,7 @@ function Actual_Time() {
 }
 
 let isTimerOn = null//essa porra qui pode dar pobema de multi instance
-async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, templatetRebate, Client__) {
+async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, funiltRebate,templatetRebate, Client__, Clientt_) {
     if (ChatData_Not_Ready) {
         console.log(`>  ℹ️ ${global.Client_} not Ready.`)
         if (global.Log_Callback) global.Log_Callback(`> ℹ️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>${global.Client_}</strong> not Ready.`)
@@ -3338,10 +3393,12 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
 
 
             let data = null
+            const { Selectedt, F_Client_, T_Client_ } = Get_Selecteds(4, Clientt_)
             if (IsRebate) {
-                data = fss.readFileSync(path.join(global.Directory_Dir_Funils_, `Template=${templatetRebate}.json`), 'utf8')
+                data = fss.readFileSync(path.join(path.join(global.Directory_Dir_Funil, `${funiltRebate}`), `Template=${templatetRebate}.json`), 'utf8')
             } else {
-                data = fss.readFileSync(global.Data_File_Templates_, 'utf8')//pega pra pegar o json do template selecionado do funil selecionado, talves mudar a forma das pastas pros template dos funil e tals
+                data = fss.readFileSync(path.join(path.join(global.Directory_Dir_Funil, `${F_Client_}`), `Template=${T_Client_}.json`), 'utf8')
+                //data = fss.readFileSync(global.Data_File_Templates_, 'utf8')//pega pra pegar o json do template selecionado do funil selecionado, talves mudar a forma das pastas pros template dos funil e tals
             }
             //console.log(data)
             let templateData = null
@@ -3538,7 +3595,7 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
 
                             let Mode_ = 1
                             let IsRebate = true
-                            await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, item.templatetRebate, Client_)
+                            await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, item.funiltRebate, item.templatetRebate, Client_, Clientt_)
                             Chat_States[chatId].Is_MSG_Rebate = false
                         } else {
                             isTimerOn = null
@@ -3711,9 +3768,30 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                     Counter_Id_Clients_.push(Number(Clientt_.split('_')[1]))
                 }
 
-                const id = await generateUniqueId()
+                //const id = await generateUniqueId()
                 Client_Not_Ready = true
-                await Save_Client_(id, Clientt_)
+                //await Save_Client_(id, Clientt_)
+                await Save_Client_(Clientt_)
+                
+                const data = JSON.parse(fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8'))
+                const exists = data.some(item => item.Clientt_ && item.Clientt_ === Clientt_)
+                if (!exists) {
+                    const data2 = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+                    const templateData = JSON.parse(data2)
+                    if (templateData[0].S_Client_ !== Clientt_) {
+                        templateData[0].S_Client_ = Clientt_
+                        global.Client_ = templateData[0].S_Client_
+                        const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                        fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+                    }
+
+                    const data = JSON.parse(fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8'))
+                    const New_Selecteds_ = { Clientt_: `${Clientt_}`, F_Client_: '', T_Client_: '' }
+                    data.push(New_Selecteds_)
+                    const jsonString = '[\n' + data.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                    fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+                }
+
                 if (Is_New_Client_) {//esta aqui mas acho que n e necessario, o list directories deve ta retornando na ordem errada real ent me bugo tudo
                     const Directories_ = await List_Directories(`Clients_`)
                     //console.log(Directories_)
@@ -3839,7 +3917,16 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
         //message_create //debug
         Client_.on('message_create', async msg => {
             try {
-                if (Is_Mode_Test & Is_Test) {
+                console.log(Clientt_)
+                const { Selectedt, F_Client_, T_Client_ } = Get_Selecteds(4, Clientt_)
+                const data = fss.readFileSync(path.join(path.join(global.Directory_Dir_Funil, `${F_Client_}`), `Template=${T_Client_}.json`), 'utf8')
+                const templateData = JSON.parse(data)
+                
+                //console.log(templateData[0])
+                //console.log(templateData[0].ReceiveMSG & templateData[0].TestMode)
+                //console.log(templateData[0].ReceiveMSG)
+                //console.log(templateData[0].TestMode)
+                if (templateData[0].ReceiveMSG & templateData[0].TestMode) {
                     //console.log(`Test Mode is ON.`)
                     //if (global.Log_Callback) global.Log_Callback(`> ⚠️ <i><strong><span class="sobTextColor">(back)</span></strong></i>Test Mode is <strong>ON</strong>.`)
 
@@ -3992,7 +4079,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
                 
                     let Mode_ = 2
                     let IsRebate = false
-                    await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, null, Client_)
+                    await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, null, null, Client_, Clientt_)
                 }
             } catch (error) {
                 console.error(`> ❌ ERROR sending messages ${Clientt_}: ${error}`)
