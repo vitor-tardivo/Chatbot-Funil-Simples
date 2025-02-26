@@ -3596,7 +3596,7 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
                             let Mode_ = 1
                             let IsRebate = true
                             await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, item.funiltRebate, item.templatetRebate, Client_, Clientt_)
-                            /*if () {
+                            /*if (true) {
                                 return
                             }*/
                             Chat_States[chatId].Is_MSG_Rebate = false
