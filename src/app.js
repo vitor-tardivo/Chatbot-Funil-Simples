@@ -3596,6 +3596,9 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
                             let Mode_ = 1
                             let IsRebate = true
                             await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, item.funiltRebate, item.templatetRebate, Client_, Clientt_)
+                            /*if () {
+                                return
+                            }*/
                             Chat_States[chatId].Is_MSG_Rebate = false
                         } else {
                             isTimerOn = null
@@ -3917,7 +3920,7 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
         //message_create //debug
         Client_.on('message_create', async msg => {
             try {
-                console.log(Clientt_)
+                //console.log(Clientt_)
                 const { Selectedt, F_Client_, T_Client_ } = Get_Selecteds(4, Clientt_)
                 const data = fss.readFileSync(path.join(path.join(global.Directory_Dir_Funil, `${F_Client_}`), `Template=${T_Client_}.json`), 'utf8')
                 const templateData = JSON.parse(data)

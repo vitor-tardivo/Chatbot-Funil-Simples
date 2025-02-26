@@ -455,6 +455,10 @@ main {
 /*#divNewClient:hover {
     border: 2px solid var(--colorInteractionElements);
 }*/
+.divClients_ {
+    background-color: var(--colorBlack);
+    transition: var(--configTrasition03s);
+}
 #Clients_ {
     display: flex;
     flex-direction: row;
@@ -471,7 +475,7 @@ main {
     border-left: 0.5px solid var(--colorBlack);
     border-bottom: 1px solid var(--colorBlack);
     outline: 1px solid rgba(0, 0, 0, 0);
-    padding: 3px 17px 3px 17px;
+    padding: 3px 30px 3px 30px;
     box-sizing: border-box;
     white-space: nowrap;
     font-size: 1vw;
@@ -687,6 +691,38 @@ main {
     border-bottom: 1px solid var(--colorRed);
     /*outline: 1px solid var(--colorWhite);*/
 }
+.showSelected {
+    background-color: var(--colorBlack);
+    color: var(--colorWhite);
+    border-top: 1px solid var(--colorBlack);
+    border-right: 0.5px solid var(--colorBlack);
+    border-left: 0.5px solid var(--colorBlack);
+    border-bottom: 1px solid var(--colorBlack);
+    outline: 1px solid rgba(0, 0, 0, 0);
+    padding: 3px 17px 3px 17px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    font-size: 0.8vw;
+    font-family: var(--fontDisplay);
+    text-align: center;
+    cursor: help;
+    transition: var(--configTrasition03s);
+}
+.showSelected:hover {
+    border-top: 1px solid var(--colorInteractionElements);
+    border-right: 0.5px solid var(--colorInteractionElements);
+    border-left: 0.5px solid var(--colorInteractionElements);
+    border-bottom: 1px solid var(--colorInteractionElements);
+}
+.showSelectedFunil {
+    padding: 0px 20px 0px 0px;
+    transition: var(--configTrasition03s);
+}
+.showSelectedTemplate {
+    padding: 0px 0px 20px 0px;
+    transition: var(--configTrasition03s);
+}
+
 #newClient {
     display: inline;
     background-color: rgba(230, 230, 230, 0.5);
@@ -696,7 +732,7 @@ main {
     border-left: 0.5px solid var(--colorBlack);
     border-bottom: 6px solid var(--colorBlack);
     outline: 1px solid rgba(0, 0, 0, 0);
-    padding: 3px 17px 3px 17px;
+    padding: 18.5px 17px 18.5px 17px;
     box-sizing: border-box;
     white-space: nowrap;
     font-size: 1vw;

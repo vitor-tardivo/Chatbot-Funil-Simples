@@ -859,8 +859,6 @@ async function ready(Client_) {
             const Type_Selected = 1
             const response2 = await axios.get('/features/selecteds', { params: { Type_Selected } })
             const Selectedt = response2.data.Selectedt
-            const F_Client_ = response2.data.F_Client_
-            const T_Client_ = response2.data.T_Client_
             if (Selectedt === '') {
                 await selectClient_(Directories_[0])
             } else {
@@ -1703,6 +1701,19 @@ async function selectTemplate_(Templatet_) {
             //capList.innerHTML = `<stronger>${Templatet_}</stronger>`
 
             Template_ = Templatet_
+
+            const abbrShowSelected = document.querySelector(`#iabbrshowselected-${Client_}`)
+            const showSelectedFunil = document.querySelector(`#ishowSelectedFunil-${Client_}`)
+            const showSelectedTemplate = document.querySelector(`#ishowSelectedTemplate-${Client_}`)
+
+            const Type_Selected = 4
+            const response = await axios.get('/features/selecteds', { params: { Type_Selected, Client_ } }) 
+            const F_Client_ = response.data.F_Client_
+            const T_Client_ = response.data.T_Client_
+
+            abbrShowSelected.title = `Selecionado - Funil: ${F_Client_} Template: ${T_Client_}`
+            showSelectedFunil.textContent = `SF: ${F_Client_}`
+            showSelectedTemplate.textContent = `ST: ${T_Client_}`
 
             status.innerHTML = `Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>`
             displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>.`)
@@ -3146,6 +3157,19 @@ async function selectFunil_(Funilt_, isFromButton) {
             //capList.innerHTML = `<stronger>${Funilt_}</stronger>`
             
             Funil_ = Funilt_
+
+            const abbrShowSelected = document.querySelector(`#iabbrshowselected-${Client_}`)
+            const showSelectedFunil = document.querySelector(`#ishowSelectedFunil-${Client_}`)
+            const showSelectedTemplate = document.querySelector(`#ishowSelectedTemplate-${Client_}`)
+
+            const Type_Selected = 4
+            const response = await axios.get('/features/selecteds', { params: { Type_Selected, Client_ } }) 
+            const F_Client_ = response.data.F_Client_
+            const T_Client_ = response.data.T_Client_
+
+            abbrShowSelected.title = `Selecionado - Funil: ${F_Client_} Template: ${T_Client_}`
+            showSelectedFunil.textContent = `SF: ${F_Client_}`
+            showSelectedTemplate.textContent = `ST: ${T_Client_}`
 
             status.innerHTML = `Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>`
             displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>.`)
@@ -6309,7 +6333,19 @@ async function DestroyClient_(Clientt_, isButton) {
                 return  
             } 
             if (Sucess) {
-                const clientHTMLReinitialize = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
+                const Type_Selected = 4
+                const response = await axios.get('/features/selecteds', { params: { Type_Selected, Clientt_ } }) 
+                const F_Client_ = response.data.F_Client_
+                const T_Client_ = response.data.T_Client_
+
+                const clientHTMLReinitialize = `\n<div class="divClients_" id="${Clientt_}">
+                                             <div>
+                                                 \n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n
+                                             </div>
+                                             <div class="showSelected">
+                                                 <abbr title="Selecionado - Funil: ${F_Client_} Template: ${T_Client_}" id="iabbrshowselected-${Clientt_}"><span class="showSelectedFunil" id="ishowSelectedFunil-${Clientt_}">SF: ${F_Client_}</span><span class="showSelectedTemplate" id="ishowSelectedTemplate-${Clientt_}">ST: ${T_Client_}</span></abbr>
+                                             </div>
+                                           </div>\n`
                 document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLReinitialize
 
                 status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Desligado</strong>!`
@@ -6404,7 +6440,19 @@ async function ReinitializeClient_(Clientt_) {
             return  
         } 
         if (Sucess) {
-            const clientHTMLDestroy = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}', true)"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
+            const Type_Selected = 4
+            const response = await axios.get('/features/selecteds', { params: { Type_Selected, Clientt_ } }) 
+            const F_Client_ = response.data.F_Client_
+            const T_Client_ = response.data.T_Client_
+
+            const clientHTMLDestroy = `\n<div class="divClients_" id="${Clientt_}">
+                                        <div>
+                                            \n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}', true)"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n
+                                        </div>
+                                        <div class="showSelected">
+                                            <abbr title="Selecionado - Funil: ${F_Client_} Template: ${T_Client_}" id="iabbrshowselected-${Clientt_}"><span class="showSelectedFunil" id="ishowSelectedFunil">SF: ${F_Client_}</span><span class="showSelectedTemplate-${Clientt_}" id="ishowSelectedTemplate-${Clientt_}">ST: ${T_Client_}</span></abbr>
+                                        </div>
+                                      </div>\n`
             document.querySelector(`#${Clientt_}`).innerHTML = clientHTMLDestroy
 
             status.innerHTML = `Client_ <strong>${Clientt_}</strong> foi <strong>Ligado</strong>!`
@@ -6437,6 +6485,13 @@ async function selectClient_(Clientt_) {
 
         const status = document.querySelector('#status')
 
+        const abbrShowSelected = document.querySelector(`#iabbrshowselected-${Clientt_}`)
+        console.log(abbrShowSelected)
+        const showSelectedFunil = document.querySelector(`#ishowSelectedFunil-${Clientt_}`)
+        const showSelectedTemplate = document.querySelector(`#ishowSelectedTemplate-${Clientt_}`)
+        console.log(showSelectedFunil)
+        console.log(showSelectedTemplate)
+
         const divClientt_ = document.querySelector(`#${Clientt_}`)
         const capList = document.querySelector(`caption`)
 
@@ -6468,10 +6523,13 @@ async function selectClient_(Clientt_) {
             Client_ = Clientt_
 
             const Type_Selected = 4
-            const response2 = await axios.get('/features/selecteds', { params: { Type_Selected } })
-            const Selectedt = response2.data.Selectedt 
+            const response2 = await axios.get('/features/selecteds', { params: { Type_Selected } }) 
             const F_Client_ = response2.data.F_Client_
             const T_Client_ = response2.data.T_Client_
+
+            abbrShowSelected.title = `Selecionado - Funil: ${F_Client_} Template: ${T_Client_}`
+            showSelectedFunil.textContent = `SF: ${F_Client_}`
+            showSelectedTemplate.textContent = `ST: ${T_Client_}`
 
             if (F_Client_ === '') {
                 await selectFunil_(Funil_, false)
@@ -7135,10 +7193,22 @@ async function insertClient_Front(Clientt_, isActive, isNew) {
             idNumberClient_DivAdjacent = response.data.idnumberclient_divadjacent
             isFirstUndefined = response.data.isfirstundefined
         }
+
+        const Type_Selected = 4
+        const response = await axios.get('/features/selecteds', { params: { Type_Selected, Clientt_ } }) 
+        const F_Client_ = response.data.F_Client_
+        const T_Client_ = response.data.T_Client_
     
         const divAdjacent = document.querySelector(`#${idNumberClient_DivAdjacent}`)
         if (isActive) {
-            const clientHTMlDestroy = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}', true)"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
+            const clientHTMlDestroy = `\n<div class="divClients_" id="${Clientt_}">
+                                        <div>
+                                            \n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Desligar ${Clientt_}" id="abbrDestroy-${Clientt_}"><button class="Clients_Destroy" id="Destroy-${Clientt_}" onclick="DestroyClient_('${Clientt_}', true)"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n
+                                        </div>
+                                        <div class="showSelected">
+                                            <abbr title="Selecionado - Funil: ${F_Client_} Template: ${T_Client_}" id="iabbrshowselected-${Clientt_}"><span class="showSelectedFunil" id="ishowSelectedFunil-${Clientt_}">SF: ${F_Client_}</span><span class="showSelectedTemplate" id="ishowSelectedTemplate-${Clientt_}">ST: ${T_Client_}</span></abbr>
+                                        </div>
+                                      </div>\n`
             if (divAdjacent) {
                 if (isFirstUndefined) {
                     divAdjacent.insertAdjacentHTML('beforebegin', clientHTMlDestroy)
@@ -7149,7 +7219,14 @@ async function insertClient_Front(Clientt_, isActive, isNew) {
                 ClientsDiv.innerHTML += clientHTMlDestroy
             }
         } else {
-            const clientHTMLReinitialize = `\n<div class="divClients_" id="${Clientt_}">\n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n</div>\n`
+            const clientHTMLReinitialize = `\n<div class="divClients_" id="${Clientt_}">
+                                             <div>
+                                                 \n<abbr title="Client_ ${Clientt_}" id="abbrselect-${Clientt_}"><button class="Clients_" id="select-${Clientt_}" onclick="selectClient_('${Clientt_}')">${Clientt_}</button></abbr><abbr title="Renomear ${Clientt_}" id="abbrRename-${Clientt_}"><button class="Clients_Rename" id="Rename-${Clientt_}" onclick="RenameClient_('${Clientt_}')"><</button></abbr><abbr title="Ligar ${Clientt_}" id="abbrReinitialize-${Clientt_}"><button class="Clients_Reinitialize" id="Reinitialize-${Clientt_}" onclick="ReinitializeClient_('${Clientt_}')"><</button></abbr><abbr title="Apagar ${Clientt_}" id="abbrerase-${Clientt_}"><button class="Clients_Erase" id="erase-${Clientt_}" onclick="eraseClient_('${Clientt_}')"><</button></abbr>\n
+                                             </div>
+                                             <div class="showSelected">
+                                                 <abbr title="Selecionado - Funil: ${F_Client_} Template: ${T_Client_}" id="iabbrshowselected-${Clientt_}"><span class="showSelectedFunil" id="ishowSelectedFunil-${Clientt_}">SF: ${F_Client_}</span><span class="showSelectedTemplate" id="ishowSelectedTemplate-${Clientt_}">ST: ${T_Client_}</span></abbr>
+                                             </div>
+                                           </div>\n`
             if (divAdjacent) {
                 if (isFirstUndefined) {
                     divAdjacent.insertAdjacentHTML('beforebegin', clientHTMLReinitialize)
