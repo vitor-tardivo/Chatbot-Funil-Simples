@@ -696,9 +696,9 @@ async function Insert_Template_Front() {
     }
 }
 
-async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData) {
+async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData) {
     try {
-        //console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType })
+        //console.log('na funcao: ', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType })
         //console.log('arquivo na funcao: ', fileData)
 
         //let Data_ = [{  }]
@@ -836,6 +836,10 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                     break;
                 case 4:
                     switch (MSGType) {
+                        case 'functions':
+                            existingItem.stateContinue = stateContinue     
+                            isDifferent = true
+                            break;
                         case 'delay':
                             if (delayType === 'input') {
                                 if (existingItem.delayData !== delayData) {
@@ -957,6 +961,7 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                             newItem.typeMSG = typeMSG
                             newItem.delayType = delayType
                             newItem.delayData = delayData
+                            newItem.stateContinue = stateContinue
                             newItem.funiltRebate = funiltRebate
                             newItem.templatetRebate = templatetRebate
                             break;
@@ -964,6 +969,7 @@ async function Send_To_Funil(typeMSG, MSGType, positionId, delayType, delayData,
                             newItem.typeMSG = typeMSG
                             newItem.delayType = delayType
                             newItem.delayData = delayData
+                            newItem.stateContinue = stateContinue
                             newItem.funiltRebate = funiltRebate
                             newItem.templatetRebate = templatetRebate
                             break;
@@ -3596,9 +3602,6 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
                             let Mode_ = 1
                             let IsRebate = true
                             await Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_, Mode_, IsRebate, item.funiltRebate, item.templatetRebate, Client_, Clientt_)
-                            /*if (true) {
-                                return
-                            }*/
                             Chat_States[chatId].Is_MSG_Rebate = false
                         } else {
                             isTimerOn = null
@@ -3607,6 +3610,37 @@ async function Funil_(msg, chat, chatId, name, Chat_Type, Chat_Action, Content_,
 
                         console.log(`> ✅ MSG_${i+1}_ Finished.`)
                         if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>MSG_${i+1}_</strong> <strong>Finished</strong>.`)
+                        
+                        if (!item.stateContinue) {
+                            data = null
+                            templateData = null
+                            positions = null
+
+                            TimeType = null
+
+                            console.log(`> ✅ ALL MSGs Finished.`)
+                            if (global.Log_Callback) global.Log_Callback(`> ✅ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>ALL</strong> MSGs <strong>Finished</strong>.`)
+
+                            
+                            if (Is_Schedule) { //&& Is_New) {
+                                //Is_New = false  
+                                console.log(`> ⏲️  Timer STARTING for ${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule} to ERASE ChatData for ${chatId} from ${global.File_Data_Chat_Data}...`)
+                                if (global.Log_Callback) global.Log_Callback(`> ⏲️ <i><strong><span class="sobTextColor">(back)</span></strong></i><strong>Timer</strong> <strong>STARTING</strong> for <strong>${timer_Duration_Schedule / timer_Duration_Schedule_Type} ${timer_Duration_Type_Schedule}</strong> to <strong>ERASE</strong> ChatData for <strong>${chatId}</strong> from <strong>${global.File_Data_Chat_Data}</strong>...`)
+                                
+                                await Schedule_Erase_Chat_Data(chatId, timer_Duration_Schedule, global.Client_)
+                            }
+
+                            if (!Chat_States[chatId].Is_MSG_Rebate) {
+                                //console.log(Chat_States)
+                                Chat_States[chatId].Is_MSG_Initiate = true
+                                Chat_States[chatId].Is_MSG_Started = false
+                                //console.log(Chat_States)
+                                delete Chat_States[chatId]
+                                //console.log(Chat_States)
+                            }
+                            
+                            return
+                        }
                         break;
                 }
             }

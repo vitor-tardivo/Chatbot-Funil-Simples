@@ -433,6 +433,10 @@
                                                     <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
 
                                                         <div class="rebateTypeMSG" id="irebateTypeMSG">
+
+                                                            <div class="divRebateFunctions" id="idivRebateFunctions">
+                                                                <abbr title="StateContinue STATUS: null" id="iabbrOnOffStateContinue"><button class="functionsDivStart OnOffStateContinue" id="iOnOffStateContinue" onclick="sendToFunil(this, 4, 'continue', this)">-O</button></abbr>
+                                                            </div>
                                                            
                                                             <div class="divDelayRebate" id="idivDelayRebate">
                                                                 <abbr title="Determine um valor para o tempo de Delay do Timer"><span class="delayRebateTitle"><strong>TIMER-Rebate:</strong></span><label for="idelayRebateTime" class="delayRebateLabelTime">Tempo-<input type="number" class="delayRebateTime" id="idelayRebateTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 4, 'input', null)" placeholder="00000" value="10"></label></abbr> 

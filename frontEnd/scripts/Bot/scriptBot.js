@@ -1706,14 +1706,16 @@ async function selectTemplate_(Templatet_) {
             const showSelectedFunil = document.querySelector(`#ishowSelectedFunil-${Client_}`)
             const showSelectedTemplate = document.querySelector(`#ishowSelectedTemplate-${Client_}`)
 
-            const Type_Selected = 4
-            const response = await axios.get('/features/selecteds', { params: { Type_Selected, Client_ } }) 
-            const F_Client_ = response.data.F_Client_
-            const T_Client_ = response.data.T_Client_
-
-            abbrShowSelected.title = `Selecionado - Funil: ${F_Client_} Template: ${T_Client_}`
-            showSelectedFunil.textContent = `SF: ${F_Client_}`
-            showSelectedTemplate.textContent = `ST: ${T_Client_}`
+            if (showSelectedTemplate) {
+                const Type_Selected = 4
+                const response = await axios.get('/features/selecteds', { params: { Type_Selected, Client_ } }) 
+                const F_Client_ = response.data.F_Client_
+                const T_Client_ = response.data.T_Client_
+                
+                abbrShowSelected.title = `Selecionado - Funil: ${F_Client_} Template: ${T_Client_}`
+                showSelectedFunil.textContent = `SF: ${F_Client_}`
+                showSelectedTemplate.textContent = `ST: ${T_Client_}`
+            }
 
             status.innerHTML = `Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>`
             displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> <strong>Selecionado</strong>.`)
@@ -1949,34 +1951,34 @@ async function selectTemplate_(Templatet_) {
                         case 1:
                             const MSGHTMlDelay = `<div class="conteinerFunilMSG" id="conteinerFunilMSG${item.positionId}">
 
-                                        <div class="divInfoPositionMSG" id="idivInfoPositionMSG${item.positionId}">
-                                            <label title="Selecione esta posição (${item.positionId})" class="divSelectionPositionMSG">
-                                                <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG${item.positionId}" onchange="selectionPositionMSG(this, 1)">
-                                                <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
-                                            </label>
-                                            <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
-                                            <p class="positionMSG" id="ipositionMSG">(${item.positionId})</p>
+                                            <div class="divInfoPositionMSG" id="idivInfoPositionMSG${item.positionId}">
+                                                <label title="Selecione esta posição (${item.positionId})" class="divSelectionPositionMSG">
+                                                    <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG${item.positionId}" onchange="selectionPositionMSG(this, 1)">
+                                                    <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                                </label>
+                                                <h3 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h3>
+                                                <p class="positionMSG" id="ipositionMSG">(${item.positionId})</p>
 
-                                            <button title="Deletar posição MSG (${item.positionId})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 1)">D</button>
-                                        </div>
-
-                                        <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
-
-                                            <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
-                                                <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
-                                            
-                                                <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
-                                                    <option value="none" selected>Nenhum</option>
-                                                    <option value="seconds">Segundos</option>
-                                                    <option value="minutes">Minutos</option>
-                                                    <option value="hours">Horas</option>
-                                                    <option value="days">Dias</option>
-                                                </select>
+                                                <button title="Deletar posição MSG (${item.positionId})" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 1)">D</button>
                                             </div>
 
-                                        </div>
+                                            <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
 
-                                    </div>`
+                                                <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
+                                                    <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
+                                                
+                                                    <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
+                                                        <option value="none" selected>Nenhum</option>
+                                                        <option value="seconds">Segundos</option>
+                                                        <option value="minutes">Minutos</option>
+                                                        <option value="hours">Horas</option>
+                                                        <option value="days">Dias</option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+
+                                        </div>`
 
                             divFunil.insertAdjacentHTML('beforeend', MSGHTMlDelay)
 
@@ -2213,7 +2215,12 @@ async function selectTemplate_(Templatet_) {
 
                                             <div class="rebateTypeMSG" id="irebateTypeMSG">
                                                 
+                                                <div class="divRebateFunctions" id="idivRebateFunctions">
+                                                    <abbr title="StateContinue STATUS: null" id="iabbrOnOffStateContinue"><button class="functionsDivStart OnOffStateContinue" id="iOnOffStateContinue" onclick="sendToFunil(this, 4, 'continue', this)">-O</button></abbr>
+                                                </div>
+                                                
                                                 <div class="divDelayRebate" id="idivDelayRebate">
+
                                                     <abbr title="Determine um valor para o tempo de Delay do Timer"><span class="delayRebateTitle"><strong>TIMER-Rebate:</strong></span><label for="idelayRebateTime" class="delayRebateLabelTime">Tempo-<input type="number" class="delayRebateTime" id="idelayRebateTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 4, 'input', null)" placeholder="00000"></label></abbr> 
                                                 
                                                     <select title="Selecione um tipo de duração do Timer" class="delayRebateSelect" id="idelayRebateSelect" oninput="sendToFunil(this, 4, this, null)">
@@ -2242,6 +2249,21 @@ async function selectTemplate_(Templatet_) {
                                     </div>`
 
                             divFunil.insertAdjacentHTML('beforeend', MSGHTMlRebate)
+
+                            const buttonStateContinue = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iOnOffStateContinue`)
+                            const abbrButtonStateContinue = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#iabbrOnOffStateContinue`)
+                            if (item.stateContinue) {
+                                abbrButtonStateContinue.title = 'StateContinue STATUS: on'
+                                buttonStateContinue.textContent = '-'
+                                buttonStateContinue.style.cssText =
+                                `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
+                            } else {
+                                abbrButtonStateContinue.title = 'StateContinue STATUS: off'
+                                buttonStateContinue.textContent = 'o'
+                                buttonStateContinue.style.cssText =
+                                    `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
+                            }
+
 
                             const selectDelayRebate = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#idelayRebateSelect`)
                             switch (item.delayType) {
@@ -2289,6 +2311,7 @@ async function selectTemplate_(Templatet_) {
                             //displayOnConsole(item.funiltRebate)
                             funilDelayRebate.value = item.funiltRebate//
 
+                            const templateDelayRebate = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itemplateRebateSelect`)
                             if (item.funiltRebate !== 'none') {
                                 const dir_Path = `Funil\\${item.funiltRebate}`
                                 //displayOnConsole(dir_Path)
@@ -2300,7 +2323,6 @@ async function selectTemplate_(Templatet_) {
                                     const match = Directories[i].match(/_(\d+_[^_]+)_/)
                                     Templatets_.push(match[0])
                                 }
-                                const templateDelayRebate = document.querySelector(`#conteinerFunilMSG${item.positionId}`).querySelector(`#itemplateRebateSelect`)
                                 //displayOnConsole(Templatets_)
                                 Templatets_.forEach(template => {
                                     let option = document.createElement("option")
@@ -3162,14 +3184,16 @@ async function selectFunil_(Funilt_, isFromButton) {
             const showSelectedFunil = document.querySelector(`#ishowSelectedFunil-${Client_}`)
             const showSelectedTemplate = document.querySelector(`#ishowSelectedTemplate-${Client_}`)
 
-            const Type_Selected = 4
-            const response = await axios.get('/features/selecteds', { params: { Type_Selected, Client_ } }) 
-            const F_Client_ = response.data.F_Client_
-            const T_Client_ = response.data.T_Client_
+            if (showSelectedFunil) {   
+                const Type_Selected = 4
+                const response = await axios.get('/features/selecteds', { params: { Type_Selected, Client_ } }) 
+                const F_Client_ = response.data.F_Client_
+                const T_Client_ = response.data.T_Client_
 
-            abbrShowSelected.title = `Selecionado - Funil: ${F_Client_} Template: ${T_Client_}`
-            showSelectedFunil.textContent = `SF: ${F_Client_}`
-            showSelectedTemplate.textContent = `ST: ${T_Client_}`
+                abbrShowSelected.title = `Selecionado - Funil: ${F_Client_} Template: ${T_Client_}`
+                showSelectedFunil.textContent = `SF: ${F_Client_}`
+                showSelectedTemplate.textContent = `ST: ${T_Client_}`
+            }
 
             status.innerHTML = `Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>`
             displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> <strong>Selecionado</strong>.`)
@@ -3790,6 +3814,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
         let positionId = null
         let delayType = null
         let delayData = null
+        let stateContinue = null
         let funiltRebate = null
         let templatetRebate = null
         let textareaData = null
@@ -3811,7 +3836,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         MSGType = 'delay'
                         delayType = typeTypeMSG
                         delayData = inputDelayMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         const selectDelayMSG = divElement.querySelector(`#idelayMSGSelect`)
                         if (inputDelayMSG.value >= 1) {
@@ -3830,7 +3855,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -3841,7 +3866,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -3852,7 +3877,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -3863,7 +3888,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputDelayMSG.value || inputDelayMSG.value === 0) {
                             inputDelayMSG.value = 1
@@ -3874,7 +3899,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (inputDelayMSG.value !== '') {
                             inputDelayMSG.value = ''
@@ -3898,7 +3923,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             MSGType = 'delay'
                             delayType = typeTypeMSG
                             delayData = inputDelayText.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             const selectDelayText = divElement.querySelector(`#idelayTextSelect`)
                             if (inputDelayText.value >= 1) {
@@ -3917,7 +3942,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -3928,7 +3953,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -3939,7 +3964,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -3952,7 +3977,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             if (!inputDelayText.value || inputDelayText.value === 0) {
                                 inputDelayText.value = 1
@@ -3963,7 +3988,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(`2=${typeTypeMSG.value}`)
                             MSGType = 'delay'
                             delayType = typeTypeMSG.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                             if (inputDelayText.value !== '') {
                                 inputDelayText.value = ''
@@ -3977,7 +4002,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                                     //displayOnConsole(data.value)
                                     MSGType = 'textarea'
                                     textareaData = data.value
-                                    await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                                    await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                                 }
                             break;
                     }
@@ -3997,7 +4022,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         MSGType = 'delay'
                         delayType = typeTypeMSG
                         delayData = inputDelayTextAudio.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         const selectDelayTextAudio = divElement.querySelector(`#idelayTextAudioSelect`)
                         if (inputDelayTextAudio.value >= 1) {
@@ -4016,7 +4041,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`3=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                             inputDelayTextAudio.value = 1
@@ -4027,7 +4052,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`3=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                             inputDelayTextAudio.value = 1
@@ -4038,7 +4063,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`3=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                             inputDelayTextAudio.value = 1
@@ -4049,7 +4074,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`3=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (!inputDelayTextAudio.value || inputDelayTextAudio.value === 0) {
                             inputDelayTextAudio.value = 1
@@ -4060,7 +4085,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`3=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (inputDelayTextAudio.value !== '') {
                             inputDelayTextAudio.value = ''
@@ -4074,7 +4099,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                             //displayOnConsole(data.value || '')
                             MSGType = 'textarea'
                             textareaData = data.value
-                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                            await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         }
                         break;
                     default:
@@ -4114,32 +4139,43 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                 positionId = Number(divElement.parentElement.parentElement.id.match(/\d+/g))
 
                 switch (typeTypeMSG.value || typeTypeMSG) {
+                    case 'continue':
+                        //displayOnConsole(`1=${typeTypeMSG}:`)
+                        //displayOnConsole(inputDelayMSG.value)
+                        MSGType = 'functions'
+
+                        const buttonStateContinue = divElement.querySelector(`#iOnOffStateContinue`)
+                        const abbrButtonStateContinue = divElement.querySelector(`#iabbrOnOffStateContinue`)
+                        if (getComputedStyle(data).backgroundColor === 'rgb(66, 209, 66)') {
+                            stateContinue = false
+                            
+                            abbrButtonStateContinue.title = 'StateContinue STATUS: off'
+                            buttonStateContinue.textContent = 'o'
+                            buttonStateContinue.style.cssText =
+                            `background-color: var(--colorRed); color: var(--colorBlack); cursor: pointer;`
+                        } else if (getComputedStyle(data).backgroundColor === 'rgb(207, 44, 44)') {
+                            stateContinue = true
+                            
+                            abbrButtonStateContinue.title = 'StateContinue STATUS: on'
+                            buttonStateContinue.textContent = '-'
+                            buttonStateContinue.style.cssText =
+                                `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
+                        }
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        break;
                     case 'input':
                         //displayOnConsole(`1=${typeTypeMSG}:`)
                         //displayOnConsole(inputDelayMSG.value)
                         MSGType = 'delay'
                         delayType = typeTypeMSG
                         delayData = inputRebateMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
-
-                        const selectDelayRebateMSG = divElement.querySelector(`#idelayRebateSelect`)
-                        if (inputRebateMSG.value >= 1) {
-                            if (selectDelayRebateMSG.selectedIndex === 0) {
-                                selectDelayRebateMSG.selectedIndex = 1
-                                selectDelayRebateMSG.dispatchEvent(new Event('input'))
-                            }
-                        } else {
-                            if (selectDelayRebateMSG.selectedIndex !== 0) {
-                                selectDelayRebateMSG.selectedIndex = 0
-                                selectDelayRebateMSG.dispatchEvent(new Event('input'))
-                            }
-                        }
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         break;
                     case 'seconds':
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputRebateMSG.value || inputRebateMSG.value === 0) {
                             inputRebateMSG.value = 1
@@ -4150,7 +4186,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputRebateMSG.value || inputRebateMSG.value === 0) {
                             inputRebateMSG.value = 1
@@ -4161,7 +4197,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputRebateMSG.value || inputRebateMSG.value === 0) {
                             inputRebateMSG.value = 1
@@ -4172,7 +4208,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         
                         if (!inputRebateMSG.value || inputRebateMSG.value === 0) {
                             inputRebateMSG.value = 1
@@ -4183,7 +4219,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'delay'
                         delayType = typeTypeMSG.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         if (inputRebateMSG.value !== '') {
                             inputRebateMSG.value = ''
@@ -4194,7 +4230,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'rebateFunil'
                         funiltRebate = data.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                         const templateDelayRebate = divElement.querySelector(`#itemplateRebateSelect`)
                         if (data.value !== 'none') {
@@ -4231,7 +4267,7 @@ async function sendToFunil(bridgeElement, typeMSG, typeTypeMSG, data) {//peda o 
                         //displayOnConsole(`1=${typeTypeMSG.value}`)
                         MSGType = 'rebateTemplate'
                         templatetRebate = data.value
-                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, funiltRebate, templatetRebate, textareaData, fileType, fileData })
+                        await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                         break;
                 }
                 break;
@@ -5715,6 +5751,8 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
         let textareaData = null
         let fileType = null
         let fileData = null
+        let stateContinue = null
+        let funiltRebate = null
         let templatetRebate = null
 
         await newTypeMSGShown()
@@ -5785,7 +5823,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                 positionId = Id_Position_MSG
                 delayType = 'none'
                 delayData = ''
-                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                 conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
@@ -5860,7 +5898,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                 delayType = 'none'
                 delayData = ''
                 textareaData = ''
-                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
                 
                 conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
@@ -5950,7 +5988,7 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                 textareaData = ''
                 fileType = ''
                 fileData = ''
-                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                 conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
@@ -5979,6 +6017,10 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                                         <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
 
                                             <div class="rebateTypeMSG" id="irebateTypeMSG">
+
+                                                <div class="divRebateFunctions" id="idivRebateFunctions">
+                                                    <abbr title="StateContinue STATUS: null" id="iabbrOnOffStateContinue"><button class="functionsDivStart OnOffStateContinue" id="iOnOffStateContinue" onclick="sendToFunil(this, 4, 'continue', this)">-O</button></abbr>
+                                                </div>
 
                                                 <div class="divDelayRebate" id="idivDelayRebate">
                                                     <abbr title="Determine um valor para o tempo de Delay do Timer"><span class="delayRebateTitle"><strong>TIMER-Rebate:</strong></span><label for="idelayRebateTime" class="delayRebateLabelTime">Tempo-<input type="number" class="delayRebateTime" id="idelayRebateTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 4, 'input', null)" placeholder="00000" value="10"></label></abbr> 
@@ -6047,14 +6089,20 @@ async function newTypeMSG(type) {//fazer aparecer invisivel e usar o id criado n
                     option.textContent = template
                     funilDelayRebate.appendChild(option)
                 })
+                const buttonStateContinue = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`).querySelector(`#iOnOffStateContinue`)
+                buttonStateContinue.textContent = '-'
+                buttonStateContinue.style.cssText =
+                    `background-color: var(--colorGreen); color: var(--colorBlack); cursor: pointer;`
 
                 typeMSG = type
                 MSGType = 'rebateFunil'
                 positionId = Id_Position_MSG
                 delayType = 'seconds'
                 delayData = '10'
+                funiltRebate = 'none'
                 templatetRebate = 'none'
-                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, templatetRebate, textareaData, fileType, fileData })
+                stateContinue = true
+                await axios.put('/funil/send-data', { typeMSG, MSGType, positionId, delayType, delayData, stateContinue, funiltRebate, templatetRebate, textareaData, fileType, fileData })
 
                 conteinerMSG = document.querySelector(`#conteinerFunilMSG${Id_Position_MSG}`)
                 conteinerMSG.style.cssText =
@@ -6486,11 +6534,11 @@ async function selectClient_(Clientt_) {
         const status = document.querySelector('#status')
 
         const abbrShowSelected = document.querySelector(`#iabbrshowselected-${Clientt_}`)
-        console.log(abbrShowSelected)
+        //console.log(abbrShowSelected)
         const showSelectedFunil = document.querySelector(`#ishowSelectedFunil-${Clientt_}`)
         const showSelectedTemplate = document.querySelector(`#ishowSelectedTemplate-${Clientt_}`)
-        console.log(showSelectedFunil)
-        console.log(showSelectedTemplate)
+        //console.log(showSelectedFunil)
+        //console.log(showSelectedTemplate)
 
         const divClientt_ = document.querySelector(`#${Clientt_}`)
         const capList = document.querySelector(`caption`)
