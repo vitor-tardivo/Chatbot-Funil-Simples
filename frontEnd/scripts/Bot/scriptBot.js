@@ -1579,6 +1579,13 @@ async function eraseTemplate_(Templatet_, Funilt_) {
             if (Sucess) {
                 const divTemplatet_ = document.querySelector(`#${Templatet_}`)
                 divTemplatet_.remove()
+
+                const showSelectedTemplate = document.querySelector(`#ishowSelectedTemplate-${Client_}`)
+                if (showSelectedTemplate.textContent.slice(4) === Templatet_) {
+                    showSelectedTemplate.textContent = `ST: `
+                }
+
+                Template_ = null
                 
                 status.innerHTML = `Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`
                 displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Template_ <strong>${Templatet_}</strong> foi <strong>Apagado</strong>!`)
@@ -1677,10 +1684,12 @@ async function selectTemplate_(Templatet_) {
         const divTemplatet_ = document.querySelector(`#${Templatet_}`)
         const capList = document.querySelector(`caption`)
 
-        const divTemplatet_Temp = document.querySelector(`#${Template_}`)
-        if (divTemplatet_Temp !== null) {
-            divTemplatet_Temp.style.cssText =
-                'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+        if (Template_) {
+            const divTemplatet_Temp = document.querySelector(`#${Template_}`)
+            if (divTemplatet_Temp !== null) {
+                divTemplatet_Temp.style.cssText =
+                    'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+            }
         }
         if (divTemplatet_ === null) {
             status.innerHTML = `Template_ <strong>${Templatet_}</strong> <strong>Não</strong> existe!`
@@ -3060,6 +3069,13 @@ async function eraseFunil_(Funilt_) {
             if (Sucess) {
                 const divFunilt_ = document.querySelector(`#${Funilt_}`)
                 divFunilt_.remove()
+
+                const showSelectedFunil = document.querySelector(`#ishowSelectedFunil-${Client_}`)
+                if (showSelectedFunil.textContent.slice(4) === Funilt_) {
+                    showSelectedFunil.textContent = `ST: `
+                }
+
+                Funil_ = null
                 
                 status.innerHTML = `Funil_ <strong>${Funilt_}</strong> foi <strong>Apagado</strong>!`
                 displayOnConsole(`> ℹ️ <i><strong><span class="sobTextColor">(status)</span></strong></i>Funil_ <strong>${Funilt_}</strong> foi <strong>Apagado</strong>!`)
@@ -3155,10 +3171,12 @@ async function selectFunil_(Funilt_, isFromButton) {
         const divFunilt_ = document.querySelector(`#${Funilt_}`)
         const capList = document.querySelector(`caption`)
 
-        const divFunilt_Temp = document.querySelector(`#${Funil_}`)
-        if (divFunilt_Temp !== null) {
-            divFunilt_Temp.style.cssText =
-                'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+        if (Funil_) {
+            const divFunilt_Temp = document.querySelector(`#${Funil_}`)
+            if (divFunilt_Temp !== null) {
+                divFunilt_Temp.style.cssText =
+                    'border-top: 5px solid var(--colorBlack); border-bottom: 5px solid var(--colorBlack); transition: var(--configTrasition03s);'
+            }
         }
         if (divFunilt_ === null) {
             status.innerHTML = `Funil_ <strong>${Funilt_}</strong> <strong>Não</strong> existe!`
@@ -6543,7 +6561,7 @@ async function selectClient_(Clientt_) {
         const divClientt_ = document.querySelector(`#${Clientt_}`)
         const capList = document.querySelector(`caption`)
 
-        if (Client_ !== '') {   
+        if (Client_) {   
             const divClientt_Temp = document.querySelector(`#${Client_}`)
             if (divClientt_Temp !== null) {
                 divClientt_Temp.style.cssText =
@@ -6579,16 +6597,26 @@ async function selectClient_(Clientt_) {
             showSelectedFunil.textContent = `SF: ${F_Client_}`
             showSelectedTemplate.textContent = `ST: ${T_Client_}`
 
-            if (F_Client_ === '') {
-                await selectFunil_(Funil_, false)
-            } else {
-                await selectFunil_(F_Client_, false)
-            }
+            const dir_Path = `Funil`
+            const response = await axios.get('/functions/dir', { params: { dir_Path } })
+            const Directories = response.data.dirs
+            if (Directories.length > 0) {
+                if (F_Client_ === '') {
+                    await selectFunil_(Funil_, false)
+                } else {
+                    await selectFunil_(F_Client_, false)
+                }
 
-            if (T_Client_ === '') {
-                await selectTemplate_(Template_)
-            } else {
-                await selectTemplate_(T_Client_)
+                const dir_Path = `Funil\\${Funil_}`
+                const response = await axios.get('/functions/dir', { params: { dir_Path } })
+                const Directories = response.data.dirs
+                if (Directories.length > 0) {   
+                    if (T_Client_ === '') {
+                        await selectTemplate_(Template_)
+                    } else {
+                        await selectTemplate_(T_Client_)
+                    }
+                }
             }
 
             document.title = `${Clientt_}`

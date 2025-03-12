@@ -475,9 +475,13 @@ main {
     border-left: 0.5px solid var(--colorBlack);
     border-bottom: 1px solid var(--colorBlack);
     outline: 1px solid rgba(0, 0, 0, 0);
-    padding: 3px 30px 3px 30px;
+    padding: 3px 0px 3px 0px;
     box-sizing: border-box;
     white-space: nowrap;
+    word-break: break-word;
+    overflow-y: hidden;
+    overflow-x: auto;
+    width: 100px;
     font-size: 1vw;
     cursor: pointer;
     font-weight: bolder;
@@ -699,9 +703,13 @@ main {
     border-left: 0.5px solid var(--colorBlack);
     border-bottom: 1px solid var(--colorBlack);
     outline: 1px solid rgba(0, 0, 0, 0);
-    padding: 3px 17px 3px 17px;
+    padding: 3px 0px 3px 0px;
     box-sizing: border-box;
     white-space: nowrap;
+    word-break: break-word;
+    overflow-y: hidden;
+    overflow-x: auto;
+    width: 231px;
     font-size: 0.8vw;
     font-family: var(--fontDisplay);
     text-align: center;
@@ -723,6 +731,13 @@ main {
     transition: var(--configTrasition03s);
 }
 
+#divButtonNewClient {
+    display: flex;
+    align-items: center;
+    background-color: var(--colorBlack);
+    height: 100%;
+    transition: var(--configTrasition03s);
+}
 #newClient {
     display: inline;
     background-color: rgba(230, 230, 230, 0.5);

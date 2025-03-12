@@ -227,14 +227,16 @@ async function MKFile_Selecteds() {
         } else {
             New_Selecteds_.S_Funil_ = Directories_2[0]
         }
-        const Directories_3 = await List_Directories(`Funil\\${Directories_2[0]}`)
-        //console.log(Directories_3)
-        if (Directories_3.length-1 === -1) {
-
-        } else {
-            const match = Directories_3[0].match(/=(.+)\.json/)
-            const Templatet_ = match ? match[1] : null
-            New_Selecteds_.S_Template_ = Templatet_
+        if (Directories_2[0]) {   
+            const Directories_3 = await List_Directories(`Funil\\${Directories_2[0]}`)
+            //console.log(Directories_3)
+            if (Directories_3.length-1 === -1) {
+                
+            } else {
+                const match = Directories_3[0].match(/=(.+)\.json/)
+                const Templatet_ = match ? match[1] : null
+                New_Selecteds_.S_Template_ = Templatet_
+            }
         }
         
         //console.log(New_Selecteds_,'ioa')
@@ -280,7 +282,7 @@ function Get_Selecteds(Type_Selected, Clientt_) {
         let Selectedt = ''
         let F_Client_ = ''
         let T_Client_ = ''
-        let SClientt_ = ''
+        let S_Clientt_ = ''
 
         //console.log(templateData)
 
@@ -296,11 +298,11 @@ function Get_Selecteds(Type_Selected, Clientt_) {
                 break;
             case 4:
                 if (Clientt_) {
-                    SClientt_ = Clientt_
+                    S_Clientt_ = Clientt_
                 } else {
-                    SClientt_ = global.Client_
+                    S_Clientt_ = global.Client_
                 }
-                const Query_Line = templateData.find(item => item.Clientt_ === SClientt_)
+                const Query_Line = templateData.find(item => item.Clientt_ === S_Clientt_)
                 //console.log(Query_Line)
                 
                 F_Client_ = Query_Line.F_Client_
@@ -1038,6 +1040,25 @@ async function Erase_Template_(Is_From_End, Templatet_, Funilt_) { // quando for
                 
                 fse.remove(`Funil\\${global.File_Data_Funils_}\\${global.File_Data_Templates_}`)
                 await sleep(100)
+
+                const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+                const templateData = JSON.parse(data)
+                if (templateData[0].S_Template_ === Templatet_) {
+                    templateData[0].S_Template_ = ''
+                    const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                    fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+                }
+                const data2 = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+                const templateData2 = JSON.parse(data2)
+                const Query_Line = templateData2.find(item => item.Clientt_ === global.Client_)
+                if (Query_Line.T_Client_ === Templatet_) {
+                    Query_Line.T_Client_ = ''
+                    const jsonString = '[\n' + templateData2.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                    fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+                }
+                if (global.Template_ === Templatet_) {
+                    global.Template_ = null
+                }
             
                 Erased_ = true
             } else if (answer.toLowerCase() === 'n') {
@@ -1062,6 +1083,25 @@ async function Erase_Template_(Is_From_End, Templatet_, Funilt_) { // quando for
             
             fse.remove(`Funil\\${global.File_Data_Funils_}\\${global.File_Data_Templates_}`)
             await sleep(100)
+
+            const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+            const templateData = JSON.parse(data)
+            if (templateData[0].S_Template_ === Templatet_) {
+                templateData[0].S_Template_ = ''
+                const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+            }
+            const data2 = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+            const templateData2 = JSON.parse(data2)
+            const Query_Line = templateData2.find(item => item.Clientt_ === global.Client_)
+            if (Query_Line.T_Client_ === Templatet_) {
+                Query_Line.T_Client_ = ''
+                const jsonString = '[\n' + templateData2.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+            }
+            if (global.Template_ === Templatet_) {
+                global.Template_ = null
+            }
             
             Erased_ = true
         }
@@ -1807,6 +1847,25 @@ async function Erase_Funil_(Is_From_End, Funilt_) { // quando for adicionar pra 
             
             fse.remove(`Funil\\${global.File_Data_Funils_}`)
             await sleep(100)
+
+            const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+            const templateData = JSON.parse(data)
+            if (templateData[0].S_Funil_ === Funilt_) {
+                templateData[0].S_Funil_ = ''
+                const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+            }
+            const data2 = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+            const templateData2 = JSON.parse(data2)
+            const Query_Line = templateData2.find(item => item.Clientt_ === global.Client_)
+            if (Query_Line.F_Client_ === Funilt_) {
+                Query_Line.F_Client_ = ''
+                const jsonString = '[\n' + templateData2.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+            }
+            if (global.Funil_ === Funilt_) {
+                global.Funil_ = null
+            }
             
             Erased_ = true
         }
@@ -2360,11 +2419,21 @@ async function Erase_Client_(Is_From_End, Clientt_) { // quando for adicionar pr
             const clientIdNumber = Clientt_.split('_')[1]
             Counter_Id_Clients_.splice(clientIdNumber-1, 1)
 
-            let data = JSON.parse(fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8'))
-            data[0].S_Client_ = ''
-            data = data.filter(item => item.Clientt_ !== Clientt_)
-            const jsonString = '[\n' + data.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+            const data = fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8')
+            const templateData = JSON.parse(data)
+            if (templateData[0].S_Client_ === Clientt_) {
+                templateData[0].S_Client_ = ''
+                const jsonString = '[\n' + templateData.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
+                fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+            }
+            let data2 = JSON.parse(fss.readFileSync(global.Directory_Dir_Selecteds_, 'utf8'))
+            data2[0].S_Client_ = ''
+            data2 = data2.filter(item => item.Clientt_ !== Clientt_)
+            const jsonString = '[\n' + data2.map(item => '\t' + JSON.stringify(item)).join(',\n') + '\n]'
             fss.writeFileSync(global.Directory_Dir_Selecteds_, jsonString, 'utf8')
+            if (global.Funil_ === Funilt_) {
+                global.Funil_ = null
+            }
             
             Erased_ = true
         }
