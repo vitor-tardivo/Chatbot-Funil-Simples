@@ -3,35 +3,486 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#141414">
     
-    <link rel="shortcut icon" href="midia/Portal/faviconP.png" type="image/x-icon"><!-- ICON TITLE PAGE-->
+    <link rel="shortcut icon" href="midia/favicon.png" type="image/x-icon"><!-- ICON TITLE PAGE-->
+
     
-    <link rel="stylesheet" href="styles/styleStandards.css"><!-- STANDARDS STYLIZATION -->
-    <link rel="stylesheet" href="styles/Portal/stylePortal.css" media="all"><!-- ALL MEDIAS -->
-    <link rel="stylesheet" href="styles/Portal/mediaQueryPortalPrint.css" media="print"><!-- MEDIA QUERY - PRINT -->
+    <link rel="stylesheet" href="../styles/styleStandards.css"><!-- STANDARDS STYLIZATION -->
+    <link rel="stylesheet" href="../styles/style.css" media="all"><!-- ALL MEDIAS -->
+    <link rel="stylesheet" href="../styles/mediaQueryPrint.css" media="print"><!-- MEDIA QUERY - PRINT -->
     
-    <script src="scripts/scriptStandards.js"></script><!-- STANDARDS SCRIPT -->
-    <script src="scripts/Portal/scriptPortal.js"></script><!-- ALL THE SCRIPT -->
+    <script src="../scripts/scriptStandards.js"></script><!-- STANDARDS SCRIPT -->
+    <script src="../scripts/script.js"></script><!-- ALL THE SCRIPT -->
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script><!-- ADD AXIOS TO PROJECT -->
     
-    <title>Portal</title>
+    <title>...</title>
 </head>
 <body>
-    <header>
-        <abbr title="Pagina principal Portal"><a id="home" href="#" target="_self"><stronger>HOME</stronger></a></abbr><!-- HOME PAGE -->
-
-        <nav> 
-            <ul>
-                <abbr title="Pagina Bot"><li><a class="navs" href="pages/bot.html" target="_self"><stronger>BOT</stronger></a></li></abbr><!-- BOT PAGE -->
-            </ul>
-        </nav>
-    </header>
+    <div id="barLoading"></div><!-- LOADING BAR -->
 
     <main>
-        <h1 id="porEnquanto">Por enquanto nada aqui...</h1>
-    </main>
+        <article id="articleConsole">
+            <div id="console">
+                <div id="functionsConsole">
+                    <abbr title="clear/cls-Console" id="abbrClear"><button class="functionsDiv" id="clearConsole" onclick="clsConsole()">C</button></abbr>
+                </div>
+                
+                <div id="divLog">
+                    <abbr title="Terminal"><div id="log">
 
-    <footer>
-        <abbr title="Link perfil GitHub do criador"><p id="credits"><a href="https://github.com/vitor-tardivo" id="linkCredits" rel="noopener" target="_blank">🔗GitHub</a></p></abbr><!-- SILLY CREDITS -->
-    </footer>
+                    </div></abbr>
+                </div>
+                <div id="commandSendInput">
+                    <abbr title="Envia o Comando"><div id="divSend">
+                        <button id="commandSend" onclick="sendCommand()">></button>
+                    </div></abbr>
+
+                    <div id="divInput">
+                        <abbr title="Digite um comando do console..."><input type="text" id="commandInput" placeholder=">..."></abbr>       
+                    </div>
+                </div>
+            </div>
+            
+            <abbr id="titleHide" title="Terminal STATUS: visivel"><div id="divHide">
+                <button id="hideConsole" onclick="hideConsole()">◀</button>
+            </div></abbr>
+        </article>
+        <section id="content">
+            <div id="divFunctions">
+                <abbr title="WebSocket STATUS: null" id="abbrReload"><button class="functionsDiv" id="reload" onclick="reconnectWebSocket()">WS</button></abbr>
+                <abbr title="Lista STATUS: null" id="abbrShowList"><button class="functionsDiv" id="showList" onclick="showTableList()">-O</button></abbr>
+                <abbr title="Funil STATUS: escondido" id="abbrShowFunil"><button class="functionsDiv" id="showFunil" onclick="showFunil()">O</button></abbr>
+            </div>
+            <abbr title="Status do Bot"><div class="divs" id="divStatus">
+                <p id="pStatus"><span id="status">...</span></p>
+            </div></abbr>
+            <div id="divNewClient">
+                
+                <div id="Clients_">
+                    
+                
+                    <!--<div class="divClients_" id="_2_Client_">
+                        <div>
+                            <abbr title="Client_ _2_Client_" id="abbrselect-_2_Client_"><button class="Clients_" id="select-_2_Client_" onclick="selectClient_('_2_Client_')">_2_Client_</button></abbr><abbr title="Renomear _2_Client_" id="abbrRename-_2_Client_"><button class="Clients_Rename" id="Rename-_2_Client_" onclick="RenameClient_('_2_Client_')"><</button></abbr><abbr title="Desligar _2_Client_" id="abbrDestroy-_2_Client_"><button class="Clients_Destroy" id="Destroy-_2_Client_" onclick="DestroyClient_('_2_Client_', true)"><</button></abbr><abbr title="Apagar _2_Client_" id="abbrerase-_2_Client_"><button class="Clients_Erase" id="erase-_2_Client_" onclick="eraseClient_('_2_Client_')"><</button></abbr>
+                        </div>
+                        <div class="showSelected">
+                            <abbr title="Selecionado - Funil: _1_Funil_ Template: _1_Template_" id="iabbrshowselected-_2_Client_"><span class="showSelectedFunil" id="ishowSelectedFunil-_2_Client_">SF: _1_Funil_</span><span class="showSelectedTemplate" id="ishowSelectedTemplate-_2_Client_">ST: _1_Template_</span></abbr>
+                        </div>
+                    </div>-->
+
+
+                </div>
+
+                <div id="divButtonNewClient">
+                    <abbr title="+ Cria um novo Client_"><button id="newClient" onclick="newClients()" ><stronger>+</stronger></button></abbr>
+                </div>
+            </div>
+
+            <div id="isendInputClientName">
+                <div id="idivInputClientName">
+                    <abbr title="Digite um nome para a instancia Client_..."><input type="text" id="iinputClientName" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" onkeydown="triggerOnKey(event, 1, 'enter', setClientName, false)" placeholder=">..."></abbr>       
+                </div>
+                <abbr title="Confirmar nome"><div id="idivSendClientName">
+                    <button id="isendSearchClientName" onclick="setClientName(false)">></button>
+                </div></abbr>
+            </div>
+            <div id="innerContent">
+                <div class="divs" id="divStart">
+                    <abbr title="Inicia o Bot"><button id="start" onclick="startBot()" ><stronger>INICIAR</stronger></button></abbr><!-- BUTTON START BOT --> 
+                </div>
+
+                <!--<abbr title="Ir ao fim da pagina"><button id="scrollB" onclick="bottomScroll()">&#9650;</button></abbr> BUTTON GO TO THE BOTTOM OF THE PAGE
+                <abbr title="Ir ao topo da pagina"><button id="scrollT" onclick="topScroll()">&#9650;</button></abbr> BUTTON GO TO THE TOP OF THE PAGE -->
+                
+                <div class="divs">
+                    <abbr title="Qr-Code WhatsApp Web"><div id="qrCode">
+                        
+                    </div></abbr>
+                </div>
+
+                <!--<div class="sections" id="section1">
+
+                    <div class="divInfoSection" id="idivInfoSection1">
+                        <label title="Selecione esta Seção (1)" class="divSelectionPositionSection">
+                            <input type="checkbox" class="inputCheckboxSelectionSection" id="iinputCheckboxSelectionSection1" onchange="selectionPositionSection(this)">
+                            <span class="checkSelectionSection" id="icheckSelectionSection"></span>
+                        </label>
+                        <h2 class="titleSection" id="ititleSection">Tabela</h2>
+                    </div>
+
+                    <div class="divInnerConteinerSection" id="idivInnerConteinerSection">-->
+
+                        <div id="listTable">
+                            <div class="divs" id="divButtonList">
+                                <abbr title="Lista todos os ChatData"><button id="list" onclick="allPrint(true, false, null)" ><stronger>LISTAR</stronger></button></abbr><!-- BUTTON LIST CHAT DATA --> 
+                            </div>
+
+                            <div id="listChatData">
+                                
+                                <div class="divs" id="sendInputList">
+                                    <div id="divInputList">
+                                        <abbr title="Digite um nome ou numero de contato..."><input type="text" id="inputList" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" placeholder=">..."></abbr>       
+                                    </div>
+
+                                    <abbr title="Pesquisa um nome ou numero de contato"><div id="divSendList">
+                                        <button id="sendSearchList" onclick="searchChatDataBySearch()">></button>
+                                    </div></abbr>
+                                    <abbr title="Apaga ChatData pelo nome ou numero"><div id="divEraseSearchList">
+                                        <button id="eraseSearchList" onclick="eraseChatDataByQuery(false, null)">></button>
+                                    </div></abbr>
+                                </div>
+                                <div class="divs">
+                                    <table> <!-- LIST -->
+                                        <caption title="Os items(Numero(s), Nome(s)) e tamanho de tal aparecerão aqui"><stronger>CHATDATA</stronger></caption>
+                                    
+                                        <thead>
+                                            <tr>
+                                                <th title="Tamanho da Lista" scope="col" colspan="2"><strong>Tamanho</strong></th>
+                                            </tr>
+                                            <tr>
+                                                <td title="Lista" scope="col" colspan="2">0</td>
+                                            </tr>
+                                            <tr>
+                                                <th title="Numero do contato" class="tableTitle" scope="col"><strong>Numero(s)</strong></th>
+                                                <th title="Nome do Contato" class="tableTitle" scope="col"><strong>Nome(s)</strong></th>
+                                            </tr>
+                                        </thead>
+                                    
+                                        <tbody title="Items">
+                                            <tr>
+                                                <td>N/A</td><!-- Number --> 
+                                                <td>N/A</td><!-- Name --> 
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="divs" id="divButtonErase">
+                                <abbr title="Apaga todos os items da lista"><button id="erase" onclick="allErase()">APAGAR</button></abbr><!-- BUTTON ERASE ITEMS OF THE LIST -->
+                            </div>
+                        </div>
+
+                    <!--</div>
+
+                </div>-->
+                
+                <!--<div class="sections" id="section2">
+
+                    <div class="divInfoSection" id="idivInfoSection2">
+                        <label title="Selecione esta Seção (2)" class="divSelectionPositionSection">
+                            <input type="checkbox" class="inputCheckboxSelectionSection" id="iinputCheckboxSelectionSection2" onchange="selectionPositionSection(this)">
+                            <span class="checkSelectionSection" id="icheckSelectionSection"></span>
+                        </label>
+                        <h2 class="titleSection" id="ititleSection">Funil</h2>
+                    </div>
+
+                    <div class="divInnerConteinerSection" id="idivInnerConteinerSection">-->
+
+                        <div class="divs" id="divFunil">
+                            <div id="divInnerFunil">
+                                <div id="divNewFunil">
+                
+                                    <div id="Funils_">
+                                        
+                                    
+                                        <!--<div class="divFunils_" id="_2_Funil_">
+                                            <abbr title="Funil_ _2_Funil_" id="abbrselect-_2_Funil_"><button class="Funils_" id="select-_2_Funil_" onclick="selectFunil_('_2_Funil_')">_2_Funil__</button></abbr><abbr title="Renomear _2_Funil_" id="abbrRename-_2_Funil_"><button class="Funils_Rename" id="Rename-_2_Funil_" onclick="RenameFunil_('_2_Funil_')"><</button></abbr><abbr title="Apagar _2_Funil_" id="abbrerase-_2_Funil_"><button class="Funils_Erase" id="erase-_2_Funil_" onclick="eraseFunil_(false, '_2_Funil_')"><</button></abbr>
+                                        </div>-->
+                    
+                    
+                                    </div>
+                    
+                                    <abbr title="+ Cria um novo Funil"><button id="newFunil" onclick="newFunils()" ><stronger>+</stronger></button></abbr>
+                                </div>
+                                <div id="isendInputFunilName">
+                                    <div id="idivInputFunilName">
+                                        <abbr title="Digite um nome para a instancia Funil_..."><input type="text" id="iinputFunilName" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" onkeydown="triggerOnKey(event, 2, 'enter', setFunilName, false)" placeholder=">..."></abbr>       
+                                    </div>
+                                    <abbr title="Confirmar nome"><div id="idivSendFunilName">
+                                        <button id="isendSearchFunilName" onclick="setFunilName(false)">></button>
+                                    </div></abbr>
+                                </div>
+                                <div id="divNewTemplate">
+                
+                                    <div id="Templates_">
+                                        
+                                    
+                                        <!--<div class="divTemplates_" id="_2_Template_">
+                                            <abbr title="Template_ _2_Template_" id="abbrselect-_2_Template_"><button class="Templates_" id="select-_2_Template_" onclick="selectTemplate_('_2_Template_')">_2_Template__</button></abbr><abbr title="Renomear _2_Template_" id="abbrRename-_2_Template_"><button class="Templates_Rename" id="Rename-_2_Template_" onclick="RenameTemplate_('_2_Template_')"><</button></abbr><abbr title="Apagar _2_Template_" id="abbrerase-_2_Template_"><button class="Templates_Erase" id="erase-_2_Template_" onclick="eraseTemplate_('_2_Template_')"><</button></abbr>
+                                        </div>-->
+                    
+                    
+                                    </div>
+                    
+                                    <abbr title="+ Cria um novo Template"><button id="newTemplate" onclick="newTemplates()" ><stronger>+</stronger></button></abbr>
+                                </div>
+                                <div id="isendInputTemplateName">
+                                    <div id="idivInputTemplateName">
+                                        <abbr title="Digite um nome para a instancia Funil_..."><input type="text" id="iinputTemplateName" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" onkeydown="triggerOnKey(event, 3, 'enter', setTemplateName, false)" placeholder=">..."></abbr>       
+                                    </div>
+                                    <abbr title="Confirmar nome"><div id="idivSendTemplateName">
+                                        <button id="isendSearchTemplateName" onclick="setTemplateName(false)">></button>
+                                    </div></abbr>
+                                </div>
+                                <div id="divInnerTemplate">
+                                    <div id="divFunilFunctions">
+                                        <abbr title="Schedule Erase STATUS: null" id="iabbrScheduleErase"><button class="functionsDivStart" id="iOnOffScheduleErase" onclick="setEraseSchedule()">-O</button></abbr>
+                                        <abbr title="Test Mode STATUS: null" id="iabbrTestMode"><button class="functionsDivStart" id="iOnOffTestMode" onclick="setTestMode()">-O</button></abbr>
+                                        <abbr title="(TM) Receive MSG STATUS: null" id="iabbrTestModeRMSG"><button class="functionsDivStart" id="iOnOffTestModeRMSG" onclick="setReceiveMSG()">-O</button></abbr>
+                                    </div>
+
+                                    <div id="idivDelayEraseSchedule">
+                                        <abbr title="Determine um valor para o tempo de Delay do Pagamento agendado"><span id="idelayEraseScheduleTitle"><strong>ATRASO-EraseSchedule:</strong></span><label for="idelayEraseScheduleTime" id="idelayEraseScheduleLabelTime">Tempo-<input type="number" id="idelayEraseScheduleTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToTemplateEraseSchedule('input')" placeholder="00000"></label></abbr> 
+                                        
+                                        <select title="Selecione um tipo de duração" id="idelayEraseScheduleSelect" oninput="sendToTemplateEraseSchedule('select')">
+                                            <option value="none" Selected>Nenhum</option>
+                                            <option value="seconds">Segundos</option>
+                                            <option value="minutes">Minutos</option>
+                                            <option value="hours">Horas</option>
+                                            <option value="days">Dias</option>
+                                        </select>
+                                    </div>
+                                    <div id="isendInputTestMode">
+                                        <div id="idivInputTestMode">
+                                            <abbr title="Digite um numero de contato..."><input type="text" id="iinputTestMode" onfocus="inputSelectAll(this, 1)" onclick="inputSelectAll(this, 2)" oninput="sendToTemplateTestMode()" placeholder=">..."></abbr>       
+                                        </div>
+                                        <abbr title="Inicia o teste"><div id="idivSendTestMode">
+                                            <button id="isendSearchTestMode" onclick="initiateTestMode()">></button>
+                                        </div></abbr>
+                                    </div>
+                                    
+                                    <div id="divCreateFunctionFunil">
+                                        <div id="titleContentFunils">
+                                            <h3 id="titleFunil"><stronger>Criação e customização</stronger></h3>
+                                            <div id="selecteds">
+                                                <p id="titleSelectedFunil">Funil: <span id="SelectedFunil">_?_Funil</span></p>
+                                                <p id="titleSelectedFunil">Template: <span id="SelectedTemplate">_?_Template</span></p>
+                                            </div>
+                                        </div>
+
+                                            <div id="funilArea">
+                                            
+
+
+                                                <!--<div class="conteinerFunilMSG" id="conteinerFunilMSG1">
+
+                                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG1">
+                                                        <label title="Selecione esta posição (1)" class="divSelectionPositionMSG">
+                                                            <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG1" onchange="selectionPositionMSG(this, 1)">
+                                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                                        </label>
+                                                        <h4 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h4>
+                                                        <p class="positionMSG" id="ipositionMSG">(1)</p>
+
+                                                        <button title="Deletar posição MSG (1)" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 1)">D</button>
+                                                    </div>
+
+                                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                                        <div class="divDelayTypeMSG" id="idivDelayTypeMSG">
+                                                            <abbr title="Determine um valor para o tempo de Delay"><span class="delayMSGTitle"><strong>ATRASO-MSG:</strong></span><label for="idelayMSGTime" class="delayMSGLabelTime">Tempo-<input type="number" class="delayMSGTime" id="idelayMSGTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 1, 'input', null)" placeholder="00000"></label></abbr> 
+                                                        
+                                                            <select title="Selecione um tipo de duração" class="delayMSGSelect" id="idelayMSGSelect" oninput="sendToFunil(this, 1, this, null)">
+                                                                <option value="none" selected>Nenhum</option>
+                                                                <option value="seconds">Segundos</option>
+                                                                <option value="minutes">Minutos</option>
+                                                                <option value="hours">Horas</option>
+                                                                <option value="days">Dias</option>
+                                                            </select>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div class="conteinerFunilMSG" id="conteinerFunilMSG2">
+
+                                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG2">
+                                                        <label title="Selecione esta posição (2)" class="divSelectionPositionMSG">
+                                                            <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG2" onchange="selectionPositionMSG(this, 2)">
+                                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                                        </label>
+                                                        <h4 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h4>
+                                                        <p class="positionMSG" id="ipositionMSG">(2)</p>
+
+                                                        <button title="Deletar posição MSG (2)" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 2)">D</button>
+                                                    </div>
+
+                                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                                        <div class="divTextarea" id="idivTextarea">
+                                                            <div class="divTextareaFunctions" id="idivTextareaFunctions">
+                                                                <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingMSG"><button class="functionsDivStart OnOffStateTypingMSG" id="iOnOffStateTypingMSG" onclick="StateTypingMSG(this, true)">O</button></abbr>
+                                                                
+                                                                <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkMSG"><button class="functionsDivStart OnOffLightDarkMSG" id="iOnOffLightDarkMSG" onclick="LightDarkMSG(this, true)">O</button></abbr>
+                                                                <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorMSG"><button class="functionsDivStart OnOffLightDarkColorMSG" id="iOnOffLightDarkColorMSG" onclick="LightDarkColorMSG(this, true)">O</button></abbr>
+                                                                
+                                                                <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupText" id="iOnOffResetScreenSetupText1" onclick="resetScreenSetup(this, true)">R</button></abbr>
+                                                                <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupText2"><button class="functionsDivStart OnOffVLockScreenSetupText" id="iOnOffVLockScreenSetupText2" onclick="VLockScreenSetup(this, true)">O</button></abbr>
+                                                                <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupText3"><button class="functionsDivStart OnOffDesktopScreenSetupText" id="iOnOffDesktopScreenSetupText3" onclick="desktopScreenSetup(this, true)">O</button></abbr>
+                                                                <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupText4"><button class="functionsDivStart OnOffPhoneScreenSetupText" id="iOnOffPhoneScreenSetupText4" onclick="phoneScreenSetup(this, true)">O</button></abbr>
+                                                            </div>
+                                                        
+                                                            <div class="divDelayText" id="idivDelayText">
+                                                                <abbr title="Determine um valor para o tempo de Delay"><span class="delayTextTitle"><strong>ATRASO-StateTyping:</strong></span><label for="idelayTextTime" class="delayTextLabelTime">Tempo-<input type="number" class="delayTextTime" id="idelayTextTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 2, 'input', null)" placeholder="00000"></label></abbr> 
+                                                                
+                                                                <select title="Selecione um tipo de duração" class="delayTextSelect" id="idelayTextSelect" oninput="sendToFunil(this, 2, this, null)">
+                                                                    <option value="none" selected>Nenhum</option>
+                                                                    <option value="seconds">Segundos</option>
+                                                                    <option value="minutes">Minutos</option>
+                                                                    <option value="hours">Horas</option>
+                                                                    <option value="days">Dias</option>
+                                                                </select>
+                                                            </div>
+                                                            
+                                                            <abbr title="Digite a MSG"><textarea class="textAreaTypeMSG" id="itextAreaTypeMSG" placeholder="TEXTO-MSG: >..." oninput="sendToFunil(this, 2, 'textarea', this)"></textarea></abbr>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div class="conteinerFunilMSG" id="conteinerFunilMSG3">
+
+                                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG3">
+                                                        <label title="Selecione esta posição (3)" class="divSelectionPositionMSG">
+                                                            <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG3" onchange="selectionPositionMSG(this, 3)">
+                                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                                        </label>
+                                                        <h4 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h4>
+                                                        <p class="positionMSG" id="ipositionMSG">(3)</p>
+
+                                                        <button title="Deletar posição MSG (3)" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 3)">D</button>
+                                                    </div>
+
+                                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                                        <div class="fileTypeMSG" id="ifileTypeMSG">
+                                                            <div class="divFileFunctions" id="idivFileFunctions">
+                                                                <abbr title="StateTyping STATUS: off" id="iabbrOnOffStateTypingFile"><button class="functionsDivStart OnOffStateTypingFile" id="iOnOffStateTypingFile" onclick="StateTypingMSG(this, false)">O</button></abbr>
+                                                                <abbr title="StateRecording STATUS: off" id="iabbrOnOffStateRecordingFile"><button class="functionsDivStart OnOffStateRecordingFile" id="iOnOffStateRecordingFile" onclick="StateRecordingMSG(this)">O</button></abbr>
+                                                                <abbr title="Area de texto STATUS: off" id="iabbrOnOffCaption"><button class="functionsDivStart OnOffCaption" id="iOnOffCaption" onclick="CaptionFileMSG(this)">O</button></abbr>
+                                                                
+                                                                <abbr title="Modo Claro/Escuro STATUS: escuro" id="iabbrOnOffLightDarkCaption"><button class="functionsDivStart OnOffLightDarkCaption" id="iOnOffLightDarkCaption" onclick="LightDarkMSG(this, false)">O</button></abbr>
+                                                                <abbr title="Modo Cliente/Usuario STATUS: cliente" id="iabbrOnOffLightDarkColorCaption"><button class="functionsDivStart OnOffLightDarkColorCaption" id="iOnOffLightDarkColorCaption" onclick="LightDarkColorMSG(this, false)">O</button></abbr>
+                                                                
+                                                                <abbr title="Reset"><button class="functionsDivStart OnOffResetScreenSetupCaption" id="iOnOffResetScreenSetupCaption1" onclick="resetScreenSetup(this, false)">R</button></abbr>
+                                                                <abbr title="VLock Tela STATUS: off" id="iabbrOnOffVLockScreenSetupCaption2"><button class="functionsDivStart OnOffVLockScreenSetupCaption" id="iOnOffVLockScreenSetupCaption2" onclick="VLockScreenSetup(this, false)">O</button></abbr>
+                                                                <abbr title="PC Tela STATUS: off" id="iabbrOnOffDesktopScreenSetupCaption3"><button class="functionsDivStart OnOffDesktopScreenSetupCaption" id="iOnOffDesktopScreenSetupCaption3" onclick="desktopScreenSetup(this, false)">O</button></abbr>
+                                                                <abbr title="Celular Tela STATUS: off" id="iabbrOnOffPhoneScreenSetupCaption4"><button class="functionsDivStart OnOffPhoneScreenSetupCaption" id="iOnOffPhoneScreenSetupCaption4" onclick="phoneScreenSetup(this, false)">O</button></abbr>
+                                                            </div>
+                                                            
+                                                            <div class="divDelayTextAudio" id="idivDelayTextAudio">
+                                                                <abbr title="Determine um valor para o tempo de Delay"><strong><span class="delayTextAudioTitle" id="idelayTextAudioTitle">ATRASO-State=Typing&Recording:</span></strong><label for="idelayTexAudioTime" class="delayTextAudioLabelTime">Tempo-<input type="number" class="delayTextAudioTime" id="idelayTexAudioTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 3, 'input', null)" placeholder="00000"></label></abbr> 
+                                                                
+                                                                <select title="Selecione um tipo de duração" class="delayTextAudioSelect" id="idelayTextAudioSelect" oninput="sendToFunil(this, 3, this, null)">
+                                                                    <option value="none" selected>Nenhum</option>
+                                                                    <option value="seconds">Segundos</option>
+                                                                    <option value="minutes">Minutos</option>
+                                                                    <option value="hours">Horas</option>
+                                                                    <option value="days">Dias</option>
+                                                                </select>
+                                                            </div>
+                                                            
+                                                            <div class="divFileSelectMSG">
+                                                                <abbr title="Clique e selecione ou arraste um arquivo aqui para poder enviar"><div class="fileTypeSelectMSG" id="ifileTypeSelectMSG" ondragover="fileHandleDragEnter(event, this)" ondragleave="fileHandleDragLeave(event, this)" onmouseenter="fileHoverEnter(this)" onmouseleave="fileHoverLeave(this)" ondrop="fileTypeAction(event, false, this)" onclick="fileAuxAction(this)">
+                                                                    <p class="fileTitleTypeMSG"><strong>ARQUIVO-MSG</strong></p>
+                                                                    <p class="fileStatus"><span id="ifileStatus">Clique ou arraste um arquivo</span></p>
+                                                                    <p class="fileTypeSelected">(<span id="ifileTypeSelected">...</span>)</p>
+                                                                    <p class="fileNameSelected"><span id="ifileNameSelected">...</span></p>
+                                                                    
+                                                                    <input type="file" class="fileTypeMSGAux" id="ifileTypeMSGAux" placeholder="..." onchange="fileTypeAction(null, true, this.parentElement)">
+                                                                </div></abbr>
+                                                            </div>
+
+                                                            <abbr title="Digite a legenda do (...)" id="iabbrtextAreaCaption"><textarea class="textAreaCaption" id="itextAreaCaption" placeholder="Legenda do (...): >..." oninput="sendToFunil(this, 3, 'textarea', this)"></textarea></abbr>
+                                                        </div>
+                                                        
+                                                    </div>
+
+                                                </div>-->
+
+
+                                                <!--<div class="conteinerFunilMSG" id="conteinerFunilMSG4">
+
+                                                    <div class="divInfoPositionMSG" id="idivInfoPositionMSG4">
+                                                        <label title="Selecione esta posição (4)" class="divSelectionPositionMSG">
+                                                            <input type="checkbox" class="inputCheckboxSelectionMSG" id="iinputCheckboxSelectionMSG4" onchange="selectionPositionMSG(this, 4)">
+                                                            <span class="checkSelectionMSG" id="icheckSelectionMSG"></span>
+                                                        </label>
+                                                        <h4 class="titlePositionMSG" id="ititlePositionMSG">Posicao MSG</h4>
+                                                        <p class="positionMSG" id="ipositionMSG">(4)</p>
+
+                                                        <button title="Deletar posição MSG (4)" class="erasePositionMSG" id="ierasePositionMSG" onclick="erasePosition(this.parentElement.parentElement, 4)">D</button>
+                                                    </div>
+
+                                                    <div class="divInnerConteinerFunilMSG" id="idivInnerConteinerFunilMSG">
+
+                                                        <div class="rebateTypeMSG" id="irebateTypeMSG">
+
+                                                            <div class="divRebateFunctions" id="idivRebateFunctions">
+                                                                <abbr title="StateContinue STATUS: null" id="iabbrOnOffStateContinue"><button class="functionsDivStart OnOffStateContinue" id="iOnOffStateContinue" onclick="sendToFunil(this, 4, 'continue', this)">-O</button></abbr>
+                                                            </div>
+                                                           
+                                                            <div class="divDelayRebate" id="idivDelayRebate">
+                                                                <abbr title="Determine um valor para o tempo de Delay do Timer"><span class="delayRebateTitle"><strong>TIMER-Rebate:</strong></span><label for="idelayRebateTime" class="delayRebateLabelTime">Tempo-<input type="number" class="delayRebateTime" id="idelayRebateTime" min="1" max="9999" step="1" oninput="delayLimitLength(this), sendToFunil(this, 4, 'input', null)" placeholder="00000" value="10"></label></abbr> 
+                                                            
+                                                                <select title="Selecione um tipo de duração do Timer" class="delayRebateSelect" id="idelayRebateSelect" oninput="sendToFunil(this, 4, this, null)">
+                                                                    <option value="none">Nenhum</option>
+                                                                    <option value="seconds" selected>Segundos</option>
+                                                                    <option value="minutes">Minutos</option>
+                                                                    <option value="hours">Horas</option>
+                                                                    <option value="days">Dias</option>
+                                                                </select>
+
+                                                                <select title="Selecione um Funil para o Rebate" class="funilRebateSelect" id="ifunilRebateSelect" oninput="sendToFunil(this, 4, 'rebateFunil', this)">
+                                                                    <option value="none" selected>Nenhum</option>
+
+                                                                </select>
+
+                                                                <select title="Selecione um Template para o Rebate" class="templateRebateSelect" id="itemplateRebateSelect" oninput="sendToFunil(this, 4, 'rebateTemplate', this)">
+                                                                    <option value="none" selected>Nenhum</option>
+
+                                                                </select>
+
+                                                            </div>
+
+                                                        </div>
+                                                        
+                                                    </div>
+
+                                                </div>-->
+
+
+                                            </div>
+                                            
+                                        <div id="plusTypeMSG">
+                                            <div id="typeSelectMSG">
+                                                <abbr title="+ Adicione o tipo Atraso de MSG"><button id="typeDelayMSG" onclick="newTypeMSG(1)">TYPE-MSG: Atraso</button></abbr>
+                                                <abbr title="+ Adicione o tipo Texto de MSG"><button id="typeTextMSG" onclick="newTypeMSG(2)">TYPE-MSG: Texto</button></abbr>
+                                                <abbr title="+ Adicione o tipo Arquivo de MSG"><button id="typeFileMSG" onclick="newTypeMSG(3)">TYPE-MSG: File</button></abbr>
+                                                <abbr title="+ Adicione o tipo Rebate de MSG"><button id="typeRebateMSG" onclick="newTypeMSG(4)">TYPE-MSG: Rebate</button></abbr>
+                                            </div>
+                                            
+                                            <abbr title="+ Adicione um tipo de MSG"><button id="addTypeMSG" onclick="newTypeMSGShown()"><strong>+</strong></button></abbr>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    <!--</div>
+
+                </div>-->
+
+            </div>
+        </section>
+
+    </main>
 </body>
 </html>

@@ -98,22 +98,22 @@ document.addEventListener('DOMContentLoaded', async function () {// LOAD MEDIA Q
             
             var link = document.createElement('link')
             link.rel = 'stylesheet'
-            link.href = '../styles/Bot/mediaQueryBot.css'
+            link.href = '../styles/mediaQuery.css'
             document.head.appendChild(link)
         } else {
             console.log(`User is from a Desktop (${navigator.userAgent}).`)
         }
 
+
         const response = await axios.get('/api/data')
         const Bot_Name = response.data.name
-        const dataName = document.querySelector('#appName')
         nameApp = `${Bot_Name}`
         document.title = `${nameApp.toUpperCase() || 'BOT'}`
-        dataName.textContent = nameApp.toUpperCase() || 'BOT'
         const Version_ = response.data.version
-        const dataVersion = document.querySelector('#appVersion')
         versionApp = 'v' +`${Version_ || '?.?.?'}`
-        dataVersion.textContent = versionApp
+        displayOnConsole(versionApp)
+        console.log(versionApp)
+
 
         const response2 = await axios.get('/back/what-stage')
         const stage = response2.data.data

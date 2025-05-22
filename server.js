@@ -59,7 +59,7 @@ server.listen(port, () => {
             }
             if (deviceIp) break
         }
-        console.log(`>  ℹ️ Server running ON: http://${deviceIp}:${port}/ || http://localhost:${port}/`)
+        console.log(`> ℹ️  Server running ON: http://${deviceIp}:${port}/ || http://localhost:${port}/`)
     } catch(error) {
         console.error(`> ❌ ERROR Listen server: ${error}`)
     }
