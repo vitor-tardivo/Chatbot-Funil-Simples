@@ -1,5 +1,12 @@
 # Chatbot MVP – Ferramenta de Criação de Fluxos de Mensagens
 
+## Autores
+
+- **Vitor de Souza Tardivo**  
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?logo=linkedin)](https://www.linkedin.com/in/vitor-tardivo/)
+
+## Descrição
+
 Este é um protótipo MVP de uma ferramenta de criação de fluxos de mensagens. Trata-se de um chatbot simples sendo assim um não senciente, desenvolvido como parte do Trabalho de Conclusão de Curso (TCC) do curso de Análise e Desenvolvimento de Sistemas da UNORTE.
 
 O chatbot foi projetado para funcionar com fluxos definidos manualmente em arquivos JSON, simulando um assistente de atendimento automatizado ou qualquer outro motivo aplicavel com estrutura condicional.
