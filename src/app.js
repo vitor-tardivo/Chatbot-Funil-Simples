@@ -3781,7 +3781,8 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
             puppeteer: {
                 executablePath: process.env.BROWSER_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
                 args: ['--no-sandbox', '--disable-gpu'],
-                headless: process.env.BROWSER_HEADLESS/*debug*/ || true
+                //headless: process.env.BROWSER_HEADLESS/*debug*/ || false
+                headless: false
             },
         })
         const QR_Counter_Exceeds = 5 //5
@@ -4023,7 +4024,6 @@ async function Initialize_Client_(Clientt_, Is_New_Client_, Is_Initialize_Client
         //message_create //debug
         Client_.on('message_create', async msg => {
             try {
-                //console.log(Clientt_)
                 const { Selectedt, F_Client_, T_Client_ } = Get_Selecteds(4, Clientt_)
                 const data = fss.readFileSync(path.join(path.join(global.Directory_Dir_Funil, `${F_Client_}`), `Template=${T_Client_}.json`), 'utf8')
                 const templateData = JSON.parse(data)

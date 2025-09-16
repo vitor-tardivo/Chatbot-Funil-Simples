@@ -70,7 +70,7 @@ router.put('/funil/position-change', async (req, res) => {
         const { Sucess } = await Change_Position_MSG(selectedId, toChangeFor)
         res.status(200).send({ sucess: Sucess, message: `Sucessfully changed ${selectedId} on ${toChangeFor}.` })
     } catch (error) {
-        console.error(`> ❌ ERROR /funil/send-data: ${error}`)
+        console.error(`> ❌ ERROR /funil/position-change: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}` })
     }
 })
