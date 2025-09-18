@@ -388,7 +388,7 @@ router.delete('/funil/erase-position-MSG', async (req, res) => {
         
         res.status(200).send({ sucess: Sucess, message: `Sucessfully erased the MSG position (${idnumberposition}).` })
     } catch (error) {
-        console.error(`> ❌ ERROR /funil/new-MSG: ${error}`)
+        console.error(`> ❌ ERROR /funil/erase-position-MSG: ${error}`)
         res.status(500).send({ sucess: false, message: `ERROR Internal server: ${error}`, idpositionmsg: null })
     }
 })
