@@ -77,5 +77,11 @@ Após a conexão:
 #### Observação
 Este chatbot é um protótipo experimental com fins acadêmicos e não representa inteligência artificial real. Não possui aprendizado de máquina, apenas segue fluxos de decisão definidos previamente pelo proprio usuario.
 
+Um pouco menos serio e formal agora.
+
+Sobre o chatbot estava desdo inicio ciente que a forma como estava desenvolvendo isso era digamos: arcaico ou burro kkk objetivo era ate onde eu conseguiria chegar sem saber muito o que ja existe, apenas vendo o que eu quero e pedindo pra IA me ajudar, e uma forma de aprendizado fuçando programando aprendendo, este é um MVP então um teste um vislumbre de como isso seria de se isso é possivel, e o resultado é bem impressionante. 
+
+Sobre o TCC digo o mesmo sobre, igual o chatbot, ele é feito sobre um template digamos não oficial um template feito as pressas pelos professores apenas para ser possivel os alunos fazerem o TCC(por que no template oficial a maioria da sala nao conseguiu) então isso que seria um artigo cientifico nao foi postado oficialmente, e o TCC em sim não é muito bom muito por causa da proposta algo muito exagerado para um curso curto desse, e não consegui encontrar um assunto muito bom sobre o MVP e alem disso fis isso tudo sozinho apenas com a ajuda do professor Anderson como a semantica do TCC e tals(o orientador), e comecei a fazer esse chatbot que logo virou o TCC apenas por curiosidade nas ferias antes do 4 semestre(curso teve 5), muito proximo do fim do curso então para alguem sozinho e ainda ter pouco tempo foi algo que eu diria impressionante o que consegui fazer.
+
 #### Licença
 Este projeto é de uso livre para fins acadêmicos. Para usos comerciais, entre em contato com o autor.
